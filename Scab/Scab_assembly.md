@@ -34,3 +34,17 @@ ProgDir=/home/heavet/git_repos/tools/seq_tools/dna_qc
 qsub $ProgDir/run_fastqc.sh $RawData
 done
 ```
+
+Trimming was performed on data to trim adapters from sequences and remove poor quality data. This was done with fastq-mcf. Trimming was performed on all isolates:
+```bash
+for EachRead in $(ls -d raw_dna/paired/*/*);
+do
+ProgDir=/home/heavet/git_repos/tools/seq_tools/rna_qc
+IlluminaAdapters=/home/heavet/git_repos/tools/seq_tools/ncbi_adapters.fa
+ReadsF=$(ls $EachRead/F/*.fastq*)
+ReadsR=$(ls $EachRead/R/*.fastq*)
+echo $ReadsF
+echo $ReadsR
+qsub $ProgDir/rna_qc_fastq-mcf.sh $ReadsF $ReadsR $IlluminaAdapters DNA
+done
+```
