@@ -48,3 +48,12 @@ echo $ReadsR
 qsub $ProgDir/rna_qc_fastq-mcf.sh $ReadsF $ReadsR $IlluminaAdapters DNA
 done
 ```
+
+Data was visualised following trimming:
+```bash
+for RawData in $(ls qc_dna/paired/*/*/*/*.fq.gz); do
+ProgDir=/home/heavet/git_repos/tools/seq_tools/dna_qc
+echo $RawData;
+qsub $ProgDir/run_fastqc.sh $RawData
+done
+```
