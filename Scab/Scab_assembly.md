@@ -82,3 +82,20 @@ cat $File | tail -n1 | rev | cut -f2 -d ' ' | rev;
 done | grep -v '.txt' | awk '{ SUM += $1} END { print SUM }'
 done
 ```
+
+
+
+######SPAdes assembly
+```bash
+  for StrainPath in $(ls -d qc_dna/paired/*/*); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    Strain=$(echo $StrainPath | rev | cut -f1 -d '/' | rev)
+    Organism=$(echo $StrainPath | rev | cut -f2 -d '/' | rev)
+    F_Read=$(ls $StrainPath/F/*.fq.gz)
+    R_Read=$(ls $StrainPath/R/*.fq.gz)
+    OutDir=assembly/spades/$Organism/$Strain
+    echo $F_Read
+    echo $R_Read
+    qsub $ProgDir/submit_SPAdes.sh $F_Read $R_Read $OutDir correct 10
+  done
+```
