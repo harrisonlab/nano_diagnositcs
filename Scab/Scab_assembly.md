@@ -82,8 +82,9 @@ cat $File | tail -n1 | rev | cut -f2 -d ' ' | rev;
 done | grep -v '.txt' | awk '{ SUM += $1} END { print SUM }'
 done
 ```
-
-
+Output of predicted coverage was:
+007     38.28
+172     36.2
 
 ######SPAdes assembly
 ```bash
