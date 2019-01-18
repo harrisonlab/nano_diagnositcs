@@ -51,9 +51,22 @@ done
 
 Data was visualised following trimming:
 ```bash
-for RawData in $(ls qc_dna/paired/*/*/*/*.fq.gz); do
+for TrimData in $(ls qc_dna/paired/*/*/*/*.fq.gz); do
 ProgDir=/home/heavet/git_repos/tools/seq_tools/dna_qc
-echo $RawData;
-qsub $ProgDir/run_fastqc.sh $RawData
+echo $TrimData;
+qsub $ProgDir/run_fastqc.sh $TrimData
 done
+```
+
+Sequencing coverage was estimated:
+```bash
+for TrimData in $(ls qc_dna/paired/*/*/*/*.fq.gz); do
+ProgDir=/home/heavet/git_repos/tools/seq_tools/dna_qc;
+echo $TrimData;
+GenomeSz=72
+OutDir=$(dirname $TrimData)
+qsub $ProgDir/sub_count_nuc.sh $GenomeSz $TrimData $OutDir
+done
+
+tail -n1 qc_dna/paired/v.inaequalis/*/*/*_cov.txt | cat
 ```
