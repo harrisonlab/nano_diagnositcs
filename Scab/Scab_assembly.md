@@ -68,5 +68,17 @@ OutDir=$(dirname $TrimData)
 qsub $ProgDir/sub_count_nuc.sh $GenomeSz $TrimData $OutDir
 done
 
-tail -n1 qc_dna/paired/v.inaequalis/*/*/*_cov.txt | cat
+tail -n1 -q qc_dna/paired/v.inaequalis/*/*/*_cov.txt | cat 
+```
+
+Find predicted coverage for these isolates:
+```bash
+for StrainDir in $(ls -d qc_dna/paired/*/*); do
+Strain=$(basename $StrainDir)
+printf "$Strain\t"
+for File in $(ls qc_dna/paired/*/"$Strain"/*/*.txt); do
+echo $(basename $File);
+cat $File | tail -n1 | rev | cut -f2 -d ' ' | rev;
+done | grep -v '.txt' | awk '{ SUM += $1} END { print SUM }'
+done
 ```
