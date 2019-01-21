@@ -3,10 +3,10 @@ Documentation of analyses and commands used as part of the PhD project investiga
 Note - all this work was performed in the directory:
 /home/groups/harrisonlab/project_files/nano_diagnostics
 
-##Test Assemblies
+## Test Assemblies
 Test data generated as part of Tom Passey's PhD project was copied to test assembly methodologies:
 
-###Copying data
+### Copying data
 Directories for miseq reads were made:
 ```bash
 mkdir -p raw_dna/paired/v.inaequalis/172/F
@@ -24,9 +24,18 @@ cp /home/groups/harrisonlab/project_files/venturia/raw_dna/paired/v.inaequalis/1
 
 cp /home/groups/harrisonlab/project_files/venturia/raw_dna/paired/v.inaequalis/172/R/172_S4_L001_R2_001.fastq.gz raw_dna/paired/v.inaequalis/172/R/.
 ```
+Reads from pac-bio were also linked into this file system:
+```bash
+RawDatDir=/home/groups/harrisonlab/project_files/venturia/raw_dna/pacbio/v.inaequalis/172_pacbio/extracted
+OutDir=raw_dna/pacbio/v.inaequalis/172/extracted
 
-####Data quality control
-Data quality was visualised using fastqc:
+mkdir -p $OutDir
+
+cp -s $RawDatDir/concatenated_pacbio.fastq $OutDir/.
+
+```
+#### Data quality control
+MiSeq data quality was visualised using fastqc:
 ```bash
 for RawData in $(ls raw_dna/paired/v.inaequalis/*/*/*.fastq.gz); do
 echo $RawData
@@ -83,10 +92,13 @@ done | grep -v '.txt' | awk '{ SUM += $1} END { print SUM }'
 done
 ```
 Output of predicted coverage was:
+
 007     38.28
+
 172     36.2
 
-######SPAdes assembly
+##### SPAdes assembly
+Trimmed MiSeq reads were assembled using the program SPAdes:
 ```bash
   for StrainPath in $(ls -d qc_dna/paired/*/*); do
     ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
@@ -132,4 +144,16 @@ Contigs were renamed in accordance with ncbi recommendations:
     $ProgDir/remove_contaminants.py --inp $Assembly --out $OutDir/contigs_min_500bp_renamed.fasta --coord_file tmp.csv
   done
   rm tmp.csv
+```
+###### Canu Assembly
+PacBio reads were assembled using the program Canu, genome size estimate from MiSeq reads was used:
+```bash
+Reads=$(ls raw_dna/pacbio/*/*/extracted/concatenated_pacbio.fastq)
+GenomeSz="70m"
+Strain=$(echo $Reads | rev | cut -f3 -d '/' | rev)
+Organism=$(echo $Reads | rev | cut -f4 -d '/' | rev)
+Prefix="$Strain"_canu
+OutDir="assembly/canu/$Organism/$Strain/70m"
+ProgDir=~/git_repos/tools/seq_tools/assemblers/canu
+qsub $ProgDir/submit_canu.sh $Reads $GenomeSz $Prefix $OutDir
 ```
