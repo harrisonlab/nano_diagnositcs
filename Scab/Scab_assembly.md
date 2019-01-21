@@ -6,7 +6,7 @@ Note - all this work was performed in the directory:
 ## Test Assemblies
 Test data generated as part of Tom Passey's PhD project was copied to test assembly methodologies:
 
-### Copying data
+## Copying data
 Directories for miseq reads were made:
 ```bash
 mkdir -p raw_dna/paired/v.inaequalis/172/F
@@ -34,7 +34,7 @@ mkdir -p $OutDir
 cp -s $RawDatDir/concatenated_pacbio.fastq $OutDir/.
 
 ```
-#### Data quality control
+## Data quality control
 MiSeq data quality was visualised using fastqc:
 ```bash
 for RawData in $(ls raw_dna/paired/v.inaequalis/*/*/*.fastq.gz); do
@@ -93,11 +93,11 @@ done
 ```
 Output of predicted coverage was:
 
-007     38.28
+For isolate 007 :    38.28
 
-172     36.2
+For isolate 172  :   36.2
 
-##### SPAdes assembly
+## SPAdes assembly
 Trimmed MiSeq reads were assembled using the program SPAdes:
 ```bash
   for StrainPath in $(ls -d qc_dna/paired/*/*); do
@@ -145,7 +145,7 @@ Contigs were renamed in accordance with ncbi recommendations:
   done
   rm tmp.csv
 ```
-###### Canu Assembly
+## Canu Assembly
 PacBio reads were assembled using the program Canu, genome size estimate from MiSeq reads was used:
 ```bash
 Reads=$(ls raw_dna/pacbio/*/*/extracted/concatenated_pacbio.fastq)
