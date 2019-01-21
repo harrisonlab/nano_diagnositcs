@@ -100,3 +100,36 @@ Output of predicted coverage was:
     qsub $ProgDir/submit_SPAdes.sh $F_Read $R_Read $OutDir correct 10
   done
 ```
+Quast was used to assess the quality of genome assembly:
+```bash
+  ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+    for Assembly in $(ls assembly/spades/*/*/filtered_contigs/contigs_min_500bp.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+    OutDir=assembly/spades/$Organism/$Strain/filtered_contigs
+    qsub $ProgDir/sub_quast.sh $Assembly $OutDir
+  done
+```
+The results of quast were desplayed:
+```bash
+  for Assembly in $(ls assembly/spades/*/*/filtered_contigs/report.txt); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev);
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev);
+    echo;
+    echo $Organism;
+    echo $Strain;
+    cat $Assembly;
+  done > assembly/quast_results.txt
+```
+Contigs were renamed in accordance with ncbi recommendations:
+```bash
+  ProgDir=~/git_repos/tools/seq_tools/assemblers/assembly_qc/remove_contaminants
+  touch tmp.csv
+  for Assembly in $(ls assembly/spades/*/*/filtered_contigs/contigs_min_500bp.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+    OutDir=assembly/spades/$Organism/$Strain/filtered_contigs
+    $ProgDir/remove_contaminants.py --inp $Assembly --out $OutDir/contigs_min_500bp_renamed.fasta --coord_file tmp.csv
+  done
+  rm tmp.csv
+```
