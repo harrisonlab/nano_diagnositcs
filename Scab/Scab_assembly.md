@@ -157,3 +157,25 @@ OutDir="assembly/canu/$Organism/$Strain/70m"
 ProgDir=~/git_repos/tools/seq_tools/assemblers/canu
 qsub $ProgDir/submit_canu.sh $Reads $GenomeSz $Prefix $OutDir
 ```
+Quast was used to assess the quality of genome assembly:
+```bash
+ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+for Assembly in $(ls assembly/canu/v.inaequalis/172/70m/172_canu.contigs.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+    OutDir=assembly/canu/$Organism/$Strain/70m
+    qsub $ProgDir/sub_quast.sh $Assembly $OutDir
+done
+```
+## SMART denovo
+
+```bash
+for CorrectedReads in $(ls assembly/canu/v.inaequalis/172/70m/172_canu.trimmedReads.fasta.gz); do
+Organism=$(echo $CorrectedReads | rev | cut -f3 -d '/' | rev)
+Strain=$(echo $CorrectedReads | rev | cut -f2 -d '/' | rev)
+Prefix="$Strain"_smartdenovo
+OutDir=assembly/SMARTdenovo/$Organism/"$Strain"
+ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/SMARTdenovo
+qsub $ProgDir/sub_SMARTdenovo.sh $CorrectedReads $Prefix $OutDir
+done
+```
