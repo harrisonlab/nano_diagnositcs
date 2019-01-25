@@ -168,6 +168,7 @@ for Assembly in $(ls assembly/canu/v.inaequalis/172/70m/172_canu.contigs.fasta);
 done
 ```
 ## SMART denovo
+An assembly was also performed using the program SMARTdenovo, with the objective of comparing the assembly results from the two programs; Canu and SMARTdenovo.
 
 ```bash
 for CorrectedReads in $(ls assembly/canu/v.inaequalis/172/70m/172_canu.trimmedReads.fasta.gz); do
@@ -179,3 +180,14 @@ ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/SMARTdenovo
 qsub $ProgDir/sub_SMARTdenovo.sh $CorrectedReads $Prefix $OutDir
 done
 ```
+quast was used to assess the quality of the SMARTdenovo assembly. 
+```bash
+ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+for Assembly in $(ls assembly/SMARTdenovo/172/70m/70m_smartdenovo.dmo.lay.utg); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+    OutDir=$(dirname $Assembly)
+    qsub $ProgDir/sub_quast.sh $Assembly $OutDir
+done
+```
+The results of Canu and SMARTdenovo quality assessment indicate that the Canu assembly is of higher quality, however the canu read correction used was set up for MinION reads.
