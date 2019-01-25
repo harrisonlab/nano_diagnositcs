@@ -190,4 +190,4 @@ for Assembly in $(ls assembly/SMARTdenovo/172/70m/70m_smartdenovo.dmo.lay.utg); 
     qsub $ProgDir/sub_quast.sh $Assembly $OutDir
 done
 ```
-The results of Canu and SMARTdenovo quality assessment indicate that the Canu assembly is of higher quality, however the canu read correction used was set up for MinION reads.
+The results of Canu and SMARTdenovo quality assessment indicate that the Canu assembly is of higher quality.
