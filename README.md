@@ -5,8 +5,11 @@ Note - all this work was performed in the directory:
 
 Work is documented within the following sub folders: 
 Scab
+
 Mildew
 
+Additionally, I experimented with running programs manually in the folder:
+Temp
 
 These folders were created using the following commands:
 ```bash
