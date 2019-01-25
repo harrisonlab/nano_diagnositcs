@@ -167,6 +167,18 @@ for Assembly in $(ls assembly/canu/v.inaequalis/172/70m/172_canu.contigs.fasta);
     qsub $ProgDir/sub_quast.sh $Assembly $OutDir
 done
 ```
+As an addition test of assembly quality the program busco was used:
+```bash
+for Assembly in $(ls assembly/canu/v.inaequalis/172/70m/172_canu.contigs.fasta); do
+Strain=$(echo $Assembly | rev | cut -f2 -d '/' | rev)
+Organism=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+echo "$Organism - $Strain"
+ProgDir=/home/heavet/git_repos/tools/gene_prediction/busco
+BuscoDB=$(ls -d /home/groups/harrisonlab/dbBusco/ascomycota_odb9)
+OutDir=gene_pred/busco/$Organism/$Strain/assembly
+qsub $ProgDir/sub_busco3.sh $Assembly $BuscoDB $OutDir
+done
+```
 ## SMART denovo
 An assembly was also performed using the program SMARTdenovo, with the objective of comparing the assembly results from the two programs; Canu and SMARTdenovo.
 
@@ -191,3 +203,16 @@ for Assembly in $(ls assembly/SMARTdenovo/172/70m/70m_smartdenovo.dmo.lay.utg); 
 done
 ```
 The results of Canu and SMARTdenovo quality assessment indicate that the Canu assembly is of higher quality.
+
+As an addition test of assembly quality the program busco was used:
+```bash
+for Assembly in $(ls assembly/SMARTdenovo/*/*/*.dmo.lay.utg); do
+Strain=$(echo $Assembly | rev | cut -f2 -d '/' | rev)
+Organism=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+echo "$Organism - $Strain"
+ProgDir=/home/heavet/git_repos/tools/gene_prediction/busco
+BuscoDB=$(ls -d /home/groups/harrisonlab/dbBusco/ascomycota_odb9)
+OutDir=gene_pred/busco/$Organism/$Strain/assembly
+qsub $ProgDir/sub_busco3.sh $Assembly $BuscoDB $OutDir
+done
+```
