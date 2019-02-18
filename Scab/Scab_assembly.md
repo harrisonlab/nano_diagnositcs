@@ -206,7 +206,7 @@ The results of Canu and SMARTdenovo quality assessment indicate that the Canu as
 
 As an addition test of assembly quality the program busco was used:
 ```bash
-for Assembly in $(ls assembly/SMARTdenovo/*/*/*.dmo.lay.utg); do
+for Assembly in $(ls assembly/SMARTdenovo/172/70m/70m_smartdenovo.dmo.lay.utg); do
 Strain=$(echo $Assembly | rev | cut -f2 -d '/' | rev)
 Organism=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
 echo "$Organism - $Strain"
