@@ -206,7 +206,7 @@ qlogin -pe smp 8 -l virtual_free=15.5G -l h=blacklace11.blacklace
 
 canu -assemble \
   -p 172 \
-  -d assembly-0.039 \
+  -d canu_correction/assembly-0.039 \
   genomeSize=72m \
   -useGrid=false \
   correctedErrorRate=0.039 \
@@ -229,6 +229,7 @@ canu -assemble \
 ```
 
 ## Assembly as script:
+A script was created for this assembly using the wrapper of A.Armitage as a base:
 ```bash
 #!/bin/bash
 
@@ -307,4 +308,190 @@ cp -r $WorkDir/assembly-*/* $CurPath/$OutDir/.
 
 echo "assembly complete"
 
+```
+This script was saved in a new directory "DIY" within tools within gitrepos.
+
+##Script submitted:
+
+```bash
+cd /home/groups/harrisonlab/project_files/nano_diagnostics/canu_correction
+
+chmod 764 /home/heavet/git_repos/tools/DIY/CanuPacBioAssemblert.sh
+
+qsub /home/heavet/git_repos/tools/DIY/CanuPacBioAssemblert.sh canu_correction/scab172.trimmedReads.fasta.gz 72m wrappera22embly a22embly
+```
+Fails therefore,
+
+Attempt with direct copy of AA wrapper, changing only node and cores to be used :
+
+ #$ -S /bin/bash
+ #$ -cwd
+ #$ -pe smp 1
+ #$ -l virtual_free=1.9G
+ #$ -l h=blacklace11.blacklace
+
+```bash
+cd /home/groups/harrisonlab/project_files/nano_diagnostics/canu_correction
+
+chmod 764 /home/heavet/git_repos/tools/DIY/CanuPacBioAssembler3.sh
+
+qsub /home/heavet/git_repos/tools/DIY/CanuPacBioAssembler3.sh canu_correction/scab172.trimmedReads.fasta.gz 72m wrappera33embly a33embly
+```
+Fails therefore:
+```bash
+qlogin -pe smp 15 -l virtual_free=1.9G -l h=blacklace01.blacklace
+mkdir canu
+cd canu
+Fasta=$(basename canu_correction/scab172.trimmedReads.fasta.gz)
+cp /home/groups/harrisonlab/project_files/nano_diagnostics/canu_correction/canu_correction/scab172.trimmedReads.fasta.gz $Fasta
+
+canu -assemble \
+ -d canu/assembly-0.039 \
+ -p wrapperassembly \
+  genomeSize=72m \
+  -useGrid=false \
+  correctedErrorRate=0.039 \
+  -utgoverlapper=ovl \
+  -pacbio-corrected scab172.trimmedReads.fasta.gz
+  2>&1 | tee canu_run_log-0.039.txt
+
+mkdir -p /home/groups/harrisonlab/project_files/nano_diagnostics/canu_correction/assembly
+cp -r canu_run_log-*.txt /home/groups/harrisonlab/project_files/nano_diagnostics/canu_correction/assembly
+cp -r canu/assembly-* /home/groups/harrisonlab/project_files/nano_diagnostics/canu_correction/assembly
+
+cd ..
+rm -r canu/
+rm -r Canu*
+
+echo "assembly complete"
+
+mkdir canu
+cd canu
+Fasta=$(basename canu_correction/scab172.trimmedReads.fasta.gz)
+cp /home/groups/harrisonlab/project_files/nano_diagnostics/canu_correction/canu_correction/scab172.trimmedReads.fasta.gz $Fasta
+
+canu -assemble \
+ -d canu/assembly-0.075 \
+ -p wrapperassembly \
+  genomeSize=72m \
+  -useGrid=false \
+  correctedErrorRate=0.075 \
+  -utgoverlapper=ovl \
+  -pacbio-corrected scab172.trimmedReads.fasta.gz
+  2>&1 | tee canu_run_log-0.075.txt
+
+#canu_run_log-0.039.txt accidentally overwritten with canu_run_log-0.075.txt
+
+cp -r canu_run_log-*.txt /home/groups/harrisonlab/project_files/nano_diagnostics/canu_correction/assembly
+cp -r canu/assembly-* /home/groups/harrisonlab/project_files/nano_diagnostics/canu_correction/assembly
+
+  echo "assembly complete"
+
+  cd ..
+  rm -r canu/
+  ```
+
+
+Asseblies for canu_correction2 missing therefore:
+  ```bash
+qlogin -pe smp 15 -l virtual_free=1.9G -l h=blacklace01.blacklace
+mkdir canu
+cd canu
+Fasta=$(basename canu_correction2/canu_correction2/172.trimmedReads.fasta.gz)
+cp /home/groups/harrisonlab/project_files/nano_diagnostics/canu_correction2/canu_correction2/172.trimmedReads.fasta.gz $Fasta
+
+canu -assemble \
+ -d canu/assembly-0.039 \
+ -p manualassembly \
+  genomeSize=72m \
+  -useGrid=false \
+  correctedErrorRate=0.039 \
+  -utgoverlapper=ovl \
+  -pacbio-corrected 172.trimmedReads.fasta.gz
+  2>&1 | tee canu_run_log-0.039.txt
+
+mkdir -p /home/groups/harrisonlab/project_files/nano_diagnostics/canu_correction2/assembly
+cp -r canu_run_log-*.txt /home/groups/harrisonlab/project_files/nano_diagnostics/canu_correction2/assembly
+cp -r canu/assembly-* /home/groups/harrisonlab/project_files/nano_diagnostics/canu_correction2/assembly
+
+cd ..
+rm -r canu/
+rm -r Canu*
+
+echo "assembly complete"
+
+
+
+#above run 08/03/2019, below not yet run
+
+qlogin -pe smp 15 -l virtual_free=1.9G -l h=blacklace05.blacklace
+mkdir canu
+cd canu
+Fasta=$(basename canu_correction2/canu_correction2/172.trimmedReads.fasta.gz)
+cp /home/groups/harrisonlab/project_files/nano_diagnostics/canu_correction2/canu_correction2/172.trimmedReads.fasta.gz $Fasta
+
+canu -assemble \
+ -d canu/assembly-0.075 \
+ -p manualassembly \
+  genomeSize=72m \
+  -useGrid=false \
+  correctedErrorRate=0.075 \
+  -utgoverlapper=ovl \
+  -pacbio-corrected 172.trimmedReads.fasta.gz
+  2>&1 | tee canu_run_log-0.075.txt
+
+cp -r canu_run_log-*.txt /home/groups/harrisonlab/project_files/nano_diagnostics/canu_correction2/assembly
+cp -r canu/assembly-* /home/groups/harrisonlab/project_files/nano_diagnostics/canu_correction2/assembly
+
+cd ..
+rm -r canu/
+rm -r Canu*
+
+echo "assembly complete"
+  ```
+
+
+  Quast was used to assess the quality of genome assemblies:
+```bash
+ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+for Assembly in $(ls canu_correction/assembly/assembly-0.039/wrapperassembly.contigs.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+    OutDir=canu_correction/assembly/assembly-0.039/Quast
+    qsub $ProgDir/sub_quast.sh $Assembly $OutDir
+done
+```
+```bash
+ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+for Assembly in $(ls canu_correction/assembly/assembly-0.075/wrapperassembly.contigs.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+    OutDir=canu_correction/assembly/assembly-0.075/Quast
+    qsub $ProgDir/sub_quast.sh $Assembly $OutDir
+done
+```
+
+
+As an addition test of assembly quality the program busco was used:
+```bash
+for Assembly in $(ls canu_correction/assembly/assembly-0.039/wrapperassembly.contigs.fasta); do
+Strain=$(echo $Assembly | rev | cut -f2 -d '/' | rev)
+Organism=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+echo "$Organism - $Strain"
+ProgDir=/home/heavet/git_repos/tools/gene_prediction/busco
+BuscoDB=$(ls -d /home/groups/harrisonlab/dbBusco/ascomycota_odb9)
+OutDir=canu_correction/assembly/assembly-0.039/Busco
+qsub $ProgDir/sub_busco3.sh $Assembly $BuscoDB $OutDir
+done
+```
+```bash
+for Assembly in $(ls canu_correction/assembly/assembly-0.075/wrapperassembly.contigs.fasta); do
+Strain=$(echo $Assembly | rev | cut -f2 -d '/' | rev)
+Organism=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+echo "$Organism - $Strain"
+ProgDir=/home/heavet/git_repos/tools/gene_prediction/busco
+BuscoDB=$(ls -d /home/groups/harrisonlab/dbBusco/ascomycota_odb9)
+OutDir=canu_correction/assembly/assembly-0.075/Busco
+qsub $ProgDir/sub_busco3.sh $Assembly $BuscoDB $OutDir
+done
 ```
