@@ -145,6 +145,33 @@ Contigs were renamed in accordance with ncbi recommendations:
   done
   rm tmp.csv
 ```
+As an addition test of assembly quality the program busco was used:
+```bash
+for Assembly in $(ls assembly/spades/*/*/filtered_contigs/contigs_min_500bp.fasta); do
+Strain=$(echo $Assembly | rev | cut -f2 -d '/' | rev)
+Organism=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+echo "$Organism - $Strain"
+ProgDir=/home/heavet/git_repos/tools/gene_prediction/busco
+BuscoDB=$(ls -d /home/groups/harrisonlab/dbBusco/ascomycota_odb9)
+OutDir=gene_pred/busco/$Organism/$Strain/assembly
+qsub $ProgDir/sub_busco3.sh $Assembly $BuscoDB $OutDir
+done
+```
+
+The assembly was polished usinng Pilon:
+```bash
+for Assembly in $(ls assembly/spades/*/*/filtered_contigs/contigs_min_500bp.fasta); do
+  Organism=v.inaequalis
+  Strain=172
+  IlluminaDir=$(ls -d qc_dna/paired/$Organism/$Strain)
+  TrimF1_Read=$IlluminaDir/F/172_S4_L001_R1_001_trim.fq.gz
+  TrimR1_Read=$IlluminaDir/R/172_S4_L001_R2_001_trim.fq.gz
+  OutDir=assembly/spades/$Organism/$Strain/polished_repeat
+  ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/pilon
+  qsub $ProgDir/sub_pilon.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir
+done
+```
+
 ## Canu Assembly
 PacBio reads were assembled using the program Canu, genome size estimate from MiSeq reads was used:
 ```bash
@@ -179,6 +206,21 @@ OutDir=gene_pred/busco/$Organism/$Strain/assembly
 qsub $ProgDir/sub_busco3.sh $Assembly $BuscoDB $OutDir
 done
 ```
+
+The assembly was polished usinng Pilon:
+```bash
+for Assembly in $(ls assembly/canu/v.inaequalis/172/70m/172_canu.contigs.fasta); do
+  Organism=v.inaequalis
+  Strain=172
+  IlluminaDir=$(ls -d qc_dna/paired/$Organism/$Strain)
+  TrimF1_Read=$IlluminaDir/F/172_S4_L001_R1_001_trim.fq.gz
+  TrimR1_Read=$IlluminaDir/R/172_S4_L001_R2_001_trim.fq.gz
+  OutDir=assembly/Canu/$Organism/$Strain/polished_repeat
+  ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/pilon
+  qsub $ProgDir/sub_pilon.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir
+done
+```
+
 ## SMART denovo
 An assembly was also performed using the program SMARTdenovo, with the objective of comparing the assembly results from the two programs; Canu and SMARTdenovo.
 
@@ -214,5 +256,19 @@ ProgDir=/home/heavet/git_repos/tools/gene_prediction/busco
 BuscoDB=$(ls -d /home/groups/harrisonlab/dbBusco/ascomycota_odb9)
 OutDir=gene_pred/busco/$Organism/$Strain/assembly
 qsub $ProgDir/sub_busco3.sh $Assembly $BuscoDB $OutDir
+done
+```
+
+The assembly was polished usinng Pilon:
+```bash
+for Assembly in $(ls assembly/SMARTdenovo/172/70m/70m_smartdenovo.dmo.lay.utg); do
+  Organism=v.inaequalis
+  Strain=172
+  IlluminaDir=$(ls -d qc_dna/paired/$Organism/$Strain)
+  TrimF1_Read=$IlluminaDir/F/172_S4_L001_R1_001_trim.fq.gz
+  TrimR1_Read=$IlluminaDir/R/172_S4_L001_R2_001_trim.fq.gz
+  OutDir=assembly/SMARTdenovo/$Organism/$Strain/polished_repeat
+  ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/pilon
+  qsub $ProgDir/sub_pilon.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir
 done
 ```
