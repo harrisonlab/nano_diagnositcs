@@ -153,7 +153,7 @@ Organism=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
 echo "$Organism - $Strain"
 ProgDir=/home/heavet/git_repos/tools/gene_prediction/busco
 BuscoDB=$(ls -d /home/groups/harrisonlab/dbBusco/ascomycota_odb9)
-OutDir=gene_pred/busco/$Organism/$Strain/assembly
+OutDir=gene_pred/busco/$Organism/$Strain/assembly/spades
 qsub $ProgDir/sub_busco3.sh $Assembly $BuscoDB $OutDir
 done
 ```
@@ -167,8 +167,18 @@ for Assembly in $(ls assembly/spades/*/*/filtered_contigs/contigs_min_500bp.fast
   TrimF1_Read=$IlluminaDir/F/172_S4_L001_R1_001_trim.fq.gz
   TrimR1_Read=$IlluminaDir/R/172_S4_L001_R2_001_trim.fq.gz
   OutDir=assembly/spades/$Organism/$Strain/polished_repeat
-  ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/pilon
-  qsub $ProgDir/sub_pilon.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir
+  ProgDir=/home/heavet/git_repos/tools/DIY
+  qsub $ProgDir/TCHPilon.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir
+done
+```
+Quast was used to assess the quality of the polished assembly:
+```bash
+ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+for Assembly in $(ls /home/groups/harrisonlab/project_files/nano_diagnostics/assembly/spades/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+    OutDir=assembly/spades/v.inaequalis/172/70m/polished_repeat
+    qsub $ProgDir/sub_quast.sh $Assembly $OutDir
 done
 ```
 
@@ -194,7 +204,7 @@ for Assembly in $(ls assembly/canu/v.inaequalis/172/70m/172_canu.contigs.fasta);
     qsub $ProgDir/sub_quast.sh $Assembly $OutDir
 done
 ```
-As an addition test of assembly quality the program busco was used:
+As an additional test of assembly quality the program busco was used:
 ```bash
 for Assembly in $(ls assembly/canu/v.inaequalis/172/70m/172_canu.contigs.fasta); do
 Strain=$(echo $Assembly | rev | cut -f2 -d '/' | rev)
@@ -202,12 +212,12 @@ Organism=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
 echo "$Organism - $Strain"
 ProgDir=/home/heavet/git_repos/tools/gene_prediction/busco
 BuscoDB=$(ls -d /home/groups/harrisonlab/dbBusco/ascomycota_odb9)
-OutDir=gene_pred/busco/$Organism/$Strain/assembly
+OutDir=gene_pred/busco/$Organism/$Strain/assembly/canu
 qsub $ProgDir/sub_busco3.sh $Assembly $BuscoDB $OutDir
 done
 ```
 
-The assembly was polished usinng Pilon:
+The assembly was polished using Pilon:
 ```bash
 for Assembly in $(ls assembly/canu/v.inaequalis/172/70m/172_canu.contigs.fasta); do
   Organism=v.inaequalis
@@ -215,9 +225,20 @@ for Assembly in $(ls assembly/canu/v.inaequalis/172/70m/172_canu.contigs.fasta);
   IlluminaDir=$(ls -d qc_dna/paired/$Organism/$Strain)
   TrimF1_Read=$IlluminaDir/F/172_S4_L001_R1_001_trim.fq.gz
   TrimR1_Read=$IlluminaDir/R/172_S4_L001_R2_001_trim.fq.gz
-  OutDir=assembly/Canu/$Organism/$Strain/polished_repeat
-  ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/pilon
-  qsub $ProgDir/sub_pilon.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir
+  OutDir=assembly/canu/$Organism/$Strain/polished_repeat
+  ProgDir=/home/heavet/git_repos/tools/DIY
+  qsub $ProgDir/TCHPilon.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir
+done
+```
+
+Quast was used to assess the quality of the polished assembly:
+```bash
+ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+for Assembly in $(ls /home/groups/harrisonlab/project_files/nano_diagnostics/assembly/canu/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+    OutDir=assembly/canu/v.inaequalis/172/70m/polished_repeat
+    qsub $ProgDir/sub_quast.sh $Assembly $OutDir
 done
 ```
 
@@ -254,7 +275,7 @@ Organism=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
 echo "$Organism - $Strain"
 ProgDir=/home/heavet/git_repos/tools/gene_prediction/busco
 BuscoDB=$(ls -d /home/groups/harrisonlab/dbBusco/ascomycota_odb9)
-OutDir=gene_pred/busco/$Organism/$Strain/assembly
+OutDir=gene_pred/busco/$Organism/$Strain/assembly/SMARTdenovo
 qsub $ProgDir/sub_busco3.sh $Assembly $BuscoDB $OutDir
 done
 ```
@@ -268,7 +289,49 @@ for Assembly in $(ls assembly/SMARTdenovo/172/70m/70m_smartdenovo.dmo.lay.utg); 
   TrimF1_Read=$IlluminaDir/F/172_S4_L001_R1_001_trim.fq.gz
   TrimR1_Read=$IlluminaDir/R/172_S4_L001_R2_001_trim.fq.gz
   OutDir=assembly/SMARTdenovo/$Organism/$Strain/polished_repeat
-  ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/pilon
-  qsub $ProgDir/sub_pilon.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir
+  ProgDir=/home/heavet/git_repos/tools/DIY
+  qsub $ProgDir/TCHPilon.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir
 done
 ```
+Quast was used to assess the quality of the polished assembly:
+```bash
+ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+for Assembly in $(ls /home/groups/harrisonlab/project_files/nano_diagnostics/assembly/SMARTdenovo/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+    OutDir=assembly/SMARTdenovo/v.inaequalis/172/70m/polished_repeat
+    qsub $ProgDir/sub_quast.sh $Assembly $OutDir
+done
+```
+
+## Merging
+
+The two polished PacBio assemblies were merged:
+```bash
+  #better assembly goes first
+  for PacBioAssembly in $(ls /home/groups/harrisonlab/project_files/nano_diagnostics/assembly/canu/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta); do
+    Organism=$(echo $PacBioAssembly | rev | cut -f4 -d '/' | rev)
+    Strain=$(echo $PacBioAssembly | rev | cut -f3 -d '/' | rev)
+    HybridAssembly=$(ls /home/groups/harrisonlab/project_files/nano_diagnostics/assembly/SMARTdenovo/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta)
+    AnchorLength=700000
+    OutDir=assembly/merged_canu_SMARTdenovo/v.inaequalis/172/70m/
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/quickmerge
+    qsub $ProgDir/sub_quickmerge.sh $PacBioAssembly $HybridAssembly $OutDir $AnchorLength
+  done
+```
+above fails
+
+The polished pacbio canu asembly and SPAdes miSeq assembly were merged:
+```bash
+  #better assembly goes first
+  for PacBioAssembly in $(ls /home/groups/harrisonlab/project_files/nano_diagnostics/assembly/canu/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta); do
+    Organism=$(echo $PacBioAssembly | rev | cut -f4 -d '/' | rev)
+    Strain=$(echo $PacBioAssembly | rev | cut -f3 -d '/' | rev)
+    HybridAssembly=$(ls /home/groups/harrisonlab/project_files/nano_diagnostics/assembly/spades/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta)
+    AnchorLength=700000
+    OutDir=assembly/merged_canu_spades/v.inaequalis/172/70m/
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/quickmerge
+    qsub $ProgDir/sub_quickmerge.sh $PacBioAssembly $HybridAssembly $OutDir $AnchorLength
+  done
+```
+also fails
