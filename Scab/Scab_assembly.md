@@ -182,6 +182,24 @@ for Assembly in $(ls /home/groups/harrisonlab/project_files/nano_diagnostics/ass
 done
 ```
 
+KAT was used to assess the completeness of the SPAdes assembly:
+```bash
+for Assembly in $(ls assembly/spades/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta); do
+  Strain=$(echo $Assembly| rev | cut -d '/' -f4 | rev | sed 's/_v2//g')
+  Organism=$(echo $Assembly | rev | cut -d '/' -f5 | rev)
+  echo "$Organism - $Strain"
+  IlluminaDir=$(ls -d qc_dna/paired/*/$Strain)
+  ReadsF=$(ls $IlluminaDir/F/172_S4_L001_R1_001_trim.fq.gz)
+  ReadsR=$(ls $IlluminaDir/R/172_S4_L001_R2_001_trim.fq.gz)
+  echo "$ReadsF"
+  echo "$ReadsR"
+  OutDir=assembly/spades/$Organism/$Strain/70m/kat
+  Prefix="172_repeat_masked"
+  ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/assembly_qc/kat
+  qsub $ProgDir/sub_kat.sh $Assembly $ReadsF $ReadsR $OutDir $Prefix
+done
+```
+
 ## Canu Assembly
 PacBio reads were assembled using the program Canu, genome size estimate from MiSeq reads was used:
 ```bash
@@ -239,6 +257,22 @@ for Assembly in $(ls /home/groups/harrisonlab/project_files/nano_diagnostics/ass
     Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
     OutDir=assembly/canu/v.inaequalis/172/70m/polished_repeat
     qsub $ProgDir/sub_quast.sh $Assembly $OutDir
+done
+```
+
+KAT was used to assess the completeness of the Canu assembly:
+```bash
+for Assembly in $(ls assembly/canu/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta); do
+  Strain=$(echo $Assembly| rev | cut -d '/' -f4 | rev | sed 's/_v2//g')
+  Organism=$(echo $Assembly | rev | cut -d '/' -f5 | rev)
+  echo "$Organism - $Strain"
+  IlluminaDir=$(ls -d qc_dna/paired/*/$Strain)
+  ReadsF=$(ls $IlluminaDir/F/172_S4_L001_R1_001_trim.fq.gz)
+  ReadsR=$(ls $IlluminaDir/R/172_S4_L001_R2_001_trim.fq.gz)
+  OutDir=assembly/canu/$Organism/$Strain/70m/kat
+  Prefix="${Strain}_repeat_masked"
+  ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/assembly_qc/kat
+  qsub $ProgDir/sub_kat.sh $Assembly $ReadsF $ReadsR $OutDir $Prefix 200
 done
 ```
 
@@ -304,34 +338,74 @@ for Assembly in $(ls /home/groups/harrisonlab/project_files/nano_diagnostics/ass
 done
 ```
 
+KAT was used to assess the completeness of the SMARTdenovo assembly:
+```bash
+for Assembly in $(ls assembly/SMARTdenovo/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta); do
+  Strain=$(echo $Assembly| rev | cut -d '/' -f4 | rev | sed 's/_v2//g')
+  Organism=$(echo $Assembly | rev | cut -d '/' -f5 | rev)
+  echo "$Organism - $Strain"
+  IlluminaDir=$(ls -d qc_dna/paired/*/$Strain)
+  ReadsF=$(ls $IlluminaDir/F/172_S4_L001_R1_001_trim.fq.gz)
+  ReadsR=$(ls $IlluminaDir/R/172_S4_L001_R2_001_trim.fq.gz)
+  echo "$ReadsF"
+  echo "$ReadsR"
+  OutDir=assembly/SMARTdenovo/$Organism/$Strain/70m/kat
+  Prefix="172_repeat_masked"
+  ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/assembly_qc/kat
+  qsub $ProgDir/sub_kat.sh $Assembly $ReadsF $ReadsR $OutDir $Prefix
+done
+```
+
 ## Merging
 
 The two polished PacBio assemblies were merged:
 ```bash
   #better assembly goes first
-  for PacBioAssembly in $(ls /home/groups/harrisonlab/project_files/nano_diagnostics/assembly/canu/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta); do
+  for PacBioAssembly in $(ls assembly/canu/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta); do
     Organism=$(echo $PacBioAssembly | rev | cut -f4 -d '/' | rev)
     Strain=$(echo $PacBioAssembly | rev | cut -f3 -d '/' | rev)
-    HybridAssembly=$(ls /home/groups/harrisonlab/project_files/nano_diagnostics/assembly/SMARTdenovo/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta)
+    HybridAssembly=$(ls assembly/SMARTdenovo/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta)
     AnchorLength=700000
     OutDir=assembly/merged_canu_SMARTdenovo/v.inaequalis/172/70m/
     ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/quickmerge
     qsub $ProgDir/sub_quickmerge.sh $PacBioAssembly $HybridAssembly $OutDir $AnchorLength
   done
 ```
-above fails
+
+Quast was used to assess the quality of the merged assembly:
+```bash
+ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+for Assembly in $(ls assembly/merged_canu_SMARTdenovo/v.inaequalis/172/70m/merged.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+    OutDir=assembly/merged_canu_SMARTdenovo/v.inaequalis/172/70m/
+    qsub $ProgDir/sub_quast.sh $Assembly $OutDir
+done
+```
 
 The polished pacbio canu asembly and SPAdes miSeq assembly were merged:
 ```bash
   #better assembly goes first
-  for PacBioAssembly in $(ls /home/groups/harrisonlab/project_files/nano_diagnostics/assembly/canu/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta); do
+  for PacBioAssembly in $(ls assembly/canu/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta); do
     Organism=$(echo $PacBioAssembly | rev | cut -f4 -d '/' | rev)
     Strain=$(echo $PacBioAssembly | rev | cut -f3 -d '/' | rev)
-    HybridAssembly=$(ls /home/groups/harrisonlab/project_files/nano_diagnostics/assembly/spades/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta)
+    HybridAssembly=$(ls assembly/spades/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta)
     AnchorLength=700000
     OutDir=assembly/merged_canu_spades/v.inaequalis/172/70m/
     ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/quickmerge
     qsub $ProgDir/sub_quickmerge.sh $PacBioAssembly $HybridAssembly $OutDir $AnchorLength
   done
 ```
-also fails
+
+Quast was used to assess the quality of the merged assembly:
+```bash
+ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+for Assembly in $(ls assembly/merged_canu_spades/v.inaequalis/172/70m/merged.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+    OutDir=assembly/merged_canu_spades/v.inaequalis/172/70m/
+    qsub $ProgDir/sub_quast.sh $Assembly $OutDir
+done
+```
+
+Quality of the two merged assemblies are the same as the canu assembly alone?
