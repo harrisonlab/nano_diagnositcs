@@ -178,8 +178,13 @@ for Assembly in $(ls /home/groups/harrisonlab/project_files/nano_diagnostics/ass
     Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
     Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
     OutDir=assembly/spades/v.inaequalis/172/70m/polished_repeat
-    qsub $ProgDir/sub_quast.sh $Assembly $OutDir
+    qsub $ProgDir/sub_quast.sh $Assembly $OutDir 200
 done
+```
+
+changing profile:
+```bash
+cp /home/armita/generic_profiles/2019-03-25/.generic_profile ~/.profile
 ```
 
 KAT was used to assess the completeness of the SPAdes assembly:
@@ -260,7 +265,7 @@ for Assembly in $(ls /home/groups/harrisonlab/project_files/nano_diagnostics/ass
 done
 ```
 
-KAT was used to assess the completeness of the Canu assembly:
+KAT was used to assess the completeness of the canu assembly:
 ```bash
 for Assembly in $(ls assembly/canu/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta); do
   Strain=$(echo $Assembly| rev | cut -d '/' -f4 | rev | sed 's/_v2//g')
@@ -269,10 +274,12 @@ for Assembly in $(ls assembly/canu/v.inaequalis/172/70m/polished_repeat/pilon_1.
   IlluminaDir=$(ls -d qc_dna/paired/*/$Strain)
   ReadsF=$(ls $IlluminaDir/F/172_S4_L001_R1_001_trim.fq.gz)
   ReadsR=$(ls $IlluminaDir/R/172_S4_L001_R2_001_trim.fq.gz)
+  echo "$ReadsF"
+  echo "$ReadsR"
   OutDir=assembly/canu/$Organism/$Strain/70m/kat
-  Prefix="${Strain}_repeat_masked"
+  Prefix="172_repeat_masked"
   ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/assembly_qc/kat
-  qsub $ProgDir/sub_kat.sh $Assembly $ReadsF $ReadsR $OutDir $Prefix 200
+  qsub $ProgDir/sub_kat.sh $Assembly $ReadsF $ReadsR $OutDir $Prefix
 done
 ```
 
@@ -409,3 +416,21 @@ done
 ```
 
 Quality of the two merged assemblies are the same as the canu assembly alone?
+
+KAT was used to assess the completeness of the merged assembly:
+```bash
+for Assembly in $(ls assembly/merged_canu_spades/v.inaequalis/172/70m/merged.fasta); do
+  Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev | sed 's/_v2//g')
+  Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+  echo "$Organism - $Strain"
+  IlluminaDir=$(ls -d qc_dna/paired/*/$Strain)
+  ReadsF=$(ls $IlluminaDir/F/172_S4_L001_R1_001_trim.fq.gz)
+  ReadsR=$(ls $IlluminaDir/R/172_S4_L001_R2_001_trim.fq.gz)
+  echo "$ReadsF"
+  echo "$ReadsR"
+  OutDir=assembly/merged_canu_spades/$Organism/$Strain/70m/kat
+  Prefix="172_repeat_masked"
+  ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/assembly_qc/kat
+  qsub $ProgDir/sub_kat.sh $Assembly $ReadsF $ReadsR $OutDir $Prefix
+done
+```
