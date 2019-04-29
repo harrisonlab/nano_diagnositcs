@@ -1,3 +1,4 @@
+
 # Scab_assembly
 Documentation of analyses and commands used as part of the PhD project investigating next generation diagnostics
 Note - all this work was performed in the directory:
@@ -433,4 +434,35 @@ for Assembly in $(ls assembly/merged_canu_spades/v.inaequalis/172/70m/merged.fas
   ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/assembly_qc/kat
   qsub $ProgDir/sub_kat.sh $Assembly $ReadsF $ReadsR $OutDir $Prefix
 done
+```
+
+try to make larger graph axis:
+2.6.1
+unsuccessful
+```bash
+for Assembly in $(ls assembly/merged_canu_spades/v.inaequalis/172/70m/merged.fasta); do
+  Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev | sed 's/_v2//g')
+  Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+  echo "$Organism - $Strain"
+  IlluminaDir=$(ls -d qc_dna/paired/*/$Strain)
+  ReadsF=$(ls $IlluminaDir/F/172_S4_L001_R1_001_trim.fq.gz)
+  ReadsR=$(ls $IlluminaDir/R/172_S4_L001_R2_001_trim.fq.gz)
+  echo "$ReadsF"
+  echo "$ReadsR"
+  OutDir=assembly/merged_canu_spades/$Organism/$Strain/70m/kat
+  Prefix="172_repeat_masked"
+  ProgDir=/home/heavet/git_repos/scripts/nano_diagnositcs/Temp/
+  qsub $ProgDir/KAT_TCH.sh $Assembly $ReadsF $ReadsR $OutDir $Prefix
+done
+```
+
+## Repeat Masking
+As the canu assembly appears to be the best this was used from this point onwards.
+Repeat masking was performed using the programs; transposonPSI and Repeatmodeler
+```bash
+  ProgDir=/home/heavet/git_repos/tools/seq_tools/repeat_masking
+    for BestAss in $(ls assembly/canu/v.inaequalis/172/70m/polished_repeat/pilon_1.fasta); do
+    qsub $ProgDir/rep_modeling.sh $BestAss
+    qsub $ProgDir/transposonPSI.sh $BestAss
+  done
 ```
