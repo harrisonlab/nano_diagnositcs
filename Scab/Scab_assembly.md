@@ -466,3 +466,94 @@ Repeat masking was performed using the programs; transposonPSI and Repeatmodeler
     qsub $ProgDir/transposonPSI.sh $BestAss
   done
 ```
+The number of bases masked by transposonPSI and Repeatmasker were summarised using the following commands: 
+```bash
+  for RepDir in $(ls -d repeat_masked/172/70m/polished_repeat_repmask/*); do
+    Strain=$(echo 172)
+    Organism=$(echo v.inaequalis)  
+    RepMaskGff=$(ls repeat_masked/172/70m/polished_repeat_repmask/70m_contigs_hardmasked.gff)
+    TransPSIGff=$(ls repeat_masked/172/70m/polished_repeat_repmask/70m_contigs_unmasked.fa.TPSI.allHits)
+    
+    printf "$Organism\t$Strain\n"
+    
+    printf "The number of bases masked by RepeatMasker:\t"
+    sortBed -i $RepMaskGff | bedtools merge | awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}'
+    
+    printf "The number of bases masked by TransposonPSI:\t"
+    sortBed -i $TransPSIGff | bedtools merge | awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}'
+    
+    printf "The total number of masked bases are:\t"
+    cat $RepMaskGff $TransPSIGff | 
+    sortBed | bedtools merge | awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}'
+  done
+```
+v.inaequalis    172
+The number of bases masked by RepeatMasker:     34815752
+The number of bases masked by TransposonPSI:    10254
+The total number of masked bases are:   Differing number of GFF fields encountered at line: 35235.  Exiting...
+
+## RNA-seq data download
+Dowloaded from Thakur et al RNA-seq data from NCBI:
+```bash
+fastq-dump -O raw_rna/unpaired/v.inaequalis SRR2164202 
+
+fastq-dump -O raw_rna/unpaired/v.inaequalis SRR2164317 
+
+fastq-dump -O raw_rna/unpaired/v.inaequalis SRR2164320
+
+fastq-dump -O raw_rna/paired/v.inaequalis SRR2164233 
+
+fastq-dump -O raw_rna/paired/v.inaequalis SRR2164324 
+
+fastq-dump -O raw_rna/paired/v.inaequalis SRR2164325
+
+```
+
+## Gene Prediction
+Gene prediction followed three steps: 
+
+Pre-gene prediction - Quality of genome assemblies were assessed using Cegma to see how many core eukaryotic genes can be identified. 
+
+Gene model training - Gene models were trained using assembled RNAseq data as part of the Braker1 pipeline 
+
+Gene prediction - Gene models were used to predict genes in genomes as part of the the Braker1 pipeline. This used RNAseq data as hints for gene models.
+
+## Pre-gene prediction
+
+Quality of genome assemblies was assessed by looking for the gene space in the assemblies.
+
+```bash
+  ProgDir=/home/heavet/git_repos/tools/gene_prediction/cegma
+    cd /home/groups/harrisonlab/project_files/nano_diagnostics
+    for Genome in $(ls repeat_masked/172/70m/polished_repeat_repmask/70m_contigs_unmasked.fa); do
+    echo $Genome;
+    qsub $ProgDir/sub_cegma.sh $Genome dna;
+  done
+```
+Outputs were summarised using the commands:
+```bash
+  for File in $(ls gene_pred/cegma/172/70m/dna_cegma.completeness_report); do
+    Strain=$(echo $File | rev | cut -f3 -d '/' | rev);
+    Species=$(echo v.inaequalis);
+    printf "$Species\t$Strain\n";
+    cat $File | head -n18 | tail -n+4;printf "\n";
+  done > gene_pred/cegma/cegma_results_dna_summary.txt
+
+less gene_pred/cegma/cegma_results_dna_summary.txt
+```
+
+## Gene Prediction
+
+Gene prediction was performed for V. inaequalis genomes using Braker1:
+
+### Quality control of RNA seq data
+
+qc was performed for RNAseq data:
+```bash
+  for File in $( ls raw_rna/*/*/*.fastq); do
+  echo $File
+    IlluminaAdapters=/home/armita/git_repos/emr_repos/tools/seq_tools/ncbi_adapters.fa
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/rna_qc
+    qsub $ProgDir/rna_qc_fastq-mcf_unpaired.sh $File $IlluminaAdapters RNA
+  done
+  ```
