@@ -1,4 +1,3 @@
-
 # Scab_assembly
 Documentation of analyses and commands used as part of the PhD project investigating next generation diagnostics
 Note - all this work was performed in the directory:
@@ -557,3 +556,116 @@ qc was performed for RNAseq data:
     qsub $ProgDir/rna_qc_fastq-mcf_unpaired.sh $File $IlluminaAdapters RNA
   done
   ```
+
+cluster no. 7 running slowly therefore:
+```bash
+  for File in $( ls raw_rna/paired/*/*.fastq); do
+  echo $File
+    IlluminaAdapters=/home/armita/git_repos/emr_repos/tools/seq_tools/ncbi_adapters.fa
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/rna_qc
+    qsub $ProgDir/rna_qc_fastq-mcf_unpaired.sh $File $IlluminaAdapters RNA
+  done
+  ```
+
+Data quality was visualised using fastqc:
+
+```bash
+for RawData in $(ls qc_rna/*/*/*/*/*.fq.gz); do
+ProgDir=/home/heavet/git_repos/tools/seq_tools/dna_qc
+echo $RawData;
+qsub $ProgDir/run_fastqc.sh $RawData
+done
+```
+
+###Aligning
+Insert sizes of the RNA seq library were unknown until a draft alignment could be made. To do this tophat and cufflinks were run, aligning the reads against a single genome. The fragment length and stdev were printed to stdout while cufflinks was running.
+```bash
+  for Assembly in $(ls repeat_masked/*/*/*/*_contigs_unmasked.fa | grep -w '172'); do
+    Strain=$(echo 172)
+    Organism=$(echo v.inaequalis)
+    Paired=$(echo $Assembly | rev | cut -d '/' -f5 | rev)
+    echo "$Organism - $Strain"
+    for rna_file in $(ls qc_rna/*/*/*/*/*.fq.gz | grep -w 'paired'); do
+      Timepoint=$(echo $rna_file | rev | cut -f1 -d '/' | cut -c12- | rev)
+      echo "$Timepoint"
+      OutDir=alignment/$Paired/$Organism/$Strain/$Timepoint
+      ProgDir=/home/heavet/git_repos/tools/seq_tools/RNAseq
+      qsub $ProgDir/tophat_alignment_unpaired.sh $Assembly $rna_file $OutDir
+    done
+  done
+```
+What is timepoint? - unique identifier
+What is Paired?
+
+Alignments were concatenated prior to running cufflinks: Cufflinks was run to produce the fragment length and stdev statistics:
+
+```bash
+  for Assembly in $(ls repeat_masked/*/*/*/*_contigs_softmasked.fa | grep -w '172'); do
+    Strain=$(echo 172)
+    Organism=$(echo v.inaequalis)
+    echo "$Organism - $Strain"
+    mkdir -p alignment/repeat_masked/$Organism/$Strain/concatenated_prelim
+    AcceptedHits=alignment/repeat_masked/$Organism/$Strain/concatenated_prelim/concatenated.bam
+    samtools merge -f $AcceptedHits \
+    alignment/repeat_masked/$Organism/$Strain/SRR2164233/accepted_hits.bam \
+    alignment/repeat_masked/$Organism/$Strain/SRR2164324/accepted_hits.bam \
+    alignment/repeat_masked/$Organism/$Strain/SRR2164325/accepted_hits.bam
+    OutDir=gene_pred/cufflinks/$Organism/$Strain/concatenated_prelim
+    mkdir -p $OutDir
+    cufflinks -o $OutDir/cufflinks -p 8 --max-intron-length 4000 $AcceptedHits 2>&1 | tee $OutDir/cufflinks/cufflinks.log
+  done
+```
+Output from stdout included:
+
+
+> Processed 47462 loci.                        [*************************] 100%
+> Map Properties:
+>       Normalized Map Mass: 10987405.31
+>       Raw Map Mass: 10987405.31
+>       Fragment Length Distribution: Truncated Gaussian (default)
+>                     Default Mean: 200
+>                  Default Std Dev: 80
+[12:04:59] Assembling transcripts and estimating abundances.
+> Processed 47495 loci.                        [*************************] 100%
+
+How is the mean read length found?
+
+A better alignment program is now available - Star - this was used:
+```bash
+for Assembly in $(ls repeat_masked/*/*/*/*_contigs_unmasked.fa | grep -w '172'); do
+Strain=$(echo 172)
+Organism=$(echo v.inaequalis)
+echo "$Organism - $Strain"
+for FileF in $(ls qc_rna/*/*/*/*/*.fq.gz); do
+Jobs=$(qstat | grep 'sub_sta' | grep 'qw'| wc -l)
+while [ $Jobs -gt 1 ]; do
+sleep 1m
+printf "."
+Jobs=$(qstat | grep 'sub_sta' | grep 'qw'| wc -l)
+done
+printf "\n"
+echo $FileF
+Prefix=$(echo $FileF | rev | cut -f1 -d '/' | cut -c12- | rev)
+Datatype=$(echo $FileF | rev | cut -f3 -d '/' | rev)
+      echo "$Datatype"
+OutDir=alignment/star/$Organism/$Strain/$Datatype/$Prefix
+ProgDir=/home/heavet/git_repos/tools/DIY
+qsub $ProgDir/sub_star_unpaired_unnzipped.sh $Assembly $FileF $OutDir
+done
+done
+```
+Accepted hits .bam file were concatenated and indexed for use for gene model training:
+```bash
+for OutDir in $(ls -d alignment/star/v.inaequalis/172); do
+  Strain=$(echo 172)
+  Organism=$(echo v.inaequalis)
+  echo "$Organism - $Strain"
+  # For all alignments
+  BamFiles=$(ls alignment/star/v.inaequalis/172/*/SRR*/star/*sortedByCoord.out.bam | tr -d '\n' | sed 's/.bam/.bam /g')
+  mkdir -p $OutDir/concatenated
+  samtools merge -@ 4 -f $OutDir/concatenated/concatenated.bam $BamFiles
+done
+```
+
+ BamFiles=$(ls alignment/star/v.inaequalis/172/*/SRR*/star/*sortedByCoord.out.bam | tr -d '\n' | sed 's/.bam/.bam /g')
+ echo $BamFiles
