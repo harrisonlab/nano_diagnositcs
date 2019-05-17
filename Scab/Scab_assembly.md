@@ -649,8 +649,8 @@ Prefix=$(echo $FileF | rev | cut -f1 -d '/' | cut -c12- | rev)
 Datatype=$(echo $FileF | rev | cut -f3 -d '/' | rev)
       echo "$Datatype"
 OutDir=alignment/star/$Organism/$Strain/$Datatype/$Prefix
-ProgDir=/home/heavet/git_repos/tools/DIY
-qsub $ProgDir/sub_star_unpaired_unnzipped.sh $Assembly $FileF $OutDir
+ProgDir=/home/heavet/git_repos/tools/seq_tools/RNAseq
+qsub $ProgDir/sub_star_unpaired.sh $Assembly $FileF $OutDir
 done
 done
 ```
@@ -667,5 +667,37 @@ for OutDir in $(ls -d alignment/star/v.inaequalis/172); do
 done
 ```
 
- BamFiles=$(ls alignment/star/v.inaequalis/172/*/SRR*/star/*sortedByCoord.out.bam | tr -d '\n' | sed 's/.bam/.bam /g')
- echo $BamFiles
+Braker prediction:
+```bash
+for Assembly in $(ls repeat_masked/*/*/*/*_contigs_unmasked.fa | grep -w '172'); do
+Strain=$(echo 172)
+Organism=$(echo v.inaequalis)
+echo "$Organism - $Strain"
+mkdir -p alignment/$Organism/$Strain/concatenated
+OutDir=gene_pred/braker/$Organism/"$Strain"_braker
+AcceptedHits=$(ls alignment/star/$Organism/$Strain/concatenated/concatenated.bam)
+GeneModelName="$Organism"_"$Strain"_braker
+rm -r /home/heavet/prog/augustus-3.1/config/species/"$Organism"_"$Strain"_braker
+ProgDir=/home/heavet/git_repos/tools/gene_prediction/braker1
+qsub $ProgDir/sub_braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+done
+```
+
+Additional genes were added to Braker gene predictions, using CodingQuary in pathogen mode to predict additional regions.
+
+Firstly, aligned RNAseq data was assembled into transcripts using Cufflinks.
+
+Note - cufflinks doesn't always predict direction of a transcript and therefore features can not be restricted by strand when they are intersected.
+
+```bash
+for Assembly in $(ls repeat_masked/*/*/*/*_contigs_unmasked.fa | grep -w '172'); do
+Strain=$(echo 172)
+Organism=$(echo v.inaequalis)
+echo "$Organism - $Strain"
+OutDir=gene_pred/cufflinks/$Organism/$Strain/concatenated
+mkdir -p $OutDir
+AcceptedHits=$(ls alignment/star/$Organism/$Strain/concatenated/concatenated.bam)
+ProgDir=/home/heavet/git_repos/tools/seq_tools/RNAseq
+qsub $ProgDir/sub_cufflinks.sh $AcceptedHits $OutDir
+done
+```
