@@ -701,3 +701,70 @@ ProgDir=/home/heavet/git_repos/tools/seq_tools/RNAseq
 qsub $ProgDir/sub_cufflinks.sh $AcceptedHits $OutDir
 done
 ```
+Secondly, genes were predicted using CodingQuary:
+
+```bash
+  for Assembly in $(ls repeat_masked/*/*/*/*_contigs_unmasked.fa | grep -w '172'); do
+    Strain=$(echo 172)
+    Organism=$(echo v.inaequalis)
+    echo "$Organism - $Strain"
+    OutDir=gene_pred/codingquary/$Organism/$Strain
+    CufflinksGTF=$(ls gene_pred/cufflinks/$Organism/$Strain/concatenated/transcripts.gtf)
+    ProgDir=/home/heavet/git_repos/tools/gene_prediction/codingquary
+    qsub $ProgDir/sub_CodingQuary.sh $Assembly $CufflinksGTF $OutDir
+  done
+  ```
+Unmasked genome was wrapped:
+
+```bash
+for Assembly in $(ls repeat_masked/*/*/*/*_contigs_unmasked.fa | grep -w '172'); do
+NewName=$(echo $Assembly | sed 's/_unmasked.fa/_unmasked_wrapped.fa/g')
+cat $Assembly | fold > $NewName
+done
+```
+
+NOT YET RUN:
+
+Additional transcripts were added to Braker gene models, when CodingQuarry genes were predicted in regions of the genome, not containing Braker gene models:
+```bash
+for BrakerGff in $(ls gene_pred/braker/*/*_braker/*/augustus.gff3 | grep '650'); do
+Strain=$(echo 172)
+Organism=$(echo v.inaequalis)
+echo "$Organism - $Strain"
+Assembly=$(ls repeat_masked/172/70m/polished_repeat_repmask/70m_contigs_unmasked_wrapped.fa)
+CodingQuaryGff=$(ls gene_pred/codingquary/$Organism/$Strain/out/PredictedPass.gff3)
+PGNGff=$(ls gene_pred/codingquary/$Organism/$Strain/out/PGN_predictedPass.gff3)
+AddDir=gene_pred/codingquary/$Organism/$Strain/additional
+FinalDir=gene_pred/final/$Organism/$Strain/final
+AddGenesList=$AddDir/additional_genes.txt
+AddGenesGff=$AddDir/additional_genes.gff
+FinalGff=$AddDir/combined_genes.gff
+mkdir -p $AddDir
+mkdir -p $FinalDir
+
+for x in $CodingQuaryGff $PGNGff; do
+  bedtools intersect -v -a $x -b $BrakerGff | grep 'gene'| cut -f2 -d'=' | cut -f1 -d';'
+done > $AddGenesList
+
+for y in $CodingQuaryGff $PGNGff; do
+  ProgDir=/home/heavet/git_repos/tools/seq_tools/feature_annotation
+  $ProgDir/gene_list_to_gff.pl $AddGenesList $y CodingQuarry_v2.0 ID CodingQuary
+done > $AddGenesGff
+ProgDir=/home/heavet/git_repos/tools/gene_prediction/codingquary
+$ProgDir/add_CodingQuary_features.pl $AddGenesGff $Assembly > $AddDir/add_genes_CodingQuary_unspliced.gff3
+$ProgDir/correct_CodingQuary_splicing.py --inp_gff $AddDir/add_genes_CodingQuary_unspliced.gff3 > $FinalDir/final_genes_CodingQuary.gff3
+# -
+$ProgDir/gff2fasta.pl $Assembly $FinalDir/final_genes_CodingQuary.gff3 $FinalDir/final_genes_CodingQuary
+cp $BrakerGff $FinalDir/final_genes_Braker.gff3
+$ProgDir/gff2fasta.pl $Assembly $FinalDir/final_genes_Braker.gff3 $FinalDir/final_genes_Braker
+cat $FinalDir/final_genes_Braker.pep.fasta $FinalDir/final_genes_CodingQuary.pep.fasta | sed -r 's/\*/X/g' > $FinalDir/final_genes_combined.pep.fasta
+cat $FinalDir/final_genes_Braker.cdna.fasta $FinalDir/final_genes_CodingQuary.cdna.fasta > $FinalDir/final_genes_combined.cdna.fasta
+cat $FinalDir/final_genes_Braker.gene.fasta $FinalDir/final_genes_CodingQuary.gene.fasta > $FinalDir/final_genes_combined.gene.fasta
+cat $FinalDir/final_genes_Braker.upstream3000.fasta $FinalDir/final_genes_CodingQuary.upstream3000.fasta > $FinalDir/final_genes_combined.upstream3000.fasta
+
+GffBraker=$FinalDir/final_genes_CodingQuary.gff3
+GffQuary=$FinalDir/final_genes_Braker.gff3
+GffAppended=$FinalDir/final_genes_appended.gff3
+cat $GffBraker $GffQuary > $GffAppended
+done
+```
