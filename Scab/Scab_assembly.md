@@ -668,7 +668,16 @@ done
 ```
 
 Braker prediction:
+
 ```bash
+#Before braker predictiction is performed, double check that the genemark key is in user area and copy it over from the genemark install directory:
+ls ~/.gm_key
+cp /home/armita/prog/genemark/2019/gm_key_64 ~/.gm_key
+#
+#
+#
+rm -r /home/heavet/prog/augustus-3.1/config/species/"$Organism"_"$Strain"_braker
+#
 for Assembly in $(ls repeat_masked/*/*/*/*_contigs_unmasked.fa | grep -w '172'); do
 Strain=$(echo 172)
 Organism=$(echo v.inaequalis)
@@ -677,7 +686,6 @@ mkdir -p alignment/$Organism/$Strain/concatenated
 OutDir=gene_pred/braker/$Organism/"$Strain"_braker
 AcceptedHits=$(ls alignment/star/$Organism/$Strain/concatenated/concatenated.bam)
 GeneModelName="$Organism"_"$Strain"_braker
-rm -r /home/heavet/prog/augustus-3.1/config/species/"$Organism"_"$Strain"_braker
 ProgDir=/home/heavet/git_repos/tools/gene_prediction/braker1
 qsub $ProgDir/sub_braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
 done
@@ -723,11 +731,9 @@ cat $Assembly | fold > $NewName
 done
 ```
 
-NOT YET RUN:
-
 Additional transcripts were added to Braker gene models, when CodingQuarry genes were predicted in regions of the genome, not containing Braker gene models:
 ```bash
-for BrakerGff in $(ls gene_pred/braker/*/*_braker/*/augustus.gff3 | grep '650'); do
+for BrakerGff in $(ls gene_pred/braker/*/*_braker/*/augustus.gff3 | grep '172'); do
 Strain=$(echo 172)
 Organism=$(echo v.inaequalis)
 echo "$Organism - $Strain"
@@ -768,3 +774,24 @@ GffAppended=$FinalDir/final_genes_appended.gff3
 cat $GffBraker $GffQuary > $GffAppended
 done
 ```
+
+The final number of genes per isolate was observed using:
+```bash
+  for DirPath in $(ls -d gene_pred/final/*/*/final); do
+    Strain=$(echo 172)
+    Organism=$(echo v.inaequalis)
+    echo "$Organism - $Strain"
+    cat $DirPath/final_genes_Braker.pep.fasta | grep '>' | wc -l;
+    cat $DirPath/final_genes_CodingQuary.pep.fasta | grep '>' | wc -l;
+    cat $DirPath/final_genes_combined.pep.fasta | grep '>' | wc -l;
+    echo "";
+  done
+  ```
+  The number of genes predicted by Braker, supplimented by CodingQuary and in the final combined dataset was shown:
+  ```bash
+v.inaequalis - 172
+11903
+0
+11903
+```
+
