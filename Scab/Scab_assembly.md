@@ -1,3 +1,7 @@
+This pipeline was performed on the old NPC GridEngine system. The files are still available (28/02/2020) within the projects/oldhome/ folder of the new SLURM system which contains a copy of the old home directory.
+
+
+
 # Scab_assembly
 Documentation of analyses and commands used as part of the PhD project investigating next generation diagnostics
 Note - all this work was performed in the directory:
