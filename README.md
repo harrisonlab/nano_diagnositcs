@@ -1,4 +1,4 @@
-# nano_diagnositcs
+# nano_diagnostics
 Documentation of analyses and commands used as part of the PhD project investigating next generation diagnostics
 Note - all this work was performed in the directory:
 /home/groups/harrisonlab/project_files/nano_diagnostics 
