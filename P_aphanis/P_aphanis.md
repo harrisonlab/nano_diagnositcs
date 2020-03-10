@@ -289,7 +289,32 @@ echo $Rread
 Adapters=~/git_repos/tools/seq_tools/ncbi_adapters.fa
 ProgDir=~/git_repos/tools/seq_tools/dna_qc
 OutDir=analysis/trimmed/
-Prefix=P_aphanis_"Fread"_trimmed
+Prefix=P_aphanis_trimmed
+sbatch $ProgDir/srun_trimmomatic.sh $Fread $Rread $Adapters $OutDir $Prefix
+done
+```
+I suspect that the files are overwritting each other as the prefix will be the same for each Fread, however changing the Prefix, below, breaks the whole script. Files are not all output to the output directory.
+```bash
+for Fread in $(ls rawdata/*/*/*1.fq.gz); do
+ Rread=$(echo $Fread|sed 's/1.fq.gz/2.fq.gz/')
+echo $Fread
+echo $Rread
+Adapters=~/git_repos/tools/seq_tools/ncbi_adapters.fa
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=analysis/trimmed/
+Prefix=$Fread
+sbatch $ProgDir/srun_trimmomatic.sh $Fread $Rread $Adapters $OutDir $Prefix
+done
+```
+```bash
+for Fread in $(ls rawdata/*/*/*1.fq.gz); do
+Rread=$(echo $Fread|sed 's/1.fq.gz/2.fq.gz/')
+echo $Fread
+echo $Rread
+Adapters=~/git_repos/tools/seq_tools/ncbi_adapters.fa
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=analysis/trimmed/
+Prefix= ( echo $Fread | cut -f3 -d '/' | rev | cut -f2 -d '.' | rev )
 sbatch $ProgDir/srun_trimmomatic.sh $Fread $Rread $Adapters $OutDir $Prefix
 done
 ```
