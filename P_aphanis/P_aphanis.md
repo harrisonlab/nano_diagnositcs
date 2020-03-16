@@ -126,4 +126,44 @@ sbatch $ProgDir/ssub_star.sh $InGenome $Fread $Rread $OutDir
 done
 ```
 
-Annotated transcripts .gtf format for InGff highly recommended -> have yet to find these for strawberry
+The most up to date version of the camarosa genome was downloaded as well as annotation information.
+
+```bash
+srun -p long --pty bash
+
+cd /projects/nano_diagnostics/rawdata/F_ananassa/camarosa/genome
+
+wget ftp://ftp.bioinfo.wsu.edu/species/Fragia_x_ananassa/Fragaria_x_ananassa_Camarosa_Genome_v1.0.a1/assembly/F_ana_Camarosa_6-28-1fasta.gz
+
+gunzip F_ana_Camarosa_6-28-17.fasta.gz
+
+mkdir -p /projects/nano_diagnostics/rawdata/F_ananassa/camarosa/annotations
+
+cd /projects/nano_diagnostics/rawdata/F_ananassa/camarosa/annotations
+
+wget ftp://ftp.bioinfo.wsu.edu/species/Fragaria_x_ananassa/Fragaria_x_ananassa_Camarosa_Genome_v1.0.a1/genes/Fxa_v1.2_makerStandard_MakerGenes_woTposases.gff.gz
+
+gunzip Fxa_v1.2_makerStandard_MakerGenes_woTposases.gff.gz
+```
+
+Settings in the STAR script were changed to save unaligned read information and to accept .gff annotation files:
+--sjdbGTFtagExonParentTranscript Parent
+--sjdbOverhang 149
+--outReadsUnmapped Fastx 
+--outSAMunmapped Within
+
+Trimmed reads were aligned to the F.ananassa 'Camarosa' genome, annotations were used to extract splice junctions and improve the accuracy of mapping.
+
+```bash
+for ReadDir in $(ls -d dna_qc/*/*/*); do
+ Fread=$(ls $ReadDir/F/*trim.fq.gz)
+ Rread=$(ls $ReadDir/R/*trim.fq.gz)
+ls $Fread
+ls $Rread
+InGenome=rawdata/F_ananassa/camarosa/genome/F_ana_Camarosa_6-28-17.fasta 
+InGff=rawdata/F_ananassa/camarosa/annotations/Fxa_v1.2_makerStandard_MakerGenes_woTposases.gff
+ProgDir=~/git_repos/tools/seq_tools/RNAseq
+OutDir=$(echo $ReadDir|sed 's@dna_qc@alignment/STAR@g')
+sbatch $ProgDir/ssub_star.sh $InGenome $Fread $Rread $OutDir $InGff
+done
+```
