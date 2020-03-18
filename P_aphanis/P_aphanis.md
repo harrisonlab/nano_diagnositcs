@@ -167,3 +167,132 @@ OutDir=$(echo $ReadDir|sed 's@dna_qc@alignment/STAR@g')
 sbatch $ProgDir/ssub_star.sh $InGenome $Fread $Rread $OutDir $InGff
 done
 ```
+
+The fungal gene prediction software FunGAP was installed along with the transcriptome assembler trinity and gene prediction software MAKER :
+
+```bash
+mkdir ~/git_repos/tools/prog/fungap
+cd ~/git_repos/tools/prog/fungap
+git clone https://github.com/CompSynBioLab-KoreaUniv/FunGAP.git
+
+mkdir ~/git_repos/tools/prog/fungap/FunGAP/external
+cd ~/git_repos/tools/prog/fungap/FunGAP/external
+git clone https://github.com/trinityrnaseq/trinityrnaseq.git
+cd trinityrnaseq
+make
+#Using gnu compiler for Inchworm and Chrysalis
+#cd Inchworm && make
+#make[1]: Entering directory '/home/heavet/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq/Inchworm'
+#make[1]: *** No targets specified and no makefile found.  Stop.
+#make[1]: Leaving directory '/home/heavet/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq/Inchworm'
+#Makefile:28: recipe for target 'inchworm_target' failed
+#make: *** [inchworm_target] Error 2
+
+nano ~/.profile
+#trinity added to PATH
+#PATH=$HOME/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq:${PATH}
+. ~/.profile
+
+cd ~/git_repos/tools/prog/fungap/FunGAP/external
+cp /projects/oldhome/armita/prog/maker/maker-2.31.9.tgz .
+tar -zxvf maker-2.31.9.tgz
+cd maker/src
+perl Build.PL
+./Build installdeps
+./Build installexes
+./Build install
+./Build status
+#PERL Dependencies:      VERIFIED
+#External Programs:      MISSING
+#                  !  RepeatMasker
+#                  !  SNAP
+#
+#External C Libraries:   VERIFIED
+#MPI SUPPORT:            DISABLED
+#MWAS Web Interface:     DISABLED
+#MAKER PACKAGE:          MISSING PREREQUISITES
+
+
+mkdir -p ~/git_repos/tools/prog/fungap/FunGAP/external/maker/exe/RepeatMasker
+cd ~/git_repos/tools/prog/fungap/FunGAP/external/maker/exe/RepeatMasker
+# The repeatmasker database was downloaded locally and transferred to the cluster
+# from: http://www.girinst.org/server/RepBase/protected/repeatmaskerlibraries/RepBaseRepeatMaskerEdition-20170127.tar.gz
+# above was not done
+wget http://www.repeatmasker.org/RepeatModeler/RepeatModeler-2.0.1.tar.gz
+wget http://www.repeatmasker.org/RepeatMasker-4.1.0.tar.gz
+
+cd ~/git_repos/tools/prog/fungap/FunGAP/external
+wget http://www.repeatmasker.org/RepeatModeler/RepeatModeler-2.0.1.tar.gz
+tar -zxvf RepeatModeler-2.0.1.tar.gz
+cd RepeatModeler-2.0.1/
+perl ./configure
+# The following perl modules required by RepeatModeler are missing from
+#your system.  Please install these first:
+#    JSON
+#    File::Which
+```
+
+A wrapper script for running trinity for denovo transcriptome assembly was created.
+
+```bash
+#!/bin/bash
+#SBATCH --partition=long
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=6
+#SBATCH --mem=50G
+. ~/.profile
+# Assemble de novo transcriptome using trinity
+Usage="ssub_trinity.sh InReadF.fq.gz InReadR.fq.gz Output_directory"
+echo $Usage
+# ---------------
+# Step 1
+# Collect inputs
+# ---------------
+InReadF=$(basename $1)
+InReadR=$(basename $2)
+OutDir=$3
+# Set working directory
+CurDir=$PWD
+WorkDir=/tmp/${SLURM_JOB_ID}
+#WorkDir=/mnt/beegfs/scratch/$USER/${SLURM_JOB_ID}_star
+GenomeDir=$WorkDir/index
+mkdir -p $GenomeDir
+# Copy over input files
+cd $WorkDir
+cp $CurDir/$1 $InReadF
+cp $CurDir/$2 $InReadR
+# ---------------
+# Step 2
+# Run trinity
+# ---------------
+echo "Assembling transcriptome"
+ Trinity \
+ --CPU 6 \
+ --max_memory 50G \
+ --seqType fq \
+ --SS_lib_type FR \
+ --left $InReadF \
+ --right $InReadR 
+
+rm $InReadF
+rm $InReadR
+mkdir -p $CurDir/$OutDir
+cp -r $WorkDir/* $CurDir/$OutDir/.
+rm -r $WorkDir
+exit
+```
+
+A denovo transcriptome assebly was performed using trinity for the unaligned reads from the control and infected sample.
+
+```bash
+for Unaligned in $(ls -d alignment/STAR/P_aphanis/RNAexp1/*/); do
+ Fread=$(ls $Unaligned*.mate1)
+ Rread=$(ls $Unaligned*.mate2)
+ls $Fread
+ls $Rread
+ProgDir=~/git_repos/tools/seq_tools/RNAseq
+OutDir=$(echo $Unaligned|sed 's@alignment/STAR@assembly/trancriptome/trinity@g')
+sbatch $ProgDir/ssub_trinity.sh $Fread $Rread $OutDir 
+done
+```
