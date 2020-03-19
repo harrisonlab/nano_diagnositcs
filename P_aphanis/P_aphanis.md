@@ -171,32 +171,67 @@ done
 The fungal gene prediction software FunGAP was installed along with the transcriptome assembler trinity and gene prediction software MAKER :
 
 ```bash
+#fungap was downloaded:
 mkdir ~/git_repos/tools/prog/fungap
 cd ~/git_repos/tools/prog/fungap
 git clone https://github.com/CompSynBioLab-KoreaUniv/FunGAP.git
 
+#trinity was downloaded:
 mkdir ~/git_repos/tools/prog/fungap/FunGAP/external
 cd ~/git_repos/tools/prog/fungap/FunGAP/external
 git clone https://github.com/trinityrnaseq/trinityrnaseq.git
-cd trinityrnaseq
-make
-#Using gnu compiler for Inchworm and Chrysalis
-#cd Inchworm && make
-#make[1]: Entering directory '/home/heavet/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq/Inchworm'
-#make[1]: *** No targets specified and no makefile found.  Stop.
-#make[1]: Leaving directory '/home/heavet/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq/Inchworm'
-#Makefile:28: recipe for target 'inchworm_target' failed
-#make: *** [inchworm_target] Error 2
 
-nano ~/.profile
+#Inchworm needed to be manually installed:
+cd ~/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq
+rm -r -f Inchworm
+git clone https://github.com/trinityrnaseq/Inchworm
+cd Inchworm
+make
+#Chrysalis needed to be manually installed:
+cd ~/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq
+rm -r -f Chrysalis
+git clone https://github.com/trinityrnaseq/Chrysalis
+cd Chrysalis
+make
+# seqtk needed to be manually installed and moved into a correctly named subdirectory for the trinty installation to function:
+cd ~/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq
+cd trinity-plugins
+git clone https://github.com/lh3/seqtk.git
+cp -r seqtk/ seqtk-trinity
+rm -r -f seqtk
+cd seqtk-trinity
+make
+cd ..
+mkdir seqtk-trinity/seqtk-trinity/
+cp seqtk-trinity/* seqtk-trinity/seqtk-trinity/
+
+#parafly needed to be manually installed:
+cd ~/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq/trinity-plugins
+tar -zxvf ParaFly-0.1.0.tar.gz
+cd ParaFly-0.1.0
+make
+
+#trinity was installed:
+cd ~/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq
+make
+#make moves seqtk from previous location to ~/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq/trinity-plugins/BIN/seqtk-trinity and will therefore not run a second time without doing the following:
+#cd ~/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq/trinity-plugins
+#mkdir seqtk-trinity/seqtk-trinity/
+#cp seqtk-trinity/* seqtk-trinity/seqtk-trinity/
+#cd ~/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq/trinity-plugins/BIN$
+#rm -r seqtk-trinity/
+
 #trinity added to PATH
+nano ~/.profile
 #PATH=$HOME/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq:${PATH}
 . ~/.profile
 
+#maker was downloaded:
 cd ~/git_repos/tools/prog/fungap/FunGAP/external
 cp /projects/oldhome/armita/prog/maker/maker-2.31.9.tgz .
 tar -zxvf maker-2.31.9.tgz
 cd maker/src
+#maker was installed:
 perl Build.PL
 ./Build installdeps
 ./Build installexes
@@ -212,7 +247,7 @@ perl Build.PL
 #MWAS Web Interface:     DISABLED
 #MAKER PACKAGE:          MISSING PREREQUISITES
 
-
+#repeatmasker was manually installed:
 mkdir -p ~/git_repos/tools/prog/fungap/FunGAP/external/maker/exe/RepeatMasker
 cd ~/git_repos/tools/prog/fungap/FunGAP/external/maker/exe/RepeatMasker
 # The repeatmasker database was downloaded locally and transferred to the cluster
@@ -230,6 +265,8 @@ perl ./configure
 #your system.  Please install these first:
 #    JSON
 #    File::Which
+
+#SNAP requires manual installation:
 ```
 
 A wrapper script for running trinity for denovo transcriptome assembly was created.
@@ -286,6 +323,26 @@ exit
 A denovo transcriptome assebly was performed using trinity for the unaligned reads from the control and infected sample.
 
 ```bash
+#seqtk location and filename following make install are wrong for the running of trinity therefore:
+cd ~/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq/trinity-plugins
+cp BIN/seqtk-trinity/* BIN/
+cd ~/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq/trinity-plugins/BIN
+rm -r seqtk-trinity
+mv seqtk seqtk-trinity
+
+#Trinity requires jellyfish to be installed on the system:
+http://www.genome.umd.edu/jellyfish.html
+cd ~/git_repos/tools/prog/
+mkdir jellyfish
+cd jellyfish
+wget https://github.com/gmarcais/Jellyfish/releases/download/v2.3.0/jellyfish-2.3.0.tar.gz
+tar -zxvf jellyfish-2.3.0.tar.gz
+cd jellyfish-2.3.0
+./configure
+make
+sudo make install
+
+#Running trinity:
 for Unaligned in $(ls -d alignment/STAR/P_aphanis/RNAexp1/*/); do
  Fread=$(ls $Unaligned*.mate1)
  Rread=$(ls $Unaligned*.mate2)
@@ -296,3 +353,8 @@ OutDir=$(echo $Unaligned|sed 's@alignment/STAR@assembly/trancriptome/trinity@g')
 sbatch $ProgDir/ssub_trinity.sh $Fread $Rread $OutDir 
 done
 ```
+```
+Error, cannot locate Trinity-specific tool: seqtk-trinity in the PATH setting: /home/heavet/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq/trinity-plugins/BIN:/home/heavet/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq/:/home/heavet/git_repos/tools/prog/STAR/STAR-2.7.3a/bin/Linux_x86_64:/home/heavet/git_repos/tools/prog/fastqc/FastQC:/home/heavet/perl5/bin:/home/heavet/git_repos/tools/prog/STAR/STAR-2.7.3a/bin/Linux_x86_64:/home/heavet/git_repos/tools/prog/fastqc/FastQC:/home/heavet/perl5/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games,  be sure to install Trinity by running 'make' in the base installation directory
+```
+
+PATH=${PATH}:$HOME/prog/exonerate/exonerate-2.2.0/bin
