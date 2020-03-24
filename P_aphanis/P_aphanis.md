@@ -340,7 +340,10 @@ tar -zxvf jellyfish-2.3.0.tar.gz
 cd jellyfish-2.3.0
 ./configure
 make
-sudo make install
+#jellyfish added to PATH
+nano ~/.profile
+#PATH=$HOME/git_repos/tools/prog/jellyfish/jellyfish-2.3.0/bin:${PATH}
+. ~/.profile
 
 #Running trinity:
 for Unaligned in $(ls -d alignment/STAR/P_aphanis/RNAexp1/*/); do
@@ -353,8 +356,38 @@ OutDir=$(echo $Unaligned|sed 's@alignment/STAR@assembly/trancriptome/trinity@g')
 sbatch $ProgDir/ssub_trinity.sh $Fread $Rread $OutDir 
 done
 ```
-```
-Error, cannot locate Trinity-specific tool: seqtk-trinity in the PATH setting: /home/heavet/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq/trinity-plugins/BIN:/home/heavet/git_repos/tools/prog/fungap/FunGAP/external/trinityrnaseq/:/home/heavet/git_repos/tools/prog/STAR/STAR-2.7.3a/bin/Linux_x86_64:/home/heavet/git_repos/tools/prog/fastqc/FastQC:/home/heavet/perl5/bin:/home/heavet/git_repos/tools/prog/STAR/STAR-2.7.3a/bin/Linux_x86_64:/home/heavet/git_repos/tools/prog/fastqc/FastQC:/home/heavet/perl5/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games,  be sure to install Trinity by running 'make' in the base installation directory
-```
 
-PATH=${PATH}:$HOME/prog/exonerate/exonerate-2.2.0/bin
+Due to the difficulties installing and running trinity a bioconda installation route was attepted instead:
+
+```bash
+cd ~/git_repos/tools/
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+sh Miniconda3-latest-Linux-x86_64.sh
+#miniconda3 was installed at the location: /home/heavet/miniconda3
+conda config --set auto_activate_base false
+conda deactivate
+conda config --add channels defaults
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda update -n base -c defaults conda
+
+#a new environment was created to install trinity
+conda create -n trinity
+conda activate trinity
+conda install -c bioconda trinity
+
+#Running trinity:
+#SeqType set to fa
+screen -S conda_trinity
+conda activate trinity
+cd /projects/nano_diagnostics/
+for Unaligned in $(ls -d alignment/STAR/P_aphanis/RNAexp1/*/); do
+ Fread=$(ls $Unaligned*.mate1)
+ Rread=$(ls $Unaligned*.mate2)
+ls $Fread
+ls $Rread
+ProgDir=~/git_repos/tools/seq_tools/RNAseq
+OutDir=$(echo $Unaligned|sed 's@alignment/STAR@assembly/trancriptome/trinity@g')
+sbatch $ProgDir/ssub_trinity.sh $Fread $Rread $OutDir 
+done
+```
