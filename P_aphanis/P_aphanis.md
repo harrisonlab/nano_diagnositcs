@@ -263,6 +263,166 @@ done
 
 # From here on pipeline is a work in progress
 
+The software rnaQUAST for quality evaluation and assessment of de novo transcriptome assemblies was installed.
+
+```bash
+#a new environment was created to install rnaQUAST
+conda create -n rnaquast
+conda activate rnaquast
+conda install -c bioconda rnaquast
+python rnaQUAST.py --test #failed therefore manual install pursued
+
+#ranQUAST was installed
+mkdir -p ~/git_repos/tools/prog/rnaQUAST
+cd ~/git_repos/tools/prog/rnaQUAST
+wget http://cab.spbu.ru/files/rnaquast/release2.0.1/rnaQUAST-2.0.1.tar.gz
+tar -xzf rnaQUAST-2.0.1.tar.gz
+cd rnaQUAST-2.0.1
+chmod 777 rnaQUAST.py
+nano ~/.profile
+#edited with:
+#PATH=$HOME/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1:${PATH}
+. ~/.profile
+python rnaQUAST.py --test
+#rnaQUAST requires the following to run; Python, gffutils, matplotlib and joblib. Also either GMAP or BLAT and BLASTN added to the $PATH variable.
+#test indicated some of these were not yet installed
+#required programmes were installed;
+python -m pip install -U pip
+python -m pip install -U matplotlib
+python -m pip install -U joblib
+python -m pip install -U gffutils
+
+mkdir -p ~/git_repos/tools/prog/GMAP
+cd ~/git_repos/tools/prog/GMAP
+wget http://research-pub.gene.com/gmap/src/gmap-gsnap-2020-03-12.tar.gz
+tar -xzf gmap-gsnap-2020-03-12.tar.gz
+cd gmap-2020-03-12
+./configure
+make
+make install
+nano ~/.profile
+#edited with:
+#PATH=$HOME/git_repos/tools/prog/GMAP/gmap-2020-03-12/src:${PATH}
+#PATH=$HOME/git_repos/tools/prog/GMAP/gmap-2020-03-12/util:${PATH}
+. ~/.profile
+
+conda activate rnaquast
+conda install -c bioconda gmap
+
+mkdir -p ~/git_repos/tools/prog/blast
+cd ~/git_repos/tools/prog/blast
+wget ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.10.0+-x64-linux.tar.gz
+tar -zxvf ncbi-blast-2.10.0+-x64-linux.tar.gz
+cd ncbi-blast-2.10.0+/
+nano ~/.profile
+#edited with:
+#PATH=$HOME/git_repos/tools/prog/blast/ncbi-blast-2.10.0+/bin:${PATH}
+. ~/.profile
+
+python rnaQUAST.py --test #test is now successful
+
+#When a reference genome is unavailable it is recommended to run rnaQUAST with BUSCO and GeneMarkS-T options. This requires GeneMarkS-T, BUSCO, tblastn, HMMER and transeq to be installed and added to the $PATH variable;
+
+conda activate rnaquast
+conda install busco # failed
+conda install -c bioconda -c conda-forge busco=3.0.2 python=2.7.13 #failed
+
+mkdir ~/git_repos/tools/prog/busco
+  cd ~/git_repos/tools/prog/busco
+  wget https://gitlab.com/ezlab/busco/-/archive/3.0.2/busco-3.0.2.tar.gz
+ # wget https://gitlab.com/ezlab/busco/-/archive/4.0.0/busco-4.0.0.tar.gz
+  tar -zxvf busco-3.0.2.tar.gz
+  cd busco-3.0.2
+  export PYTHONPATH="/home/heavet/.local/lib/python3.5/site-packages"
+  python setup.py install --user
+  nano ~/.profile
+  #edited with:
+  #PATH=$HOME/git_repos/tools/prog/busco/busco-3.0.2/scripts:${PATH}
+  . ~/.profile
+
+ls /projects/oldhome/armita/prog/
+cp -r -n /projects/oldhome/armita/prog/ ~/git_repos/tools/prog/
+  nano ~/.profile
+  #edited with:
+  #PATH=$HOME/git_repos/tools/prog/blast/ncbi-blast-2.2.31+/bin:${PATH}
+  #PATH=$HOME/git_repos/tools/prog/hmmer/hmmer_3.1/hmmer-3.1b2-linux-intel-x86_64/binaries:${PATH}
+  #PATH=$HOME/git_repos/tools/prog/emboss/EMBOSS-4.0.0/bin:${PATH}
+  . ~/.profile
+
+nano ~/git_repos/tools/prog/busco/busco-3.0.2/config/config.ini.default
+#Edited to contain:
+#[tblastn]
+#path = /home/heavet/git_repos/prog/blast/ncbi-blast-2.2.31+/bin
+#command = tblastn
+
+#[makeblastdb]
+#path = /home/heavet/git_repos/prog/blast/ncbi-blast-2.2.31+/bin            
+#command = makeblastdb
+
+#[augustus]
+#path = /home/heavet/git_repos/prog/augustus-3.1/bin         
+#command = augustus
+
+#[etraining]
+#path = /home/heavet/git_repos/prog/augustus-3.1/bin         
+#command = etraining
+
+#[gff2gbSmallDNA.pl]
+#path = /home/heavet/git_repos/prog/augustus-3.1/scripts     
+#command = gff2gbSmallDNA.pl
+
+#[new_species.pl]
+#path = /home/heavet/git_repos/prog/augustus-3.1/scripts   
+#command = new_species.pl
+
+#[optimize_augustus.pl]
+#path = /home/heavet/git_repos/prog/augustus-3.1/scripts   
+#command = optimize_augustus.pl
+
+#[hmmsearch]
+#path = /home/heavet/git_repos/prog/hmmer/hmmer_3.1/hmmer-3.1b2-linux-intel-x86_64/binaries          
+#command = hmmsearch
+
+#[prodigal]
+#path = /home/heavet/git_repos/prog/prodigal
+#command = prodigal
+
+export BUSCO_CONFIG_FILE=/home/heavet/git_repos/tools/prog/busco/busco-3.0.2/config/config.ini
+
+mkdir -p ~/git_repos/tools/prog/genemark/2020
+  cd ~/git_repos/tools/prog/genemark/2020
+  wget http://topaz.gatech.edu/GeneMark/tmp/GMtool__soAM/gmst_linux_64.tar.gz
+  tar -zxvf gmst_linux_64.tar.gz
+  wget http://topaz.gatech.edu/GeneMark/tmp/GMtool__soAM/gm_key_64.gz
+  gunzip gm_key_64.gz
+  cp ~/git_repos/tools/prog/genemark/2020/gm_key_64 ~/.gm_key
+  nano ~/.profile
+  #edited with:
+  #PATH=$HOME/git_repos/tools/prog/genemark/2020:${PATH}
+  . ~/.profile
+```
+
+Quast was used to assess the quality of genome assembly:
+```bash
+  ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+    for Assembly in $(ls assembly/spades/*/*/filtered_contigs/contigs_min_500bp.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+    OutDir=assembly/spades/$Organism/$Strain/filtered_contigs
+    qsub $ProgDir/sub_quast.sh $Assembly $OutDir
+  done
+```
+The results of quast were desplayed:
+```bash
+  for Assembly in $(ls assembly/spades/*/*/filtered_contigs/report.txt); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev);
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev);
+    echo;
+    echo $Organism;
+    echo $Strain;
+    cat $Assembly;
+  done > assembly/quast_results.txt
+```
 
 The podosphaera xanthii transcriptome was downloaded - assembled using MIRA3 & euler by D.Corsia
 ```bash
@@ -401,4 +561,33 @@ perl ./configure
 #    File::Which
 
 #SNAP requires manual installation:
+```
+
+
+
+A partial genome assembly for P.aphanis genertaed by H.Cockerton was collected.
+
+```bash
+mkdir -p /projects/nano_diagnostics/assembly/genome/spades/P_aphanis/H_Cockerton/
+
+cp -s -r /projects/oldhome/groups/harrisonlab/project_files/podosphaera/assembly/spades/P.aphanis/ /projects/nano_diagnostics/assembly/genome/spades/P_aphanis/H_Cockerton/
+
+ls /projects/nano_diagnostics/assembly/genome/spades/P_aphanis/H_Cockerton/C1_no_strawberry/deconseq_appended/contigs_min_500bp_renamed.fasta
+```
+STAR was used to align trimmed reads that did not align to F.ananassa to the P.aphanis genome
+
+```bash
+for ReadDir in $(ls -d alignment/STAR/P_aphanis/RNAexp1/*); do
+ Fread=$(ls $ReadDir/*.F.fa)
+ Rread=$(ls $ReadDir/*.R.fa)
+ls $Fread
+ls $Rread
+InGenome=assembly/genome/spades/P_aphanis/H_Cockerton/C1_no_strawberry/deconseq_appended/contigs_min_500bp_renamed.fasta 
+#InGff=
+ProgDir=~/git_repos/tools/seq_tools/RNAseq
+OutDir=$(echo $ReadDir/P_aphanis)
+sbatch $ProgDir/ssub_star.sh $InGenome $Fread $Rread $OutDir
+done
+#318140
+#318141
 ```
