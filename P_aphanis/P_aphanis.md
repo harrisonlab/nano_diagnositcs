@@ -341,12 +341,34 @@ mkdir ~/git_repos/tools/prog/busco
   . ~/.profile
 
 ls /projects/oldhome/armita/prog/
-cp -r -n /projects/oldhome/armita/prog/ ~/git_repos/tools/prog/
+srun -p long --pty bash
+cd ~/git_repos/tools/prog/
+cp -r /projects/oldhome/armita/prog/emboss/* .
+cd ~/git_repos/tools/prog/emboss/
+rm EMBOSS-4.0.0
+#version 6.5.7 is current howver download webiste is down atm
+tar -zxvf EMBOSS-latest.tar.gz
+rm EMBOSS-latest.tar.gz
+cd EMBOSS-4.0.0 
+./configure
+make
+
+cd ~/git_repos/tools/prog/
+mkdir hmmer
+cd hmmer
+wget http://eddylab.org/software/hmmer/hmmer.tar.gz
+tar -zxvf hmmer.tar.gz
+cd hmmer-3.3
+./configure
+make
+make check
+make install
+
   nano ~/.profile
   #edited with:
   #PATH=$HOME/git_repos/tools/prog/blast/ncbi-blast-2.2.31+/bin:${PATH}
   #PATH=$HOME/git_repos/tools/prog/hmmer/hmmer_3.1/hmmer-3.1b2-linux-intel-x86_64/binaries:${PATH}
-  #PATH=$HOME/git_repos/tools/prog/emboss/EMBOSS-4.0.0/bin:${PATH}
+  #PATH=$HOME/git_repos/tools/prog/emboss/EMBOSS-4.0.0/emboss:${PATH}
   . ~/.profile
 
 nano ~/git_repos/tools/prog/busco/busco-3.0.2/config/config.ini.default
