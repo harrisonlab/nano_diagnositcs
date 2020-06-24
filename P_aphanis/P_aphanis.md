@@ -222,21 +222,112 @@ done
 #309676 - infected (himem)
 ```
 
-# From here on pipeline is a work in progress
-
 The software rnaQUAST for quality evaluation and assessment of de novo transcriptome assemblies was installed along with dependencies; gffutils, matplotlib, joblib, GMAP, BLASTN.
 
 When a reference genome is unavailable it is recommended to run rnaQUAST with BUSCO and GeneMarkS-T options. This required the additional installation of depedancies; GeneMarkS-T, BUSCO, tblastn, HMMER and transeq.
 
+A profile library for the leotiomycetes was downloaded for use with BUSCO.
+```bash
+mkdir ~/git_repos/tools/prog/busco/libraries
+cd ~/git_repos/tools/prog/busco/libraries
+wget https://busco-data.ezlab.org/v4/data/lineages/leotiomycetes_odb10.2019-11-20.tar.gz
+tar -zxvf leotiomycetes_odb10.2019-11-20.tar.gz
+```
+Running rnaQUAST:
+```bash
+srun --partition long --time 0-72:00:00 --mem 100G --cpus-per-task 1 --pty bash
+conda activate rnaquast
 
+mkdir assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/unaligned/rnaquast
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/unaligned/trinity_out_dir/Trinity.fasta --output_dir assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/unaligned/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
 
+mkdir assembly/trancriptome/trinity/P_aphanis/RNAexp1/control/unaligned/rnaquast
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/assembly/trancriptome/trinity/P_aphanis/RNAexp1/control/unaligned/trinity_out_dir/Trinity.fasta --output_dir assembly/trancriptome/trinity/P_aphanis/RNAexp1/control/unaligned/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
 
+mkdir assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/rnaquast
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/trinity_out_dir/Trinity.fasta --output_dir assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
 
+mkdir assembly/trancriptome/trinity/P_aphanis/RNAexp1/control/rnaquast
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/assembly/trancriptome/trinity/P_aphanis/RNAexp1/control/trinity_out_dir/Trinity.fasta --output_dir assembly/trancriptome/trinity/P_aphanis/RNAexp1/control/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
 
+exit
+```
 
+The podosphaera xanthii shotgun assembled transcriptome was downloaded - assembled using trinity by Angelini et al.
+```bash
+mkdir -p rawdata/P_xanthii/AngeliniExp/transcriptome/
 
+cd rawdata/P_xanthii/AngeliniExp/transcriptome/
 
+#no download from ncbi available
+wget ftp://ftp.ebi.ac.uk/pub/databases/ena/tsa/public/gh/GHEF01.fasta.gz
 
+gunzip GHEF01.fasta.gz 
+```
+
+Rnaquast was run on the Angelini assembly
+```bash
+srun --partition long --time 0-72:00:00 --mem 100G --cpus-per-task 1 --pty bash
+conda activate rnaquast
+
+mkdir -p assembly/trancriptome/trinity/P_xanthii/AngeliniExp/rnaquast
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/rawdata/P_xanthii/AngeliniExp/transcriptome/GHEF01.fasta --output_dir assembly/trancriptome/trinity/P_xanthii/AngeliniExp/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
+exit
+```
+
+The podosphaera xanthii epiphytic transcriptome was downloaded - assembled using MIRA3 & euler by D.Corsia
+```bash
+mkdir -p rawdata/P_xanthii/D_CorsiaExp/transcriptome/
+
+srun -p long --pty bash
+
+cd rawdata/P_xanthii/D_CorsiaExp/transcriptome/
+
+wget https://sra-download.ncbi.nlm.nih.gov/traces/wgs03/wgs_aux/GE/UO/GEUO01/GEUO01.1.gbff.gz
+
+wget https://sra-download.ncbi.nlm.nih.gov/traces/wgs03/wgs_aux/GE/UO/GEUO01/GEUO01.1.fsa_nt.gz
+
+gunzip GEUO01.1.fsa_nt.gz # fasta file
+
+gunzip GEUO01.1.gbff.gz #Genebank file
+```
+Rnaquast was run on the Corsia assembly
+```bash
+srun --partition long --time 0-72:00:00 --mem 100G --cpus-per-task 1 --pty bash
+conda activate rnaquast
+
+mkdir -p assembly/trancriptome/trinity/P_xanthii/D_CorsiaExp/rnaquast
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/rawdata/P_xanthii/D_CorsiaExp/transcriptome/GEUO01.1.fsa_nt --output_dir assembly/trancriptome/trinity/P_xanthii/D_CorsiaExp/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
+
+exit
+```
+The podosphaera pannosa transcriptome was downloaded - assembled using trinity by N.Fonseca
+```bash
+mkdir -p rawdata/P_pannosa/N_FonsecaExp/transcriptome/
+
+srun -p long --pty bash
+
+cd rawdata/P_pannosa/N_FonsecaExp/transcriptome/
+
+wget https://sra-download.ncbi.nlm.nih.gov/traces/wgs01/wgs_aux/GH/DE/GHDE01/GHDE01.1.fsa_nt.gz
+
+wget https://sra-download.ncbi.nlm.nih.gov/traces/wgs01/wgs_aux/GH/DE/GHDE01/GHDE01.1.gbff.gz
+
+gunzip GHDE01.1.fsa_nt.gz # fasta file
+
+gunzip GHDE01.1.gbff.gz #Genebank file
+```
+Rnaquast was run on the Fonseca assembly
+```bash
+srun --partition long --time 0-72:00:00 --mem 100G --cpus-per-task 1 --pty bash
+conda activate rnaquast
+
+mkdir -p assembly/trancriptome/trinity/P_pannosa/N_FonsecaExp/rnaquast
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/rawdata/P_pannosa/N_FonsecaExp/transcriptome/GHDE01.1.fsa_nt --output_dir assembly/trancriptome/trinity/P_pannosa/N_FonsecaExp/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
+
+exit
+```
+# From here on pipeline is a work in progress
 
 Quast was used to assess the quality of genome assembly:
 ```bash
@@ -260,44 +351,7 @@ The results of quast were desplayed:
   done > assembly/quast_results.txt
 ```
 
-The podosphaera xanthii transcriptome was downloaded - assembled using MIRA3 & euler by D.Corsia
-```bash
-mkdir -p rawdata/P_xanthii/D_CorsiaExp/transcriptome/
-
-srun -p long --pty bash
-
-cd rawdata/P_xanthii/D_CorsiaExp/transcriptome/
-
-wget https://sra-download.ncbi.nlm.nih.gov/traces/wgs03/wgs_aux/GE/UO/GEUO01/GEUO01.1.gbff.gz
-
-wget https://sra-download.ncbi.nlm.nih.gov/traces/wgs03/wgs_aux/GE/UO/GEUO01/GEUO01.1.fsa_nt.gz
-
-gunzip GEUO01.1.fsa_nt.gz # fasta file
-
-gunzip GEUO01.1.gbff.gz #Genebank file
-```
-The podosphaera pannosa transcriptome was downloaded - assembled using trinity by N.Fonseca
-```bash
-mkdir -p rawdata/P_pannosa/N_FonsecaExp/transcriptome/
-
-srun -p long --pty bash
-
-cd rawdata/P_pannosa/N_FonsecaExp/transcriptome/
-
-wget https://sra-download.ncbi.nlm.nih.gov/traces/wgs01/wgs_aux/GH/DE/GHDE01/GHDE01.1.fsa_nt.gz
-
-wget https://sra-download.ncbi.nlm.nih.gov/traces/wgs01/wgs_aux/GH/DE/GHDE01/GHDE01.1.gbff.gz
-
-gunzip GHDE01.1.fsa_nt.gz # fasta file
-
-gunzip GHDE01.1.gbff.gz #Genebank file
-```
-
-
-
-
-
-A partial genome assembly for P.aphanis genertaed by H.Cockerton was collected.
+A partial genome assembly for P.aphanis generated by H.Cockerton was collected.
 
 ```bash
 mkdir -p /projects/nano_diagnostics/assembly/genome/spades/P_aphanis/H_Cockerton/
@@ -323,3 +377,35 @@ done
 #318140
 #318141
 ```
+
+Erysiphales:
+
+Erysiphales genome assemblies were downloaded from NCBI, the best of each of the 9 species represented.
+
+```bash
+
+mkdir -p /projects/nano_diagnostics/rawdata/erysiphales
+cd /projects/nano_diagnostics/rawdata/erysiphales
+
+ncbi-genome-download --dry-run --species-taxid 5120 fungi
+#does not work
+
+wget -P B_graminis https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/900/237/765/GCA_900237765.1_BghRACE1_v1/GCA_900237765.1_BghRACE1_v1_genomic.fna.gz 
+
+wget -P E_necator https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/798/715/GCA_000798715.1_ASM79871v1/GCA_000798715.1_ASM79871v1_genomic.fna.gz 
+
+wget -P E_pisi https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/208/805/GCA_000208805.1_ASM20880v1/GCA_000208805.1_ASM20880v1_genomic.fna.gz
+
+wget -P E_pulchra https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/918/395/GCA_002918395.1_ASM291839v1/GCA_002918395.1_ASM291839v1_genomic.fna.gz
+
+wget -P G_cichoracearum https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/003/611/235/GCA_003611235.1_ASM361123v1/GCA_003611235.1_ASM361123v1_genomic.fna.gz 
+
+wget -P G_magnicellulatus https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/006/912/115/GCA_006912115.1_ASM691211v1/GCA_006912115.1_ASM691211v1_genomic.fna.gz 
+
+wget -P O_heveae https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/003/957/845/GCA_003957845.1_ASM395784v1/GCA_003957845.1_ASM395784v1_genomic.fna.gz 
+
+wget -P O_neolycopersici https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/003/610/855/GCA_003610855.1_ASM361085v1/GCA_003610855.1_ASM361085v1_genomic.fna.gz 
+
+wget -P P_xanthii https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/010/015/925/GCA_010015925.1_POXAN_niab_assembly/GCA_010015925.1_POXAN_niab_assembly_genomic.fna.gz 
+```
+
