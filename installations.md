@@ -75,6 +75,93 @@ python -m pip install -U matplotlib
 python -m pip install -U joblib
 python -m pip install -U gffutils
 python rnaQUAST.py --test # conda test now successful also
+
+conda install -c conda-forge pympler
+```
+retry RNAquast conda install:
+
+
+conda config --set allow_conda_downgrades true
+conda install conda=4.6.14
+
+
+```bash
+conda create --name rnaquast2 -c bioconda rnaquast
+```
+
+
+
+
+
+
+RNAquast - Transcriptome validation
+  conda create --name rnaquast -c bioconda rnaquast
+  conda activate rnaquast
+Install dependancy Genemark E/S
+mkdir -p ~/prog/genemark
+cd ~/prog/genemark
+wget http://topaz.gatech.edu/GeneMark/tmp/GMtool_fwRQI/gmst_linux_64.tar.gz
+tar -zxvf gmst_linux_64.tar.gz
+./gmst.pl test.fa
+# wget http://topaz.gatech.edu/GeneMark/tmp/GMtool_fwRQI/gm_key_64.gz
+Add genemarkES to your PATH:
+PATH=$HOME/prog/genemark:${PATH} (edited) 
+16:26
+^ my install instructions so far for the greenwich cluster
+16:27
+i am getting an error with gmap - i will post instructions when i get it sorted
+16:28
+rnaQUAST.py --test
+...lots of output output... 
+2020-05-05 16:23:07
+Creating genome index by gmap_build...
+  logs can be found in /mnt/beegfs/home/aa0377h/progs/anaconda2/envs/rnaquast/bin/rnaQUAST_test_output/logs/gmap_build.out.log and /mnt/beegfs/home/aa0377h/progs/anaconda2/envs/rnaquast/bin/rnaQUAST_test_output/logs/gmap_build.err.log.
+ERROR! gmap_build failed!
+In case you have troubles running rnaQUAST, you can write to rnaquast_support@ablab.spbau.ru
+Please provide us with rnaQUAST.log file from the output directory.
+
+```bash
+. ~/.profile
+rnaQUAST.py --test
+```
+Correct a gmap build error with a bad perl shebang
+```bash
+which gmap_build
+# ~/progs/anaconda2/envs/rnaquast/bin/gmap_build
+which perl
+# ~/progs/anaconda2/envs/rnaquast/bin/perl
+echo $HOME
+for File in $(ls -p /mnt/beegfs/home/aa0377h/progs/anaconda2/envs/rnaquast/bin/*); do
+  # echo $File;
+  if head -n5 $File | grep -q "/opt/conda/conda-bld/gmap_1530905053430/_build_env/bin/perl"; then
+    echo $File
+    echo "replacing shebang"
+    sed -i "s@/opt/conda/conda-bld/gmap_1530905053430/_build_env/bin/perl@/mnt/beegfs/home/aa0377h/progs/anaconda2/envs/rnaquast/bin/perl@g" $File
+  fi
+done
+```
+^ you will need to change the '/mnt/beegfs/home/aa0377h/progs/anaconda2/envs/rnaquast/bin/perl' to your $HOME and conda-installed perl location - run after doing conda activate to have the conda perl location in your path
+17:11
+aha, my tblastn isnt using the conda install
+17:12
+## Install Blast
+A local install of BLAST >2.8.1 was installed, which has a bug fix for widely reported "feature"/bug where the first blast hit, rather than the top blast hit was reported.
+```bash
+mkdir ~/prog/blast
+cd ~/prog/blast
+wget https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.10.0+-x64-linux.tar.gz
+tar -zxvf ncbi-blast-2.10.0+-x64-linux.tar.gz
+```
+prepend this to your ~/.profile
+
+
+
+
+
+
+
+
+
 ```
 ##GMAP
 ```bash
@@ -112,6 +199,17 @@ conda install blast
 ```
 ##BUSCO 
 ```bash
+#BUSCO innstallation:
+conda create -n oldBUSCO
+conda activate oldBUSCO
+conda install -c bioconda -c conda-forge busco=1.2.0
+
+#BUSCO innstallation:
+conda create -n BUSCO
+conda activate BUSCO
+conda install -c bioconda -c conda-forge busco=4.0.6
+
+#BUSCO installation to work with RNAquast:
 mkdir ~/git_repos/tools/prog/busco
   cd ~/git_repos/tools/prog/busco
   wget https://gitlab.com/ezlab/busco/-/archive/3.0.2/busco-3.0.2.tar.gz
@@ -170,7 +268,6 @@ export BUSCO_CONFIG_FILE=/home/heavet/git_repos/tools/prog/busco/busco-3.0.2/con
 
 conda activate rnaquast 
 conda install busco
-
 ```
 ##Genewise
 ```bash
@@ -345,6 +442,18 @@ conda create -n trinity
 conda activate trinity
 conda install -c bioconda trinity
 ```
+###jellyfish
+```bash
+#both conda install in the trinity environment and manual download performed from http://www.genome.umd.edu/jellyfish.html
+
+mkdir ~/git_repos/tools/prog/jellyfish/
+cd ~/git_repos/tools/prog/jellyfish/
+wget https://github.com/gmarcais/Jellyfish/releases/download/v2.2.5/jellyfish-2.2.5.tar.gz
+tar -xzf jellyfish-2.2.5.tar.gz
+ ./configure --prefix=$HOME/git_repos/tools/prog/jellyfish/
+ make
+ make install
+```
 ##MIRA
 ```bash
 #a new environment was created to install MIRA
@@ -452,4 +561,12 @@ perl ./configure
 #    File::Which
 
 #SNAP requires manual installation:
+```
+##NCBI download
+```bash
+pip install ncbi-genome-download
+nano ~/.profile
+#PATH=$HOME/.local/bin:${PATH}
+~/.local/bin
+. ~/.profile
 ```
