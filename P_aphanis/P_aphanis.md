@@ -153,7 +153,7 @@ The first method tried to generate a denovo P.aphanis transcriptome was using th
 
 Trinity was installed.
 
-Trinity runs with sample data demonstrated that using .fq files was resulting in erros. Quality controlled reads were therefore converted from .fq to .fa
+Trinity runs with sample data demonstrated that using .fq files was resulting in errors. Quality controlled reads were therefore converted from .fq to .fa
 ```bash
 #Files were uncompressed
 for ReadDir in $(ls -d dna_qc/P_aphanis/RNAexp1/*); do
@@ -191,10 +191,23 @@ De novo transcriptome assembly was performed for combined quality controlled rea
 
 The following were not used here but may help reduce memory requirements; --min_kmer_cov 2, --bflyCalculateCPU
 More details at; http://trinityrnaseq.github.io/performance/mem.html and https://github.com/trinityrnaseq/trinityrnaseq/wiki
+
+
+
+
+########!!!!!!!!!!! trancriptome
+
+
+
+
+
 ```bash
 #a trinity instance of bioconda was opened
 screen -S conda_trinity
 conda activate trinity
+conda install -c bioconda jellyfish
+
+
 #Trinity de novo transcriptome assembly was run for all quality controlled reads
 for ReadDir in $(ls -d dna_qc/P_aphanis/RNAexp1/*); do
  Fread=$(ls $ReadDir/F/*trim.fa)
@@ -202,11 +215,18 @@ for ReadDir in $(ls -d dna_qc/P_aphanis/RNAexp1/*); do
 ls $Fread
 ls $Rread
 ProgDir=~/git_repos/tools/seq_tools/RNAseq
-OutDir=$(echo $ReadDir|sed 's@dna_qc@assembly/trancriptome/trinity@g')
-sbatch $ProgDir/ssub_trinity.sh $Fread $Rread $OutDir 
+OutDir=$(echo $ReadDir|sed 's@dna_qc@assembly/transcriptome@g')
+OutDir2=$(echo $OutDir|sed 's@RNAexp1@RNAexp1/trinity@g')
+sbatch $ProgDir/ssub_trinity.sh $Fread $Rread $OutDir2 
 done
-#309671 - control (medium partion)
-#309674 - infected (long partion)
+#346617
+#346697
+#jellyfish: error while loading shared libraries: libjellyfish-2.0.so.2: cannot open shared object file: No such file or directory
+
+# manually enter the path to manual install of jellyfish in trinity code replacing 'which jellyfish' with /home/heavet/git_repos/tools/prog/jellyfish/jellyfish-2.3.0/bin/jellyfish before line 3880, this did not work and was returned to 'which jellyfish', trinity then worked, I do not understand what fixed the problem.
+#Installations of jellyfish now exist here: /home/heavet/git_repos/tools/prog/jellyfish/jellyfish-2.3.0/bin/jellyfish and here: /home/heavet/miniconda3/envs/trinity/bin/jellyfish
+# configure and install of manual install jellyfish was repeated
+# libjellyfish-2.0.so.2 is located at ~/git_repos/tools/prog/jellyfish/lib and /home/heavet/miniconda3/envs/trinity/bin/jellyfish/lib
 
 #Trinity de novo transcriptome assembly was run for unnmapped reads
 for ReadDir in $(ls -d alignment/STAR/P_aphanis/RNAexp1/*); do
@@ -215,13 +235,14 @@ for ReadDir in $(ls -d alignment/STAR/P_aphanis/RNAexp1/*); do
 ls $Fread
 ls $Rread
 ProgDir=~/git_repos/tools/seq_tools/RNAseq
-OutDir=$(echo $ReadDir/unaligned|sed 's@alignment/STAR@assembly/trancriptome/trinity@g')
-sbatch $ProgDir/ssub_trinity.sh $Fread $Rread $OutDir 
+OutDir=$(echo $ReadDir/unaligned|sed 's@alignment/STAR@assembly/transcriptome@g')
+OutDir2=$(echo $OutDir|sed 's@RNAexp1@RNAexp1/trinity@g')
+sbatch $ProgDir/ssub_trinity.sh $Fread $Rread $OutDir2 
 done
-#309675 - control (himem)
-#309676 - infected (himem)
+#346698
+#346699
+#All trinity assemblies now completed successfully
 ```
-
 The software rnaQUAST for quality evaluation and assessment of de novo transcriptome assemblies was installed along with dependencies; gffutils, matplotlib, joblib, GMAP, BLASTN.
 
 When a reference genome is unavailable it is recommended to run rnaQUAST with BUSCO and GeneMarkS-T options. This required the additional installation of depedancies; GeneMarkS-T, BUSCO, tblastn, HMMER and transeq.
@@ -235,24 +256,25 @@ tar -zxvf leotiomycetes_odb10.2019-11-20.tar.gz
 ```
 Running rnaQUAST:
 ```bash
+screen -S rnaquast
 srun --partition long --time 0-72:00:00 --mem 100G --cpus-per-task 1 --pty bash
 conda activate rnaquast
 
-mkdir assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/unaligned/rnaquast
-python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/unaligned/trinity_out_dir/Trinity.fasta --output_dir assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/unaligned/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
+mkdir assembly/transcriptome/P_aphanis/RNAexp1/trinity/infected/unaligned/rnaquast
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/assembly/transcriptome/P_aphanis/RNAexp1/trinity/infected/unaligned/trinity_out_dir/Trinity.fasta --output_dir assembly/transcriptome/P_aphanis/RNAexp1/trinity/infected/unaligned/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
 
-mkdir assembly/trancriptome/trinity/P_aphanis/RNAexp1/control/unaligned/rnaquast
-python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/assembly/trancriptome/trinity/P_aphanis/RNAexp1/control/unaligned/trinity_out_dir/Trinity.fasta --output_dir assembly/trancriptome/trinity/P_aphanis/RNAexp1/control/unaligned/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
+mkdir assembly/transcriptome/P_aphanis/RNAexp1/trinity/control/unaligned/rnaquast
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/assembly/assembly/transcriptome/P_aphanis/RNAexp1/trinity/control/unaligned/trinity_out_dir/Trinity.fasta --output_dir assembly/transcriptome/P_aphanis/RNAexp1/trinity/control/unaligned/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
 
-mkdir assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/rnaquast
-python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/trinity_out_dir/Trinity.fasta --output_dir assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
+mkdir assembly/transcriptome/P_aphanis/RNAexp1/trinity/infected/rnaquast
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/assembly/assembly/transcriptome/P_aphanis/RNAexp1/trinity/infected/trinity_out_dir/Trinity.fasta --output_dir assembly/transcriptome/P_aphanis/RNAexp1/trinity/infected/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
 
-mkdir assembly/trancriptome/trinity/P_aphanis/RNAexp1/control/rnaquast
-python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/assembly/trancriptome/trinity/P_aphanis/RNAexp1/control/trinity_out_dir/Trinity.fasta --output_dir assembly/trancriptome/trinity/P_aphanis/RNAexp1/control/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
+mkdir assembly/transcriptome/P_aphanis/RNAexp1/trinity/control/rnaquast
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/assembly/transcriptome/P_aphanis/RNAexp1/trinity/control/trinity_out_dir/Trinity.fasta --output_dir assembly/transcriptome/P_aphanis/RNAexp1/trinity/control/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
 
 exit
+#run of all 4 started 3:24, 20/07/2020 in screen 17810.rnaquast
 ```
-
 The podosphaera xanthii shotgun assembled transcriptome was downloaded - assembled using trinity by Angelini et al.
 ```bash
 mkdir -p rawdata/P_xanthii/AngeliniExp/transcriptome/
@@ -264,17 +286,6 @@ wget ftp://ftp.ebi.ac.uk/pub/databases/ena/tsa/public/gh/GHEF01.fasta.gz
 
 gunzip GHEF01.fasta.gz 
 ```
-
-Rnaquast was run on the Angelini assembly
-```bash
-srun --partition long --time 0-72:00:00 --mem 100G --cpus-per-task 1 --pty bash
-conda activate rnaquast
-
-mkdir -p assembly/trancriptome/trinity/P_xanthii/AngeliniExp/rnaquast
-python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/rawdata/P_xanthii/AngeliniExp/transcriptome/GHEF01.fasta --output_dir assembly/trancriptome/trinity/P_xanthii/AngeliniExp/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
-exit
-```
-
 The podosphaera xanthii epiphytic transcriptome was downloaded - assembled using MIRA3 & euler by D.Corsia
 ```bash
 mkdir -p rawdata/P_xanthii/D_CorsiaExp/transcriptome/
@@ -290,16 +301,6 @@ wget https://sra-download.ncbi.nlm.nih.gov/traces/wgs03/wgs_aux/GE/UO/GEUO01/GEU
 gunzip GEUO01.1.fsa_nt.gz # fasta file
 
 gunzip GEUO01.1.gbff.gz #Genebank file
-```
-Rnaquast was run on the Corsia assembly
-```bash
-srun --partition long --time 0-72:00:00 --mem 100G --cpus-per-task 1 --pty bash
-conda activate rnaquast
-
-mkdir -p assembly/trancriptome/trinity/P_xanthii/D_CorsiaExp/rnaquast
-python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/rawdata/P_xanthii/D_CorsiaExp/transcriptome/GEUO01.1.fsa_nt --output_dir assembly/trancriptome/trinity/P_xanthii/D_CorsiaExp/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
-
-exit
 ```
 The podosphaera pannosa transcriptome was downloaded - assembled using trinity by N.Fonseca
 ```bash
@@ -317,42 +318,74 @@ gunzip GHDE01.1.fsa_nt.gz # fasta file
 
 gunzip GHDE01.1.gbff.gz #Genebank file
 ```
-Rnaquast was run on the Fonseca assembly
+The different transcriptomes were moved to a shared folder structure
+```bash
+cd /projects/nano_diagnostics
+mkdir -p assembly/transcriptome/P_pannosa/N_FonsecaExp/trinity/assembly
+cp  rawdata/P_pannosa/N_FonsecaExp/transcriptome/GHDE01.1.fsa_nt assembly/transcriptome/P_pannosa/N_FonsecaExp/trinity/assembly
+
+mkdir -p assembly/transcriptome/P_xanthii/D_CorsiaExp/MIRA3/assembly
+cp  rawdata/P_xanthii/D_CorsiaExp/transcriptome/GEUO01.1.fsa_nt assembly/transcriptome/P_xanthii/D_CorsiaExp/MIRA3/assembly
+
+mkdir -p assembly/transcriptome/P_xanthii/AngeliniExp/trinity/assembly
+cp  rawdata/P_xanthii/AngeliniExp/transcriptome/GHEF01.fasta assembly/transcriptome/P_xanthii/AngeliniExp/trinity/assembly
+
+mkdir -p assembly/transcriptome/P_aphanis/HeavenRNAexp1/trinity/assembly
+cp  assembly/transcriptome/P_aphanis/RNAexp1/trinity/infected/unaligned/trinity_out_dir/Trinity.fasta assembly/transcriptome/P_aphanis/HeavenRNAexp1/trinity/assembly
+```
+Rnaquast was run on each mildew assembly
 ```bash
 srun --partition long --time 0-72:00:00 --mem 100G --cpus-per-task 1 --pty bash
 conda activate rnaquast
 
-mkdir -p assembly/trancriptome/trinity/P_pannosa/N_FonsecaExp/rnaquast
-python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/rawdata/P_pannosa/N_FonsecaExp/transcriptome/GHDE01.1.fsa_nt --output_dir assembly/trancriptome/trinity/P_pannosa/N_FonsecaExp/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
+mkdir -p assembly/transcriptome/P_xanthii/AngeliniExp/trinity/rnaquast
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/rawdata/P_xanthii/AngeliniExp/transcriptome/GHEF01.fasta --output_dir assembly/transcriptome/P_xanthii/AngeliniExp/trinity/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
 
+mkdir -p assembly/transcriptome/P_xanthii/D_CorsiaExp/MIRA3/rnaquast
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/rawdata/P_xanthii/D_CorsiaExp/transcriptome/GEUO01.1.fsa_nt --output_dir assembly/transcriptome/P_xanthii/D_CorsiaExp/MIRA3/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
+
+mkdir -p assembly/transcriptome/P_pannosa/N_FonsecaExp/trinity/rnaquast
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/rawdata/P_pannosa/N_FonsecaExp/transcriptome/GHDE01.1.fsa_nt --output_dir assembly/transcriptome/P_pannosa/N_FonsecaExp/trinity/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
+
+mkdir -p assembly/transcriptome/P_aphanis/HeavenRNAexp1/trinity/rnaquast
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts assembly/transcriptome/P_aphanis/HeavenRNAexp1/trinity/assembly/Trinity.fasta --output_dir assembly/transcriptome/P_aphanis/HeavenRNAexp1/trinity/rnaquast --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/leotiomycetes_odb10
 exit
 ```
+
 # From here on pipeline is a work in progress
 
-Quast was used to assess the quality of genome assembly:
+RNAquast produces BUSCO results, the library used during RNAquast analysis was a database for the order leotiomycetes. BUSCO analysis was repeated separately at the level of class, phylum and kingdom with databases for leotiomycetes, ascomycota and fungi respectively.
 ```bash
-  ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
-    for Assembly in $(ls assembly/spades/*/*/filtered_contigs/contigs_min_500bp.fasta); do
-    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
-    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
-    OutDir=assembly/spades/$Organism/$Strain/filtered_contigs
-    qsub $ProgDir/sub_quast.sh $Assembly $OutDir
-  done
-```
-The results of quast were desplayed:
-```bash
-  for Assembly in $(ls assembly/spades/*/*/filtered_contigs/report.txt); do
-    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev);
-    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev);
-    echo;
-    echo $Organism;
-    echo $Strain;
-    cat $Assembly;
-  done > assembly/quast_results.txt
-```
+conda activate BUSCO
 
-A partial genome assembly for P.aphanis generated by H.Cockerton was collected.
+for transcriptome in $(echo assembly/transcriptome/*/*/*/assembly); do
+	Data=$(ls $transcriptome/*) 
+	Input=$(dirname $transcriptome)
+	mkdir -p $Input/BUSCO/fungi/1
+	cd $Input/BUSCO/fungi
+	busco -f -m transcriptome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
+	cd /projects/nano_diagnostics
+done
 
+for transcriptome in $(echo assembly/transcriptome/*/*/*/assembly); do
+	Data=$(ls $transcriptome/*) 
+	Input=$(dirname $transcriptome)
+	mkdir -p $Input/BUSCO/ascomycota/1
+	cd $Input/BUSCO/ascomycota
+	busco -f -m transcriptome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
+	cd /projects/nano_diagnostics
+done
+
+for transcriptome in $(echo assembly/transcriptome/*/*/*/assembly); do
+	Data=$(ls $transcriptome/*) 
+	Input=$(dirname $transcriptome)
+	mkdir -p $Input/BUSCO/leotiomycetes/1
+	cd $Input/BUSCO/leotiomycetes
+	busco -f -m transcriptome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
+	cd /projects/nano_diagnostics
+done
+```
+A P.aphanis genome assembly was accessed
 ```bash
 mkdir -p /projects/nano_diagnostics/assembly/genome/spades/P_aphanis/H_Cockerton/
 
@@ -361,7 +394,6 @@ cp -s -r /projects/oldhome/groups/harrisonlab/project_files/podosphaera/assembly
 ls /projects/nano_diagnostics/assembly/genome/spades/P_aphanis/H_Cockerton/C1_no_strawberry/deconseq_appended/contigs_min_500bp_renamed.fasta
 ```
 STAR was used to align trimmed reads that did not align to F.ananassa to the P.aphanis genome
-
 ```bash
 for ReadDir in $(ls -d alignment/STAR/P_aphanis/RNAexp1/*); do
  Fread=$(ls $ReadDir/*.F.fa)
@@ -378,34 +410,292 @@ done
 #318141
 ```
 
-Erysiphales:
 
-Erysiphales genome assemblies were downloaded from NCBI, the best of each of the 9 species represented.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Erysiphales genome assemblies were downloaded from NCBI, the best of each of the 10 species represented. These were concatenated into a single file for database creation.
 ```bash
-
-mkdir -p /projects/nano_diagnostics/rawdata/erysiphales
-cd /projects/nano_diagnostics/rawdata/erysiphales
+#downloading erysiphales genomes
+mkdir -p /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales
+cd /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales
 
 ncbi-genome-download --dry-run --species-taxid 5120 fungi
 #does not work
 
+wget -P P_leocotricha https://sra-download.ncbi.nlm.nih.gov/traces/wgs01/wgs_aux/JA/AT/OF/JAATOF01/JAATOF01.1.fsa_nt.gz
+gunzip P_leocotricha/JAATOF01.1.fsa_nt.gz
+
 wget -P B_graminis https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/900/237/765/GCA_900237765.1_BghRACE1_v1/GCA_900237765.1_BghRACE1_v1_genomic.fna.gz 
+gunzip B_graminis/GCA_900237765.1_BghRACE1_v1_genomic.fna.gz
 
 wget -P E_necator https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/798/715/GCA_000798715.1_ASM79871v1/GCA_000798715.1_ASM79871v1_genomic.fna.gz 
+gunzip E_necator/GCA_000798715.1_ASM79871v1_genomic.fna.gz
 
 wget -P E_pisi https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/208/805/GCA_000208805.1_ASM20880v1/GCA_000208805.1_ASM20880v1_genomic.fna.gz
+gunzip E_pisi/GCA_000208805.1_ASM20880v1_genomic.fna.gz
 
 wget -P E_pulchra https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/918/395/GCA_002918395.1_ASM291839v1/GCA_002918395.1_ASM291839v1_genomic.fna.gz
+gunzip E_pulchra/GCA_002918395.1_ASM291839v1_genomic.fna.gz
 
 wget -P G_cichoracearum https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/003/611/235/GCA_003611235.1_ASM361123v1/GCA_003611235.1_ASM361123v1_genomic.fna.gz 
+gunzip G_cichoracearum/GCA_003611235.1_ASM361123v1_genomic.fna.gz
 
 wget -P G_magnicellulatus https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/006/912/115/GCA_006912115.1_ASM691211v1/GCA_006912115.1_ASM691211v1_genomic.fna.gz 
+gunzip G_magnicellulatus/GCA_006912115.1_ASM691211v1_genomic.fna.gz
 
 wget -P O_heveae https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/003/957/845/GCA_003957845.1_ASM395784v1/GCA_003957845.1_ASM395784v1_genomic.fna.gz 
+gunzip O_heveae/GCA_003957845.1_ASM395784v1_genomic.fna.gz 
 
 wget -P O_neolycopersici https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/003/610/855/GCA_003610855.1_ASM361085v1/GCA_003610855.1_ASM361085v1_genomic.fna.gz 
+gunzip O_neolycopersici/GCA_003610855.1_ASM361085v1_genomic.fna.gz 
 
 wget -P P_xanthii https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/010/015/925/GCA_010015925.1_POXAN_niab_assembly/GCA_010015925.1_POXAN_niab_assembly_genomic.fna.gz 
+gunzip P_xanthii/GCA_010015925.1_POXAN_niab_assembly_genomic.fna.gz 
+
+#modifying files to include taxid information
+cd /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales
+
+sed 's@>@>P_leucotricha_@g' P_leocotricha/JAATOF01.1.fsa_nt > P_leocotricha/JAATOF01.1.fa
+
+sed 's@>@>P_xanthii_@g' P_xanthii/GCA_010015925.1_POXAN_niab_assembly_genomic.fna > P_xanthii/GCA_010015925.1_POXAN_niab_assembly_genomic.fa
+
+sed 's@>@>O_neolycopersici_@g' O_neolycopersici/GCA_003610855.1_ASM361085v1_genomic.fna > O_neolycopersici/GCA_003610855.1_ASM361085v1_genomic.fa
+
+sed 's@>@>O_heveae_@g' O_heveae/GCA_003957845.1_ASM395784v1_genomic.fna > O_heveae/GCA_003957845.1_ASM395784v1_genomic.fa
+
+sed 's@>@>G_magnicellulatus_@g' G_magnicellulatus/GCA_006912115.1_ASM691211v1_genomic.fna > G_magnicellulatus/GCA_006912115.1_ASM691211v1_genomic.fa
+
+sed 's@>@>G_cichoracearum_@g' G_cichoracearum/GCA_003611235.1_ASM361123v1_genomic.fna > G_cichoracearum/GCA_003611235.1_ASM361123v1_genomic.fa
+
+sed 's@>@>E_pulchra_@g' E_pulchra/GCA_002918395.1_ASM291839v1_genomic.fna > E_pulchra/GCA_002918395.1_ASM291839v1_genomic.fa
+
+sed 's@>@>E_pisi_@g' E_pisi/GCA_000208805.1_ASM20880v1_genomic.fna > E_pisi/GCA_000208805.1_ASM20880v1_genomic.fa
+
+sed 's@>@>E_necator_@g' E_necator/GCA_000798715.1_ASM79871v1_genomic.fna > E_necator/GCA_000798715.1_ASM79871v1_genomic.fa
+
+sed 's@>@>E_necator_@g' B_graminis/GCA_900237765.1_BghRACE1_v1_genomic.fna > B_graminis/GCA_900237765.1_BghRACE1_v1_genomic.fa
+
+#concatenating into a single file
+cat P_leocotricha/JAATOF01.1.fa P_xanthii/GCA_010015925.1_POXAN_niab_assembly_genomic.fa O_neolycopersici/GCA_003610855.1_ASM361085v1_genomic.fa O_heveae/GCA_003957845.1_ASM395784v1_genomic.fa G_magnicellulatus/GCA_006912115.1_ASM691211v1_genomic.fa G_cichoracearum/GCA_003611235.1_ASM361123v1_genomic.fa E_pulchra/GCA_002918395.1_ASM291839v1_genomic.fa E_pisi/GCA_000208805.1_ASM20880v1_genomic.fa E_necator/GCA_000798715.1_ASM79871v1_genomic.fa B_graminis/GCA_900237765.1_BghRACE1_v1_genomic.fa > myerysiphalesdb.fasta
+
+#creating a blast database
+makeblastdb -in myerysiphalesdb.fasta -out myerysiphalesdb -parse_seqids -title "Podosphaera database" -dbtype nucl
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+A profile library of conserved fungal orthologs was downloaded for use with BUSCO.
+```bash
+cd ~/git_repos/tools/prog/busco/libraries
+wget https://busco-archive.ezlab.org/v1/files/fungi_buscos.tar.gz
+tar -zxvf fungi_buscos.tar.gz
+```
+```bash
+conda activate rnaquast
+cd /projects/nano_diagnostics
+mkdir -p assembly/trancriptome/trinity/P_pannosa/N_FonsecaExp/BUSCO/fungi
+cd assembly/trancriptome/trinity/P_pannosa/N_FonsecaExp/BUSCO/fungi
+python ~/git_repos/tools/prog/busco/busco-3.0.2/scripts/run_BUSCO.py -m transcriptome -i /projects/nano_diagnostics/rawdata/P_pannosa/N_FonsecaExp/transcriptome/GHDE01.1.fsa_nt -o . -l ~/git_repos/tools/prog/busco/libraries/fungi
+```
+
+/home/heavet/miniconda3/envs/rnaquast/bin/tblastn
+
+RNAquast analysis was repeated with the conserved fungi library insteead of leotiomycetes as this is currently the only way BUSCO is running successfully.
+```bash
+srun --partition long --time 0-72:00:00 --mem 100G --cpus-per-task 1 --pty bash
+conda activate rnaquast
+cd /projects/nano_diagnostics
+
+mkdir assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/unaligned/rnaquast2
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/unaligned/trinity_out_dir/Trinity.fasta --output_dir assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/unaligned/rnaquast2 --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/fungi
+
+mkdir -p assembly/trancriptome/trinity/P_pannosa/N_FonsecaExp/rnaquast2
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/rawdata/P_pannosa/N_FonsecaExp/transcriptome/GHDE01.1.fsa_nt --output_dir assembly/trancriptome/trinity/P_pannosa/N_FonsecaExp/rnaquast2 --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/fungi
+
+mkdir -p assembly/trancriptome/trinity/P_xanthii/D_CorsiaExp/rnaquast2
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/rawdata/P_xanthii/D_CorsiaExp/transcriptome/GEUO01.1.fsa_nt --output_dir assembly/trancriptome/trinity/P_xanthii/D_CorsiaExp/rnaquast2 --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/fungi
+
+mkdir -p assembly/trancriptome/trinity/P_xanthii/AngeliniExp/rnaquast2
+python ~/git_repos/tools/prog/rnaQUAST/rnaQUAST-2.0.1/rnaQUAST.py --transcripts /projects/nano_diagnostics/rawdata/P_xanthii/AngeliniExp/transcriptome/GHEF01.fasta --output_dir assembly/trancriptome/trinity/P_xanthii/AngeliniExp/rnaquast2 --debug --busco_lineage ~/git_repos/tools/prog/busco/libraries/fungi
+
+echo "complete"
+
+exit
+```
+```bash
+
+cd /projects/nano_diagnostics
+mkdir -p assembly/trancriptome/trinity/P_xanthii/AngeliniExp/BUSCO/fungi/1
+cd assembly/trancriptome/trinity/P_xanthii/AngeliniExp/BUSCO/fungi
+
+busco -f -m transcriptome -i /projects/nano_diagnostics/rawdata/P_xanthii/AngeliniExp/transcriptome/GHEF01.fasta -o 1 -l fungi_odb10
+
+        --------------------------------------------------
+        |Results from dataset fungi_odb10                 |
+        --------------------------------------------------
+        |C:94.3%[S:52.0%,D:42.3%],F:1.6%,M:4.1%,n:758     |
+        |715    Complete BUSCOs (C)                       |
+        |394    Complete and single-copy BUSCOs (S)       |
+        |321    Complete and duplicated BUSCOs (D)        |
+        |12     Fragmented BUSCOs (F)                     |
+        |31     Missing BUSCOs (M)                        |
+        |758    Total BUSCO groups searched               |
+        --------------------------------------------------
+cd /projects/nano_diagnostics
+mkdir -p assembly/trancriptome/trinity/P_xanthii/D_CorsiaExp/BUSCO/fungi/1
+cd assembly/trancriptome/trinity/P_xanthii/D_CorsiaExp/BUSCO/fungi
+
+busco -f -m transcriptome -i /projects/nano_diagnostics/rawdata/P_xanthii/D_CorsiaExp/transcriptome/GEUO01.1.fsa_nt -o 1 -l fungi_odb10
+
+        --------------------------------------------------
+        |Results from dataset fungi_odb10                 |
+        --------------------------------------------------
+        |C:65.0%[S:57.3%,D:7.7%],F:17.7%,M:17.3%,n:758    |
+        |492    Complete BUSCOs (C)                       |
+        |434    Complete and single-copy BUSCOs (S)       |
+        |58     Complete and duplicated BUSCOs (D)        |
+        |134    Fragmented BUSCOs (F)                     |
+        |132    Missing BUSCOs (M)                        |
+        |758    Total BUSCO groups searched               |
+        --------------------------------------------------
+
+cd /projects/nano_diagnostics
+mkdir -p assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/unaligned/BUSCO/fungi/1
+cd assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/unaligned/BUSCO/fungi
+
+busco -f -m transcriptome -i /projects/nano_diagnostics/assembly/trancriptome/trinity/P_aphanis/RNAexp1/infected/unaligned/trinity_out_dir/Trinity.fasta -o 1 -l fungi_odb10
+
+
+        --------------------------------------------------
+        |Results from dataset fungi_odb10                 |
+        --------------------------------------------------
+        |C:56.4%[S:16.4%,D:40.0%],F:23.4%,M:20.2%,n:758   |
+        |427    Complete BUSCOs (C)                       |
+        |124    Complete and single-copy BUSCOs (S)       |
+        |303    Complete and duplicated BUSCOs (D)        |
+        |177    Fragmented BUSCOs (F)                     |
+        |154    Missing BUSCOs (M)                        |
+        |758    Total BUSCO groups searched               |
+        --------------------------------------------------
+
+cd /projects/nano_diagnostics
+mkdir -p assembly/trancriptome/trinity/P_pannosa/N_FonsecaExp/BUSCO/fungi/1
+cd assembly/trancriptome/trinity/P_pannosa/N_FonsecaExp/BUSCO/fungi
+
+busco -f -m transcriptome -i /projects/nano_diagnostics/rawdata/P_pannosa/N_FonsecaExp/transcriptome/GHDE01.1.fsa_nt -o 1 -l fungi_odb10
+
+        --------------------------------------------------
+        |Results from dataset fungi_odb10                 |
+        --------------------------------------------------
+        |C:46.6%[S:31.0%,D:15.6%],F:9.9%,M:43.5%,n:758    |
+        |353    Complete BUSCOs (C)                       |
+        |235    Complete and single-copy BUSCOs (S)       |
+        |118    Complete and duplicated BUSCOs (D)        |
+        |75     Fragmented BUSCOs (F)                     |
+        |330    Missing BUSCOs (M)                        |
+        |758    Total BUSCO groups searched               |
+        --------------------------------------------------
+
+python BUSCO_v1.1b.py -o NAME -in TRANSCRIPTOME -l LINEAGE -m trans
+
+```
+
+Quast was used to assess the quality of genome assembly:
+```bash
+  ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+    for Assembly in $(ls assembly/spades/*/*/filtered_contigs/contigs_min_500bp.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+    OutDir=assembly/spades/$Organism/$Strain/filtered_contigs
+    qsub $ProgDir/sub_quast.sh $Assembly $OutDir
+  done
+```
+The results of quast were displayed:
+```bash
+  for Assembly in $(ls assembly/spades/*/*/filtered_contigs/report.txt); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev);
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev);
+    echo;
+    echo $Organism;
+    echo $Strain;
+    cat $Assembly;
+  done > assembly/quast_results.txt
+```
+
+
+
 
