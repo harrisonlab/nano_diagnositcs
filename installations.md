@@ -16,7 +16,34 @@ conda config --add channels conda-forge
 conda update -n base -c defaults conda
 ```
 
+##samtools
+```bash
+conda create -n samtools
+conda activate samtools
+conda install -c bioconda samtools
+conda install -c conda-forge openssl=1.0.2p=h14c3975_1002
+#version 1.7 only, therefore:
 
+mkdir -p ~/git_repos/tools/prog/samtools
+cd ~/git_repos/tools/prog/samtools
+wget https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2
+tar -jxvf samtools-1.10.tar.bz2
+cd samtools-1.10
+./configure --prefix=/home/heavet/git_repos/tools/prog/samtools/current
+make
+make install
+
+cd ~/git_repos/tools/prog/samtools
+git clone git://github.com/samtools/htslib.git
+git clone git://github.com/samtools/bcftools.git
+cd bcftools
+make
+
+nano ~/.profile
+#edited with:
+#PATH=$HOME/git_repos/tools/prog/samtools/samtools-1.10:${PATH}
+. ~/.profile
+```
 ##FastQC
 ```bash
 mkdir -p ~/git_repos/tools/prog/fastqc
@@ -36,6 +63,19 @@ nano ~/.profile
 #PATH=$HOME/git_repos/tools/prog/fastqc/FastQC:${PATH}
 
 . ~/.profile
+```
+##ATLAS
+```bash
+conda create -n ATLAS
+conda activate ATLAS
+conda install metagenome-atlas
+conda install mamba
+```
+##bowtie2
+```bash
+conda create -n bowtie2
+conda activate bowtie2
+conda install -c bioconda bowtie2
 ```
 ##rnaQUAST
 ```bash
