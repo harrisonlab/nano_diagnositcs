@@ -64,6 +64,19 @@ nano ~/.profile
 
 . ~/.profile
 ```
+## kat
+```bash
+conda create -n kat
+conda activate kat
+conda install kat
+conda install -c anaconda python
+```
+##SPAdes
+```
+conda create -n spades
+conda activate spades
+conda install -c bioconda spades
+```
 ##ATLAS
 ```bash
 conda create -n ATLAS
