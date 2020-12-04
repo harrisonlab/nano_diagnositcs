@@ -40,12 +40,18 @@ mkdir -p assembly/genome/NCBI/rosales
 
 ln -s /projects/oldhome/groups/harrisonlab/project_files/root_architecture/Apple_genome/GDDH13_1-1_formatted.fasta assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta
 ```
+The yeast reference genome was downloaded
+```bash
+mkdir -p assembly/genome/NCBI/S.cerevisiae
+cd assembly/genome/NCBI/S.cerevisiae
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/146/045/GCF_000146045.2_R64/GCF_000146045.2_R64_genomic.fna.gz
+gunzip GCF_000146045.2_R64_genomic.fna.gz
+```
 The phiX genome was downloaded
 ```bash
 mkdir -p assembly/genome/NCBI/phix
 cd assembly/genome/NCBI/phix
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/Viruses/enterobacteria_phage_phix174_sensu_lato_uid14015/NC_001422.fna
-
 ```
 The human genome was downloaded
 ```bash
@@ -340,12 +346,14 @@ conda activate bowtie2
 cd alignment/P_leucotricha/THeavenp11_1/bowtie2/apple
 
 #An alignment of trimmed reads including unpaired reads was made to the apple genome, this produced a 13.67% overall alignment rate.
+
 bowtie2 \
 -x apple_index \
 -1 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim.fq.gz \
 -2 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim.fq.gz \
 -U /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim_unpaired.fq.gz \
---un THeavenp11_1unalignedapple1+2.sam \
+--un-gz THeavenp11_1unalignedapple1+2s.fq.gz \
+--un-conc-gz THeavenp11_1unalignedapple1+2fr.fq.gz \
 -S THeavenp11_1alignedapple1+2.sam
 #60306445 reads; of these:
 # 56908048 (94.36%) were paired; of these:
@@ -398,7 +406,7 @@ bowtie2 \
 #    144189 (4.24%) aligned >1 times
 #64.15% overall alignment rate
 ```
-###Coverage
+### Coverage
 ```bash
 #Coverage with the first round of sequencing data was estimated.
 samtools index -b alignment/P_leucotricha/THeavenp11_1/bowtie2/P_leucotricha/batch/JAATOF01.1.fa_aligned_sorted.bam 
@@ -420,7 +428,7 @@ samtools sort --threads 8 -o THeavenp11_1alignedGananPleucotricha1+2_sorted.bam 
 samtools index -@ 8 THeavenp11_1alignedGananPleucotricha1+2_sorted.bam THeavenp11_1alignedGananPleucotricha1+2_sorted.bam.index
 samtools coverage THeavenp11_1alignedGananPleucotricha1+2_sorted.bam -o coverage1+2.txt
 ```
-###Kmer analysis toolkit
+### Kmer analysis toolkit
 The quality of the first round of sequencing data was assessed using KAT.
 ```bash
 #Sequencing reads were compared with the available apple powdery mildew genome, results were plotted with various settings
@@ -459,14 +467,17 @@ kat comp -m 15 -v -h -t 8 -o alignment/P_leucotricha/THeavenp11_1/kat/P_leucotri
 
 kat plot spectra-cn -x 300 -o alignment/P_leucotricha/THeavenp11_1/kat/P_leucotricha/reads_v_ganan1+2plot300 alignment/P_leucotricha/THeavenp11_1/kat/P_leucotricha/reads_v_ganan1+2-main.mx
 
+screen -r
+srun -p short  --mem 350G --pty bash
+conda activate kat
+cd /projects/nano_diagnostics
 #Combined reads were compared to the available apple genome and results plotted:
-kat comp -m 15 -v -h -t 8 -o alignment/P_leucotricha/THeavenp11_1/kat/apple/reads_v_gdel1+2 '/projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim_unpaired.fq.gz' assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta
-#kmers reduced to 10 still exceeds memory
+kat comp -m 21 -v -h -t 8 -o alignment/P_leucotricha/THeavenp11_1/kat/apple/reads_v_gdel1+2-21 '/projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim_unpaired.fq.gz' assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta
 
-kat plot spectra-cn -x 300 -o alignment/P_leucotricha/THeavenp11_1/kat/apple/reads_v_gdel1+2plot300 alignment/P_leucotricha/THeavenp11_1/kat/apple/reads_v_gdel1+2-main.mx
+kat plot spectra-cn -x 300 -o alignment/P_leucotricha/THeavenp11_1/kat/apple/reads_v_gdel1+2-21plot300 alignment/P_leucotricha/THeavenp11_1/kat/apple/reads_v_gdel1+2-21-main.mx
 ```
 
-#from here work in progress
+# from here work in progress
 
 
 
@@ -508,46 +519,29 @@ kat plot spectra-cn -x 300 -o alignment/P_leucotricha/THeavenp11_1/kat/apple/rea
 Trimmed read that did not align to the apple genome were taken as raw data for assembly.
 
 ```bash
-#unaligned reads were converted to sorted .bam format
-samtools view --threads 8 -bS alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2.sam -o alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2.bam
+#files were renamed to correct extensions for spades
+mv alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2fr.fq.1.gz alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-f.fq.gz
 
-#get all unpaired reads
-samtools view --threads 8 -F 1 alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2.bam > alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2s.bam
+mv alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2fr.fq.2.gz alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-r.fq.gz
 
-#get all paired reads
-samtools view --threads 8 -f 1 alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2.bam > alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2fr.bam
-
-#paired reads separated into forward and reverse reads
-samtools view -F 0x10  -h alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2fr.bam | samtools view -bS - > alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2f.bam
-
-samtools view -f 0x10  -h alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2fr.bam | samtools view -bS - > alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2r.bam
-
-#these files were sorted
-samtools sort -n --threads 8 alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2f.bam -o alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-f.bam
-
-samtools sort -n --threads 8 alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2r.bam -o alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-r.bam
-
-samtools sort -n --threads 8 alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2s.bam -o alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-s.bam
-
-#these files were converted to  fastq format
-samtools fastq --threads 8 alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-f.bam > alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-f.fq.gz
-
-samtools fastq --threads 8 alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-r.bam > alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-r.fq.gz
-
-samtools fastq --threads 8 alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-s.bam > alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-s.fq.gz
+mv alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2s.fq.gz alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-s.fq.gz
+#files needed to be unzipped for use with megahit
+gunzip alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-f.fq.gz
+gunzip alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-r.fq.gz
+gunzip alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-s.fq.gz
 ```
-###SPAdes
+### SPAdes
 A conda installation of SPAdes was performed
 
-Trimmed MiSeq reads were assembled using the program SPAdes:
+Trimmed MiSeq reads were assembled using the program SPAdes, contigs <500bp filtered out with abyss:
 ```bash
 conda activate spades
-#spades assembly was performed --meta flag for metagenome data was not selected
+# himem, --careful flag used for mismatch correction, max memory 250gb, max threads 20
   for ReadDir in $(ls -d alignment/P_leucotricha/THeavenp11_1/bowtie2/apple); do
     ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
-    F_Read=$(ls $StrainPath/*-f.fq.gz)
-    R_Read=$(ls $StrainPath/*-r.fq.gz)
-    S_Read=$(ls $StrainPath/*-s.fq.gz)
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    S_Read=$(ls $ReadDir/*s.fq)
     OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/apple@SPAdes@g')
     echo $F_Read
     echo $R_Read
@@ -555,13 +549,333 @@ conda activate spades
     echo $OutDir
     sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 10
   done
+# Submitted batch job 580029  -250gb long
+# Completed with warnings - (kmer_coverage_model.cpp   : 366)   Failed to determine erroneous kmer threshold. Threshold set to: 3
+
+# himem, max memory 250gb, --isolate flag (recommended for high >100 coverage data), --careful therefore unavailable
+  for ReadDir in $(ls -d alignment/P_leucotricha/THeavenp11_1/bowtie2/apple); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    S_Read=$(ls $ReadDir/*s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/apple@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes_isolate.sh $F_Read $R_Read $S_Read $OutDir correct 10
+  done
+# Submitted batch job 580030  -250gb long
+# Completed with warnings - (kmer_coverage_model.cpp   : 366)   Failed to determine erroneous kmer threshold. Threshold set to: 3
+
+```
+A conda installation of quast was performed.
+
+Quast was used to assess the quality of genome assemblys:
+```bash
+conda activate quast
+
+    for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/*/contigs_min_500bp.fasta); do
+    	ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+    	OutDir=$(dirname $Assembly)
+    	echo $Assembly
+    	echo $OutDir
+    	sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+```
+### metaSPAdes
+metaSPAdes is included in the SPAdes toolkit. metaSPAdes supports only a single short read-read library which has to be paired-end. Mismatch correction is not available and coverage cuttoff cannot be specified.
+
+Trimmed paired MiSeq reads were assembled using the program metaSPAdes, contigs <500bp filtered out with abyss:
+```bash
+conda activate spades
+# max memory 58gb, max threads 20
+  for ReadDir in $(ls -d alignment/P_leucotricha/THeavenp11_1/bowtie2/apple); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/apple@metaSPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_metaSPAdes.sh $F_Read $R_Read $OutDir 
+  done
+# Submitted batch job 578642 -58gb long anything higher will not run
+# Completed
+```
+Quast was used to assess the quality of genome assembly:
+```bash
+conda activate quast
+
+    for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/metaSPAdes/*/*/contigs_min_500bp.fasta); do
+    	ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+    	OutDir=$(dirname $Assembly)
+    	echo $Assembly
+    	echo $OutDir
+    	sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
 ```
 
+Deconseq 
 
 
 
+### MEGAHIT
+A conda installation of megahit was performed
+
+Trimmed paired MiSeq reads were assembled using the program megahit, contigs <500bp filtered out with --min-contig-len flag
+```bash
+conda activate megahit
+# max memory 30,000,000,000 bytes, max threads 20, klist specified the same as with spades: 21,33,55,77,99,127
+  for ReadDir in $(ls -d alignment/P_leucotricha/THeavenp11_1/bowtie2/apple); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    S_Read=$(ls $ReadDir/*s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/apple@megahit@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_megahit.sh $F_Read $R_Read $S_Read $OutDir 
+  done
+# Submitted batch job 578644 -58gb long
+# no output
+# Submitted batch job 580031  -250gb long
+# no output
+
+mkdir assembly/metagenome/P_leucotricha/THeavenp11_1/megahit/1
+megahit -1 alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-f.fq -2 alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-r.fq -o assembly/metagenome/P_leucotricha/THeavenp11_1/megahit/2
+
+megahit --verbose --k-list 21,33,55,77,99,127 --min-contig-len 500 -1 alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-f.fq -2 alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-r.fq -r alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-s.fq -o assembly/metagenome/P_leucotricha/THeavenp11_1/megahit/4
+
+```
+```bash
+conda activate BUSCO
+
+for assembly in $(echo assembly/metagenome/P_leucotricha/THeavenp11_1/metaSPAdes/*/filtered_contigs); do
+	Data=$(ls $assembly/contigs_min_500bp.fasta) 
+	Input=$(dirname $assembly)
+	mkdir -p $Input/BUSCO/fungi/1
+	cd $Input/BUSCO/fungi
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
+	cd /projects/nano_diagnostics
+done
+
+#metaspades:
+	--------------------------------------------------
+	|Results from dataset fungi_odb10                 |
+	--------------------------------------------------
+	|C:96.3%[S:95.6%,D:0.7%],F:0.7%,M:3.0%,n:758      |
+	|730	Complete BUSCOs (C)                       |
+	|725	Complete and single-copy BUSCOs (S)       |
+	|5	Complete and duplicated BUSCOs (D)        |
+	|5	Fragmented BUSCOs (F)                     |
+	|23	Missing BUSCOs (M)                        |
+	|758	Total BUSCO groups searched               |
+	--------------------------------------------------
+#spades: 580029:
+        --------------------------------------------------
+        |Results from dataset fungi_odb10                 |
+        --------------------------------------------------
+        |C:96.5%[S:96.2%,D:0.3%],F:0.5%,M:3.0%,n:758      |
+        |731    Complete BUSCOs (C)                       |
+        |729    Complete and single-copy BUSCOs (S)       |
+        |2      Complete and duplicated BUSCOs (D)        |
+        |4      Fragmented BUSCOs (F)                     |
+        |23     Missing BUSCOs (M)                        |
+        |758    Total BUSCO groups searched               |
+        --------------------------------------------------
+
+#spades -isolate: 580030:
+        --------------------------------------------------
+        |Results from dataset fungi_odb10                 |
+        --------------------------------------------------
+        |C:96.3%[S:96.0%,D:0.3%],F:0.7%,M:3.0%,n:758      |
+        |730    Complete BUSCOs (C)                       |
+        |728    Complete and single-copy BUSCOs (S)       |
+        |2      Complete and duplicated BUSCOs (D)        |
+        |5      Fragmented BUSCOs (F)                     |
+        |23     Missing BUSCOs (M)                        |
+        |758    Total BUSCO groups searched               |
+        --------------------------------------------------
+#no output files being produced
+
+for assembly in $(echo assembly/metagenome/P_leucotricha/THeavenp11_1/*/*/filtered_contigs); do
+	Data=$(ls $assembly/contigs_min_500bp.fasta) 
+	Input=$(dirname $assembly)
+	mkdir -p $Input/BUSCO/ascomycota/1
+	cd $Input/BUSCO/ascomycota
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
+	cd /projects/nano_diagnostics
+done
+#metaspades:
+	--------------------------------------------------
+	|Results from dataset ascomycota_odb10            |
+	--------------------------------------------------
+	|C:93.9%[S:93.3%,D:0.6%],F:0.5%,M:5.6%,n:1706     |
+	|1601	Complete BUSCOs (C)                       |
+	|1591	Complete and single-copy BUSCOs (S)       |
+	|10	Complete and duplicated BUSCOs (D)        |
+	|8	Fragmented BUSCOs (F)                     |
+	|97	Missing BUSCOs (M)                        |
+	|1706	Total BUSCO groups searched               |
+	--------------------------------------------------
+#spades:
+	--------------------------------------------------
+	|Results from dataset ascomycota_odb10            |
+	--------------------------------------------------
+	|C:93.7%[S:93.5%,D:0.2%],F:0.4%,M:5.9%,n:1706     |
+	|1598	Complete BUSCOs (C)                       |
+	|1595	Complete and single-copy BUSCOs (S)       |
+	|3	Complete and duplicated BUSCOs (D)        |
+	|6	Fragmented BUSCOs (F)                     |
+	|102	Missing BUSCOs (M)                        |
+	|1706	Total BUSCO groups searched               |
+	--------------------------------------------------
+
+#spades -isolate:
+        --------------------------------------------------
+        |Results from dataset ascomycota_odb10            |
+        --------------------------------------------------
+        |C:93.9%[S:93.7%,D:0.2%],F:0.5%,M:5.6%,n:1706     |
+        |1601   Complete BUSCOs (C)                       |
+        |1598   Complete and single-copy BUSCOs (S)       |
+        |3      Complete and duplicated BUSCOs (D)        |
+        |8      Fragmented BUSCOs (F)                     |
+        |97     Missing BUSCOs (M)                        |
+        |1706   Total BUSCO groups searched               |
+        --------------------------------------------------
+
+for assembly in $(echo assembly/metagenome/P_leucotricha/THeavenp11_1/*/*/filtered_contigs); do
+	Data=$(ls $assembly/contigs_min_500bp.fasta) 
+	Input=$(dirname $assembly)
+	mkdir -p $Input/BUSCO/leotiomycetes/1
+	cd $Input/BUSCO/leotiomycetes
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
+	cd /projects/nano_diagnostics
+done
+
+#metaspades:
+	--------------------------------------------------
+	|Results from dataset leotiomycetes_odb10         |
+	--------------------------------------------------
+	|C:77.0%[S:76.6%,D:0.4%],F:3.5%,M:19.5%,n:3234    |
+	|2491	Complete BUSCOs (C)                       |
+	|2477	Complete and single-copy BUSCOs (S)       |
+	|14	Complete and duplicated BUSCOs (D)        |
+	|112	Fragmented BUSCOs (F)                     |
+	|631	Missing BUSCOs (M)                        |
+	|3234	Total BUSCO groups searched               |
+	--------------------------------------------------
+#spades:
+	--------------------------------------------------
+	|Results from dataset leotiomycetes_odb10         |
+	--------------------------------------------------
+	|C:88.7%[S:88.3%,D:0.4%],F:1.4%,M:9.9%,n:3234     |
+	|2870	Complete BUSCOs (C)                       |
+	|2857	Complete and single-copy BUSCOs (S)       |
+	|13	Complete and duplicated BUSCOs (D)        |
+	|44	Fragmented BUSCOs (F)                     |
+	|320	Missing BUSCOs (M)                        |
+	|3234	Total BUSCO groups searched               |
+	--------------------------------------------------
 
 
+#spades -isolate:
+        --------------------------------------------------
+        |Results from dataset leotiomycetes_odb10         |
+        --------------------------------------------------
+        |C:88.6%[S:88.3%,D:0.3%],F:1.4%,M:10.0%,n:3234    |
+        |2867   Complete BUSCOs (C)                       |
+        |2857   Complete and single-copy BUSCOs (S)       |
+        |10     Complete and duplicated BUSCOs (D)        |
+        |46     Fragmented BUSCOs (F)                     |
+        |321    Missing BUSCOs (M)                        |
+        |3234   Total BUSCO groups searched               |
+        --------------------------------------------------
+
+```
+```bash
+conda activate BUSCO
+for assembly in $(echo assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa); do
+	Data=$(ls $assembly) 
+	Input=$(dirname $assembly)
+	mkdir -p $Input/BUSCO/fungi/1
+	cd $Input/BUSCO/fungi
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
+	cd /projects/nano_diagnostics
+done
+for assembly in $(echo assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa); do
+	Data=$(ls $assembly) 
+	Input=$(dirname $assembly)
+	mkdir -p $Input/BUSCO/ascomycota/1
+	cd $Input/BUSCO/ascomycota
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
+	cd /projects/nano_diagnostics
+done
+for assembly in $(echo assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa); do
+	Data=$(ls $assembly) 
+	Input=$(dirname $assembly)
+	mkdir -p $Input/BUSCO/leotiomycetes/1
+	cd $Input/BUSCO/leotiomycetes
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
+	cd /projects/nano_diagnostics
+done
+```
+```bash
+conda activate BUSCO
+for assembly in $(echo assembly/genome/NCBI/S.cerevisiae/GCF_000146045.2_R64_genomic.fna); do
+	Data=$(ls $assembly) 
+	Input=$(dirname $assembly)
+	mkdir -p $Input/BUSCO/fungi/1
+	cd $Input/BUSCO/fungi
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
+	cd /projects/nano_diagnostics
+done
+for assembly in $(echo assembly/genome/NCBI/S.cerevisiae/GCF_000146045.2_R64_genomic.fna); do
+	Data=$(ls $assembly) 
+	Input=$(dirname $assembly)
+	mkdir -p $Input/BUSCO/ascomycota/1
+	cd $Input/BUSCO/ascomycota
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
+	cd /projects/nano_diagnostics
+done
+for assembly in $(echo assembly/genome/NCBI/S.cerevisiae/GCF_000146045.2_R64_genomic.fna); do
+	Data=$(ls $assembly) 
+	Input=$(dirname $assembly)
+	mkdir -p $Input/BUSCO/leotiomycetes/1
+	cd $Input/BUSCO/leotiomycetes
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
+	cd /projects/nano_diagnostics
+done
+
+for assembly in $(echo assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta); do
+	Data=$(ls $assembly) 
+	Input=$(dirname $assembly)
+	mkdir -p $Input/BUSCO/fungi/1
+	cd $Input/BUSCO/fungi
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
+	cd /projects/nano_diagnostics
+done
+for assembly in $(echo assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta); do
+	Data=$(ls $assembly) 
+	Input=$(dirname $assembly)
+	mkdir -p $Input/BUSCO/ascomycota/1
+	cd $Input/BUSCO/ascomycota
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
+	cd /projects/nano_diagnostics
+done
+for assembly in $(echo assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta); do
+	Data=$(ls $assembly) 
+	Input=$(dirname $assembly)
+	mkdir -p $Input/BUSCO/leotiomycetes/1
+	cd $Input/BUSCO/leotiomycetes
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
+	cd /projects/nano_diagnostics
+done
+echo fin
+```
 
 
 
@@ -616,40 +930,315 @@ sbatch $ProgDir/sub_atlas.sh $config $workdir
 #569879
 ```
 
+### BBAP
+### Genovo
+### IDBA-UD
+### IVA
+### MAP
+### MegaGTA
+### MEGAHIT
+### MetaVelvet
+### MetaVelvet-SL
+### Omega
+### PRICE
+### Ray Meta
+### SAVAGE
+### Snowball
+### VICUNA
+### Xander
+### BBAP
+### Genovo
+### IDBA-UD
+### IVA
+### MAP
+### MegaGTA
+### MetaVelvet
+### MetaVelvet-SL
+### Omega
+### PRICE
+### Ray Meta
+### SAVAGE
+### Snowball
+
+try BWA alignment instead of bowtie, get back to ATLAS, run through andys pipeline for strawberry mildew, busco of assemblies, kraken?, identify species in metagenome, mask/hard mask assemblies?, kat, busco, megahit example datasets --test, specify memory for megahit
+```bash
+screen -r
+srun -p himem --pty bash
+conda activate kat
+cd /projects/nano_diagnostics
+
+#Combined reads were compared to the spades draft mildew genome and results plotted:
+kat comp -m 21 -v -h -t 8 -o alignment/P_leucotricha/THeavenp11_1/kat/P_leucotricha/ganan_v_spades 'assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta' assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
+#15206.123
+
+kat plot spectra-cn -x 300 -o alignment/P_leucotricha/THeavenp11_1/kat/P_leucotricha/ganan_v_spadesplot300 alignment/P_leucotricha/THeavenp11_1/kat/P_leucotricha/ganan_v_spades-main.mx
+
+kat comp -m 21 -v -h -t 8 -o alignment/P_leucotricha/THeavenp11_1/kat/P_leucotricha/ganan_v_spades2 'assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta' assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
+
+kat plot spectra-cn -x 300 -o alignment/P_leucotricha/THeavenp11_1/kat/apple/gdel_v_spadesplot300 alignment/P_leucotricha/THeavenp11_1/kat/P_leucotricha/ganan_v_spades2-main.mx
+
+kat comp -m 21 -v -h -t 8 -o alignment/P_leucotricha/THeavenp11_1/kat/P_leucotricha/ganan_v_spades3 'assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa' assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
+
+kat plot spectra-cn -y 50000000 -x 10 -o alignment/P_leucotricha/THeavenp11_1/kat/P_leucotricha/ganan_v_spadesplot100-1 alignment/P_leucotricha/THeavenp11_1/kat/P_leucotricha/ganan_v_spades3-main.mx
+```
+
+The existing Podosphaera leucotricha genome raw reads were downloaded.
+```bash
+mkdir /projects/nano_diagnostics/rawdata/P_leucotricha/ganan
+pip install osfclient
+osf -p reh8b clone rawdata/P_leucotricha/ganan
+
+srun -p himem --pty bash
+conda activate kat
+kat comp -m 21 -v -h -t 8 -o alignment/P_leucotricha/THeavenp11_1/kat/P_leucotricha/gananreads_v_spades '/projects/nano_diagnostics/rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/5732-PL3-HiSeqMetagenome_S9_L001_R1_001.fastq.gz /projects/nano_diagnostics/rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/5732-PL3-HiSeqMetagenome_S9_L001_R2_001.fastq.gz /projects/nano_diagnostics/rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/5732-PL3-HiSeqMetagenome_S9_L002_R1_001.fastq.gz /projects/nano_diagnostics/rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/5732-PL3-HiSeqMetagenome_S9_L002_R2_001.fastq.gz /projects/nano_diagnostics/rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/5732-PL3-HiSeqMetagenome_S9_L003_R1_001.fastq.gz /projects/nano_diagnostics/rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/5732-PL3-HiSeqMetagenome_S9_L003_R2_001.fastq.gz /projects/nano_diagnostics/rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/5732-PL3-HiSeqMetagenome_S9_L004_R1_001.fastq.gz /projects/nano_diagnostics/rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/5732-PL3-HiSeqMetagenome_S9_L004_R2_001.fastq.gz' assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
+#30797.asco
+
+kat plot spectra-cn -x 300 -o alignment/P_leucotricha/THeavenp11_1/kat/P_leucotricha/gananreads_v_spadesplot300 alignment/P_leucotricha/THeavenp11_1/kat/P_leucotricha/gananreads_v_spades-main.mx
+#our reads vs our assembly
+screen -r
+srun -p short  --mem 350G --pty bash
+conda activate kat
+cd /projects/nano_diagnostics
+
+kat comp -m 21 -v -h -t 8 -o alignment/P_leucotricha/THeavenp11_1/kat/apple/myreads_v_spades '/projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim_unpaired.fq.gz' assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
+
+kat plot spectra-cn -x 300 -o alignment/P_leucotricha/THeavenp11_1/kat/P_leucotricha/myreads_v_spadesplot300 alignment/P_leucotricha/THeavenp11_1/kat/apple/myreads_v_spades-main.mx
+
+#their reads vs their assembly
+kat comp -m 21 -v -h -t 8 -o alignment/P_leucotricha/THeavenp11_1/kat/P_leucotricha/gananreads_v_ganan '/projects/nano_diagnostics/rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/5732-PL3-HiSeqMetagenome_S9_L001_R1_001.fastq.gz /projects/nano_diagnostics/rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/5732-PL3-HiSeqMetagenome_S9_L001_R2_001.fastq.gz /projects/nano_diagnostics/rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/5732-PL3-HiSeqMetagenome_S9_L002_R1_001.fastq.gz /projects/nano_diagnostics/rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/5732-PL3-HiSeqMetagenome_S9_L002_R2_001.fastq.gz /projects/nano_diagnostics/rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/5732-PL3-HiSeqMetagenome_S9_L003_R1_001.fastq.gz /projects/nano_diagnostics/rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/5732-PL3-HiSeqMetagenome_S9_L003_R2_001.fastq.gz /projects/nano_diagnostics/rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/5732-PL3-HiSeqMetagenome_S9_L004_R1_001.fastq.gz /projects/nano_diagnostics/rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/5732-PL3-HiSeqMetagenome_S9_L004_R2_001.fastq.gz' assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa
+
+kat plot spectra-cn -x 300 -o alignment/P_leucotricha/THeavenp11_1/kat/apple/gananreads_v_gananplot300 alignment/P_leucotricha/THeavenp11_1/kat/apple/gananreads_v_ganan-main.mx
+```
+Kraken2 was downloaded and a standard database created.
+```bash
+mkdir -p analysis/P_leucotricha/THeavenp11_1/kraken2
+kraken2-build --standard --db analysis/P_leucotricha/THeavenp11_1/kraken2
+#Accession to taxid map files are required to build this DB.
+
+kraken2-build --download-taxonomy --db analysis/P_leucotricha/THeavenp11_1/kraken2
+kraken2-build --standard --db analysis/P_leucotricha/THeavenp11_1/kraken2
+#database ("analysis/P_leucotricha/THeavenp11_1/kraken2") does not contain necessary file taxo.k2d
+kraken2-build --download-taxonomy --threads 24 --db analysis/P_leucotricha/THeavenp11_1/kraken2
+kraken2-build --standard --threads 24 --db analysis/P_leucotricha/THeavenp11_1/kraken2
+
+#Building database files (step 3)...
+#Taxonomy parsed and converted.
+#xargs: cat: terminated by signal 13
+#/home/heavet/git_repos/tools/prog/kraken2/1/build_kraken2_db.sh: line 143:  7610 Done                    list_sequence_files
+#      7611 Exit 125                | xargs -0 cat
+#      7612 Killed                  | build_db -k $KRAKEN2_KMER_LEN -l $KRAKEN2_MINIMIZER_LEN -S $KRAKEN2_SEED_TEMPLATE $KRAKEN2XFLAG -H hash.k2d.tmp -t taxo.k2d.tmp -o opts.k2d.tmp -n taxonomy/ -m $seqid2taxid_map_file -c $required_capacity -p $KRAKEN2_THREAD_CT $max_db_flag -B $KRAKEN2_BLOCK_SIZE -b $KRAKEN2_SUBBLOCK_SIZE -r $KRAKEN2_MIN_TAXID_BITS $fast_build_flag
+
+
+mkdir analysis/P_leucotricha/THeavenp11_1/kraken2/1
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/1/output.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/unclassified-out.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/classified-out.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/1/report.txt \
+assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
+#kraken2: database ("analysis/P_leucotricha/THeavenp11_1/kraken2") does not contain necessary file taxo.k2d
+```
+
+A conda installation of metabat2 was performed
+```bash
+#metabat requires assembled contigs and a BAM file with the mapping of reads to the contigs as an input. Therefore trimmed reads were aligned to our metagenome assembly and formatted appropriately:
+mkdir -p alignment/P_leucotricha/THeavenp11_1/bowtie2/myapplemildew
+cd alignment/P_leucotricha/THeavenp11_1/bowtie2/myapplemildew
+conda activate bowtie2
+bowtie2-build /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta myapplemildew_index
+bowtie2 \
+-x myapplemildew_index \
+-1 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim_unpaired.fq.gz \
+--un-gz THeavenp11_1unalignedmyapplemildew1+2s.fq.gz \
+--un-conc-gz THeavenp11_1unalignedmyapplemildew1+2fr.fq.gz \
+-S THeavenp11_1alignedmyapplemildew1+2.sam
+samtools view -S -b THeavenp11_1alignedmyapplemildew1+2.sam > THeavenp11_1alignedmyapplemildew1+2.bam
+samtools sort THeavenp11_1alignedmyapplemildew1+2.bam -o THeavenp11_1alignedmyapplemildew1+2.sorted.bam
+samtools index THeavenp11_1alignedmyapplemildew1+2.sorted.bam
+conda deactivate
+
+#metabat2 was run
+cd /projects/nano_diagnostics
+mkdir -p analysis/P_leucotricha/THeavenp11_1/metabat2
+cd analysis/P_leucotricha/THeavenp11_1/metabat2
+conda activate metabat2
+runMetaBat.sh --saveCls --unbinned /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta /projects/nano_diagnostics/alignment/P_leucotricha/THeavenp11_1/bowtie2/myapplemildew/THeavenp11_1alignedmyapplemildew1+2.sorted.bam 
+#Output 3 bins; size 262 (9 sequences), 2586 (106 sequences) and 35577kB (1743 sequences) + unbinned 11993 (3177 sequences) 7860 contigs - 2825 contigs missing?
+
+#checkM was installed in the metabat2 conda environment
+conda install checkm-genome
+
+#focus was installed and run
+pip3 install metagenomics-focus
+pip3 install numpy
+pip3 install scipy 
+cd /projects/nano_diagnostics
+mkdir -p analysis/P_leucotricha/THeavenp11_1/focus
+focus -q /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs --list_output -o analysis/P_leucotricha/THeavenp11_1/focus
+
+#metaphlan was installed
+conda create -n metaphlan
+conda activate metaphlan
+conda install metaphlan=3.0=pyh5ca1d4c_2 --no-channel-priority
+screen -r
+srun -p short --mem 350G --pty bash
+mkdir -p analysis/P_leucotricha/THeavenp11_1/metaphlan
+metaphlan /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta --bowtie2out /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp_bowtie2.bz2 --nproc 5 --input_type fasta -o /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp_profile.txt
+
+#KeyError: 'mpa_mpa_v30_CHOCOPhlAn_201901.tar'
+```
+A conda installation of CONCOCT was performed.
+```bash
+#CONCOCT also requires assembled contigs and a BAM file with the mapping of reads to the contigs as an input. 
+
+# adapted from https://github.com/BinPro/CONCOCT/tree/1.1.0
+
+cd /projects/nano_diagnostics
+mkdir -p analysis/P_leucotricha/THeavenp11_1/concoct
+cd analysis/P_leucotricha/THeavenp11_1/concoct 
+conda activate concoct
+# Slice contigs into smaller sequences
+cut_up_fasta.py /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta -c 10000 -o 0 --merge_last -b contigs_10K.bed > contigs_10K.fa
+ 
+# Generate coverage depth 
+concoct_coverage_table.py contigs_10K.bed /projects/nano_diagnostics/alignment/P_leucotricha/THeavenp11_1/bowtie2/myapplemildew/THeavenp11_1alignedmyapplemildew1+2.sorted.bam > coverage_table.tsv
+ 
+# Execute CONCOCT
+concoct --composition_file contigs_10K.fa --coverage_file coverage_table.tsv -b concoct_output/
+#ImportError: libmkl_rt.so: cannot open shared object file: No such file or directory
+pip install dlib
+ 
+# Merge sub-contig clustering into original contig clustering
+merge_cutup_clustering.py concoct_output/clustering_gt1000.csv > concoct_output/clustering_merged.csv
+ 
+# Create output folder for bins
+mkdir concoct_output/fasta_bins
+ 
+# Parse bins into different files
+extract_fasta_bins.py /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta concoct_output/clustering_merged.csv --output_path concoct_output/fasta_bins
+```
+https://onestopdataanalysis.com/binning/
+
+## Ganan raw data
+```bash
+#Quality control:
+
+for RawData in $(ls rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/*.fastq.gz); do
+echo $RawData
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(dirname $RawData)
+Outfile=$(basename -a $RawData)_fastqc
+sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
+done
+
+#The number of raw reads were counted:
+
+cat rawdata/P_leucotricha/THeavenp11_1/paired/001/F/p11_1_f.fq.gz | gunzip -cf | echo $((`wc -l`/4))
+#20,886,394
+cat rawdata/P_leucotricha/THeavenp11_1/paired/001/R/p11_1_r.fq.gz | gunzip -cf | echo $((`wc -l`/4))
+#20,886,394
+cat rawdata/P_leucotricha/THeavenp11_1/paired/002/F/p11_2_f.fq.gz | gunzip -cf | echo $((`wc -l`/4))
+#39,700,854
+cat rawdata/P_leucotricha/THeavenp11_1/paired/002/R/p11_2_r.fq.gz | gunzip -cf | echo $((`wc -l`/4))
+#39,700,854
+
+#Trimming:
+for ReadDir in $(ls -d rawdata/P_leucotricha/ganan/osfstorage/Raw_reads/);
+do
+ Fread=$(ls $ReadDir*R1_001.fastq.gz)
+ Rread=$(ls $ReadDir*R2_001.fastq.gz)
+ls $Fread
+ls $Rread
+Adapters=~/git_repos/tools/seq_tools/ncbi_adapters.fa
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(echo $ReadDir|sed 's@rawdata@dna_qc@g')
+Prefix=$(echo $ReadDir|cut -f2,3,4,5 -d '/' --output-delimiter '-')
+echo $Prefix
+sbatch $ProgDir/srun_trimmomatic.sh $Fread $Rread $Adapters $OutDir $Prefix
+done
+
+#The number of trimmed reads were counted:
+zcat dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim.fq.gz | echo $((`wc -l`/4))
+#19,638,648
+zcat dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim_unpaired.fq.gz | echo $((`wc -l`/4))
+#966.121
+
+
+
+mkdir
+ln -s 
+
+conda activate spades
+  for ReadDir in $(ls -d alignment/P_leucotricha/THeavenp11_1/bowtie2/apple); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    S_Read=$(ls $ReadDir/*s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/apple@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 10
+  done
+```
+
+## Repeat Masking
+Conda installations of repeatmodeler and transposonPSI were performed.
+
+Repeatmodeler and transposonPSI were run on our assembly.
+```bash
+conda activate repeatmasking
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta); do
+	ProgDir=~/git_repos/tools/seq_tools/repeat_masking
+	OutDir=$(dirname $Assembly)/masked
+	mkdir -p $OutDir/rep_modeling
+#	mkdir -p $OutDir/transposonPSI
+	sbatch $ProgDir/rep_modeling.sh $Assembly $OutDir/rep_modeling
+#	sbatch $ProgDir/transposonPSI.sh $Assembly $OutDir/transposonPSI
+done
+#603016
+#603017
+#603056
+#603057
+#603058
+#606127
+#606137
+#606140
+ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Assembly_qc
+touch tmp.txt
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta); do
+  OutDir=$(dirname $Assembly)
+  $ProgDir/remove_contaminants.py --inp $Assembly --out $OutDir/WT_miniasm_pilon10_renamed.fasta --coord_file tmp.txt > $OutDir/log.txt
+done
+rm tmp.txt
+
+ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Repeat_masking
+BestAssembly=assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/*10_renamed.fasta
+OutDir=assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/masked
+sbatch $ProgDir/rep_modeling.sh $BestAssembly $OutDir
+
+#614096
 
 
 
 
 
-###BBAP
-###Genovo
-###IDBA-UD
-###IVA
-###MAP
-###MegaGTA
-###MEGAHIT
-###MetaVelvet
-###MetaVelvet-SL
-###Omega
-###PRICE
-###Ray Meta
-###SAVAGE
-###Snowball
-
-###MEGAHIT
-###metaSPAdes
-###VICUNA
-###Xander
-###BBAP
-###Genovo
-###IDBA-UD
-###IVA
-###MAP
-###MegaGTA
-###MetaVelvet
-###MetaVelvet-SL
-###Omega
-###PRICE
-###Ray Meta
-###SAVAGE
-###Snowball
+conda activate transposonpsi
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta); do
+	ProgDir=~/git_repos/tools/seq_tools/repeat_masking
+	OutDir=$(dirname $Assembly)/masked
+#	mkdir -p $OutDir/rep_modeling
+	mkdir -p $OutDir/transposonPSI
+#	sbatch $ProgDir/rep_modeling.sh $Assembly $OutDir/rep_modeling
+	sbatch $ProgDir/transposonPSI.sh $Assembly $OutDir/transposonPSI
+done
+#603118
+#606136
+#606144
+#606147
+#606148
+```
