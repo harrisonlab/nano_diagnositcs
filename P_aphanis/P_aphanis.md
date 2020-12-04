@@ -695,7 +695,3 @@ The results of quast were displayed:
     cat $Assembly;
   done > assembly/quast_results.txt
 ```
-
-
-
-
