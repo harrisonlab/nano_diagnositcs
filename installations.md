@@ -2,7 +2,7 @@
 
 Documenting the process of downloading and installing programmes within project pipelines was over complicating pipelines therefore installations are now documented here.
 
-##Bioconda
+## Bioconda
 ```bash
 cd ~/git_repos/tools/
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
@@ -15,8 +15,14 @@ conda config --add channels bioconda
 conda config --add channels conda-forge
 conda update -n base -c defaults conda
 ```
+## megahit
+```bash
+conda create -n megahit
+conda activate megahit
+conda install -c bioconda megahit
+```
 
-##samtools
+## samtools
 ```bash
 conda create -n samtools
 conda activate samtools
@@ -44,7 +50,46 @@ nano ~/.profile
 #PATH=$HOME/git_repos/tools/prog/samtools/samtools-1.10:${PATH}
 . ~/.profile
 ```
-##FastQC
+## repeatmodeler
+```bash
+conda create -n repeatmasking
+conda activate repeatmasking
+conda install -c bioconda repeatmodeler
+```
+## transposonPSI
+```bash
+conda create -n transposonpsi
+conda activate transposonpsi
+conda install -c bioconda transposonpsi
+```
+##concoct
+```bash
+conda create -n concoct
+conda activate concoct
+conda install concoct
+```
+##metabat2
+```bash
+conda create -n metabat2
+conda activate metabat2
+conda install -c bioconda metabat2
+```
+##kraken
+```bash
+mkdir -p ~/git_repos/tools/prog/kraken2/1
+cd ~/git_repos/tools/prog/kraken2
+git clone https://github.com/DerrickWood/kraken2.git
+cd kraken2
+./install_kraken2.sh ~/git_repos/tools/prog/kraken2/1
+nano ~/.profile
+#edited with:
+#PATH=$HOME/git_repos/tools/prog/kraken2/1:${PATH}
+#PATH=$HOME/git_repos/tools/prog/kraken2/1/kraken2:${PATH}
+#PATH=$HOME/git_repos/tools/prog/kraken2/1/kraken2-build:${PATH}
+#PATH=$HOME/git_repos/tools/prog/kraken2/1/kraken2-inspect:${PATH}
+. ~/.profile
+```
+## FastQC
 ```bash
 mkdir -p ~/git_repos/tools/prog/fastqc
 cd ~/git_repos/tools/prog/fastqc
@@ -71,26 +116,33 @@ conda activate kat
 conda install kat
 conda install -c anaconda python
 ```
-##SPAdes
+## SPAdes
 ```
 conda create -n spades
 conda activate spades
 conda install -c bioconda spades
 ```
-##ATLAS
+## ATLAS
 ```bash
 conda create -n ATLAS
 conda activate ATLAS
 conda install metagenome-atlas
 conda install mamba
 ```
-##bowtie2
+## bowtie2
 ```bash
 conda create -n bowtie2
 conda activate bowtie2
 conda install -c bioconda bowtie2
 ```
-##rnaQUAST
+## QUAST
+```bash
+conda create -n quast
+conda activate quast
+conda install python=2.7
+conda install -c bioconda quast
+```
+## rnaQUAST
 ```bash
 #a new environment was created to install rnaQUAST
 conda create -n rnaquast
@@ -235,7 +287,7 @@ nano ~/.profile
 conda activate rnaquast
 conda install -c bioconda gmap
 ```
-##Blast
+## Blast
 ```bash
 mkdir -p ~/git_repos/tools/prog/blast
 cd ~/git_repos/tools/prog/blast
@@ -250,7 +302,7 @@ nano ~/.profile
 conda activate rnaquast 
 conda install blast
 ```
-##BUSCO 
+## BUSCO 
 ```bash
 #BUSCO innstallation:
 conda create -n oldBUSCO
@@ -322,7 +374,7 @@ export BUSCO_CONFIG_FILE=/home/heavet/git_repos/tools/prog/busco/busco-3.0.2/con
 conda activate rnaquast 
 conda install busco
 ```
-##Genewise
+## Genewise
 ```bash
 #still does not install correctly
 
@@ -353,7 +405,7 @@ nano ~/.profile
 #PATH=$HOME/git_repos/tools/prog/genewise/wise-2.4.1/src:${PATH}
 . ~/.profile
 ```
-##EMBOSS
+## EMBOSS
 ```bash
 ls /projects/oldhome/armita/prog/
 srun -p long --pty bash
@@ -372,7 +424,7 @@ nano ~/.profile
 #PATH=$HOME/git_repos/tools/prog/emboss/EMBOSS-4.0.0/emboss:${PATH}
 . ~/.profile
 ```
-##Prodigal
+## Prodigal
 ```bash
 cd ~/git_repos/tools/prog/
 git clone https://github.com/hyattpd/Prodigal.git
@@ -383,7 +435,7 @@ nano ~/.profile
 #PATH=$HOME/git_repos/tools/prog/Prodigal:${PATH}
 . ~/.profile
 ```
-##HMMer
+## HMMer
 ```bash
 cd ~/git_repos/tools/prog/
 mkdir hmmer
@@ -399,7 +451,7 @@ nano ~/.profile
 #PATH=$HOME/git_repos/tools/prog/hmmer/hmmer-3.3/src:${PATH}
 . ~/.profile
 ```
-##Augustus
+## Augustus
 ```bash
 cd ~/git_repos/tools/prog/
 mkdir augustus
@@ -437,7 +489,7 @@ conda activate rnaquast
 conda install -c bioconda augustus
 #conda install is successfull however now all programmes with augustus as a dependancy will have to run in this environment?
 ```
-##Bamtools
+## Bamtools
 ```bash
 git clone git://github.com/pezmaster31/bamtools.git
 cd bamtools
@@ -451,7 +503,7 @@ nano ~/.profile
 . ~/.profile
 #libbamtools.* files are not symlinked into /usr/lib/ 
 ```
-##GenemarkS-T
+## GenemarkS-T
 ```bash
 mkdir -p ~/git_repos/tools/prog/genemark/2020
   cd ~/git_repos/tools/prog/genemark/2020
@@ -467,7 +519,7 @@ mkdir -p ~/git_repos/tools/prog/genemark/2020
 
   gmst.pl --test #fails
 ```
-##STAR
+## STAR
 ```bash
 mkdir -p ~/git_repos/tools/prog/STAR
 cd ~/git_repos/tools/prog/STAR
@@ -486,7 +538,7 @@ nano ~/.profile
 . ~/.profile
 ```
 
-##Trinity
+## Trinity
 ```bash
 #Due to the difficulties installing and running trinity a bioconda installation route was used:
 
@@ -495,7 +547,7 @@ conda create -n trinity
 conda activate trinity
 conda install -c bioconda trinity
 ```
-###jellyfish
+### jellyfish
 ```bash
 #both conda install in the trinity environment and manual download performed from http://www.genome.umd.edu/jellyfish.html
 
@@ -507,7 +559,7 @@ tar -xzf jellyfish-2.2.5.tar.gz
  make
  make install
 ```
-##MIRA
+## MIRA
 ```bash
 #a new environment was created to install MIRA
 conda create -n MIRA
@@ -615,7 +667,7 @@ perl ./configure
 
 #SNAP requires manual installation:
 ```
-##NCBI download
+## NCBI download
 ```bash
 pip install ncbi-genome-download
 nano ~/.profile
