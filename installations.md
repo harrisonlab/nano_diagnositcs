@@ -21,7 +21,12 @@ conda create -n megahit
 conda activate megahit
 conda install -c bioconda megahit
 ```
-
+## kmc
+```bash
+conda create -n kmc
+conda activate kmc
+conda install kmc
+```
 ## samtools
 ```bash
 conda create -n samtools
