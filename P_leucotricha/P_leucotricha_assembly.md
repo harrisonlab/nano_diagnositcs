@@ -1218,9 +1218,8 @@ rm tmp.txt
 
 ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Repeat_masking
 BestAssembly=assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/*10_renamed.fasta
-OutDir=assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/masked
+OutDir=assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/masked/rep_modeling
 sbatch $ProgDir/rep_modeling.sh $BestAssembly $OutDir
-
 #614096
 
 
@@ -1241,4 +1240,20 @@ done
 #606144
 #606147
 #606148
+conda activate transposonpsi
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta); do
+	ProgDir=~/git_repos/tools/seq_tools/repeat_masking
+	OutDir=$(dirname $Assembly)/masked
+#	mkdir -p $OutDir/rep_modeling
+	mkdir -p $OutDir/transposonPSI
+#	sbatch $ProgDir/rep_modeling.sh $Assembly $OutDir/rep_modeling
+	sbatch $ProgDir/gomez_transposonPSI.sh $Assembly $OutDir/transposonPSI/2
+done
+echo Finished
+#615884
+
+mkdir assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/masked/transposonPSI/3
+cd assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/masked/transposonPSI/3
+cp /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta man_contigs_unmasked.fa
+/home/gomeza/miniconda3/envs/general_tools/share/transposonPSI/transposonPSI.pl man_contigs_unmasked.fa nuc
 ```
