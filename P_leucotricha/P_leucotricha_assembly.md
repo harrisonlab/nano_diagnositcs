@@ -650,6 +650,67 @@ megahit -1 alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalig
 megahit --verbose --k-list 21,33,55,77,99,127 --min-contig-len 500 -1 alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-f.fq -2 alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-r.fq -r alignment/P_leucotricha/THeavenp11_1/bowtie2/apple/THeavenp11_1unalignedapple1+2-s.fq -o assembly/metagenome/P_leucotricha/THeavenp11_1/megahit/4
 
 ```
+### Coverage
+```bash
+#An alignment of trimmed reads including unpaired reads was made to the assembled genome, this produced a ######% overall alignment rate.
+screen -S kat
+srun -p long  --mem 350G --pty bash
+conda activate bowtie2
+cd /projects/nano_diagnostics
+mkdir -p alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/Heaven_P_leucotricha
+cd alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/Heaven_P_leucotricha
+bowtie2-build /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/metaSPAdes/*/filtered_contigs/contigs_min_500bp.fasta Heaven_P_leucotricha_index
+bowtie2 \
+-x Heaven_P_leucotricha_index \
+-1 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1unalignedHeaven_P_leucotricha.sam \
+--un-gz THeavenDRCT72020_1unalignedHeaven_P_leucotricha_s.fq.gz \
+--un-conc-gz THeavenDRCT72020_1unalignedHeaven_P_leucotricha_fr.fq.gz \
+-S THeavenDRCT72020_1alignedHeaven_P_leucotricha.sam
+echo finished
+
+#60306445 reads; of these:
+#  56908048 (94.36%) were paired; of these:
+#    12699983 (22.32%) aligned concordantly 0 times
+#    37238409 (65.44%) aligned concordantly exactly 1 time
+#    6969656 (12.25%) aligned concordantly >1 times
+#    ----
+#    12699983 pairs aligned concordantly 0 times; of these:
+#      1126918 (8.87%) aligned discordantly 1 time
+#    ----
+#    11573065 pairs aligned 0 times concordantly or discordantly; of these:
+#      23146130 mates make up the pairs; of these:
+#        17418276 (75.25%) aligned 0 times
+#        3450880 (14.91%) aligned exactly 1 time
+#        2276974 (9.84%) aligned >1 times
+#  3398397 (5.64%) were unpaired; of these:
+#    472044 (13.89%) aligned 0 times
+#    2592309 (76.28%) aligned exactly 1 time
+#    334044 (9.83%) aligned >1 times
+
+
+samtools view --threads 8 -bS THeavenDRCT72020_1alignedHeaven_P_leucotricha.sam -o THeavenDRCT72020_1alignedHeaven_P_leucotricha.bam
+samtools sort --threads 8 -o THeavenDRCT72020_1alignedHeaven_P_leucotricha_sorted.bam THeavenDRCT72020_1alignedHeaven_P_leucotricha.bam
+samtools index -@ 8 THeavenDRCT72020_1alignedHeaven_P_leucotricha_sorted.bam THeavenDRCT72020_1alignedHeaven_P_leucotricha_sorted.bam.index
+samtools coverage THeavenDRCT72020_1alignedHeaven_P_leucotricha_sorted.bam -o coverage.txt
+
+#Mean depth per contig: 42.42
+#Median depth per contig: 3.22
+
+samtools depth THeavenDRCT72020_1alignedHeaven_P_leucotricha_sorted.bam -o depth.txt
+
+#IN PROGRESS
+
+#A conda installation of picard was performed
+conda activate Picard
+java -jar picard.jar MarkDuplicates \
+      I=THeavenDRCT72020_1alignedHeaven_P_leucotricha_sorted.bam \
+      O=marked_duplicates.bam \
+      M=marked_dup_metrics.txt
+#Error: Unable to access jarfile picard.jar
+```
 ```bash
 conda activate BUSCO
 
@@ -1009,35 +1070,26 @@ kat comp -m 21 -v -h -t 8 -o alignment/P_leucotricha/THeavenp11_1/kat/P_leucotri
 
 kat plot spectra-cn -x 300 -o alignment/P_leucotricha/THeavenp11_1/kat/apple/gananreads_v_gananplot300 alignment/P_leucotricha/THeavenp11_1/kat/apple/gananreads_v_ganan-main.mx
 ```
-Kraken2 was downloaded and a standard database created.
+A conda innstallation of Kraken2 was performed and a standard database created.
 ```bash
-mkdir -p analysis/P_leucotricha/THeavenp11_1/kraken2
-kraken2-build --standard --db analysis/P_leucotricha/THeavenp11_1/kraken2
-#Accession to taxid map files are required to build this DB.
+#A kraken2 standard database was built for binning - had to repeat several times before taxo.k2d file was successfully downloaded
+mkdir -p analysis/P_leucotricha/THeavenp11_1/kraken2/1
+srun -p long  --mem 350G --pty bash
+conda activate kraken2
+kraken2-build --standard --db analysis/P_leucotricha/THeavenp11_1/kraken2/1
 
-kraken2-build --download-taxonomy --db analysis/P_leucotricha/THeavenp11_1/kraken2
-kraken2-build --standard --db analysis/P_leucotricha/THeavenp11_1/kraken2
-#database ("analysis/P_leucotricha/THeavenp11_1/kraken2") does not contain necessary file taxo.k2d
-kraken2-build --download-taxonomy --threads 24 --db analysis/P_leucotricha/THeavenp11_1/kraken2
-kraken2-build --standard --threads 24 --db analysis/P_leucotricha/THeavenp11_1/kraken2
-
-#Building database files (step 3)...
-#Taxonomy parsed and converted.
-#xargs: cat: terminated by signal 13
-#/home/heavet/git_repos/tools/prog/kraken2/1/build_kraken2_db.sh: line 143:  7610 Done                    list_sequence_files
-#      7611 Exit 125                | xargs -0 cat
-#      7612 Killed                  | build_db -k $KRAKEN2_KMER_LEN -l $KRAKEN2_MINIMIZER_LEN -S $KRAKEN2_SEED_TEMPLATE $KRAKEN2XFLAG -H hash.k2d.tmp -t taxo.k2d.tmp -o opts.k2d.tmp -n taxonomy/ -m $seqid2taxid_map_file -c $required_capacity -p $KRAKEN2_THREAD_CT $max_db_flag -B $KRAKEN2_BLOCK_SIZE -b $KRAKEN2_SUBBLOCK_SIZE -r $KRAKEN2_MIN_TAXID_BITS $fast_build_flag
-
-
-mkdir analysis/P_leucotricha/THeavenp11_1/kraken2/1
+#Kraken2 analysis was performed
 kraken2 \
---db analysis/P_leucotricha/THeavenp11_1/kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/1 \
 --output analysis/P_leucotricha/THeavenp11_1/kraken2/1/output.txt \
 --unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/unclassified-out.txt \
 --classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/classified-out.txt \
 --report analysis/P_leucotricha/THeavenp11_1/kraken2/1/report.txt \
 assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
-#kraken2: database ("analysis/P_leucotricha/THeavenp11_1/kraken2") does not contain necessary file taxo.k2d
+
+#7860 sequences (51.51 Mbp) processed in 6.616s (71.3 Kseq/m, 467.14 Mbp/m).
+#  2429 sequences classified (30.90%)
+#  5431 sequences unclassified (69.10%)
 ```
 
 A conda installation of metabat2 was performed
@@ -1256,4 +1308,42 @@ mkdir assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_cont
 cd assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/masked/transposonPSI/3
 cp /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta man_contigs_unmasked.fa
 /home/gomeza/miniconda3/envs/general_tools/share/transposonPSI/transposonPSI.pl man_contigs_unmasked.fa nuc
+```
+The number of bases masked by transposonPSI and Repeatmasker were summarised using the following commands:
+```bash
+RepMaskGff=/projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/masked/rep_modeling/*_contigs_hardmasked.gff
+TransPSIGff=/projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/masked/transposonPSI/3/*_contigs_unmasked.fa.TPSI.allHits
+printf "P_leucotricha\tTHeavenp11_1\n"
+printf "The number of bases masked by RepeatMasker:\t"
+sortBed -i $RepMaskGff | bedtools merge | awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}'
+#22,190,306
+printf "The number of bases masked by TransposonPSI:\t"
+sortBed -i $TransPSIGff | bedtools merge | awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}'
+#14,182
+printf "The total number of masked bases are:\t"
+cat $RepMaskGff $TransPSIGff | sortBed | bedtools merge | awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}'
+#Differing number of GFF fields encountered at line: 77884.  Exiting...
+```
+### Aligning
+Insert sizes of the RNA seq library were unknown until a draft alignment could be made. To do this tophat and cufflinks were run, aligning the reads against a single genome. The fragment length and stdev were printed to stdout while cufflinks was running.
+
+
+```bash
+#in the abscence of apple mildew rnaseq data P.aphanis read were used
+for assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/masked/transposonPSI/3/man_contigs_unmasked.fa); do
+	for RNAdata in $(ls -d dna_qc/P_aphanis/RNAexp1/infected); do
+	 Freads=$(ls $RNAdata/F/*trim.fq.gz)
+	 Rreads=$(ls $RNAdata/R/*trim.fq.gz)
+
+	OutDir=alignment/P_leucotricha/THeavenp11_1/tophat
+	ProgDir=/home/heavet/git_repos/tools/seq_tools/RNAseq
+	ls $Freads
+	ls $Rreads
+	ls $assembly
+	ls $OutDir
+	sbatch $ProgDir/tophat_alignment.sh $assembly $Freads $Rreads $OutDir
+	done
+done
+echo finished
+#620250
 ```
