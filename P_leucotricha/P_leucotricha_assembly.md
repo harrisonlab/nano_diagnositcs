@@ -405,6 +405,177 @@ bowtie2 \
 #    2041772 (60.08%) aligned exactly 1 time
 #    144189 (4.24%) aligned >1 times
 #64.15% overall alignment rate
+
+screen -S graminis
+srun -p long  --mem 350G --pty bash
+cd /projects/nano_diagnostics
+conda activate bowtie2
+mkdir -p alignment/P_leucotricha/THeavenp11_1/bowtie2/P_graminis
+cd alignment/P_leucotricha/THeavenp11_1/bowtie2/P_graminis
+bowtie2-build /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/B_graminis/GCA_900237765.1_BghRACE1_v1_genomic.fna P_graminis_index
+(bowtie2 \
+-x P_graminis_index \
+-1 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim_unpaired.fq.gz \
+--un THeavenp11_1unalignedP_graminisPleucotricha1+2.sam \
+-S THeavenp11_1alignedP_graminisPleucotricha1+2.sam) 2> log.txt
+echo finished
+#60306445 reads; of these:
+#  56908048 (94.36%) were paired; of these:
+#    55941726 (98.30%) aligned concordantly 0 times
+#    101264 (0.18%) aligned concordantly exactly 1 time
+#    865058 (1.52%) aligned concordantly >1 times
+#    ----
+#    55941726 pairs aligned concordantly 0 times; of these:
+#      2658 (0.00%) aligned discordantly 1 time
+#    ----
+#    55939068 pairs aligned 0 times concordantly or discordantly; of these:
+#      111878136 mates make up the pairs; of these:
+#        111042703 (99.25%) aligned 0 times
+#        450493 (0.40%) aligned exactly 1 time
+#        384940 (0.34%) aligned >1 times
+#  3398397 (5.64%) were unpaired; of these:
+#    3339962 (98.28%) aligned 0 times
+#    28376 (0.83%) aligned exactly 1 time
+#    30059 (0.88%) aligned >1 times
+
+screen -S caphanis
+srun -p himem  --mem 350G --pty bash
+cd /projects/nano_diagnostics
+conda activate bowtie2
+mkdir -p alignment/P_leucotricha/THeavenp11_1/bowtie2/cockerton_P_aphanis
+cd alignment/P_leucotricha/THeavenp11_1/bowtie2/cockerton_P_aphanis
+bowtie2-build /projects/nano_diagnostics/assembly/genome/spades/P_aphanis/H_Cockerton/C1_no_strawberry/deconseq_appended/contigs_min_500bp_renamed.fasta cockerton_P_aphanis_index
+(bowtie2 \
+-x cockerton_P_aphanis_index \
+-1 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim_unpaired.fq.gz \
+--un THeavenp11_1unalignedcockerton_P_aphanisPleucotricha1+2.sam \
+-S THeavenp11_1alignedcockerton_P_aphanisPleucotricha1+2.sam) 2> log.txt
+echo finished
+#60306445 reads; of these:
+#  56908048 (94.36%) were paired; of these:
+#    49521451 (87.02%) aligned concordantly 0 times
+#    6013382 (10.57%) aligned concordantly exactly 1 time
+#    1373215 (2.41%) aligned concordantly >1 times
+#    ----
+#    49521451 pairs aligned concordantly 0 times; of these:
+#      279751 (0.56%) aligned discordantly 1 time
+#    ----
+#    49241700 pairs aligned 0 times concordantly or discordantly; of these:
+#      98483400 mates make up the pairs; of these:
+#        92882507 (94.31%) aligned 0 times
+#        4284005 (4.35%) aligned exactly 1 time
+#        1316888 (1.34%) aligned >1 times
+#  3398397 (5.64%) were unpaired; of these:
+#    2905961 (85.51%) aligned 0 times
+#    414012 (12.18%) aligned exactly 1 time
+#    78424 (2.31%) aligned >1 times
+
+screen -S E_necator
+srun -p himem  --mem 350G --pty bash
+cd /projects/nano_diagnostics
+conda activate bowtie2
+mkdir -p alignment/P_leucotricha/THeavenp11_1/bowtie2/E_necator
+cd alignment/P_leucotricha/THeavenp11_1/bowtie2/E_necator
+bowtie2-build /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/E_necator/GCA_000798715.1_ASM79871v1_genomic.fna E_necator_index
+(bowtie2 \
+-x E_necator_index \
+-1 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim_unpaired.fq.gz \
+--un THeavenp11_1unalignedE_necatorPleucotricha1+2.sam \
+-S THeavenp11_1alignedE_necatorPleucotricha1+2.sam) 2> log.txt
+echo finished
+#60306445 reads; of these:
+#  56908048 (94.36%) were paired; of these:
+#    54979096 (96.61%) aligned concordantly 0 times
+#    1675611 (2.94%) aligned concordantly exactly 1 time
+#    253341 (0.45%) aligned concordantly >1 times
+#    ----
+#    54979096 pairs aligned concordantly 0 times; of these:
+#      38058 (0.07%) aligned discordantly 1 time
+#    ----
+#    54941038 pairs aligned 0 times concordantly or discordantly; of these:
+#      109882076 mates make up the pairs; of these:
+#        108080332 (98.36%) aligned 0 times
+#        1527793 (1.39%) aligned exactly 1 time
+#        273951 (0.25%) aligned >1 times
+#  3398397 (5.64%) were unpaired; of these:
+#    3128303 (92.05%) aligned 0 times
+#    103020 (3.03%) aligned exactly 1 time
+#    167074 (4.92%) aligned >1 times
+
+screen -S P_xanthii
+srun -p himem  --mem 350G --pty bash
+cd /projects/nano_diagnostics
+conda activate bowtie2
+mkdir -p alignment/P_leucotricha/THeavenp11_1/bowtie2/Angelini_P_xanthii
+cd alignment/P_leucotricha/THeavenp11_1/bowtie2/Angelini_P_xanthii
+bowtie2-build /projects/nano_diagnostics/rawdata/P_xanthii/AngeliniExp/transcriptome/GHEF01.fasta Angelini_P_xanthii_index
+(bowtie2 \
+-x Angelini_P_xanthii_index \
+-1 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim_unpaired.fq.gz \
+--un THeavenp11_1unalignedAngelini_P_xanthiiPleucotricha1+2.sam \
+-S THeavenp11_1alignedAngelini_P_xanthiiPleucotricha1+2.sam) 2> log.txt
+echo finished
+#60306445 reads; of these:
+#  56908048 (94.36%) were paired; of these:
+#    52696845 (92.60%) aligned concordantly 0 times
+#    3226316 (5.67%) aligned concordantly exactly 1 time
+#    984887 (1.73%) aligned concordantly >1 times
+#    ----
+#    52696845 pairs aligned concordantly 0 times; of these:
+#      184262 (0.35%) aligned discordantly 1 time
+#    ----
+#    52512583 pairs aligned 0 times concordantly or discordantly; of these:
+#      105025166 mates make up the pairs; of these:
+#        101059955 (96.22%) aligned 0 times
+#        2575018 (2.45%) aligned exactly 1 time
+#        1390193 (1.32%) aligned >1 times
+#  3398397 (5.64%) were unpaired; of these:
+#    3212828 (94.54%) aligned 0 times
+#    139920 (4.12%) aligned exactly 1 time
+#    45649 (1.34%) aligned >1 times
+
+screen -S P_pannosa
+srun -p himem  --mem 350G --pty bash
+cd /projects/nano_diagnostics
+conda activate bowtie2
+mkdir -p alignment/P_leucotricha/THeavenp11_1/bowtie2/Fonseca_P_pannosa
+cd alignment/P_leucotricha/THeavenp11_1/bowtie2/Fonseca_P_pannosa
+bowtie2-build /projects/nano_diagnostics/rawdata/P_pannosa/N_FonsecaExp/transcriptome/GHDE01.1.fsa_nt Fonseca_P_pannosa_index
+(bowtie2 \
+-x Fonseca_P_pannosa_index \
+-1 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim_unpaired.fq.gz \
+--un THeavenp11_1unalignedFonseca_P_pannosaPleucotricha1+2.sam \
+-S THeavenp11_1alignedFonseca_P_pannosaPleucotricha1+2.sam) 2> log.txt
+echo finished
+#60306445 reads; of these:
+#  56908048 (94.36%) were paired; of these:
+#    56067033 (98.52%) aligned concordantly 0 times
+#    566366 (1.00%) aligned concordantly exactly 1 time
+#    274649 (0.48%) aligned concordantly >1 times
+#    ----
+#    56067033 pairs aligned concordantly 0 times; of these:
+#      54637 (0.10%) aligned discordantly 1 time
+#    ----
+#    56012396 pairs aligned 0 times concordantly or discordantly; of these:
+#      112024792 mates make up the pairs; of these:
+#        110896333 (98.99%) aligned 0 times
+#        745913 (0.67%) aligned exactly 1 time
+#        382546 (0.34%) aligned >1 times
+#  3398397 (5.64%) were unpaired; of these:
+#    3368354 (99.12%) aligned 0 times
+#    18215 (0.54%) aligned exactly 1 time
+#    11828 (0.35%) aligned >1 times
+
 ```
 ### Coverage
 ```bash
@@ -856,6 +1027,7 @@ done
         |3234   Total BUSCO groups searched               |
         --------------------------------------------------
 
+
 ```
 ```bash
 conda activate BUSCO
@@ -1070,7 +1242,7 @@ kat comp -m 21 -v -h -t 8 -o alignment/P_leucotricha/THeavenp11_1/kat/P_leucotri
 
 kat plot spectra-cn -x 300 -o alignment/P_leucotricha/THeavenp11_1/kat/apple/gananreads_v_gananplot300 alignment/P_leucotricha/THeavenp11_1/kat/apple/gananreads_v_ganan-main.mx
 ```
-A conda innstallation of Kraken2 was performed and a standard database created.
+A conda installation of Kraken2 was performed and a standard database created.
 ```bash
 #A kraken2 standard database was built for binning - had to repeat several times before taxo.k2d file was successfully downloaded
 mkdir -p analysis/P_leucotricha/THeavenp11_1/kraken2/1
@@ -1085,13 +1257,141 @@ kraken2 \
 --unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/unclassified-out.txt \
 --classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/classified-out.txt \
 --report analysis/P_leucotricha/THeavenp11_1/kraken2/1/report.txt \
+--use-names \
 assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
 
 #7860 sequences (51.51 Mbp) processed in 6.616s (71.3 Kseq/m, 467.14 Mbp/m).
 #  2429 sequences classified (30.90%)
 #  5431 sequences unclassified (69.10%)
+#  19.4% return as human
 ```
+The kraken2 standard database contains NCBI taxonomic information, as well as the complete genomes in RefSeq for the bacterial, archaeal, and viral domains, along with the human genome and a collection of known vectors (UniVec_Core). We are investigating a fungal plant pathogen and so the reference libraries for plants and fungi were also used.
+```bash
+#additional libraries were added to the standard database
+screen -S krakenfungi
+srun -p himem  --mem 350G --pty bash
+conda activate kraken2
+kraken2-build --download-library fungi --db analysis/P_leucotricha/THeavenp11_1/kraken2/1
+kraken2-build --download-library plant --db analysis/P_leucotricha/THeavenp11_1/kraken2/1
+kraken2-build --download-library protozoa --db analysis/P_leucotricha/THeavenp11_1/kraken2/1
+kraken2-build --download-library UniVec --db analysis/P_leucotricha/THeavenp11_1/kraken2/1
+kraken2-build --build --db analysis/P_leucotricha/THeavenp11_1/kraken2/1
+#Kraken2 analysis was performed
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/1 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/1/output2.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/unclassified-out2.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/classified-out2.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/1/report2.txt \
+--use-names \
+assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
+#7860 sequences (51.51 Mbp) processed in 13.487s (35.0 Kseq/m, 229.17 Mbp/m).
+#2429 sequences classified (30.90%)
+#5431 sequences unclassified (69.10%)
 
+#A fungi only database was created
+mkdir -p analysis/P_leucotricha/THeavenp11_1/kraken2/fungi
+kraken2-build --download-taxonomy --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi
+kraken2-build --download-library fungi --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi
+kraken2-build --build --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi
+#taxo.k2d was again not downloaded properly by these commands the first time and so all was deleted and commands repeated, file downloaded successfully the second time
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/output.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/unclassified-out.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/classified-out.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/report.txt \
+--use-names \
+assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
+#7860 sequences (51.51 Mbp) processed in 6.524s (72.3 Kseq/m, 473.75 Mbp/m).
+#700 sequences classified (8.91%)
+#7160 sequences unclassified (91.09%)
+#detects zero fungi but 75 viruses despite the virus library not being used?
+```
+An alternative library download was tried sent by A.Armitage
+```bash
+#Alternative download scripts were downloaded from a git repo:
+#* from https://github.com/R-Wright-1/peptides
+#* following the discussion at https://github.com/DerrickWood/kraken2/issues/272
+screen -S kraken
+srun -p long  --mem 50G --pty bash
+mkdir /scratch/public_data/tch
+cd /scratch/public_data/tch
+wget https://github.com/R-Wright-1/peptides/archive/refs/heads/master.zip
+unzip master.zip
+conda create -n biopython
+conda activate biopython
+conda update -n base conda
+conda install -c conda-forge biopython
+conda install pandas
+mkdir tmp123
+cd tmp123
+DBNAME=/projects/nano_diagnostics/analysis/P_leucotricha/THeavenp11_1/kraken2/custom_kraken_db
+kraken2-build --download-taxonomy --use-ftp --threads 20 --db $DBNAME 
+#edit ../peptides-master/download_domain.py to http download
+python ../peptides-master/download_domain.py --domain fungi --ext dna # 04052021
+python ../peptides-master/download_domain.py --domain bacteria --complete True --ext dna 
+python ../peptides-master/download_domain.py --domain plant --ext dna
+
+python ../peptides-master/download_domain.py --domain vertebrate_mammalian --human True --complete True --ext dna #IN PROGRESS
+#gzip: GCF_000001405.39_GRCh38.p13_genomic.fna.gz: invalid compressed data--format violated
+#Didn't manage to change the taxids for this file: GCF_000001405.39_GRCh38.p13_genomic.fna
+
+kraken2-build --add-to-library chr1.fa --db analysis/P_leucotricha/THeavenp11_1/kraken2/1
+
+
+
+
+#Additional tools were downloaded to extract reads associated with each kraken2-identified taxon (https://github.com/jenniferlu717/KrakenTools)
+srun --partition=short --nodes=1 --ntasks=1 --cpus-per-task=1 --mem=1G --pty bash
+cd ~/git_repos/tools/prog/kraken2/2
+wget https://github.com/jenniferlu717/KrakenTools/archive/refs/tags/v1.0.1.tar.gz
+exit
+cd ~/git_repos/tools/prog/kraken2/2
+tar -zxvf v1.0.1.tar.gz
+chmod +x KrakenTools-1.0.1/*.py
+chmod +x KrakenTools-1.0.1/*/*.py
+#Added to PATH in ~/.profile
+PATH=$HOME/git_repos/tools/prog/kraken2/KrakenTools-1.0.1:${PATH}
+PATH=$HOME/git_repos/tools/prog/kraken2/KrakenTools-1.0.1/DiversityTools:${PATH}
+```
+Kraken2 suggested a larger number of reads in our assembly are of human origin, to investigate this further unassembled trimmed reads were aligned to the human genome.
+```bash
+screen -S bowtie2
+srun -p himem  --mem 350G --pty bash
+conda activate bowtie2
+cd /projects/nano_diagnostics
+mkdir -p alignment/P_leucotricha/THeavenp11_1/bowtie2/human
+cd alignment/P_leucotricha/THeavenp11_1/bowtie2/human
+bowtie2-build /projects/nano_diagnostics/assembly/genome/NCBI/primate/H.sapiens/GCA_000001405.15_GRCh38_genomic.fa Human_index
+bowtie2 \
+-x Human_index \
+-1 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim_unpaired.fq.gz \
+--un-gz THeavenp11_1unalignedhuman1+2s.fq.gz \
+--un-conc-gz THeavenp11_1unalignedhuman1+2fr.fq.gz \
+-S THeavenp11_1alignedhuman1+2.sam
+#60306445 reads; of these:
+#  56908048 (94.36%) were paired; of these:
+#    56876068 (99.94%) aligned concordantly 0 times
+#    6911 (0.01%) aligned concordantly exactly 1 time
+#    25069 (0.04%) aligned concordantly >1 times
+#    ----
+#    56876068 pairs aligned concordantly 0 times; of these:
+#      84 (0.00%) aligned discordantly 1 time
+#    ----
+#    56875984 pairs aligned 0 times concordantly or discordantly; of these:
+#      113751968 mates make up the pairs; of these:
+#        113393452 (99.68%) aligned 0 times
+#        6153 (0.01%) aligned exactly 1 time
+#        352363 (0.31%) aligned >1 times
+#  3398397 (5.64%) were unpaired; of these:
+#    3253868 (95.75%) aligned 0 times
+#    1285 (0.04%) aligned exactly 1 time
+#    143244 (4.22%) aligned >1 times
+#0.48% overall alignment rate
+```
 A conda installation of metabat2 was performed
 ```bash
 #metabat requires assembled contigs and a BAM file with the mapping of reads to the contigs as an input. Therefore trimmed reads were aligned to our metagenome assembly and formatted appropriately:
@@ -1173,6 +1473,80 @@ mkdir concoct_output/fasta_bins
 extract_fasta_bins.py /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta concoct_output/clustering_merged.csv --output_path concoct_output/fasta_bins
 ```
 https://onestopdataanalysis.com/binning/
+
+Centrifuge has already been installed on slurm in the /scratch area.
+```bash
+# The following commands have been used to create a database with all fungal genomes on NCBI:
+centrifuge-download -o library -m -a Any -d "fungi" genbank > seqid2taxid.map
+centrifuge-download -o taxonomy taxonomy
+cat library/fungi/*.fna > input-fungal-sequences.fna
+centrifuge-build -p 4 --conversion-table seqid2taxid.map --taxonomy-tree taxonomy/nodes.dmp --name-table taxonomy/names.dmp input-fungal-sequences.fna fungi
+
+#There is a database of fungi only at /data/scratch/gomeza/prog/centrifuge/
+#There is a nucleotide database at /scratch/public_data/nt-centrifuge_12jan2021/nt
+
+mkdir ~/git_repos/tools/seq_tools/metagenomics
+cp /home/gomeza/git_repos/scripts/bioinformatics_tools/Metagenomics/centrifuge.sh ~/git_repos/tools/seq_tools/metagenomics/centrifuge.sh
+cp /home/gomeza/git_repos/scripts/bioinformatics_tools/Metagenomics/centrifuge.sh ~/git_repos/tools/seq_tools/metagenomics/ag_centrifuge.sh
+```
+Centrifuge was run with a Fungi only database:
+```bash
+mkdir -p analysis/P_leucotricha/THeavenp11_1/centrifuge
+
+#Centrifuge appears to run, at least by default, on reads rather than assembled contigs. This will be performed first for our filtered reads. -q flag used.
+  for ReadDir in $(ls -d /projects/nano_diagnostics/alignment/P_leucotricha/THeavenp11_1/bowtie2/apple); do
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    S_Read=$(ls $ReadDir/*s.fq)
+    echo $F_Read
+	echo $R_Read
+	echo $S_Read
+    Database=fungi
+    OutDir=analysis/P_leucotricha/THeavenp11_1/centrifuge/reads
+    ProgDir=~/git_repos/tools/seq_tools/metagenomics
+    sbatch $ProgDir/centrifuge.sh $Database $OutDir $F_Read $R_Read $S_Read
+	done
+#731047 - ERROR
+
+#attempted with unedited version of a.gomez wrapper script.
+  for ReadDir in $(ls -d alignment/P_leucotricha/THeavenp11_1/bowtie2/apple); do
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    echo $F_Read
+	echo $R_Read
+    Database=fungi
+    OutDir=analysis/P_leucotricha/THeavenp11_1/centrifuge/reads
+    ProgDir=~/git_repos/tools/seq_tools/metagenomics
+    sbatch $ProgDir/ag_centrifuge.sh $Database $OutDir $F_Read $R_Read
+	done
+#737390 
+
+#Following this a run with assembled contigs was attempted. -f flag used.
+  for ReadDir in $(ls /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta); do
+    F_Read=$ReadDir
+    echo $F_Read
+    Database=fungi
+    OutDir=analysis/P_leucotricha/THeavenp11_1/centrifuge/contigs
+    ProgDir=~/git_repos/tools/seq_tools/metagenomics
+    sbatch $ProgDir/ag_centrifuge.sh $Database $OutDir $F_Read
+	done
+#740029 - unsuccessful
+```
+Centrifuge was run with nt database.
+```bash
+#change database to /scratch/public_data/nt-centrifuge_12jan2021/
+  for ReadDir in $(ls -d alignment/P_leucotricha/THeavenp11_1/bowtie2/apple); do
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    echo $F_Read
+	echo $R_Read
+    Database=nt
+    OutDir=analysis/P_leucotricha/THeavenp11_1/centrifuge/reads/nt
+    ProgDir=~/git_repos/tools/seq_tools/metagenomics
+    sbatch $ProgDir/ag_centrifuge.sh $Database $OutDir $F_Read $R_Read
+	done
+#740638
+```
 
 ## Ganan raw data
 ```bash
