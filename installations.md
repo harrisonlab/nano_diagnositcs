@@ -15,6 +15,12 @@ conda config --add channels bioconda
 conda config --add channels conda-forge
 conda update -n base -c defaults conda
 ```
+## Stringtie
+```bash
+conda create -n Stringtie
+conda activate Stringtie
+conda install stringtie 
+```
 ## megahit
 ```bash
 conda create -n megahit
@@ -26,6 +32,12 @@ conda install -c bioconda megahit
 conda create -n kmc
 conda activate kmc
 conda install kmc
+```
+## tophat
+```bash
+conda create -n tophat
+conda activate tophat
+conda install tophat
 ```
 ## samtools
 ```bash
@@ -93,6 +105,54 @@ nano ~/.profile
 #PATH=$HOME/git_repos/tools/prog/kraken2/1/kraken2-build:${PATH}
 #PATH=$HOME/git_repos/tools/prog/kraken2/1/kraken2-inspect:${PATH}
 . ~/.profile
+```
+```bash
+conda create -n kraken2
+conda activate kraken2
+conda install -c bioconda kraken2
+conda install libiconv
+```
+## codingquary
+```bash
+conda create --name codingquary python=2.7
+conda activate codingquary
+conda install codingquarry
+
+nano ~/.profile
+#PATH=$HOME/miniconda3/envs/codingquary/opt/codingquarry-2.0/QuarryFiles:${PATH}
+. ~/.profile
+```
+## signalp
+```bash
+mkdir /home/heavet/git_repos/tools/gene_prediction/signalp-5.0b
+cd /home/heavet/git_repos/tools/gene_prediction/signalp-5.0b
+wget https://services.healthtech.dtu.dk/download/6e5220c3-8c8b-44ec-8835-f9184061d75b/signalp-5.0b.Linux.tar.gz
+tar -xvzf signalp-5.0b.Linux.tar.gz
+nano ~/.profile
+#PATH=${PATH}:$HOME/git_repos/tools/gene_prediction/signalp-5.0b/signalp-5.0b/bin:${PATH}
+. ~/.profile
+```
+## centrifuge
+```bash
+nano ~/.profile
+PATH=${PATH}:/scratch/software/centrifuge:${PATH}
+. ~/.profile
+```
+## cufflinks
+```bash
+conda activate tophat
+conda install cufflinks
+```
+## Braker
+```bash
+conda create -n braker
+conda activate braker
+conda install -c bioconda braker
+conda install YAML
+conda install -c bioconda perl-hash-merge
+conda install -c bioconda perl-logger-simple
+conda install augustus
+conda install numpy
 ```
 ## FastQC
 ```bash
@@ -378,6 +438,7 @@ export BUSCO_CONFIG_FILE=/home/heavet/git_repos/tools/prog/busco/busco-3.0.2/con
 
 conda activate rnaquast 
 conda install busco
+conda install -c bioconda -c conda-forge busco=4.1.4 augustus=3.3.3
 ```
 ## Genewise
 ```bash
@@ -542,7 +603,12 @@ nano ~/.profile
 #PATH=$HOME/git_repos/tools/prog/STAR/STAR-2.7.3a/bin/Linux_x86_64:${PATH}
 . ~/.profile
 ```
-
+## Picard
+```bash
+conda create -n Picard
+conda activate Picard
+conda install -c bioconda picard
+```
 ## Trinity
 ```bash
 #Due to the difficulties installing and running trinity a bioconda installation route was used:
