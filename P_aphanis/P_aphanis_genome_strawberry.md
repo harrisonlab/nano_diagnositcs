@@ -13,14 +13,42 @@ Raw MiSeq sequence data for P.aphanis was linked from long term storage in /arch
 ```bash
 mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F
 mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R
 mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/1/all
 
 ln -s /archives/2020_niab_general/20201203_X204SC20110698-Z01-F001/X204SC20110698-Z01-F001/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HKFFGDSXY_L4_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/DRCT72020_1_f.fq.gz
+ln -s /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HNLV2DSXY_L2_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/DRCT72020_2_f.fq.gz
+ln -s /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HTTWTDSXY_L3_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/DRCT72020_3_f.fq.gz
+ln -s /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HNTVMDSXY_L4_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/DRCT72020_4_f.fq.gz
 
 ln -s /archives/2020_niab_general/20201203_X204SC20110698-Z01-F001/X204SC20110698-Z01-F001/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HKFFGDSXY_L4_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/DRCT72020_1_r.fq.gz
+ln -s /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HNLV2DSXY_L2_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/DRCT72020_2_r.fq.gz
+ln -s /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HTTWTDSXY_L3_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/DRCT72020_3_r.fq.gz
+ln -s /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HNTVMDSXY_L4_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/DRCT72020_4_r.fq.gz
 
 ln -s /archives/2020_niab_general/20201203_X204SC20110698-Z01-F001/X204SC20110698-Z01-F001/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HKFFGDSXY_L4_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/1/all/DRCT72020_1_f.fq.gz
 ln -s /archives/2020_niab_general/20201203_X204SC20110698-Z01-F001/X204SC20110698-Z01-F001/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HKFFGDSXY_L4_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/1/all/DRCT72020_1_r.fq.gz
+ln -s /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HNLV2DSXY_L2_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/1/all/DRCT72020_2_f.fq.gz
+ln -s /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HNLV2DSXY_L2_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/1/all/DRCT72020_2_r.fq.gz
+ln -s /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HTTWTDSXY_L3_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/1/all/DRCT72020_3_f.fq.gz
+ln -s /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HTTWTDSXY_L3_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/1/all/DRCT72020_3_r.fq.gz
+ln -s /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HNTVMDSXY_L4_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/1/all/DRCT72020_4_f.fq.gz
+ln -s /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HNTVMDSXY_L4_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/1/all/DRCT72020_4_r.fq.gz
+
+#Sequencing performed by H.Cockerton & A.Armitage was also linked
+mkdir -p rawdata/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F
+mkdir -p rawdata/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R
+mkdir -p rawdata/P_aphanis/MiSeq/H_Cockerton2018/paired/001/1/all
+
+ln -s /data/seq_data/miseq/2018/ANALYSIS/180227_M04465_0070_000000000-B86MV/Data/Intensities/BaseCalls/MildewC1_S1_L001_R1_001.fastq.gz rawdata/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/H_Cockerton2018_1_f.fq.gz
+ln -s /data/seq_data/miseq/2018/ANALYSIS/180227_M04465_0070_000000000-B86MV/Data/Intensities/BaseCalls/MildewC1_S1_L001_R2_001.fastq.gz rawdata/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/H_Cockerton2018_1_r.fq.gz
+ln -s /data/seq_data/miseq/2018/ANALYSIS/180227_M04465_0070_000000000-B86MV/Data/Intensities/BaseCalls/MildewC1_S1_L001_R1_001.fastq.gz rawdata/P_aphanis/MiSeq/H_Cockerton2018/paired/001/1/all/H_Cockerton2018_1_f.fq.gz
+ln -s /data/seq_data/miseq/2018/ANALYSIS/180227_M04465_0070_000000000-B86MV/Data/Intensities/BaseCalls/MildewC1_S1_L001_R2_001.fastq.gz rawdata/P_aphanis/MiSeq/H_Cockerton2018/paired/001/1/all/H_Cockerton2018_1_r.fq.gz
 ```
 The fragaria ananassa 'camarosa' genome was linked from its download location. Originally downloaded from rosaceae.org/species/fragaria/
 ```bash
@@ -97,8 +125,16 @@ OutDir=$(dirname $RawData)
 Outfile=$(basename -a $RawData)_fastqc
 sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
 done
-#615754
-#615755
+#715652
+#715653
+#715654
+#715655
+#715656
+#715657
+#715658
+#715659
+#721875
+#721876
 
 #The number of raw reads were counted:
 
@@ -106,10 +142,26 @@ cat rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/DRCT72020_1_f.fq.gz 
 #46,331,871
 cat rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/DRCT72020_1_r.fq.gz | gunzip -cf | echo $((`wc -l`/4))
 #46,331,871
+cat rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/DRCT72020_2_f.fq.gz | gunzip -cf | echo $((`wc -l`/4))
+#125,053,705
+cat rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/DRCT72020_2_r.fq.gz | gunzip -cf | echo $((`wc -l`/4))
+#125,053,705
+cat rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/DRCT72020_3_f.fq.gz | gunzip -cf | echo $((`wc -l`/4))
+#158,992,963
+cat rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/DRCT72020_3_r.fq.gz | gunzip -cf | echo $((`wc -l`/4))
+#158,992,963
+cat rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/DRCT72020_4_f.fq.gz | gunzip -cf | echo $((`wc -l`/4))
+#18,904,140
+cat rawdata/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/DRCT72020_4_r.fq.gz | gunzip -cf | echo $((`wc -l`/4))
+#18,904,140
+cat rawdata/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/H_Cockerton2018_1_f.fq.gz | gunzip -cf | echo $((`wc -l`/4))
+#23,712,972
+cat rawdata/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/H_Cockerton2018_1_r.fq.gz | gunzip -cf | echo $((`wc -l`/4))
+#23,712,972
 ```
 Trimming was performed on data to trim adapters from sequences and remove poor quality data. This was done with trimmomatic. 
 ```bash
-for ReadDir in $(ls -d rawdata/P_aphanis/*/THeavenDRCT72020_1/*/*);
+for ReadDir in $(ls -d rawdata/P_aphanis/MiSeq/*/*/*);
 do
  Fread=$(ls $ReadDir/F/*.fq.gz)
  Rread=$(ls $ReadDir/R/*.fq.gz)
@@ -122,7 +174,11 @@ Prefix=$(echo $ReadDir|cut -f2,3,4,5,6 -d '/' --output-delimiter '-')
 echo $Prefix
 sbatch $ProgDir/srun_trimmomatic.sh $Fread $Rread $Adapters $OutDir $Prefix
 done
-#615756
+#715660
+#715661 
+#715663
+#715871
+#721878
 
 #The number of trimmed reads were counted:
 zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz | echo $((`wc -l`/4))
@@ -133,20 +189,62 @@ zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THea
 #44,242,374
 zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz | echo $((`wc -l`/4))
 #350,503
+
+zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz | echo $((`wc -l`/4))
+#120,533,647
+zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz | echo $((`wc -l`/4))
+#3,246,798
+zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz | echo $((`wc -l`/4))
+#120,533,647
+zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz | echo $((`wc -l`/4))
+#967,607
+
+zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz | echo $((`wc -l`/4))
+#154,120,231
+zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz | echo $((`wc -l`/4))
+#3,673,782
+zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz | echo $((`wc -l`/4))
+#154,120,231
+zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz | echo $((`wc -l`/4))
+#876,913
+
+zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz | echo $((`wc -l`/4))
+#18,088,614
+zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz | echo $((`wc -l`/4))
+#623,562
+zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz | echo $((`wc -l`/4))
+#18,088,614
+zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz | echo $((`wc -l`/4))
+#140,495
+
+zcat dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim.fq.gz | echo $((`wc -l`/4))
+#22,482,779
+zcat dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim_unpaired.fq.gz | echo $((`wc -l`/4))
+#1,110,466
+zcat dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim.fq.gz | echo $((`wc -l`/4))
+#22,482,779
+zcat dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim_unpaired.fq.gz | echo $((`wc -l`/4))
+#59,680
 ```
 The data was visualised following trimming.
 ```bash
-for QCData in $(ls dna_qc/P_aphanis/*/THeavenDRCT72020_1/*/*/*/*.fq.gz); do
+for QCData in $(ls dna_qc/P_aphanis/MiSeq/*/*/*/*/*.fq.gz); do
 echo $QCData
 ProgDir=~/git_repos/tools/seq_tools/dna_qc
-OutDir=$(dirname $RawData)
-Outfile=$(basename -a $RawData)_fastqc
+OutDir=$(dirname $QCData)
+echo $OutDir
+Outfile=$(basename -a $QCData)_fastqc
+echo $Outfile
 sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
 done
 #615768
 #615769
 #615770
 #615771
+#721880
+#721881
+#721882
+#721883
 ```
 ## Alignment
 
@@ -194,6 +292,97 @@ echo finished
 #    120540 (6.19%) aligned >1 times
 #14.04% overall alignment rate
 
+bowtie2 \
+-x camarosa_index \
+-1 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1allunalignedcamarosa.sam \
+--un-gz THeavenDRCT72020_1allunalignedcamarosa_s.fq.gz \
+--un-conc-gz THeavenDRCT72020_1allunalignedcamarosa_fr.fq.gz \
+-S THeavenDRCT72020_1allalignedcamarosa.sam
+echo finished
+#348,460,905 reads; of these:
+#  336984866 (96.71%) were paired; of these:
+#    293519726 (87.10%) aligned concordantly 0 times
+#    9812741 (2.91%) aligned concordantly exactly 1 time
+#    33652399 (9.99%) aligned concordantly >1 times
+#    ----
+#    293519726 pairs aligned concordantly 0 times; of these:
+#      157140 (0.05%) aligned discordantly 1 time
+#    ----
+#    293362586 pairs aligned 0 times concordantly or discordantly; of these:
+#      586725172 mates make up the pairs; of these:
+#        580453494 (98.93%) aligned 0 times
+#        1584858 (0.27%) aligned exactly 1 time
+#        4686820 (0.80%) aligned >1 times
+#  11476039 (3.29%) were unpaired; of these:
+#    10747404 (93.65%) aligned 0 times
+#    108991 (0.95%) aligned exactly 1 time
+#    619644 (5.40%) aligned >1 times
+#13.75% overall alignment rate
+
+bowtie2 \
+-x camarosa_index \
+-1 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1combunalignedcamarosa.sam \
+--un-gz THeavenDRCT72020_1combunalignedcamarosa_s.fq.gz \
+--un-conc-gz THeavenDRCT72020_1combunalignedcamarosa_fr.fq.gz \
+-S THeavenDRCT72020_1combalignedcamarosa.sam
+echo finished
+#372113830 reads; of these:
+#  359467645 (96.60%) were paired; of these:
+#    301620392 (83.91%) aligned concordantly 0 times
+#    12792520 (3.56%) aligned concordantly exactly 1 time
+#    45054733 (12.53%) aligned concordantly >1 times
+#    ----
+#    301620392 pairs aligned concordantly 0 times; of these:
+#      268147 (0.09%) aligned discordantly 1 time
+#    ----
+#    301352245 pairs aligned 0 times concordantly or discordantly; of these:
+#      602704490 mates make up the pairs; of these:
+#        593295715 (98.44%) aligned 0 times
+#        2060262 (0.34%) aligned exactly 1 time
+#        7348513 (1.22%) aligned >1 times
+#  12646185 (3.40%) were unpaired; of these:
+#    11206758 (88.62%) aligned 0 times
+#    212666 (1.68%) aligned exactly 1 time
+#    1226761 (9.70%) aligned >1 times
+#17.37% overall alignment rate
+
+#An alignment was made to the camarosa genome with the Cockerton reads:
+bowtie2 \
+-x camarosa_index \
+-1 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1cockertoncamarosa.sam \
+--un-gz THeavenDRCT72020_1cockertoncamarosa_s.fq.gz \
+--un-conc-gz THeavenDRCT72020_1cockertoncamarosa_fr.fq.gz \
+-S THeavenDRCT72020_1cockertoncamarosa.sam
+echo finished
+#23652925 reads; of these:
+#  22482779 (95.05%) were paired; of these:
+#    8100666 (36.03%) aligned concordantly 0 times
+#    2979779 (13.25%) aligned concordantly exactly 1 time
+#    11402334 (50.72%) aligned concordantly >1 times
+#    ----
+#    8100666 pairs aligned concordantly 0 times; of these:
+#      111007 (1.37%) aligned discordantly 1 time
+#    ----
+#    7989659 pairs aligned 0 times concordantly or discordantly; of these:
+#      15979318 mates make up the pairs; of these:
+#        12842221 (80.37%) aligned 0 times
+#        475404 (2.98%) aligned exactly 1 time
+#        2661693 (16.66%) aligned >1 times
+#  1170146 (4.95%) were unpaired; of these:
+#    459354 (39.26%) aligned 0 times
+#    103675 (8.86%) aligned exactly 1 time
+#    607117 (51.88%) aligned >1 times
+#71.17% overall alignment rate
+
 #An alignment of trimmed reads including unpaired reads was made to the ganan apple powdery mildew genome, this produced a 14.37% overall alignment rate.
 cd /projects/nano_diagnostics
 mkdir -p alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/ganan_P_leucotricha
@@ -228,6 +417,63 @@ echo finished
 #    31630 (1.62%) aligned >1 times
 #14.37% overall alignment rate
 
+bowtie2 \
+-x ganan_P_leucotricha_index \
+-1 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1allunalignedGananPleucotricha.sam \
+-S THeavenDRCT72020_1allalignedGananPleucotricha.sam
+echo finished
+
+#348460905 reads; of these:
+#  336984866 (96.71%) were paired; of these:
+#    305886631 (90.77%) aligned concordantly 0 times
+#    25067221 (7.44%) aligned concordantly exactly 1 time
+#    6031014 (1.79%) aligned concordantly >1 times
+#    ----
+#    305886631 pairs aligned concordantly 0 times; of these:
+#      1628319 (0.53%) aligned discordantly 1 time
+#    ----
+#    304258312 pairs aligned 0 times concordantly or discordantly; of these:
+#      608516624 mates make up the pairs; of these:
+#        578474789 (95.06%) aligned 0 times
+#        22549276 (3.71%) aligned exactly 1 time
+#        7492559 (1.23%) aligned >1 times
+#  11476039 (3.29%) were unpaired; of these:
+#    10000449 (87.14%) aligned 0 times
+#    1311901 (11.43%) aligned exactly 1 time
+#    163689 (1.43%) aligned >1 times
+#14.15% overall alignment rate
+
+bowtie2 \
+-x ganan_P_leucotricha_index \
+-1 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1combunalignedGananPleucotricha.sam \
+-S THeavenDRCT72020_1combalignedGananPleucotricha.sam
+echo finished
+#372113830 reads; of these:
+#  359467645 (96.60%) were paired; of these:
+#    327590292 (91.13%) aligned concordantly 0 times
+#    25716119 (7.15%) aligned concordantly exactly 1 time
+#    6161234 (1.71%) aligned concordantly >1 times
+#    ----
+#    327590292 pairs aligned concordantly 0 times; of these:
+#      1692948 (0.52%) aligned discordantly 1 time
+#    ----
+#    325897344 pairs aligned 0 times concordantly or discordantly; of these:
+#      651794688 mates make up the pairs; of these:
+#        621110892 (95.29%) aligned 0 times
+#        23043657 (3.54%) aligned exactly 1 time
+#        7640139 (1.17%) aligned >1 times
+#  12646185 (3.40%) were unpaired; of these:
+#    11099458 (87.77%) aligned 0 times
+#    1369374 (10.83%) aligned exactly 1 time
+#    177353 (1.40%) aligned >1 times
+#13.58% overall alignment rate
+
 #An alignment of trimmed reads including unpaired reads was made to the low coverage P_aphanis powdery mildew genome, this produced a 58.71% overall alignment rate.
 cd /projects/nano_diagnostics
 mkdir -p alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/cockerton_P_aphanis
@@ -261,6 +507,67 @@ echo finished
 #    1155433 (59.35%) aligned exactly 1 time
 #    203141 (10.43%) aligned >1 times
 #58.71% overall alignment rate
+
+cd /projects/nano_diagnostics
+mkdir -p alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/cockerton_P_aphanis
+cd alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/cockerton_P_aphanis
+bowtie2-build /projects/nano_diagnostics/assembly/genome/spades/P_aphanis/H_Cockerton/C1_no_strawberry/deconseq_appended/contigs_min_500bp_renamed.fasta cockerton_P_aphanis_index
+bowtie2 \
+-x cockerton_P_aphanis_index \
+-1 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1unalignedcockerton_allP_aphanis.sam \
+-S THeavenDRCT72020_1alignedcockerton_allP_aphanis.sam
+echo finished
+
+#348460905 reads; of these:
+#  336984866 (96.71%) were paired; of these:
+#    161627958 (47.96%) aligned concordantly 0 times
+#    154355233 (45.80%) aligned concordantly exactly 1 time
+#    21001675 (6.23%) aligned concordantly >1 times
+#   ----
+#    161627958 pairs aligned concordantly 0 times; of these:
+#      6223831 (3.85%) aligned discordantly 1 time
+#    ----
+#    155404127 pairs aligned 0 times concordantly or discordantly; of these:
+#      310808254 mates make up the pairs; of these:
+#        276561423 (88.98%) aligned 0 times
+#        15752895 (5.07%) aligned exactly 1 time
+#        18493936 (5.95%) aligned >1 times
+#  11476039 (3.29%) were unpaired; of these:
+#    3342939 (29.13%) aligned 0 times
+#    6937600 (60.45%) aligned exactly 1 time
+#    1195500 (10.42%) aligned >1 times
+#59.16% overall alignment rate
+
+bowtie2 \
+-x cockerton_P_aphanis_index \
+-1 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1unalignedcockerton_combP_aphanis.sam \
+-S THeavenDRCT72020_1alignedcockerton_combP_aphanis.sam
+echo finished
+#372113830 reads; of these:
+#  359467645 (96.60%) were paired; of these:
+#    180078260 (50.10%) aligned concordantly 0 times
+#    157878176 (43.92%) aligned concordantly exactly 1 time
+#    21511209 (5.98%) aligned concordantly >1 times
+#    ----
+#    180078260 pairs aligned concordantly 0 times; of these:
+#      6514087 (3.62%) aligned discordantly 1 time
+#    ----
+#    173564173 pairs aligned 0 times concordantly or discordantly; of these:
+#      347128346 mates make up the pairs; of these:
+#        312189289 (89.93%) aligned 0 times
+#        16032540 (4.62%) aligned exactly 1 time
+#        18906517 (5.45%) aligned >1 times
+#  12646185 (3.40%) were unpaired; of these:
+#    4180541 (33.06%) aligned 0 times
+#    7198262 (56.92%) aligned exactly 1 time
+#    1267382 (10.02%) aligned >1 times
+#56.76% overall alignment rate
 
 #An alignment of trimmed reads including unpaired reads was made to the wheat powdery mildew genome, this produced a 2.17% overall alignment rate.
 cd /projects/nano_diagnostics
@@ -297,6 +604,71 @@ echo finished
 #    18053 (0.93%) aligned >1 times
 #2.17% overall alignment rate
 
+cd /projects/nano_diagnostics
+mkdir -p alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/P_graminis
+cd alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/P_graminis
+bowtie2-build /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/B_graminis/GCA_900237765.1_BghRACE1_v1_genomic.fna P_graminis_index
+bowtie2 \
+-x P_graminis_index \
+-1 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1unalignedP_graminis_allP_aphanis.sam \
+--un-gz THeavenDRCT72020_1unalignedP_graminis_allP_aphanis_s.fq.gz \
+--un-conc-gz THeavenDRCT72020_1unalignedP_graminis_allP_aphanis_fr.fq.gz \
+--met-file THeavenDRCT72020_1unalignedP_graminis_allP_aphanis.txt \
+-S THeavenDRCT72020_1alignedP_graminis_allP_aphanis.sam
+echo finished
+#348460905 reads; of these:
+#  336984866 (96.71%) were paired; of these:
+#    331700418 (98.43%) aligned concordantly 0 times
+#    432801 (0.13%) aligned concordantly exactly 1 time
+#    4851647 (1.44%) aligned concordantly >1 times
+#    ----
+#    331700418 pairs aligned concordantly 0 times; of these:
+#      19998 (0.01%) aligned discordantly 1 time
+#    ----
+#    331680420 pairs aligned 0 times concordantly or discordantly; of these:
+#      663360840 mates make up the pairs; of these:
+#        659421479 (99.41%) aligned 0 times
+#        1954210 (0.29%) aligned exactly 1 time
+#        1985151 (0.30%) aligned >1 times
+#  11476039 (3.29%) were unpaired; of these:
+#    11297185 (98.44%) aligned 0 times
+#    75160 (0.65%) aligned exactly 1 time
+#    103694 (0.90%) aligned >1 times
+#2.15% overall alignment rate
+
+cd alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/P_graminis
+bowtie2 \
+-x P_graminis_index \
+-1 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1unalignedcockerton_combP_graminis.sam \
+-S THeavenDRCT72020_1alignedcockerton_combP_graminis.sam
+echo finished
+#372113830 reads; of these:
+#  359467645 (96.60%) were paired; of these:
+#    354086552 (98.50%) aligned concordantly 0 times
+#    452528 (0.13%) aligned concordantly exactly 1 time
+#    4928565 (1.37%) aligned concordantly >1 times
+#    ----
+#    354086552 pairs aligned concordantly 0 times; of these:
+#      21608 (0.01%) aligned discordantly 1 time
+#    ----
+#    354064944 pairs aligned 0 times concordantly or discordantly; of these:
+#      708129888 mates make up the pairs; of these:
+#        704070367 (99.43%) aligned 0 times
+#        2007745 (0.28%) aligned exactly 1 time
+#        2051776 (0.29%) aligned >1 times
+#  12646185 (3.40%) were unpaired; of these:
+#    12456667 (98.50%) aligned 0 times
+#    79048 (0.63%) aligned exactly 1 time
+#    110470 (0.87%) aligned >1 times
+#2.06% overall alignment rate
+
+
 #An alignment of trimmed reads including unpaired reads was made to the grape powdery mildew genome, this produced a 3.96% overall alignment rate.
 cd /projects/nano_diagnostics
 mkdir -p alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/E_necator
@@ -331,6 +703,72 @@ echo finished
 #    58706 (3.02%) aligned exactly 1 time
 #    54695 (2.81%) aligned >1 times
 #3.96% overall alignment rate
+
+cd /projects/nano_diagnostics
+mkdir -p alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/E_necator
+cd alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/E_necator
+bowtie2-build /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/E_necator/GCA_000798715.1_ASM79871v1_genomic.fna E_necator_index
+bowtie2 \
+-x E_necator_index \
+-1 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1unalignedE_necator_allP_aphanis.sam \
+--un-gz THeavenDRCT72020_1unalignedE_necator_allP_aphanis_s.fq.gz \
+--un-conc-gz THeavenDRCT72020_1unalignedE_necator_allP_aphanis_fr.fq.gz \
+-S THeavenDRCT72020_1alignedE_necator_allP_aphanis.sam
+echo finished
+#348460905 reads; of these:
+#  336984866 (96.71%) were paired; of these:
+#    328152471 (97.38%) aligned concordantly 0 times
+#    7392156 (2.19%) aligned concordantly exactly 1 time
+#    1440239 (0.43%) aligned concordantly >1 times
+#    ----
+#    328152471 pairs aligned concordantly 0 times; of these:
+#      170767 (0.05%) aligned discordantly 1 time
+#    ----
+#    327981704 pairs aligned 0 times concordantly or discordantly; of these:
+#      655963408 mates make up the pairs; of these:
+#        648095461 (98.80%) aligned 0 times
+#        6795974 (1.04%) aligned exactly 1 time
+#        1071973 (0.16%) aligned >1 times
+#  11476039 (3.29%) were unpaired; of these:
+#    10927928 (95.22%) aligned 0 times
+#    305860 (2.67%) aligned exactly 1 time
+#    242251 (2.11%) aligned >1 times
+#3.79% overall alignment rate
+
+cd alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/E_necator
+bowtie2 \
+-x E_necator_index \
+-1 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1unalignedcockerton_combE_necator_allP_aphanis.sam \
+--un-gz THeavenDRCT72020_1unalignedcockerton_combE_necator_allP_aphanis_s.fq.gz \
+--un-conc-gz THeavenDRCT72020_1unalignedcockerton_combE_necator_allP_aphanis_fr.fq.gz \
+-S THeavenDRCT72020_1alignedcockerton_combE_necator_allP_aphanis.sam
+echo finished
+#372113830 reads; of these:
+#  359467645 (96.60%) were paired; of these:
+#    350422960 (97.48%) aligned concordantly 0 times
+#    7582038 (2.11%) aligned concordantly exactly 1 time
+#    1462647 (0.41%) aligned concordantly >1 times
+#    ----
+#    350422960 pairs aligned concordantly 0 times; of these:
+#      185540 (0.05%) aligned discordantly 1 time
+#    ----
+#    350237420 pairs aligned 0 times concordantly or discordantly; of these:
+#      700474840 mates make up the pairs; of these:
+#        692385524 (98.85%) aligned 0 times
+#        6985193 (1.00%) aligned exactly 1 time
+#        1104123 (0.16%) aligned >1 times
+#  12646185 (3.40%) were unpaired; of these:
+#    12078750 (95.51%) aligned 0 times
+#    321843 (2.54%) aligned exactly 1 time
+#    245592 (1.94%) aligned >1 times
+#3.71% overall alignment rate
+
 
 #An alignment of trimmed reads including unpaired reads was made to the P.xanthii transcriptome, this produced a 11.98% overall alignment rate.
 cd /projects/nano_diagnostics
@@ -367,6 +805,70 @@ echo finished
 #    50804 (2.61%) aligned >1 times
 #11.98% overall alignment rate
 
+cd /projects/nano_diagnostics
+mkdir -p alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/Angelini_P_xanthii
+cd alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/Angelini_P_xanthii
+bowtie2-build /projects/nano_diagnostics/rawdata/P_xanthii/AngeliniExp/transcriptome/GHEF01.fasta Angelini_P_xanthii_index
+bowtie2 \
+-x Angelini_P_xanthii_index \
+-1 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1unalignedAngelini_P_xanthii_allP_aphanis.sam \
+--un-gz THeavenDRCT72020_1unalignedAngelini_P_xanthii_allP_aphanis_s.fq.gz \
+--un-conc-gz THeavenDRCT72020_1unalignedAngelini_P_xanthii_allP_aphanis_fr.fq.gz \
+-S THeavenDRCT72020_1alignedAngelini_P_xanthii_allP_aphanis.sam
+echo finished
+#348460905 reads; of these:
+#  336984866 (96.71%) were paired; of these:
+#    309818161 (91.94%) aligned concordantly 0 times
+#    19302237 (5.73%) aligned concordantly exactly 1 time
+#    7864468 (2.33%) aligned concordantly >1 times
+#    ----
+#    309818161 pairs aligned concordantly 0 times; of these:
+#      1348947 (0.44%) aligned discordantly 1 time
+#    ----
+#    308469214 pairs aligned 0 times concordantly or discordantly; of these:
+#      616938428 mates make up the pairs; of these:
+#        593855586 (96.26%) aligned 0 times
+#        13096652 (2.12%) aligned exactly 1 time
+#        9986190 (1.62%) aligned >1 times
+#  11476039 (3.29%) were unpaired; of these:
+#    10737048 (93.56%) aligned 0 times
+#    463152 (4.04%) aligned exactly 1 time
+#    275839 (2.40%) aligned >1 times
+#11.80% overall alignment rate
+
+bowtie2 \
+-x Angelini_P_xanthii_index \
+-1 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1unalignedAngelini_P_xanthii_cockerton_combP_aphanis.sam \
+--un-gz THeavenDRCT72020_1unalignedAngelini_P_xanthii_cockerton_combP_aphanis_s.fq.gz \
+--un-conc-gz THeavenDRCT72020_1unalignedAngelini_P_xanthii_cockerton_combP_aphanis_fr.fq.gz \
+-S THeavenDRCT72020_1alignedAngelini_P_xanthii_cockerton_combP_aphanis.sam
+echo finished
+#372113830 reads; of these:
+#  359467645 (96.60%) were paired; of these:
+#    331740757 (92.29%) aligned concordantly 0 times
+#    19690547 (5.48%) aligned concordantly exactly 1 time
+#    8036341 (2.24%) aligned concordantly >1 times
+#    ----
+#    331740757 pairs aligned concordantly 0 times; of these:
+#      1395044 (0.42%) aligned discordantly 1 time
+#    ----
+#    330345713 pairs aligned 0 times concordantly or discordantly; of these:
+#      660691426 mates make up the pairs; of these:
+#        637101873 (96.43%) aligned 0 times
+#        13405523 (2.03%) aligned exactly 1 time
+#        10184030 (1.54%) aligned >1 times
+#  12646185 (3.40%) were unpaired; of these:
+#    11859852 (93.78%) aligned 0 times
+#    493258 (3.90%) aligned exactly 1 time
+#    293075 (2.32%) aligned >1 times
+#11.29% overall alignment rate
+
 #An alignment of trimmed reads including unpaired reads was made to the P.pannosa transcriptome, this produced a 6.36% overall alignment rate.
 cd /projects/nano_diagnostics
 mkdir -p alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/Fonseca_P_pannosa
@@ -401,12 +903,112 @@ echo finished
 #    30097 (1.55%) aligned exactly 1 time
 #    30218 (1.55%) aligned >1 times
 #6.36% overall alignment rate
+
+cd /projects/nano_diagnostics
+mkdir -p alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/Fonseca_P_pannosa
+cd alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/Fonseca_P_pannosa
+bowtie2-build /projects/nano_diagnostics/rawdata/P_pannosa/N_FonsecaExp/transcriptome/GHDE01.1.fsa_nt Fonseca_P_pannosa_index
+bowtie2 \
+-x Fonseca_P_pannosa_index \
+-1 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1unalignedFonseca_P_pannosa_allP_aphanis.sam \
+--un-gz THeavenDRCT72020_1unalignedFonseca_P_pannosa_allP_aphanis_s.fq.gz \
+--un-conc-gz THeavenDRCT72020_1unalignedFonseca_P_pannosa_allP_aphanis_fr.fq.gz \
+-S THeavenDRCT72020_1alignedFonseca_P_pannosa_allP_aphanis.sam
+echo finished
+#348460905 reads; of these:
+#  336984866 (96.71%) were paired; of these:
+#    322977656 (95.84%) aligned concordantly 0 times
+#    8587047 (2.55%) aligned concordantly exactly 1 time
+#    5420163 (1.61%) aligned concordantly >1 times
+#    ----
+#    322977656 pairs aligned concordantly 0 times; of these:
+#      657077 (0.20%) aligned discordantly 1 time
+#    ----
+#    322320579 pairs aligned 0 times concordantly or discordantly; of these:
+#      644641158 mates make up the pairs; of these:
+#        631423994 (97.95%) aligned 0 times
+#        7932259 (1.23%) aligned exactly 1 time
+#        5284905 (0.82%) aligned >1 times
+#  11476039 (3.29%) were unpaired; of these:
+#    11156612 (97.22%) aligned 0 times
+#    155698 (1.36%) aligned exactly 1 time
+#    163729 (1.43%) aligned >1 times
+#6.25% overall alignment rate
+
+cd /projects/nano_diagnostics
+cd alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/Fonseca_P_pannosa
+bowtie2 \
+-x Fonseca_P_pannosa_index \
+-1 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1unalignedFonseca_P_pannosa_comballP_aphanis.sam \
+--un-gz THeavenDRCT72020_1unalignedFonseca_P_pannosa_comballP_aphanis_s.fq.gz \
+--un-conc-gz THeavenDRCT72020_1unalignedFonseca_P_pannosa_comballP_aphanis_fr.fq.gz \
+-S THeavenDRCT72020_1alignedFonseca_P_pannosa_comballP_aphanis.sam
+echo finished
+#372113830 reads; of these:
+#  359467645 (96.60%) were paired; of these:
+#    345178813 (96.03%) aligned concordantly 0 times
+#    8756253 (2.44%) aligned concordantly exactly 1 time
+#    5532579 (1.54%) aligned concordantly >1 times
+#    ----
+#    345178813 pairs aligned concordantly 0 times; of these:
+#      674031 (0.20%) aligned discordantly 1 time
+#    ----
+#    344504782 pairs aligned 0 times concordantly or discordantly; of these:
+#      689009564 mates make up the pairs; of these:
+#        675558378 (98.05%) aligned 0 times
+#        8068948 (1.17%) aligned exactly 1 time
+#        5382238 (0.78%) aligned >1 times
+#  12646185 (3.40%) were unpaired; of these:
+#    12305745 (97.31%) aligned 0 times
+#    167422 (1.32%) aligned exactly 1 time
+#    173018 (1.37%) aligned >1 times
+```
+Centrifuge was run with trimmed reads to identify what taxa were represented in the metagenome data.
+### Centrifuge
+```bash
+#centrifuge was run with a fungi only database
+mkdir -p analysis/P_aphanis/THeavenDRCT72020_1/centrifuge/reads/fungi
+#change database to /data/scratch/gomeza/prog/centrifuge/
+  for ReadDir in $(ls -d alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa); do
+    F_Read=$(ls $ReadDir/*allunalignedcamarosa_fr-f.fq)
+    R_Read=$(ls $ReadDir/*allunalignedcamarosa_fr-r.fq)
+    echo $F_Read
+	echo $R_Read
+    Database=fungi
+    OutDir=analysis/P_aphanis/THeavenDRCT72020_1/centrifuge/reads/fungi
+    ProgDir=~/git_repos/tools/seq_tools/metagenomics
+    sbatch $ProgDir/ag_centrifuge.sh $Database $OutDir $F_Read $R_Read
+	done
+#741416
+
+#centrifuge was run with a broad nt database
+mkdir -p analysis/P_aphanis/THeavenDRCT72020_1/centrifuge/reads/nt
+#change database to /scratch/public_data/nt-centrifuge_12jan2021/
+  for ReadDir in $(ls -d alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa); do
+    F_Read=$(ls $ReadDir/*allunalignedcamarosa_fr-f.fq)
+    R_Read=$(ls $ReadDir/*allunalignedcamarosa_fr-r.fq)
+    echo $F_Read
+	echo $R_Read
+    Database=nt
+    OutDir=analysis/P_leucotricha/THeavenp11_1/centrifuge/reads/nt
+    ProgDir=~/git_repos/tools/seq_tools/metagenomics
+    sbatch $ProgDir/ag_centrifuge.sh $Database $OutDir $F_Read $R_Read
+	done
+#741417
 ```
 ### Coverage
 There is no existing genome to use for estimated coverage.
 ```bash
 #Basic coverage calculation; coverage=(readlength*readnumber)/genomelength
 (350bp x 46,189,256 reads)/39,000,000 = 414.5
+
+(350bp x 685,445,771 reads)/60,196,572 = 3,985
 
 #kmer counting was performed using kmc This allowed estimation of sequencing depth and total genome size. This excludes unpaired trimmed data.
 conda activate kmc
@@ -431,7 +1033,7 @@ for TrimPath in $(ls -d dna_qc/*/*/THeavenDRCT72020_1/*/*); do
     echo $TrimunR
     sbatch $ProgDir/kmc_kmer_counting.sh $TrimF $TrimR
 done
-
+#720346 - fails
 
 #Coverage of the sequence data was also estimated via alignmnet with the unpublished low coverage P.aphanis assembly.
 cd alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/cockerton_P_aphanis
@@ -439,10 +1041,24 @@ samtools view --threads 8 -bS THeavenDRCT72020_1alignedcockerton_P_aphanis.sam -
 samtools sort --threads 8 -o THeavenDRCT72020_1alignedcockerton_P_aphanis_sorted.bam THeavenDRCT72020_1alignedcockerton_P_aphanis.bam
 samtools index -@ 8 THeavenDRCT72020_1alignedcockerton_P_aphanis_sorted.bam THeavenDRCT72020_1alignedcockerton_P_aphanis_sorted.bam.index
 samtools coverage THeavenDRCT72020_1alignedcockerton_P_aphanis_sorted.bam -o coverage.txt
-#Coverage x136.8 14209/17365 contigs
+#median depth 58.3, mean depth x136.8 14209/17365 contigs
+
+cd alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/cockerton_P_aphanis
+samtools view --threads 8 -bS THeavenDRCT72020_1alignedcockerton_allP_aphanis.sam -o THeavenDRCT72020_1alignedcockerton_allP_aphanis.bam
+samtools sort --threads 8 -o THeavenDRCT72020_1alignedcockerton_allP_aphanis_sorted.bam THeavenDRCT72020_1alignedcockerton_allP_aphanis.bam
+samtools index -@ 8 THeavenDRCT72020_1alignedcockerton_allP_aphanis_sorted.bam THeavenDRCT72020_1alignedcockerton_allP_aphanis_sorted.bam.index
+samtools coverage THeavenDRCT72020_1alignedcockerton_allP_aphanis_sorted.bam -o allcoverage.txt
+#median depth 433, mean depth x1033 14296/17365 contigs
+
+cd alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/cockerton_P_aphanis
+samtools view --threads 8 -bS THeavenDRCT72020_1alignedcockerton_combP_aphanis.sam -o THeavenDRCT72020_1alignedcockerton_comballP_aphanis.bam
+samtools sort --threads 8 -o THeavenDRCT72020_1alignedcockerton_comballP_aphanis_sorted.bam THeavenDRCT72020_1alignedcockerton_comballP_aphanis.bam
+samtools index -@ 8 THeavenDRCT72020_1alignedcockerton_comballP_aphanis_sorted.bam THeavenDRCT72020_1alignedcockerton_comballP_aphanis_sorted.bam.index
+samtools coverage THeavenDRCT72020_1alignedcockerton_comballP_aphanis_sorted.bam -o comballcoverage.txt
+#median depth 405, mean depth x870 17342/17365 contigs
 ```
 ### Kmer analysis toolkit
-The quality of the first round of sequencing data was assessed using KAT.
+The quality of the sequencing data was assessed using KAT.
 ```bash
 screen -S kat
 srun -p short  --mem 350G --pty bash
@@ -460,6 +1076,34 @@ cd /projects/nano_diagnostics
 kat comp -m 21 -v -h -t 8 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/reads_v_cockerton_P_aphanis-21 '/projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz' assembly/genome/spades/P_aphanis/H_Cockerton/C1_no_strawberry/deconseq_appended/contigs_min_500bp_renamed.fasta
 
 kat plot spectra-cn -x 300 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/reads_v_cockerton_P_aphanis-21plot300 alignment/P_aphanis/THeavenDRCT72020_1/kat/reads_v_cockerton_P_aphanis-21-main.mx
+
+screen -S kat
+srun -p himem  --mem 350G --pty bash
+conda activate kat
+cd /projects/nano_diagnostics
+#Combined reads were compared to the camarosa genome and results plotted:
+kat comp -m 21 -v -h -t 8 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/allreads_v_camarosa-21 '/projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz' rawdata/F_ananassa/camarosa/genome/F_ana_Camarosa_6-28-17.fasta
+
+kat plot spectra-cn -x 300 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/allreads_v_camarosa-21plot300 alignment/P_aphanis/THeavenDRCT72020_1/kat/allreads_v_camarosa-21-main.mx
+kat plot spectra-cn -x 2000 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/allreads_v_camarosa-21plot2000 alignment/P_aphanis/THeavenDRCT72020_1/kat/allreads_v_camarosa-21-main.mx
+
+#Combined reads were compared to the unpublished low coverage P.aphanis genome and results plotted:
+kat comp -m 21 -v -h -t 8 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/allreads_v_cockerton_P_aphanis-21 '/projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz' assembly/genome/spades/P_aphanis/H_Cockerton/C1_no_strawberry/deconseq_appended/contigs_min_500bp_renamed.fasta
+
+kat plot spectra-cn -x 300 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/allreads_v_cockerton_P_aphanis-21plot300 alignment/P_aphanis/THeavenDRCT72020_1/kat/allreads_v_cockerton_P_aphanis-21-main.mx
+kat plot spectra-cn -x 2000 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/allreads_v_cockerton_P_aphanis-21plot2000 alignment/P_aphanis/THeavenDRCT72020_1/kat/allreads_v_cockerton_P_aphanis-21-main.mx
+
+#All Combined reads were compared to the camarosa genome and results plotted:
+kat comp -m 21 -v -h -t 8 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/comballreads_v_camarosa-21 '/projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim_unpaired.fq.gz' rawdata/F_ananassa/camarosa/genome/F_ana_Camarosa_6-28-17.fasta
+
+kat plot spectra-cn -x 300 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/comballreads_v_camarosa-21plot300 alignment/P_aphanis/THeavenDRCT72020_1/kat/comballreads_v_camarosa-21-main.mx
+kat plot spectra-cn -x 2000 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/comballreads_v_camarosa-21plot2000 alignment/P_aphanis/THeavenDRCT72020_1/kat/comballreads_v_camarosa-21-main.mx
+
+#All Combined reads were compared to the unpublished low coverage P.aphanis genome and results plotted:
+kat comp -m 21 -v -h -t 8 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/comballreads_v_cockerton_P_aphanis-21 '/projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim_unpaired.fq.gz' assembly/genome/spades/P_aphanis/H_Cockerton/C1_no_strawberry/deconseq_appended/contigs_min_500bp_renamed.fasta
+
+kat plot spectra-cn -x 300 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/comballreads_v_cockerton_P_aphanis-21plot300 alignment/P_aphanis/THeavenDRCT72020_1/kat/comballreads_v_cockerton_P_aphanis-21-main.mx
+kat plot spectra-cn -x 2000 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/comballreads_v_cockerton_P_aphanis-21plot2000 alignment/P_aphanis/THeavenDRCT72020_1/kat/comballreads_v_cockerton_P_aphanis-21-main.mx
 ```
 ## Assembly
 Trimmed reads that did not align to the camarosa genome were taken as raw data for assembly.
@@ -474,6 +1118,39 @@ mv alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1una
 gunzip alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1unalignedcamarosa_fr-f.fq.gz
 gunzip alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1unalignedcamarosa_fr-r.fq.gz
 gunzip alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1unalignedcamarosa_s-s.fq.gz
+
+#Repeated with aditional sequencing data
+#files were renamed to correct extensions for spades
+mv alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1allunalignedcamarosa_fr.fq.1.gz alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1allunalignedcamarosa_fr-f.fq.gz
+ 
+mv alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1allunalignedcamarosa_fr.fq.2.gz alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1allunalignedcamarosa_fr-r.fq.gz
+
+mv alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1allunalignedcamarosa_s.fq.gz alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1allunalignedcamarosa_s-s.fq.gz
+#files were unzipped
+gunzip alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1allunalignedcamarosa_fr-f.fq.gz
+gunzip alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1allunalignedcamarosa_fr-r.fq.gz
+gunzip alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1allunalignedcamarosa_s-s.fq.gz
+
+#Repeated for cockerton data
+#files were renamed to correct extensions for spades
+mv alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1cockertoncamarosa_fr.fq.1.gz alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1cockertoncamarosa_fr-f.fq.gz
+ 
+mv alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1cockertoncamarosa_fr.fq.2.gz alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1cockertoncamarosa_fr-r.fq.gz
+
+mv alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1cockertoncamarosa_s.fq.gz alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1cockertoncamarosa_s-s.fq.gz
+#files were unzipped
+gunzip alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1cockertoncamarosa_fr-f.fq.gz
+gunzip alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1cockertoncamarosa_fr-r.fq.gz
+gunzip alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1cockertoncamarosa_s-s.fq.gz
+
+wc -l alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1allunalignedcamarosa_fr-f.fq
+# 1174078904
+wc -l alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1allunalignedcamarosa_fr-r.fq
+#1174078904
+
+conda activate spades
+fastq_pair -t 1174078904 alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1allunalignedcamarosa_fr-f.fq alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa/THeavenDRCT72020_1allunalignedcamarosa_fr-r.fq
+#terminated
 ```
 ### SPAdes
 A conda installation of SPAdes was performed
@@ -495,6 +1172,91 @@ conda activate spades
     sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 10
   done
 #615827
+  for ReadDir in $(ls -d alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*allunalignedcamarosa_fr-f.fq)
+    R_Read=$(ls $ReadDir/*allunalignedcamarosa_fr-r.fq)
+    S_Read=$(ls $ReadDir/*allunalignedcamarosa_s-s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/camarosa@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 10
+  done
+#720338
+#720434
+#Produced very large genome and duplicated BUSCO results, therefore rerun with --isolate setting and also with a higher coverage cutoff.
+  for ReadDir in $(ls -d alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*allunalignedcamarosa_fr-f.fq)
+    R_Read=$(ls $ReadDir/*allunalignedcamarosa_fr-r.fq)
+    S_Read=$(ls $ReadDir/*allunalignedcamarosa_s-s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/camarosa@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes_isolate.sh $F_Read $R_Read $S_Read $OutDir correct 10
+  done
+#721950
+  for ReadDir in $(ls -d alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*allunalignedcamarosa_fr-f.fq)
+    R_Read=$(ls $ReadDir/*allunalignedcamarosa_fr-r.fq)
+    S_Read=$(ls $ReadDir/*allunalignedcamarosa_s-s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/camarosa@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 150
+  done
+#721951
+#isolate setting with cuttoff
+  for ReadDir in $(ls -d alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*allunalignedcamarosa_fr-f.fq)
+    R_Read=$(ls $ReadDir/*allunalignedcamarosa_fr-r.fq)
+    S_Read=$(ls $ReadDir/*allunalignedcamarosa_s-s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/camarosa@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes_isolate.sh $F_Read $R_Read $S_Read $OutDir correct 75
+  done
+#725715
+
+#isolate setting with cuttoff
+  for ReadDir in $(ls -d alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*allunalignedcamarosa_fr-f.fq)
+    R_Read=$(ls $ReadDir/*allunalignedcamarosa_fr-r.fq)
+    S_Read=$(ls $ReadDir/*allunalignedcamarosa_s-s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/camarosa@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes_isolate.sh $F_Read $R_Read $S_Read $OutDir correct 25
+  done
+#734336
+
+#The cockerton reads were assembled inndependantly
+  for ReadDir in $(ls -d alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/camarosa); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*cockertoncamarosa_fr-f.fq)
+    R_Read=$(ls $ReadDir/*cockertoncamarosa_fr-r.fq)
+    S_Read=$(ls $ReadDir/*cockertoncamarosa_s-s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/camarosa@SPAdes@g'|sed 's@THeavenDRCT72020_1@Cockerton1@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes_isolate.sh $F_Read $R_Read $S_Read $OutDir correct 10
+  done
+#740639
 ```
 Quast was used to assess the quality of genome assembly:
 ```bash
@@ -508,6 +1270,55 @@ conda activate quast
     	sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
     done
 #615846
+
+    for Assembly in $(ls assembly/metagenome/P_aphanis/*/SPAdes/720434/*/contigs_min_500bp.fasta); do
+    	ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+    	OutDir=$(dirname $Assembly)
+    	echo $Assembly
+    	echo $OutDir
+    	sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#721886
+    for Assembly in $(ls assembly/metagenome/P_aphanis/*/SPAdes/721950/*/contigs_min_500bp.fasta); do
+    	ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+    	OutDir=$(dirname $Assembly)
+    	echo $Assembly
+    	echo $OutDir
+    	sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#722308
+    for Assembly in $(ls assembly/metagenome/P_aphanis/*/SPAdes/721951/*/contigs_min_500bp.fasta); do
+    	ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+    	OutDir=$(dirname $Assembly)
+    	echo $Assembly
+    	echo $OutDir
+    	sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#725714
+    for Assembly in $(ls assembly/metagenome/P_aphanis/*/SPAdes/725715/*/contigs_min_500bp.fasta); do
+    	ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+    	OutDir=$(dirname $Assembly)
+    	echo $Assembly
+    	echo $OutDir
+    	sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#721038
+    for Assembly in $(ls assembly/metagenome/P_aphanis/*/SPAdes/734336/*/contigs_min_500bp.fasta); do
+    	ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+    	OutDir=$(dirname $Assembly)
+    	echo $Assembly
+    	echo $OutDir
+    	sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#740232
+    for Assembly in $(ls assembly/metagenome/P_aphanis/*/SPAdes/740639/*/contigs_min_500bp.fasta); do
+    	ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+    	OutDir=$(dirname $Assembly)
+    	echo $Assembly
+    	echo $OutDir
+    	sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#740704
 ```
 ### BUSCO
 BUSCO was used to assess the quality of the genome assembly:
@@ -515,10 +1326,115 @@ BUSCO was used to assess the quality of the genome assembly:
 screen -S busco
 srun -p himem  --mem 350G --pty bash
 
-#BUSCO analysis was performed of the SPAdes assembly using three databases.
+#BUSCO analysis was performed of the SPAdes assemblys using three databases.
 conda activate BUSCO
 
 for assembly in $(echo assembly/metagenome/P_aphanis/*/SPAdes/615827/filtered_contigs); do
+	Data=$(ls $assembly/contigs_min_500bp.fasta) 
+	Input=$(dirname $assembly)
+
+	mkdir -p $Input/BUSCO/fungi/1
+	cd $Input/BUSCO/fungi
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
+	cd /projects/nano_diagnostics
+
+	mkdir -p $Input/BUSCO/ascomycota/1
+	cd $Input/BUSCO/ascomycota
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
+	cd /projects/nano_diagnostics
+
+	mkdir -p $Input/BUSCO/leotiomycetes/1
+	cd $Input/BUSCO/leotiomycetes
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
+	cd /projects/nano_diagnostics
+done
+echo finished
+
+for assembly in $(echo assembly/metagenome/P_aphanis/*/SPAdes/720434/filtered_contigs); do
+	Data=$(ls $assembly/contigs_min_500bp.fasta) 
+	Input=$(dirname $assembly)
+
+	mkdir -p $Input/BUSCO/fungi/1
+	cd $Input/BUSCO/fungi
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
+	cd /projects/nano_diagnostics
+
+	mkdir -p $Input/BUSCO/ascomycota/1
+	cd $Input/BUSCO/ascomycota
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
+	cd /projects/nano_diagnostics
+
+	mkdir -p $Input/BUSCO/leotiomycetes/1
+	cd $Input/BUSCO/leotiomycetes
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
+	cd /projects/nano_diagnostics
+done
+echo finished
+
+for assembly in $(echo assembly/metagenome/P_aphanis/*/SPAdes/72195*/filtered_contigs); do
+	Data=$(ls $assembly/contigs_min_500bp.fasta) 
+	Input=$(dirname $assembly)
+
+	mkdir -p $Input/BUSCO/fungi/1
+	cd $Input/BUSCO/fungi
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
+	cd /projects/nano_diagnostics
+
+	mkdir -p $Input/BUSCO/ascomycota/1
+	cd $Input/BUSCO/ascomycota
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
+	cd /projects/nano_diagnostics
+
+	mkdir -p $Input/BUSCO/leotiomycetes/1
+	cd $Input/BUSCO/leotiomycetes
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
+	cd /projects/nano_diagnostics
+done
+echo finished
+
+for assembly in $(echo assembly/metagenome/P_aphanis/*/SPAdes/725715/filtered_contigs); do
+	Data=$(ls $assembly/contigs_min_500bp.fasta) 
+	Input=$(dirname $assembly)
+
+	mkdir -p $Input/BUSCO/fungi/1
+	cd $Input/BUSCO/fungi
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
+	cd /projects/nano_diagnostics
+
+	mkdir -p $Input/BUSCO/ascomycota/1
+	cd $Input/BUSCO/ascomycota
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
+	cd /projects/nano_diagnostics
+
+	mkdir -p $Input/BUSCO/leotiomycetes/1
+	cd $Input/BUSCO/leotiomycetes
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
+	cd /projects/nano_diagnostics
+done
+echo finished
+
+for assembly in $(echo assembly/metagenome/P_aphanis/*/SPAdes/734336/filtered_contigs); do
+	Data=$(ls $assembly/contigs_min_500bp.fasta) 
+	Input=$(dirname $assembly)
+
+	mkdir -p $Input/BUSCO/fungi/1
+	cd $Input/BUSCO/fungi
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
+	cd /projects/nano_diagnostics
+
+	mkdir -p $Input/BUSCO/ascomycota/1
+	cd $Input/BUSCO/ascomycota
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
+	cd /projects/nano_diagnostics
+
+	mkdir -p $Input/BUSCO/leotiomycetes/1
+	cd $Input/BUSCO/leotiomycetes
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
+	cd /projects/nano_diagnostics
+done
+echo finished
+
+for assembly in $(echo assembly/metagenome/P_aphanis/*/SPAdes/740639/filtered_contigs); do
 	Data=$(ls $assembly/contigs_min_500bp.fasta) 
 	Input=$(dirname $assembly)
 
@@ -562,12 +1478,34 @@ for assembly in $(echo rawdata/F_ananassa/camarosa/genome); do
 	cd /projects/nano_diagnostics
 done
 echo finished
+
+#BUSCO was performed for the low coverage cockerton assembly
+for assembly in $(echo assembly/genome/spades/P_aphanis/H_Cockerton/C1_no_strawberry/deconseq_appended); do
+	Data=$(ls $assembly/contigs_min_500bp_renamed.fasta) 
+	Input=$(dirname $assembly)
+
+	mkdir -p $Input/BUSCO/fungi/1
+	cd $Input/BUSCO/fungi
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
+	cd /projects/nano_diagnostics
+
+	mkdir -p $Input/BUSCO/ascomycota/1
+	cd $Input/BUSCO/ascomycota
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
+	cd /projects/nano_diagnostics
+
+	mkdir -p $Input/BUSCO/leotiomycetes/1
+	cd $Input/BUSCO/leotiomycetes
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
+	cd /projects/nano_diagnostics
+done
+echo finished
 ```
 ### KAT
 
 ```bash
 screen -S kat
-srun -p short  --mem 350G --pty bash
+srun -p himem  --mem 750G --pty bash
 conda activate kat
 cd /projects/nano_diagnostics
 
@@ -576,10 +1514,107 @@ kat comp -m 21 -v -h -t 8 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/THeavenD
 
 kat plot spectra-cn -x 300 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/THeavenDRCT72020_1_v_spades-21plot300 alignment/P_aphanis/THeavenDRCT72020_1/kat/THeavenDRCT72020_1_v_spades-21-main.mx
 
+kat comp -m 21 -v -h -t 8 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/allTHeavenDRCT72020_1_v_spades-21 '/projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz' assembly/metagenome/P_aphanis/*/SPAdes/725715/filtered_contigs/contigs_min_500bp.fasta
+
+kat plot spectra-cn -x 2000 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/allTHeavenDRCT72020_1_v_spades-21plot2000 alignment/P_aphanis/THeavenDRCT72020_1/kat/allTHeavenDRCT72020_1_v_spades-21-main.mx
+
+kat comp -m 21 -v -h -t 8 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/comballTHeavenDRCT72020_1_v_spades-21 '/projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim_unpaired.fq.gz' assembly/metagenome/P_aphanis/*/SPAdes/725715/filtered_contigs/contigs_min_500bp.fasta 
+
+kat plot spectra-cn -x 2000 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/comballTHeavenDRCT72020_1_v_spades-21plot2000 alignment/P_aphanis/THeavenDRCT72020_1/kat/comballTHeavenDRCT72020_1_v_spades-21-main.mx
+
+#The cockerton reads were compared to the spades assembly and the results plotted: 
+kat comp -m 21 -v -h -t 8 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/cockerton_v_spades-21 '/projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/P_aphanis-MiSeq-H_Cockerton2018-paired-001_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/P_aphanis-MiSeq-H_Cockerton2018-paired-001_R_trim_unpaired.fq.gz' assembly/metagenome/P_aphanis/*/SPAdes/725715/filtered_contigs/contigs_min_500bp.fasta 
+
+kat plot spectra-cn -x 2000 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/cockerton_v_spades-21plot2000 alignment/P_aphanis/THeavenDRCT72020_1/kat/cockerton_v_spades-21-main.mx
+
 #The camarosa genome was compared to the spades draft mildew genome and results plotted:
 kat comp -m 21 -v -h -t 8 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/camarosa_v_spades-21 'rawdata/F_ananassa/camarosa/genome/F_ana_Camarosa_6-28-17.fasta' assembly/metagenome/P_aphanis/*/SPAdes/615827/filtered_contigs/contigs_min_500bp.fasta
 
 kat plot spectra-cn -x 300 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/camarosa_v_spades-21plot300 alignment/P_aphanis/THeavenDRCT72020_1/kat/camarosa_v_spades-21-main.mx
+```
+### Coverage
+```bash
+#An alignment of trimmed reads including unpaired reads was made to the assembled genome, this produced a 66% overall alignment rate.
+screen -S bowtie
+srun -p long  --mem 350G --pty bash
+conda activate bowtie2
+cd /projects/nano_diagnostics
+mkdir -p alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/Heaven_P_aphanis
+cd alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/Heaven_P_aphanis
+bowtie2-build /projects/nano_diagnostics/assembly/metagenome/P_aphanis/*/SPAdes/615827/filtered_contigs/contigs_min_500bp.fasta Heaven_P_aphanis_index
+bowtie2 \
+-x Heaven_P_aphanis_index \
+-1 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1unalignedHeaven_P_aphanis.sam \
+--un-gz THeavenDRCT72020_1unalignedHeaven_P_aphanis_s.fq.gz \
+--un-conc-gz THeavenDRCT72020_1unalignedHeaven_P_aphanis_fr.fq.gz \
+-S THeavenDRCT72020_1alignedHeaven_P_aphanis.sam
+echo finished
+#46189256 reads; of these:
+#  44242374 (95.78%) were paired; of these:
+#    18908508 (42.74%) aligned concordantly 0 times
+#    19178225 (43.35%) aligned concordantly exactly 1 time
+#    6155641 (13.91%) aligned concordantly >1 times
+#    ----
+#    18908508 pairs aligned concordantly 0 times; of these:
+#      1133202 (5.99%) aligned discordantly 1 time
+#    ----
+#    17775306 pairs aligned 0 times concordantly or discordantly; of these:
+#      35550612 mates make up the pairs; of these:
+#        30083287 (84.62%) aligned 0 times
+#        3182662 (8.95%) aligned exactly 1 time
+#        2284663 (6.43%) aligned >1 times
+#  1946882 (4.22%) were unpaired; of these:
+#    681199 (34.99%) aligned 0 times
+#    1015429 (52.16%) aligned exactly 1 time
+#    250254 (12.85%) aligned >1 times
+#65.98% overall alignment rate
+
+samtools view --threads 8 -bS THeavenDRCT72020_1alignedHeaven_P_aphanis.sam -o THeavenDRCT72020_1alignedHeaven_P_aphanis.bam
+samtools sort --threads 8 -o THeavenDRCT72020_1alignedHeaven_P_aphanis_sorted.bam THeavenDRCT72020_1alignedHeaven_P_aphanis.bam
+samtools index -@ 8 THeavenDRCT72020_1alignedHeaven_P_aphanis_sorted.bam THeavenDRCT72020_1alignedHeaven_P_aphanis_sorted.bam.index
+samtools coverage THeavenDRCT72020_1alignedHeaven_P_aphanis_sorted.bam -o coverage.txt
+#median depth = 58.6, mean depth 212
+
+#An alignment of all our reads including unpaired reads was made to the 75 cuttoff assembled genome, this produced a 66.1% overall alignment rate.
+screen -S bowtie
+srun -p long  --mem 350G --pty bash
+conda activate bowtie2
+cd /projects/nano_diagnostics
+mkdir -p alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/Heaven_P_aphanis75
+cd alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/Heaven_P_aphanis75
+bowtie2-build /projects/nano_diagnostics/assembly/metagenome/P_aphanis/*/SPAdes/725715/filtered_contigs/contigs_min_500bp.fasta Heaven_P_aphanis75_index
+bowtie2 \
+-x Heaven_P_aphanis75_index \
+-1 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim.fq.gz \
+-2 /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim.fq.gz \
+-U /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-002_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-003_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/004/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-004_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72020_1unalignedHeaven_P_aphanis75.sam \
+--un-gz THeavenDRCT72020_1unalignedHeaven_P_aphanis75_s.fq.gz \
+--un-conc-gz THeavenDRCT72020_1unalignedHeaven_P_aphanis75_fr.fq.gz \
+-S THeavenDRCT72020_1alignedHeaven_P_aphanis75.sam
+echo finished
+#348460905 reads; of these:
+#  336984866 (96.71%) were paired; of these:
+#    145647053 (43.22%) aligned concordantly 0 times
+#    144611056 (42.91%) aligned concordantly exactly 1 time
+#    46726757 (13.87%) aligned concordantly >1 times
+#    ----
+#    145647053 pairs aligned concordantly 0 times; of these:
+#      10166996 (6.98%) aligned discordantly 1 time
+#    ----
+#    135480057 pairs aligned 0 times concordantly or discordantly; of these:
+#      270960114 mates make up the pairs; of these:
+#        228656173 (84.39%) aligned 0 times
+#        23468232 (8.66%) aligned exactly 1 time
+#        18835709 (6.95%) aligned >1 times
+#  11476039 (3.29%) were unpaired; of these:
+#    3704549 (32.28%) aligned 0 times
+#    6019197 (52.45%) aligned exactly 1 time
+#    1752293 (15.27%) aligned >1 times
+#66.10% overall alignment rate
 ```
 ### Metabat2
 ```bash
@@ -630,10 +1665,22 @@ mkdir -p analysis/P_aphanis/THeavenDRCT72020_1/metabat2
 cd analysis/P_aphanis/THeavenDRCT72020_1/metabat2
 conda activate metabat2
 runMetaBat.sh --saveCls --unbinned /projects/nano_diagnostics/assembly/metagenome/P_aphanis/*/SPAdes/615827/filtered_contigs/contigs_min_500bp.fasta /projects/nano_diagnostics/alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/mystrawberrymildew/THeavenDRCT72020_1alignedmystrawberrymildew.sorted.bam 
+
+cd alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/Heaven_P_aphanis75
+samtools view -S -b THeavenDRCT72020_1alignedHeaven_P_aphanis75.sam > THeavenDRCT72020_1alignedHeaven_P_aphanis75.bam 
+samtools sort THeavenDRCT72020_1alignedHeaven_P_aphanis75.bam -o THeavenDRCT72020_1alignedHeaven_P_aphanis75.sorted.bam 
+samtools index THeavenDRCT72020_1alignedHeaven_P_aphanis75.sorted.bam
+cd /projects/nano_diagnostics
+cd analysis/P_aphanis/THeavenDRCT72020_1/metabat2
+mkdir 2
+cd 2
+conda activate metabat2
+runMetaBat.sh --saveCls --unbinned /projects/nano_diagnostics/assembly/metagenome/P_aphanis/*/SPAdes/725715/filtered_contigs/contigs_min_500bp.fasta /projects/nano_diagnostics/alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/Heaven_P_aphanis75/THeavenDRCT72020_1alignedHeaven_P_aphanis75.sorted.bam 
 ```
 ### Repeat Masking
 Repeatmodeler and transposonPSI were run on our assembly.
 ```bash
+#files renamed
 conda activate repeatmasking
 ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Assembly_qc
 touch tmp.txt
@@ -643,12 +1690,14 @@ for Assembly in $(ls assembly/metagenome/P_aphanis/*/SPAdes/615827/filtered_cont
 done
 rm tmp.txt
 
+#repeatmodeler run
 ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Repeat_masking
 BestAssembly=assembly/metagenome/P_aphanis/*/SPAdes/615827/filtered_contigs/*10_renamed.fasta
-OutDir=assembly/metagenome/P_aphanis/*/SPAdes/615827/filtered_contigs/masked/rep_modeling
+OutDir=assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/615827/filtered_contigs/masked/rep_modeling
 sbatch $ProgDir/rep_modeling.sh $BestAssembly $OutDir
 #615941
 
+#transposonpsi run
 screen -r
 srun -p long  --mem 350G --pty bash
 conda activate transposonpsi
@@ -657,9 +1706,379 @@ mkdir -p assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/615827/filtered
 cd assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/615827/filtered_contigs/masked/transposonPSI
 cp /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/615827/filtered_contigs/contigs_min_500bp.fasta man_contigs_unmasked.fa
 /home/gomeza/miniconda3/envs/general_tools/share/transposonPSI/transposonPSI.pl man_contigs_unmasked.fa nuc
+
+#75 cuttoff files renamed
+conda activate repeatmasking
+ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Assembly_qc
+touch tmp.txt
+for Assembly in $(ls assembly/metagenome/P_aphanis/*/SPAdes/725715/filtered_contigs/contigs_min_500bp.fasta); do
+  OutDir=$(dirname $Assembly)
+  $ProgDir/remove_contaminants.py --inp $Assembly --out $OutDir/WT_miniasm_pilon10_renamed.fasta --coord_file tmp.txt > $OutDir/log.txt
+done
+rm tmp.txt
+
+#repeatmodeler run
+ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Repeat_masking
+BestAssembly=assembly/metagenome/P_aphanis/*/SPAdes/725715/filtered_contigs/*10_renamed.fasta
+OutDir=assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/masked/rep_modeling
+sbatch $ProgDir/rep_modeling.sh $BestAssembly $OutDir
+#740809
+
+screen -S PSI
+srun -p long  --mem 350G --pty bash
+conda activate transposonpsi
+cd /projects/nano_diagnostics
+mkdir -p assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/masked/transposonPSI
+cd assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/masked/transposonPSI
+cp /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp.fasta man_contigs_unmasked.fa
+/home/gomeza/miniconda3/envs/general_tools/share/transposonPSI/transposonPSI.pl man_contigs_unmasked.fa nuc
+```
+The number of bases masked by transposonPSI and Repeatmasker were summarised using the following commands:
+```bash
+RepMaskGff=/projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/615827/filtered_contigs/masked/rep_modeling/*_contigs_hardmasked.gff
+TransPSIGff=/projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/615827/filtered_contigs/masked/transposonPSI/man_contigs_unmasked.fa.TPSI.allHits
+printf "P_aphanis/THeavenDRCT72020_1\n"
+printf "The number of bases masked by RepeatMasker:\t"
+sortBed -i $RepMaskGff | bedtools merge | awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}'
+#28,510,709
+printf "The number of bases masked by TransposonPSI:\t"
+sortBed -i $TransPSIGff | bedtools merge | awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}'
+#14,533
+printf "The total number of masked bases are:\t"
+cat $RepMaskGff $TransPSIGff | sortBed | bedtools merge | awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}'
+#Differing number of GFF fields encountered at line: 100686.  Exiting...
+
+RepMaskGff=/projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/masked/rep_modeling/*_contigs_hardmasked.gff
+TransPSIGff=/projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/masked/transposonPSI/man_contigs_unmasked.fa.TPSI.allHits
+printf "P_aphanis/THeavenDRCT72020_1\n"
+printf "The number of bases masked by RepeatMasker:\t"
+sortBed -i $RepMaskGff | bedtools merge | awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}'
+#28,812,425
+printf "The number of bases masked by TransposonPSI:\t"
+sortBed -i $TransPSIGff | bedtools merge | awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}'
+#14,616
+printf "The total number of masked bases are:\t"
+cat $RepMaskGff $TransPSIGff | sortBed | bedtools merge | awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}'
+#Differing number of GFF fields encountered at line: 97499.  Exiting...
+#0
+```
+## Gene prediction
+Trimmed RNASeq reads that did not align to the camarosa genome can be found here:
+```bash
+ls dna_qc/P_aphanis/RNAexp1/infected/F/*trim.fa
+ls dna_qc/P_aphanis/RNAexp1/infected/R/*trim.fa
+```
+### Aligning
+Insert sizes of the RNA seq library were unknown until a draft alignment could be made. To do this tophat and cufflinks were run.
+
+Tophat was used to align the RNAseq data to the masked genome.
+```bash
+conda activate tophat
+for assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/615827/filtered_contigs/masked/transposonPSI/man_contigs_unmasked.fa); do
+	for RNAdata in $(ls -d dna_qc/P_aphanis/RNAexp1/infected); do
+	 Freads=$(ls $RNAdata/F/*trim.fq.gz)
+	 Rreads=$(ls $RNAdata/R/*trim.fq.gz)
+
+	OutDir=alignment/P_aphanis/THeavenDRCT72020_1/tophat
+	ProgDir=/home/heavet/git_repos/tools/seq_tools/RNAseq
+	ls $Freads
+	ls $Rreads
+	ls $assembly
+	ls $OutDir
+	sbatch $ProgDir/tophat_alignment.sh $assembly $Freads $Rreads $OutDir
+	done
+done
+#619613
+
+for assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/masked/transposonPSI/man_contigs_unmasked.fa); do
+	for RNAdata in $(ls -d dna_qc/P_aphanis/RNAexp1/infected); do
+	 Freads=$(ls $RNAdata/F/*trim.fq.gz)
+	 Rreads=$(ls $RNAdata/R/*trim.fq.gz)
+
+	OutDir=alignment/P_aphanis/THeavenDRCT72020_1/tophat
+	ProgDir=/home/heavet/git_repos/tools/seq_tools/RNAseq
+	ls $Freads
+	ls $Rreads
+	ls $assembly
+	ls $OutDir
+	sbatch $ProgDir/tophat_alignment.sh $assembly $Freads $Rreads $OutDir
+	done
+done
+#741289
+cp -r 741289 alignment/P_aphanis/THeavenDRCT72020_1/tophat
+rm -r 741289
+```
+Cufflinks assembles transcripts, estimates their abundances, and tests for differential expression and regulation in RNA-Seq samples.
+
+Alignments should be concatenated prior to running cufflinks, initially we have only one RNASeq file to align and so this is unecessary. Cufflinks was run to produce fragment length and stdev statistics. Samtools was used to find the average read length.
+```bash
+conda activate tophat
+  for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/615827/filtered_contigs/masked/rep_modeling/*_contigs_softmasked.fa); do
+    AcceptedHits=alignment/P_aphanis/THeavenDRCT72020_1/tophat/619613/619613_tophat/accepted_hits.bam 
+    OutDir=gene_pred/P_aphanis/THeavenDRCT72020_1/cufflinks
+    mkdir -p $OutDir
+    cufflinks -o $OutDir -p 8 --max-intron-length 4000 $AcceptedHits 2>&1 | tee $OutDir/cufflinks/cufflinks.log
+  done
+
+#The fragment length and stdev were printed to stdout while cufflinks was running.
+
+#> Processed 36922 loci.                        [*************************] 100%
+#> Map Properties:
+#>       Normalized Map Mass: 933698.56
+#>       Raw Map Mass: 933698.56
+#>       Fragment Length Distribution: Empirical (learned)
+#>                     Estimated Mean: 248.00
+#>                  Estimated Std Dev: 51.22
+#[14:10:25] Assembling transcripts and estimating abundances.
+#> Processed 36967 loci.                        [*************************] 100%
+
+samtools stats alignment/P_aphanis/THeavenDRCT72020_1/tophat/619613/619613_tophat/accepted_hits.bam
+#average length: 149
+
+  for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/masked/rep_modeling/*_contigs_softmasked.fa); do
+    AcceptedHits=alignment/P_aphanis/THeavenDRCT72020_1/tophat/741289/741289_tophat/accepted_hits.bam 
+    OutDir=gene_pred/P_aphanis/THeavenDRCT72020_1/cufflinks/75
+    mkdir -p $OutDir
+    cufflinks -o $OutDir -p 8 --max-intron-length 4000 $AcceptedHits 2>&1 | tee $OutDir/cufflinks/cufflinks.log
+  done
+
+#The fragment length and stdev were printed to stdout while cufflinks was running.
+
+#> Processed 36907 loci.                        [*************************] 100%
+#> Map Properties:
+#>       Normalized Map Mass: 896568.31
+#>       Raw Map Mass: 896568.31
+#>       Fragment Length Distribution: Empirical (learned)
+#>                     Estimated Mean: 247.81
+#>                  Estimated Std Dev: 52.35
+#[16:21:13] Assembling transcripts and estimating abundances.
+#> Processed 36951 loci.                        [*************************] 100%
+
+samtools stats alignment/P_aphanis/THeavenDRCT72020_1/tophat/741289/741289_tophat/accepted_hits.bam > stats.txt
+#average length: 149
+```
+The mean insert gap was calculated from the estimated fragment length and read length. This was provided to tophat on a second run (as the -r option) along with the fragment length stdev to increase the accuracy of mapping.
+
+```bash
+#The mean insert gap was calculated from the estimated fragment length and read length: 248 - (149 x 2) = -50.
+
+conda activate tophat
+for assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/615827/filtered_contigs/masked/transposonPSI/man_contigs_unmasked.fa); do
+	for RNAdata in $(ls -d dna_qc/P_aphanis/RNAexp1/infected); do
+	 Freads=$(ls $RNAdata/F/*trim.fq.gz)
+	 Rreads=$(ls $RNAdata/R/*trim.fq.gz)
+
+	OutDir=alignment/P_aphanis/THeavenDRCT72020_1/tophat
+	ProgDir=/home/heavet/git_repos/tools/seq_tools/RNAseq
+	ls $Freads
+	ls $Rreads
+	ls $assembly
+	ls $OutDir
+	sbatch $ProgDir/tophat_alignment.sh $assembly $Freads $Rreads $OutDir -50 51
+	done
+done
+#721872
+
+#The mean insert gap was calculated from the estimated fragment length and read length: 248 - (149 x 2) = -50.
+
+for assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/masked/transposonPSI/man_contigs_unmasked.fa); do
+	for RNAdata in $(ls -d dna_qc/P_aphanis/RNAexp1/infected); do
+	 Freads=$(ls $RNAdata/F/*trim.fq.gz)
+	 Rreads=$(ls $RNAdata/R/*trim.fq.gz)
+
+	OutDir=alignment/P_aphanis/THeavenDRCT72020_1/tophat
+	ProgDir=/home/heavet/git_repos/tools/seq_tools/RNAseq
+	ls $Freads
+	ls $Rreads
+	ls $assembly
+	ls $OutDir
+	sbatch $ProgDir/tophat_alignment.sh $assembly $Freads $Rreads $OutDir -50 52
+	done
+done
+#741368 - IN PROGRESS
+```
+
+A better alignment program is now available - Star - this was used:
+
+```bash
+mkdir alignment/P_aphanis/THeavenDRCT72020_1/star
+for RNAdata in $(ls -d dna_qc/P_aphanis/RNAexp1/infected); do
+	Freads=$RNAdata/F/*trim.fq.gz
+	Rreads=$RNAdata/R/*trim.fq.gz
+	ls $Freads
+	ls $Rreads
+	InGenome=assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/615827/filtered_contigs/masked/transposonPSI/man_contigs_unmasked.fa
+	ProgDir=~/git_repos/tools/seq_tools/RNAseq
+	OutDir=alignment/P_aphanis/THeavenDRCT72020_1/star
+	sbatch $ProgDir/star_alignment.sh $InGenome $Freads $Rreads $OutDir
+done
+#718185
+
+for RNAdata in $(ls -d dna_qc/P_aphanis/RNAexp1/infected); do
+	Freads=$RNAdata/F/*trim.fq.gz
+	Rreads=$RNAdata/R/*trim.fq.gz
+	ls $Freads
+	ls $Rreads
+	InGenome=assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/masked/transposonPSI/man_contigs_unmasked.fa
+	echo $InGenome
+	ProgDir=~/git_repos/tools/seq_tools/RNAseq
+	OutDir=alignment/P_aphanis/THeavenDRCT72020_1/star/75
+	sbatch $ProgDir/star_alignment.sh $InGenome $Freads $Rreads $OutDir
+done
+#741328
+```
+```bash
+conda activate tophat
+  for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/615827/filtered_contigs/masked/rep_modeling/*_contigs_softmasked.fa); do
+    AcceptedHits=alignment/P_aphanis/THeavenDRCT72020_1/star/star_aligmentAligned.sortedByCoord.out.bam
+    OutDir=gene_pred/P_aphanis/THeavenDRCT72020_1/cufflinks2
+    mkdir -p $OutDir
+    cufflinks -o $OutDir -p 8 --max-intron-length 4000 $AcceptedHits 2>&1 | tee $OutDir/cufflinks/cufflinks.log
+  done
+
+#The fragment length and stdev were printed to stdout while cufflinks was running.
+
+#> Processed 35122 loci.                        [*************************] 100%
+#> Map Properties:
+#>       Normalized Map Mass: 1005273.58
+#>       Raw Map Mass: 1005273.58
+#>       Fragment Length Distribution: Empirical (learned)
+#>                     Estimated Mean: 247.70
+#>                  Estimated Std Dev: 52.81
+#[13:48:28] Assembling transcripts and estimating abundances.
+#> Processed 35133 loci.                        [*************************] 100%
+
+samtools stats alignment/P_aphanis/THeavenDRCT72020_1/star/star_aligmentAligned.sortedByCoord.out.bam
+#average length: 148
+```
+The mean insert gap was calculated from the estimated fragment length and read length: 248 - (148 x 2) = -48. 
+
+### Braker prediction
+Genes were predited using the program Braker1
+```bash
+#Before braker predictiction is performed, double check that the genemark key is in user area and copy it over from the genemark install directory:
+conda activate braker
+cp /home/gomeza/miniconda3/envs/gene_pred/bin/filterGenesIn_mRNAname.pl /home/heavet/miniconda3/envs/braker/bin
+cp /home/gomeza/git_repos/scripts/bioinformatics_tools/Gene_prediction/braker_fungi.sh /home/heavet/git_repos/tools/gene_prediction/braker1/gom_braker_fungi.sh
+cp /home/gomeza/prog/genemark/gm_key_Nov2020/gm_key_64 ~/.gm_key
+
+for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/615827/filtered_contigs/masked/transposonPSI/man_contigs_unmasked.fa); do
+OutDir=gene_pred/P_aphanis/THeavenDRCT72020_1/braker
+AcceptedHits=$(ls alignment/P_aphanis/THeavenDRCT72020_1/star/star_aligmentAligned.sortedByCoord.out.bam)
+GeneModelName=P_aphanis_braker
+ProgDir=/home/heavet/git_repos/tools/gene_prediction/braker1
+sbatch $ProgDir/gom_braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+done
+#721053
+
+rm -r /home/heavet/miniconda3/envs/braker/config//species/P_aphanis_braker
+for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/masked/transposonPSI/man_contigs_unmasked.fa); do
+OutDir=gene_pred/P_aphanis/THeavenDRCT72020_1/braker/75
+AcceptedHits=$(ls alignment/P_aphanis/THeavenDRCT72020_1/star/75/star_aligmentAligned.sortedByCoord.out.bam)
+GeneModelName=P_aphanis_braker
+ProgDir=/home/heavet/git_repos/tools/gene_prediction/braker1
+sbatch $ProgDir/gom_braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+done
+#741363
+```
+Fasta and gff files were extracted from the Braker1 output.
+```bash
+for File in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/braker/P_aphanis_braker/augustus.gff); do
+getAnnoFasta.pl $File
+OutDir=$(dirname $File)
+echo "##gff-version 3" > $OutDir/augustus_extracted.gff
+cat $File | grep -v '#' >> $OutDir/augustus_extracted.gff
+done
+```
+### CodingQuary
+Additional genes were added  to Braker gene predictions using CodingQuary in pathogen mode to predict additional regions. 
+
+Firstly, aligned RNAseq data was assembled into transcripts using Stringtie.
+```bash
+  for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/615827/filtered_contigs/masked/transposonPSI/man_contigs_unmasked.fa); do
+    OutDir=gene_pred/P_aphanis/THeavenDRCT72020_1/stringtie/concatenated_prelim
+    AcceptedHits=alignment/P_aphanis/THeavenDRCT72020_1/star/star_aligmentAligned.sortedByCoord.out.bam
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/RNAseq
+    sbatch $ProgDir/stringtie.sh $AcceptedHits $OutDir
+   done
+#721477
+```
+This step was also performed using cufflinks.
+```bash
+conda activate tophat
+  for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/615827/filtered_contigs/masked/transposonPSI/man_contigs_unmasked.fa); do
+    OutDir=gene_pred/P_aphanis/THeavenDRCT72020_1/cufflinks/concatenated_prelim
+    AcceptedHits=alignment/P_aphanis/THeavenDRCT72020_1/star/star_aligmentAligned.sortedByCoord.out.bam
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/RNAseq
+    sbatch $ProgDir/sub_cufflinks.sh $AcceptedHits $OutDir
+  done
+#721498
+```
+```bash
+conda activate codingquary
+  for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/615827/filtered_contigs/masked/transposonPSI/man_contigs_unmasked.fa); do
+    OutDir=gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/1
+    GTF=gene_pred/P_aphanis/THeavenDRCT72020_1/stringtie/concatenated_prelim/out.gtf
+    ProgDir=/home/heavet/git_repos/tools/gene_prediction/codingquary
+    sbatch $ProgDir/sub_CodingQuary.sh $Assembly $GTF $OutDir
+  done
+#721871 - /home/heavet/git_repos/tools/gene_prediction/codingquary/run_CQ-PM_stranded.sh: line 35: signalp: command not found
+#721885 - signalp: error while loading shared libraries: libtensorflow.so: cannot open shared object file: No such f
+find -maxdepth 1000 -name libtensorflow.so -print > findlog.txt
+ls ~/git_repos/tools/gene_prediction/signalp-5.0b/signalp-5.0b/lib/libtensorflow.so
+cp ~/git_repos/tools/gene_prediction/signalp-5.0b/signalp-5.0b/lib/libtensorflow.so ~/git_repos/tools/gene_prediction/signalp-5.0b/signalp-5.0b/bin/libtensorflow.so
+#721952
+#There are only 499 secreted genes
+#to train from. Pathogen mode cannot run with less
+#than 500 secreted genes.
 ```
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Accepted hits .bam file were concatenated and indexed for use for gene model training:
+```bash
+for OutDir in $(ls -d alignment/star/v.inaequalis/172); do
+  Strain=$(echo 172)
+  Organism=$(echo v.inaequalis)
+  echo "$Organism - $Strain"
+  # For all alignments
+  BamFiles=$(ls alignment/star/v.inaequalis/172/*/SRR*/star/*sortedByCoord.out.bam | tr -d '\n' | sed 's/.bam/.bam /g')
+  mkdir -p $OutDir/concatenated
+  samtools merge -@ 4 -f $OutDir/concatenated/concatenated.bam $BamFiles
+done
+```
 
 
 
