@@ -7,6 +7,8 @@ Scab
 
 P_aphanis
 
+P_leucotricha
+
 Additionally, I experimented with running programs manually in the folder:
 
 Temp
