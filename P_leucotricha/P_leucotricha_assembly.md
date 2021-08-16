@@ -885,7 +885,7 @@ java -jar picard.jar MarkDuplicates \
 ```bash
 conda activate BUSCO
 
-for assembly in $(echo assembly/metagenome/P_leucotricha/THeavenp11_1/metaSPAdes/*/filtered_contigs); do
+for assembly in $(echo assembly/metagenome/P_leucotricha/THeavenp11_1/*/*/filtered_contigs); do
 	Data=$(ls $assembly/contigs_min_500bp.fasta) 
 	Input=$(dirname $assembly)
 	mkdir -p $Input/BUSCO/fungi/1
@@ -1027,7 +1027,21 @@ done
         |3234   Total BUSCO groups searched               |
         --------------------------------------------------
 
-
+for assembly in $(echo assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs); do 
+	Data=$(ls $assembly/contigs_min_500bp.fasta) 
+	; Input=$(dirname $assembly);  
+	mkdir -p $Input/BUSCO/fungi/1/2; 
+	cd $Input/BUSCO/fungi/1;
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 2 -l fungi_odb10; 
+	cd /projects/nano_diagnostics; 
+	mkdir -p $Input/BUSCO/ascomycota/1/2; 
+	cd $Input/BUSCO/ascomycota/1; 
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 2 -l ascomycota_odb10; 
+	cd /projects/nano_diagnostics;  
+	mkdir -p $Input/BUSCO/leotiomycetes/1/2; 
+	cd $Input/BUSCO/leotiomycetes/1; 
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 2 -l leotiomycetes_odb10; 
+	cd /projects/nano_diagnostics; done
 ```
 ```bash
 conda activate BUSCO
@@ -1332,15 +1346,97 @@ kraken2-build --download-taxonomy --use-ftp --threads 20 --db $DBNAME
 python ../peptides-master/download_domain.py --domain fungi --ext dna # 04052021
 python ../peptides-master/download_domain.py --domain bacteria --complete True --ext dna 
 python ../peptides-master/download_domain.py --domain plant --ext dna
+python ../peptides-master/download_domain.py --domain vertebrate_mammalian --human True --complete True --ext dna
+python ../peptides-master/download_domain.py --domain protozoa --ext dna 
+python ../peptides-master/download_domain.py --domain archaea --ext dna 
 
-python ../peptides-master/download_domain.py --domain vertebrate_mammalian --human True --complete True --ext dna #IN PROGRESS
-#gzip: GCF_000001405.39_GRCh38.p13_genomic.fna.gz: invalid compressed data--format violated
-#Didn't manage to change the taxids for this file: GCF_000001405.39_GRCh38.p13_genomic.fna
+python ../peptides-master/download_domain.py --domain plasmid --complete True --ext dna #unable to open assembly_summary.txt
+python ../peptides-master/download_domain.py --domain viral --complete True --ext dna
+python ../peptides-master/download_domain.py --domain human --complete True --ext dna #unable to open assembly_summary.txt
+python ../peptides-master/download_domain.py --domain UniVec_Core --complete True --ext dna #unable to open assembly_summary.txt
+echo complete
+python ../peptides-master/download_domain.py --domain nt --ext dna #unable to open assembly_summary.txt
 
-kraken2-build --add-to-library chr1.fa --db analysis/P_leucotricha/THeavenp11_1/kraken2/1
+#Build a fungi only kraken database:
+screen -S kraken2
+srun -p himem  --mem 100G --pty bash
+for file in $(ls /scratch/public_data/tch/tmp123/fungi/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi 
+done
+exit
+echo finished
 
+srun -p himem  --mem 490G --pty bash
+kraken2-build --build --threads 20 --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi 
+kraken2-build --clean --threads 20 --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi 
+exit
+echo finished 
+#Run kraken with updated fungi only database
+srun -p himem  --mem 350G --pty bash
+conda activate kraken2
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/output2.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/unclassified-out2.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/classified-out2.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/report2.txt \
+--use-names \
+assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
+#8.91% classified
 
+#Build a kraken database:
+ screen -S kraken2
+srun -p long  --mem 100G --pty bash
+for file in $(ls /scratch/public_data/tch/tmp123/archaea/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/bacteria/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/fungi/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/plant/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/protozoa/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/viral/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/vertebrate_mammalian/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+done
+exit
+echo finished 
+srun -p himem  --mem 490G --pty bash
+kraken2-build --build --threads 20 --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+kraken2-build --clean --threads 20 --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+exit
+echo finished 
+srun -p himem  --mem 350G --pty bash
+conda activate kraken2
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/1 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/1/output2.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/unclassified-out2.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/classified-out2.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/1/report2.txt \
+--use-names \
+assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
+#2429 sequences classified (30.90%)
 
+kraken2-build --add-to-library assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi #scan_fasta_file.pl: unable to determine taxonomy ID 
+kraken2-build --add-to-library assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa  --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi #scan_fasta_file.pl: unable to determine taxonomy ID 
 
 #Additional tools were downloaded to extract reads associated with each kraken2-identified taxon (https://github.com/jenniferlu717/KrakenTools)
 srun --partition=short --nodes=1 --ntasks=1 --cpus-per-task=1 --mem=1G --pty bash
@@ -1354,6 +1450,288 @@ chmod +x KrakenTools-1.0.1/*/*.py
 #Added to PATH in ~/.profile
 PATH=$HOME/git_repos/tools/prog/kraken2/KrakenTools-1.0.1:${PATH}
 PATH=$HOME/git_repos/tools/prog/kraken2/KrakenTools-1.0.1/DiversityTools:${PATH}
+
+#constructed databses were used with the published yeast genome as a test
+srun -p himem  --mem 350G --pty bash
+conda activate kraken2
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/outputyeast.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/unclassified-outyeast.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/classified-outyeast.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/reportyeast.txt \
+--use-names \
+assembly/genome/NCBI/S.cerevisiae/GCF_000146045.2_R64_genomic.fna
+#  17 sequences classified (100.00%)
+# 0 sequences unclassified (0.00%)
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/1 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/1/outputyeast.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/unclassified-outyeast.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/classified-outyeast.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/1/reportyeast.txt \
+--use-names \
+assembly/genome/NCBI/S.cerevisiae/GCF_000146045.2_R64_genomic.fna
+#  17 sequences classified (100.00%)
+# 0 sequences unclassified (0.00%)
+
+#constructed databses were used with the published P.leucotricha genome as a test
+srun -p himem  --mem 350G --pty bash
+conda activate kraken2
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/outputganan.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/unclassified-outganan.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/classified-outganan.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/reportganan.txt \
+--use-names \
+assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa 
+#  632 sequences classified (7.08%)
+#  8289 sequences unclassified (92.92%)
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/1 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/1/outputganan.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/unclassified-outganan.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/classified-outganan.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/1/reportganan.txt \
+--use-names \
+assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa 
+#  2415 sequences classified (27.07%)
+#  6506 sequences unclassified (72.93%)
+
+#constructed databses were used with the published V.inaequalis genome as a test
+srun -p himem  --mem 350G --pty bash
+conda activate kraken2
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/outputscab.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/unclassified-outscab.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/classified-outscab.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/reportscab.txt \
+--use-names \
+assembly/genome/NCBI/venturia/V_inaequalis/GCA_003351075.1_ASM335107v1_genomic.fna 
+#    135 sequences classified (56.72%)
+#  103 sequences unclassified (43.28%)
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/1 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/1/outputscab.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/unclassified-outscab.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/classified-outscab.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/1/reportscab.txt \
+--use-names \
+assembly/genome/NCBI/venturia/V_inaequalis/GCA_003351075.1_ASM335107v1_genomic.fna
+#    228 sequences classified (95.80%)
+#  10 sequences unclassified (4.20%)
+```
+The published P.leucotricha genome was added to the databases.
+```bash
+sed 's/ Podosphaera/|kraken:taxid|79249 Podosphaera/g' /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa > /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.mod.1.fa
+grep "^>" /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.mod.1.fa
+
+3750
+grep "^>" assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta
+
+
+conda activate kraken2
+kraken2-build --add-to-library /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.mod.1.fa --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi
+kraken2-build --download-taxonomy --use-ftp --threads 20 --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi 
+kraken2-build --build --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi
+
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/outputganan2.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/unclassified-outganan2.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/classified-outganan2.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/reportganan2.txt \
+--use-names \
+assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa 
+#  632 sequences classified (7.08%)
+#  8289 sequences unclassified (92.92%)
+
+kraken2-build --add-to-library /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.mod.1.fa --db analysis/P_leucotricha/THeavenp11_1/kraken2/1
+kraken2-build --download-taxonomy --use-ftp --threads 20 --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+kraken2-build --build --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 2>&1 | tee krakenfungioutput.log
+
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/1 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/1/outputganan2.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/unclassified-outganan2.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/classified-outganan2.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/1/reportganan2.txt \
+--use-names \
+assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa 
+#  2415 sequences classified (27.07%)
+#  6506 sequences unclassified (72.93%)
+
+screen -S kraken
+srun -p himem  --mem 350G --pty bash
+conda activate kraken2
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/outputscab2.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/unclassified-outscab2.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/classified-outscab2.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/fungi/reportscab2.txt \
+--use-names \
+assembly/genome/NCBI/venturia/V_inaequalis/GCA_003351075.1_ASM335107v1_genomic.fna 
+#  135 sequences classified (56.72%)
+#  103 sequences unclassified (43.28%)
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/1 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/1/outputscab2.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/unclassified-outscab2.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/1/classified-outscab2.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/1/reportscab2.txt \
+--use-names \
+assembly/genome/NCBI/venturia/V_inaequalis/GCA_003351075.1_ASM335107v1_genomic.fna
+#  228 sequences classified (95.80%)
+#  10 sequences unclassified (4.20%)
+```
+Kraken again
+```bash
+screen -S kraken
+srun -p himem  --mem 350G --pty bash
+conda activate kraken2
+mkdir -p analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3
+kraken2-build --download-taxonomy --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 2>&1 | tee 1.log
+for file in $(ls /scratch/public_data/tch/tmp123/fungi/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 2>&1 | tee -a 1.log
+done
+kraken2-build --add-to-library /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.mod.1.fa --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 2>&1 | tee -a 1.log
+kraken2-build --build --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 2>&1 | tee -a 1.log
+kraken2-build --clean --threads 20 --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3
+exit
+exit
+echo finished
+
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/outputganan.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/unclassified-outganan.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/classified-outganan.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/reportganan.txt \
+--use-names \
+assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa 
+#  8921 sequences classified (100.00%)
+#  0 sequences unclassified (0.00%)
+
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/outputscab.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/unclassified-outscab.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/classified-outscab.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/reportscab.txt \
+--use-names \
+assembly/genome/NCBI/venturia/V_inaequalis/GCA_003351075.1_ASM335107v1_genomic.fna 
+#  222 sequences classified (93.28%)
+#  16 sequences unclassified (6.72%)
+
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/output.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/unclassified-out.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/classified-out.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/report.txt \
+--use-names \
+assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
+#  6723 sequences classified (85.53%)
+#  1137 sequences unclassified (14.47%)
+```
+
+```bash
+screen -S kraken
+srun -p himem  --mem 350G --pty bash
+conda activate kraken2
+mkdir -p analysis/P_leucotricha/THeavenp11_1/kraken2/nt2
+kraken2-build --download-taxonomy --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee 3.log
+for file in $(ls /scratch/public_data/tch/tmp123/archaea/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee -a 3.log 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/bacteria/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee -a 3.log 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/fungi/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee -a 3.log 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/plant/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee -a 3.log 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/protozoa/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee -a 3.log 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/viral/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee -a 3.log 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/vertebrate_mammalian/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee -a 3.log 
+done
+kraken2-build --add-to-library /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.mod.1.fa --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee -a 3.log
+grep "|3750" /scratch/public_data/tch/tmp123/plant/*.fna # confirms that apple is in the plant database
+kraken2-build --build --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee -a 3.log
+kraken2-build --clean --threads 20 --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2
+exit
+exit
+echo finished # taxo.k2d file missing >:()
+
+#line 143:  2372 Exit 141                list_sequence_files
+#      2373 Exit 125                | xargs -0 cat
+#      2374 Killed                  | build_db -k $KRAKEN2_KMER_LEN -l $KRAKEN2_MINIMIZER_LEN -S $KRAKEN2_SEED_TEMPLATE $KRAKEN2XFLAG -H hash.k2d.tmp -t taxo.k2d.tmp -o opts.k2d.tmp -n taxonomy/ -m $seqid2taxid_map_file -c $required_capacity -p $KRAKEN2_THREAD_CT $max_db_flag -B $KRAKEN2_BLOCK_SIZE -b $KRAKEN2_SUBBLOCK_SIZE -r $KRAKEN2_MIN_TAXID_BITS $fast_build_flag
+
+
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/outputganan.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/unclassified-outganan.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/classified-outganan.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/reportganan.txt \
+--use-names \
+assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa 
+# 8921 sequences classified (100.00%)
+#  0 sequences unclassified (0.00%)
+
+
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/outputscab.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/unclassified-outscab.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/classified-outscab.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/reportscab.txt \
+--use-names \
+assembly/genome/NCBI/venturia/V_inaequalis/GCA_003351075.1_ASM335107v1_genomic.fna 
+#  238 sequences classified (100.00%)
+#  0 sequences unclassified (0.00%)
+
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/output.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/unclassified-out.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/classified-out.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/report.txt \
+--use-names \
+assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
+#  7416 sequences classified (94.35%)
+#  444 sequences unclassified (5.65%)
+
+#kraken rerunn with database containing all published mildew genomes and strawberry genome
+kraken2 \
+--db analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/output2.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/unclassified-out2.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/classified-out2.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/report2.txt \
+--use-names \
+assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
+#  7550 sequences classified (96.06%)
+#  310 sequences unclassified (3.94%)
+
 ```
 Kraken2 suggested a larger number of reads in our assembly are of human origin, to investigate this further unassembled trimmed reads were aligned to the human genome.
 ```bash
@@ -1392,6 +1770,228 @@ bowtie2 \
 #    143244 (4.22%) aligned >1 times
 #0.48% overall alignment rate
 ```
+Contaminant contigs were removed from the assembly
+```bash
+touch analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/contaminantlist.txt
+nano analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/contaminantlist.txt
+
+#Edited with the following: 
+
+#Bacteria:
+Buchnera 
+Acinetobacter
+Candidatus
+Avibacterium
+Vibrio
+Campylobacter
+Halarcobacter
+Sphingobium
+Clostridium
+Cellulosilyticum
+Staphylococcus
+Paenibacillus
+Streptomyces
+Nocardiopsis
+Pedobacter
+#Archaea:
+Methanosarcina
+#Animals:
+Homo sapiens
+#Plants:
+Embryophyta
+Magnoliopsida
+Mesangiospermae
+Pentapetalae
+rosids
+fabids
+Maleae
+Malus
+Pyrus
+Cannabis
+Ziziphus
+inversion
+Phaseoleae
+Vigna
+Cajanus
+Phaseolus
+Glycine
+Abrus
+Medicago
+Arachis
+Lupinus
+Prosopis
+Quercus
+Juglans
+Hevea
+Manihot
+Jatropha
+Ricinus
+Populus
+Cucurbitaceae
+Benincasa
+Cucumis
+Cucurbita
+Tripterygium
+malvids
+Malvoideae
+Gossypium
+Hibiscus
+Durio
+Brassica
+Raphanus
+Camelina
+Arabidopsis
+Rhodamnia
+Eucalyptus
+Syzygium
+Punica
+Pistacia
+Citrus
+asterids
+Asteraceae
+Lactuca
+Helianthus
+Cynara
+Daucus
+lamiids
+Capsicum
+Solanum
+Nicotiana
+Ipomoea
+Olea europaea
+Sesamum
+Erythranthe
+Coffea
+Camellia
+Chenopodium
+Spinacia
+Beta vulgaris
+Petrosaviidae
+Triticum
+Panicum
+Setaria
+Zea mays
+Ananas comosus
+Arecaceae
+Elaeis guineensis
+Phoenix dactylifera
+Dendrobium
+Phalaenopsis
+Dioscorea
+Papaver
+Nelumbo
+Amborella
+#Protists:
+Plasmodium 
+Theileria
+Eimeria acervulina
+#Algae:
+Paramecium
+Saprolegnia
+#Amoeba:
+Entamoeba
+Dictyostelium
+Trypanosoma
+# These are the taxids identified by kraken2, excluding fungi identifed as these may be misidentifed mildew contigs given the lack of sequencing within the mildew clade.
+
+# Most contaminat contifs are accounted for by Lactuca sativ and Mlaus domestica, a separate file was created for the other minor contaminants.
+touch analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/minorcontaminantlist.txt
+nano analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/minorcontaminantlist.txt
+
+grep -f analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/contaminantlist.txt analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/output.txt > analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/contaminantcontigs.txt
+grep -f analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/minorcontaminantlist.txt analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/output.txt > analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/minorcontaminantcontigs.txt
+
+
+nawk -F"\\t" '{print $2}' analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/contaminantcontigs.txt > analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/contaminantcontignames.txt
+nawk -F"\\t" '{print $2}' analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/minorcontaminantcontigs.txt > analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/minorcontaminantcontignames.txt
+
+conda activate seqtk
+seqtk subseq assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/contaminantcontignames.txt > analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/contaminants.fasta
+seqtk subseq assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/minorcontaminantcontignames.txt > analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/minorcontaminants.fasta
+conda deactivate
+
+/home/heavet/git_repos/tools/DIY/filter.py assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/contaminantcontignames.txt > assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/filtered_contigs_min_500bp.fasta
+awk '/^>/ { print (NR==1 ? "" : RS) $0; next } { printf "%s", $0 } END { printf RS }' assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/filtered_contigs_min_500bp.fasta > assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp_filtered.fasta
+wc -l analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/contaminantcontignames.txt #802
+wc -l assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta #15720
+wc -l assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp_filtered.fasta #14116
+```
+Following the removal of contaminant contigs, kraken2, BUSCO and quast analysis were performed again for the filtered assembly
+```bash
+screen -S kraken2
+srun -p long  --mem 160G --pty bash
+conda activate kraken2
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/filteredoutput.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/filteredunclassified-out.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/filteredclassified-out.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/filteredreport.txt \
+--use-names \
+assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp_filtered.fasta
+#  6614 sequences classified (93.71%)
+#  444 sequences unclassified (6.29%)
+
+#kraken rerunn with database containing all published mildew genomes and strawberry genome
+kraken2 \
+--db analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/filteredoutput2.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/filteredunclassified-out2.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/filteredclassified-out2.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/nt2/filteredreport2.txt \
+--use-names \
+assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp_filtered.fasta
+#  6749 sequences classified (95.62%)
+#  309 sequences unclassified (4.38%)
+
+conda deactive
+conda activate BUSCO
+
+for assembly in $(echo assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs); do
+	Data=$(ls $assembly/contigs_min_500bp_filtered.fasta) 
+	Input=$(dirname $assembly)
+
+	mkdir -p $Input/BUSCO/fungi/1/filtered
+	cd $Input/BUSCO/fungi/1
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o filtered -l fungi_odb10
+	cd /projects/nano_diagnostics
+
+	mkdir -p $Input/BUSCO/ascomycota/1/filtered
+	cd $Input/BUSCO/ascomycota/1
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o filtered -l ascomycota_odb10
+	cd /projects/nano_diagnostics
+
+	mkdir -p $Input/BUSCO/leotiomycetes/1/filtered
+	cd $Input/BUSCO/leotiomycetes/1
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o filtered -l leotiomycetes_odb10
+	cd /projects/nano_diagnostics
+done
+echo finished
+conda deactivate
+#busco scores higher now that some contigs removed? retest unfiltered in /2
+conda activate quast
+
+    for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp_filtered.fasta); do
+    	ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+    	OutDir=$(dirname $Assembly)/filtered
+    	echo $Assembly
+    	echo $OutDir
+    	sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#756881
+```
+## NCBI submission
+Following filtering our assembly was submitted to NCBI with a request that they run it through their own contamination detection pipelines.
+
+Any contaminants detected by NCBI can be removed via the following:
+```bash
+ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Assembly_qc
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta); do
+  OutDir=$(dirname $Assembly)
+  $ProgDir/remove_contaminants.py --inp $Assembly --out $OutDir/WT_miniasm_pilon10_renamed.fasta --coord_file tmp.txt > $OutDir/log.txt
+done
+```
+
 A conda installation of metabat2 was performed
 ```bash
 #metabat requires assembled contigs and a BAM file with the mapping of reads to the contigs as an input. Therefore trimmed reads were aligned to our metagenome assembly and formatted appropriately:
@@ -1547,6 +2147,103 @@ Centrifuge was run with nt database.
 	done
 #740638
 ```
+###  Conterminator
+```bash
+head /scratch/public_data/nt-centrifuge_12jan2021/nt.fa # confirm this is fasta file
+grep "^>" /scratch/public_data/nt-centrifuge_12jan2021/nt.fa # confirm this has many sequences
+head /scratch/public_data/nt-centrifuge_12jan2021/acc2tax.map # confirm this is mapping file in correct format
+grep -m 10 "X52703.1" /scratch/public_data/nt-centrifuge_12jan2021/acc2tax.map # confirm mapping file has example sequence from database file
+grep "\s79249" /scratch/public_data/nt-centrifuge_12jan2021/acc2tax.map # confirm that Ganan P.leucotricha reads are in the mapping file
+grep -m 10 "JAATOF010" /scratch/public_data/nt-centrifuge_12jan2021/nt.fa # confirm that Ganan P.leucotricha reads are in the sequence file - cannot confirm, file is not writable and ~350GB in size
+sed 's/>P_leucotricha_/>/g' /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa > /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.mod2.1.fa
+#cat /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.mod2.1.fa  /scratch/public_data/nt-centrifuge_12jan2021/nt.fa #cannot perform this step without write permissions
+mkdir -p analysis/P_leucotricha/THeavenp11_1/conterminator/nt/
+screen -S conterminator
+srun -p himem  --mem 350G --pty bash
+conda activate conterminator 
+conterminator dna /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.mod2.1.fa /scratch/public_data/nt-centrifuge_12jan2021/acc2tax.map analysis/P_leucotricha/THeavenp11_1/conterminator/nt/nt.result /scratch/public_data/tch
+```
+### Mitofinder
+
+```bash
+mkdir -p rawdata/P_xanthii/KimS/mitochondrion/
+cd rawdata/P_xanthii/KimS/mitochondrion/
+
+#file uploaded of complete podosphaera xanthii mitochondrion from: https://www.ncbi.nlm.nih.gov/nuccore/MK674497.1?report=fasta&log$=seqview
+
+conda activate Mitofinder
+RefMtGb=$(ls rawdata/P_xanthii/KimS/mitochondrion)
+NCBI_Code="4"
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp_filtered.fasta); do
+  Prefix=P_leucotrichaTHeavenp11_1_MtDNA
+  OutDir=$(dirname $Assembly)/mtDNA_mitofinder
+  mkdir -p $OutDir
+  ProgDir=~/git_repos/tools/seq_tools/assemblers
+  echo $Prefix
+  sbatch $ProgDir/sub_mitofinder.sh $Prefix $Assembly $RefMtGb $NCBI_Code $OutDir
+done
+#757975 - basic command not working, argument list too long
+
+screen -S mito
+srun -p long -c 10 --mem 50G --pty bash 
+conda activate spades
+ls /home/heavet/miniconda3/envs/Mitofinder/bin/mitofinder
+
+cd assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/mtDNA_mitofinder
+mitofinder \
+  --seqid P_leucotrichaTHeavenp11_1_MtDNA \
+  --tRNA-annotation mitfi \
+  --adjust-direction \
+  --new-genes \
+  --max-contig-size 50000 \
+  --circular-size 55 \
+  --assembly /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp_filtered.fasta \
+  --refseq /projects/nano_diagnostics/rawdata/P_xanthii/KimS/mitochondrion/pxanthiimito.gb \
+  --organism 4 \
+  --processors 10 \
+  --max-memory 49
+```
+## Repeat Masking
+Conda installations of repeatmodeler and transposonPSI were performed.
+
+Repeatmodeler and transposonPSI were run on our assembly.
+```bash
+conda activate repeatmasking
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp_filtered.fasta); do
+	ProgDir=~/git_repos/tools/seq_tools/repeat_masking
+	OutDir=$(dirname $Assembly)/filteredmasked
+	mkdir -p $OutDir/rep_modeling
+	sbatch $ProgDir/rep_modeling.sh $Assembly $OutDir/rep_modeling
+done
+#758296
+conda deactivate
+
+screen -S psi
+srun -p long -c 4 --mem 10G --pty bash 
+conda activate transposonpsi
+mkdir assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/filteredmasked/transposonPSI
+cd assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/filteredmasked/transposonPSI
+cp /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp_filtered.fasta man_contigs_unmasked_filtered.fa
+/home/gomeza/miniconda3/envs/general_tools/share/transposonPSI/transposonPSI.pl contigs_min_500bp_filtered.fa nuc
+conda deactivate
+exit
+exit
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Ganan raw data
 ```bash
