@@ -83,6 +83,11 @@ The grape powdery mildew genome was downloaded
 wget -P assembly/genome/NCBI/erysiphales/E_necator https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/798/715/GCA_000798715.1_ASM79871v1/GCA_000798715.1_ASM79871v1_genomic.fna.gz 
 gunzip assembly/genome/NCBI/erysiphales/E_necator/GCA_000798715.1_ASM79871v1_genomic.fna.gz
 ```
+An apple scab genome was downloaded
+```bash
+wget -P assembly/genome/NCBI/venturia/V_inaequalis https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/003/351/075/GCA_003351075.1_ASM335107v1/GCA_003351075.1_ASM335107v1_genomic.fna.gz 
+gunzip assembly/genome/NCBI/venturia/V_inaequalis/GCA_003351075.1_ASM335107v1_genomic.fna.gz 
+```
 Our P.aphanis transcriptome is accessed at:
 ```bash
 ls assembly/transcriptome/P_aphanis/HeavenRNAexp1/trinity/assembly/Trinity.fasta
@@ -1677,6 +1682,521 @@ cd 2
 conda activate metabat2
 runMetaBat.sh --saveCls --unbinned /projects/nano_diagnostics/assembly/metagenome/P_aphanis/*/SPAdes/725715/filtered_contigs/contigs_min_500bp.fasta /projects/nano_diagnostics/alignment/P_aphanis/THeavenDRCT72020_1/bowtie2/Heaven_P_aphanis75/THeavenDRCT72020_1alignedHeaven_P_aphanis75.sorted.bam 
 ```
+### Kraken2
+```bash
+#Build a kraken database:
+ screen -S kraken2
+srun -p long  --mem 100G --pty bash
+for file in $(ls /scratch/public_data/tch/tmp123/archaea/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/bacteria/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/fungi/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/plant/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/protozoa/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/viral/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+done
+for file in $(ls /scratch/public_data/tch/tmp123/vertebrate_mammalian/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+done
+exit
+echo finished 
+srun -p himem  --mem 490G --pty bash
+kraken2-build --build --threads 20 --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+kraken2-build --clean --threads 20 --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
+exit
+echo finished 
+
+#Build a fungi only kraken database:
+screen -S kraken2
+srun -p himem  --mem 100G --pty bash
+for file in $(ls /scratch/public_data/tch/tmp123/fungi/*.fna); do
+	#echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi 
+done
+exit
+echo finished
+
+srun -p himem  --mem 490G --pty bash
+kraken2-build --build --threads 20 --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi 
+kraken2-build --clean --threads 20 --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi 
+exit
+echo finished 
+
+#Run kraken 2 analysis
+srun -p himem  --mem 350G --pty bash
+conda activate kraken2
+mkdir -p analysis/P_aphanis/THeavenDRCT72020_1/kraken2/fungi/
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi \
+--output analysis/P_aphanis/THeavenDRCT72020_1/kraken2/fungi/output.txt \
+--unclassified-out analysis/P_aphanis/THeavenDRCT72020_1/kraken2/fungi/unclassified-out.txt \
+--classified-out analysis/P_aphanis/THeavenDRCT72020_1/kraken2/fungi/classified-out.txt \
+--report analysis/P_aphanis/THeavenDRCT72020_1/kraken2/fungi/report.txt \
+--use-names \
+/projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp.fasta
+#  1002 sequences classified (7.69%)
+#  12024 sequences unclassified (92.31%)
+mkdir -p analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/1 \
+--output analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/output.txt \
+--unclassified-out analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/unclassified-out.txt \
+--classified-out analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/classified-out.txt \
+--report analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/report.txt \
+--use-names \
+/projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp.fasta
+#  3034 sequences classified (23.29%)
+#  9992 sequences unclassified (76.71%)
+
+
+
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 \
+--output analysis/P_aphanis/THeavenDRCT72020_1/kraken2/fungi/output2.txt \
+--unclassified-out analysis/P_aphanis/THeavenDRCT72020_1/kraken2/fungi/unclassified-out2.txt \
+--classified-out analysis/P_aphanis/THeavenDRCT72020_1/kraken2/fungi/classified-out2.txt \
+--report analysis/P_aphanis/THeavenDRCT72020_1/kraken2/fungi/report2.txt \
+--use-names \
+/projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp.fasta
+#  11118 sequences classified (85.35%)
+#  1908 sequences unclassified (14.65%)
+
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 \
+--output analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/output2.txt \
+--unclassified-out analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/unclassified-out2.txt \
+--classified-out analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/classified-out2.txt \
+--report analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/report2.txt \
+--use-names \
+/projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp.fasta
+#  11656 sequences classified (89.48%)
+#  1370 sequences unclassified (10.52%)
+
+#kraken rerunn with database containing all published mildew genomes and strawberry genome
+kraken2 \
+--db analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt \
+--output analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/output3.txt \
+--unclassified-out analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/unclassified-out3.txt \
+--classified-out analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/classified-out3.txt \
+--report analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/report3.txt \
+--use-names \
+/projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp.fasta
+#  12799 sequences classified (98.26%)
+#  227 sequences unclassified (1.74%)
+```
+Contaminant contigs were removed from the assembly
+```bash
+touch analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/contaminantlist.txt
+nano analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/contaminantlist.txt
+
+#Edited with the following: 
+
+#Animals:
+Homo sapiens
+#Plants:
+Viridiplantae
+Embryophyta
+Tracheophyta
+Magnoliopsida
+Mesangiospermae
+Pentapetalae
+rosids
+fabids
+Rosaceae
+Rosoideae
+Fragaria
+Rosa chinensis
+Rubus
+Malus domestica
+Pyrus
+Prunus
+Cannabis
+Morus notabilis
+Ziziphus jujuba
+Glycine
+Vigna
+Cajanus
+Phaseolus
+Abrus precatorius
+Medicago
+Cicer arietinum
+Arachis
+Lupinus
+Prosopis
+Quercus
+Juglans
+Cucumis
+Benincasa
+Cucurbita
+Manihot
+Jatropha
+Ricinus
+Populus
+Tripterygium
+malvids
+Gossypium
+Hibiscus
+Durio
+Byttnerioideae
+Theobroma
+Herrania
+Brassica
+Camelina
+Carica papaya
+Tarenaya
+Syzygium
+Rhodamnia
+Pistacia
+Citrus
+Vitis vinifera
+Vitis riparia
+asterids
+lamiids
+Solanaceae
+Nicotiana
+Solanoideae
+Capsicum
+Solanum
+Ipomoea
+Olea europaea
+Sesamum 
+Erythranthe
+Cynara cardunculus
+Coffea
+Asteraceae
+Helianthus
+Lactuca sativa
+Cynara cardunculus
+Daucus carota
+Camellia
+Chenopodiaceae
+Chenopodium
+Beta vulgaris
+Petrosaviidae
+Poaceae
+Panicoideae
+Zea mays
+Sorghum bicolor
+Panicum virgatum
+Panicum hallii
+Triticinae
+Triticum
+Aegilops tauschii
+Brachypodium
+Oryza brachyantha
+Ananas comosus
+Elaeis guineensis
+Phoenix dactylifera
+Musa acuminata
+Phalaenopsis
+Dendrobium
+Asparagus
+Dioscorea cayenensis
+Papaver somniferum
+Nelumbo nucifera
+Amborella
+Nymphaea colorata
+Selaginella
+Physcomitrium
+#Protozoa:
+Chlamydomonas
+Monoraphidium
+Oomycota
+Phytophthora
+Aphanomyces
+Plasmodium
+Tetrahymena
+Acanthamoeba
+Heterostelium 
+Guillardia
+#Bacteria
+Bacteria
+Enterobacterales
+Lonsdalea
+Buchnera
+Pantoea agglomerans
+Salmonella
+Pseudomonas
+Acinetobacter
+Halomonas
+Francisella
+Pseudoalteromonas
+Rhodobacter
+Ketogulonicigenium
+Afipia carboxidovorans
+Rhizobium
+Pelistega
+Variovorax
+Burkholderia
+Rhizobium
+Paraburkholderia
+Campylobacter
+Nautilia
+Staphylococcus
+Bacillus
+Planococcus
+Aerococcus
+Clostridium
+Actinomycetia
+Streptomyces
+Mycoplasma
+Flavobacterium
+Cellulophaga
+Borrelia
+Halopenitus
+Haloterrigena
+Methanococcus
+# These are the taxids identified by kraken2, excluding fungi identifed as these may be misidentifed mildew contigs given the lack of sequencing within the mildew clade.
+
+# Most contaminat contifs are accounted for by Lactuca sativ and Mlaus domestica, a separate file was created for the other minor contaminants.
+
+grep -f analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/contaminantlist.txt analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/output3.txt > analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/contaminantcontigs.txt
+
+nawk -F"\\t" '{print $2}' analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/contaminantcontigs.txt > analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/contaminantcontignames.txt
+
+conda activate seqtk
+seqtk subseq /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp.fasta analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/contaminantcontignames.txt > analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/contaminants.fasta
+conda deactivate
+
+conda activate biopython
+/home/heavet/git_repos/tools/DIY/filter.py /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp.fasta analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/contaminantcontignames.txt > /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/filtered_contigs_min_500bp.fasta
+conda deactivate
+awk '/^>/ { print (NR==1 ? "" : RS) $0; next } { printf "%s", $0 } END { printf RS }' /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/filtered_contigs_min_500bp.fasta > /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp_filtered.fasta
+wc -l analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/contaminantcontignames.txt #322
+wc -l assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp.fasta #26052
+wc -l assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp_filtered.fasta #25408
+```
+Following the removal of contaminant contigs, kraken2, BUSCO and quast analysis were performed again for the filtered assembly
+```bash
+screen -S kraken
+srun -p long  --mem 160G --pty bash
+conda activate kraken2
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 \
+--output analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/filteredoutput.txt \
+--unclassified-out analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/filteredunclassified-out.txt \
+--classified-out analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/filteredclassified-out.txt \
+--report analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/filteredreport.txt \
+--use-names \
+/projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp_filtered.fasta
+#  10982 sequences classified (88.91%)
+#  1370 sequences unclassified (11.09%)
+
+#kraken rerunn with database containing all published mildew genomes and strawberry genome
+screen -S kraken
+srun -p himem  --mem 350G --pty bash
+conda activate kraken2
+kraken2 \
+--db analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt \
+--output analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/filteredoutput2.txt \
+--unclassified-out analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/filteredunclassified-out2.txt \
+--classified-out analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/filteredclassified-out2.txt \
+--report analysis/P_aphanis/THeavenDRCT72020_1/kraken2/1/filteredreport2.txt \
+--use-names \
+/projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp_filtered.fasta
+exit
+exit
+echo finished
+#  12477 sequences classified (98.21%)
+#  227 sequences unclassified (1.79%)
+
+conda deactivate
+conda activate BUSCO
+
+for assembly in $(echo assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs); do
+	Data=$(ls $assembly/contigs_min_500bp_filtered.fasta) 
+	Input=$(dirname $assembly)
+
+	mkdir -p $Input/BUSCO/fungi/1/filtered
+	cd $Input/BUSCO/fungi/1
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o filtered -l fungi_odb10
+	cd /projects/nano_diagnostics
+
+	mkdir -p $Input/BUSCO/ascomycota/1/filtered
+	cd $Input/BUSCO/ascomycota/1
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o filtered -l ascomycota_odb10
+	cd /projects/nano_diagnostics
+
+	mkdir -p $Input/BUSCO/leotiomycetes/1/filtered
+	cd $Input/BUSCO/leotiomycetes/1
+	busco -f -m genome -i /projects/nano_diagnostics/$Data -o filtered -l leotiomycetes_odb10
+	cd /projects/nano_diagnostics
+done
+exit
+exit
+echo finished
+conda deactivate
+conda activate quast
+
+    for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp_filtered.fasta); do
+    	ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+    	OutDir=$(dirname $Assembly)/filtered
+    	echo $Assembly
+    	echo $OutDir
+    	sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#764222
+```
+## NCBI submission
+
+Contigs were renamed in accordance with ncbi recomendations.
+```bash
+conda activate Biopython
+  ProgDir=~/git_repos/tools/seq_tools/assemblers/assembly_qc/remove_contaminants
+  touch tmp.csv
+  for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp_filtered.fasta); do
+    OutDir=$(dirname $Assembly|sed 's@assembly/metagenome@genome_submission@g'|sed 's@filtered_contigs@ncbi_edits@g')
+    mkdir -p $OutDir
+    $ProgDir/remove_contaminants.py --inp $Assembly --out $OutDir/contigs_min_500bp_renamed.fasta --coord_file tmp.csv
+  done
+  rm tmp.csv
+conda deactivate
+#number of contigs written:      12704
+```
+Following filtering our assembly was submitted to NCBI with a request that they run it through their own contamination detection pipelines. The returned report was used to correct the assembly to NCBI standards.
+
+NCBI reports (FCSreport.txt) were manually downloaded to the following locations:
+```bash
+mkdir -p genome_submission/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/NCBI_report_dir
+```
+These downloaded files were used to correct assemblies:
+```bash
+conda activate Biopython
+for Assembly in $(ls genome_submission/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/contigs_min_500bp_renamed.fasta); do
+NCBI_report=$(ls genome_submission/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/NCBI_report_dir/FCSreport.txt)
+OutDir=$(dirname $Assembly|sed 's@filtered_contigs@ncbi_edits@g')
+mkdir -p $OutDir
+ProgDir=~/git_repos/tools/seq_tools/assemblers/assembly_qc/remove_contaminants
+$ProgDir/remove_contaminants.py --inp $Assembly --out $OutDir/contigs_min_500bp_renamed.fasta --coord_file $NCBI_report > $OutDir/log.txt
+done
+#exclude dictionary contains:
+#2
+#split dictionary contatins:
+#13
+conda deactivate
+conda activate quast
+
+    for Assembly in $(ls genome_submission/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/contigs_min_500bp_renamed.fasta); do
+    	ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+    	OutDir=$(dirname $Assembly)
+    	echo $Assembly
+    	echo $OutDir
+    	sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#764879
+conda deactivate
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Mitofinder
+
+```bash
+mkdir -p rawdata/P_xanthii/KimS/mitochondrion/
+cd rawdata/P_xanthii/KimS/mitochondrion/
+#file uploaded of complete podosphaera xanthii mitochondrion from: https://www.ncbi.nlm.nih.gov/nuccore/MK674497.1?report=fasta&log$=seqview
+cd /projects/nano_diagnostics
+
+screen -S mito
+srun -p long -c 10 --mem 50G --pty bash 
+conda activate Mitofinder
+mkdir assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/mtDNA_mitofinder
+
+cd assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/mtDNA_mitofinder
+mitofinder \
+  --seqid P_aphanisTHeavenDRCT72020_1_MtDNA \
+  --tRNA-annotation mitfi \
+  --adjust-direction \
+  --new-genes \
+  --max-contig-size 50000 \
+  --circular-size 55 \
+  --assembly /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp_filtered.fasta \
+  --refseq /projects/nano_diagnostics/rawdata/P_xanthii/KimS/mitochondrion/pxanthiimito.gb \
+  --organism 4 \
+  --processors 10 \
+  --max-memory 49
+```
+### Repeat Masking
+Repeatmodeler and transposonPSI were run on our assembly.
+```bash
+conda activate repeatmasking
+for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp_filtered.fasta); do
+	ProgDir=~/git_repos/tools/seq_tools/repeat_masking
+	OutDir=$(dirname $Assembly)/filteredmasked
+	mkdir -p $OutDir/rep_modeling
+	sbatch $ProgDir/rep_modeling.sh $Assembly $OutDir/rep_modeling
+done
+#758371
+conda deactivate
+
+conda activate transposonpsi
+for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/contigs_min_500bp_filtered.fasta); do
+	ProgDir=~/git_repos/tools/seq_tools/repeat_masking
+	OutDir=$(dirname $Assembly)/filteredmasked
+	mkdir -p $OutDir/transposonPSI
+	sbatch $ProgDir/gomez_transposonPSI.sh $Assembly $OutDir/transposonPSI
+done
+#758374
+conda deactivate
+```
 ### Repeat Masking
 Repeatmodeler and transposonPSI were run on our assembly.
 ```bash
@@ -1761,6 +2281,19 @@ printf "The total number of masked bases are:\t"
 cat $RepMaskGff $TransPSIGff | sortBed | bedtools merge | awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}'
 #Differing number of GFF fields encountered at line: 97499.  Exiting...
 #0
+```
+The TransposonPSI asked bases were used to mask additional bases from the repearmasker softmasked files.
+```bash
+for File in $(ls /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/masked/rep_modeling/*_contigs_softmasked.fa); do
+OutDir=$(dirname $File)
+TPSI=$(ls /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/masked/transposonPSI/*_contigs_unmasked.fa.TPSI.allHits.chains.gff3)
+OutFile=$(echo $File | sed 's/_contigs_softmasked.fa/_contigs_softmasked_repeatmasker_TPSI_appended.fa/g')
+echo "$OutFile"
+bedtools maskfasta -soft -fi $File -bed $TPSI -fo $OutFile
+echo "Number of masked bases:"
+cat $OutFile | grep -v '>' | tr -d '\n' | awk '{print $0, gsub("[a-z]", ".")}' | cut -f2 -d ' '
+done
+#Number of masked bases: 28,812,425 -> the same as just with repeatmasker?
 ```
 ## Gene prediction
 Trimmed RNASeq reads that did not align to the camarosa genome can be found here:
@@ -1989,12 +2522,20 @@ OutDir=$(dirname $File)
 echo "##gff-version 3" > $OutDir/augustus_extracted.gff
 cat $File | grep -v '#' >> $OutDir/augustus_extracted.gff
 done
+
+for File in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/braker/75/P_aphanis_braker/augustus.gff); do
+getAnnoFasta.pl $File
+OutDir=$(dirname $File)
+echo "##gff-version 3" > $OutDir/augustus_extracted.gff
+cat $File | grep -v '#' >> $OutDir/augustus_extracted.gff
+done
 ```
 ### CodingQuary
 Additional genes were added  to Braker gene predictions using CodingQuary in pathogen mode to predict additional regions. 
 
 Firstly, aligned RNAseq data was assembled into transcripts using Stringtie.
 ```bash
+conda activate Stringtie
   for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/615827/filtered_contigs/masked/transposonPSI/man_contigs_unmasked.fa); do
     OutDir=gene_pred/P_aphanis/THeavenDRCT72020_1/stringtie/concatenated_prelim
     AcceptedHits=alignment/P_aphanis/THeavenDRCT72020_1/star/star_aligmentAligned.sortedByCoord.out.bam
@@ -2002,6 +2543,14 @@ Firstly, aligned RNAseq data was assembled into transcripts using Stringtie.
     sbatch $ProgDir/stringtie.sh $AcceptedHits $OutDir
    done
 #721477
+
+  for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/masked/transposonPSI/man_contigs_unmasked.fa); do
+    OutDir=gene_pred/P_aphanis/THeavenDRCT72020_1/stringtie/concatenated_prelim/75
+    AcceptedHits=alignment/P_aphanis/THeavenDRCT72020_1/star/75/star_aligmentAligned.sortedByCoord.out.bam
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/RNAseq
+    sbatch $ProgDir/stringtie.sh $AcceptedHits $OutDir
+   done
+#741645 
 ```
 This step was also performed using cufflinks.
 ```bash
@@ -2012,7 +2561,15 @@ conda activate tophat
     ProgDir=/home/heavet/git_repos/tools/seq_tools/RNAseq
     sbatch $ProgDir/sub_cufflinks.sh $AcceptedHits $OutDir
   done
-#721498
+#741643 - Warning: Could not connect to update server to verify current version.
+
+  for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/masked/transposonPSI/man_contigs_unmasked.fa); do
+    OutDir=gene_pred/P_aphanis/THeavenDRCT72020_1/stringtie/concatenated_prelim/75
+    AcceptedHits=alignment/P_aphanis/THeavenDRCT72020_1/star/75/star_aligmentAligned.sortedByCoord.out.bam
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/RNAseq
+    sbatch $ProgDir/sub_cufflinks.sh $AcceptedHits $OutDir
+   done
+#741644 - Warning: Could not connect to update server to verify current version. 
 ```
 ```bash
 conda activate codingquary
@@ -2031,7 +2588,61 @@ cp ~/git_repos/tools/gene_prediction/signalp-5.0b/signalp-5.0b/lib/libtensorflow
 #There are only 499 secreted genes
 #to train from. Pathogen mode cannot run with less
 #than 500 secreted genes.
+
+conda activate codingquary
+  for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/masked/transposonPSI/man_contigs_unmasked.fa); do
+    OutDir=gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/75
+    GTF=gene_pred/P_aphanis/THeavenDRCT72020_1/stringtie/concatenated_prelim/75/out.gtf
+    ProgDir=/home/heavet/git_repos/tools/gene_prediction/codingquary
+    sbatch $ProgDir/sub_CodingQuary.sh $Assembly $GTF $OutDir
+  done
+#742025
 ```
+Where CodingQuarry genes were predicted in regions of the genome not containing Braker gene models these transcripts were added to the Braker gene models
+```bash
+srun -p short  --mem 100G --pty bash
+cpanm Bio::Perl
+#Building and testing Bio-DB-NCBIHelper-1.7.6 ... FAIL
+#! Installing Bio::DB::GenPept failed. See /home/heavet/.cpanm/work/1622640779.4676/build.log for details. Retry with --force to force install it.
+#! Installing the dependencies failed: Module 'Bio::DB::GenPept' is not installed, Module 'Bio::DB::GenBank' is not installed
+#! Bailing out the installation for Bio-Procedural-1.7.4.
+
+for BrakerGff in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/braker/75/P_aphanis_braker/augustus.gff3); do
+Assembly=$(ls /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/filtered_contigs/masked/rep_modeling/*_softmasked_repeatmasker_TPSI_appended.fa)
+CodingQuaryGff=gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/75/742025/out/PredictedPass.gff3
+PGNGff=gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/75/742025/out/PGN_predictedPass.gff3
+AddDir=gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/75/742025/additional
+FinalDir=gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/75/742025/final
+AddGenesList=$AddDir/additional_genes.txt
+AddGenesGff=$AddDir/additional_genes.gff
+FinalGff=$AddDir/combined_genes.gff
+mkdir -p $AddDir
+mkdir -p $FinalDir
+
+bedtools intersect -v -a $CodingQuaryGff -b $BrakerGff | grep 'gene'| cut -f2 -d'=' | cut -f1 -d';' > $AddGenesList
+bedtools intersect -v -a $PGNGff -b $BrakerGff | grep 'gene'| cut -f2 -d'=' | cut -f1 -d';' >> $AddGenesList
+ProgDir=/projects/oldhome/armita/git_repos/emr_repos/tools/seq_tools/feature_annotation
+$ProgDir/gene_list_to_gff.pl $AddGenesList $CodingQuaryGff CodingQuarry_v2.0 ID CodingQuary > $AddGenesGff
+$ProgDir/gene_list_to_gff.pl $AddGenesList $PGNGff PGNCodingQuarry_v2.0 ID CodingQuary >> $AddGenesGff
+ProgDir=/projects/oldhome/armita/git_repos/emr_repos/tools/gene_prediction/codingquary
+
+$ProgDir/add_CodingQuary_features.pl $AddGenesGff $Assembly > $FinalDir/final_genes_CodingQuary.gff3
+$ProgDir/gff2fasta.pl $Assembly $FinalDir/final_genes_CodingQuary.gff3 $FinalDir/final_genes_CodingQuary
+cp $BrakerGff $FinalDir/final_genes_Braker.gff3
+$ProgDir/gff2fasta.pl $Assembly $FinalDir/final_genes_Braker.gff3 $FinalDir/final_genes_Braker
+cat $FinalDir/final_genes_Braker.pep.fasta $FinalDir/final_genes_CodingQuary.pep.fasta | sed -r 's/\*/X/g' > $FinalDir/final_genes_combined.pep.fasta
+cat $FinalDir/final_genes_Braker.cdna.fasta $FinalDir/final_genes_CodingQuary.cdna.fasta > $FinalDir/final_genes_combined.cdna.fasta
+cat $FinalDir/final_genes_Braker.gene.fasta $FinalDir/final_genes_CodingQuary.gene.fasta > $FinalDir/final_genes_combined.gene.fasta
+cat $FinalDir/final_genes_Braker.upstream3000.fasta $FinalDir/final_genes_CodingQuary.upstream3000.fasta > $FinalDir/final_genes_combined.upstream3000.fasta
+
+GffBraker=$FinalDir/final_genes_Braker.gff3
+GffQuary=$FinalDir/final_genes_CodingQuary.gff3
+GffAppended=$FinalDir/final_genes_appended.gff3
+cat $GffBraker $GffQuary > $GffAppended
+done
+#ERROR Can't locate Bio/Seq.pm in @INC
+```
+
 
 
 
