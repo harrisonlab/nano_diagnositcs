@@ -15,6 +15,19 @@ conda config --add channels bioconda
 conda config --add channels conda-forge
 conda update -n base -c defaults conda
 ```
+## eDIRECT
+```bash
+conda create -n eDIRECT
+conda activate eDIRECT
+conda install -y -c conda-forge -c bioconda -c defaults entrez-direct
+```
+
+## Conterminator
+```bash
+conda create -n conterminator
+conda activate conterminator
+conda install -c bioconda conterminator
+```
 ## Stringtie
 ```bash
 conda create -n Stringtie
@@ -630,6 +643,12 @@ tar -xzf jellyfish-2.2.5.tar.gz
  make
  make install
 ```
+## seqtk
+```bash
+conda create -n seqtk
+conda activate seqtk
+conda install -c bioconda seqtk
+```
 ## MIRA
 ```bash
 #a new environment was created to install MIRA
@@ -744,5 +763,25 @@ pip install ncbi-genome-download
 nano ~/.profile
 #PATH=$HOME/.local/bin:${PATH}
 ~/.local/bin
+. ~/.profile
+```
+
+## Mitofinder
+```bash
+conda create -n Mitofinder
+conda activate Mitofinder
+conda install mitofinder
+
+mkdir -p ~/git_repos/tools/prog/mitofinder
+cd ~/git_repos/tools/prog/mitofinder
+wget https://github.com/RemiAllio/MitoFinder/archive/master.zip
+unzip master.zip
+mv MitoFinder-master MitoFinder
+cd MitoFinder
+./install.sh
+exit
+
+nano ~/.profile
+#PATH=$HOME/git_repos/tools/prog/mitofinder/MitoFinder/:${PATH}
 . ~/.profile
 ```
