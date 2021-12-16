@@ -92,11 +92,33 @@ conda create -n transposonpsi
 conda activate transposonpsi
 conda install -c bioconda transposonpsi
 ```
+## GATK
+```bash
+conda activate Picard
+conda install -c bioconda gatk
+conda install gatk4
+```
 ##concoct
 ```bash
 conda create -n concoct
 conda activate concoct
 conda install concoct
+```
+## vcflib
+```bash
+conda create -n vcflib
+conda activate vcflib
+conda install -c bioconda vcflib
+```
+## vcftools
+```bash
+conda activate vcflib
+conda install -c bioconda vcftools
+```
+## bcftools
+```bash
+conda activate Picard
+conda install -c bioconda bcftools
 ```
 ##metabat2
 ```bash
@@ -119,11 +141,43 @@ nano ~/.profile
 #PATH=$HOME/git_repos/tools/prog/kraken2/1/kraken2-inspect:${PATH}
 . ~/.profile
 ```
+## assembly stats
+```bash
+mkdir -p /scratch/projects/heavet/prog/assemblystats
+cd /scratch/projects/heavet/prog/assemblystats
+git clone https://github.com/rjchallis/assembly-stats
+cd assembly-stats
+
+conda create -n assembly-stats
+conda activate assembly-stats
+conda install -c bioconda assembly-stats
+conda install -c conda-forge jq
+```
+##vt
+```bash
+mkdir -p ~/git_repos/tools/prog/vt
+cd ~/git_repos/tools/prog/vt
+git clone https://github.com/atks/vt.git
+cd vt
+git submodule update --init --recursive
+make 
+make test
+nano ~/.profile
+#edited with:
+#PATH=$HOME/git_repos/tools/prog/vt/vt:${PATH}
+. ~/.profile
+```
 ```bash
 conda create -n kraken2
 conda activate kraken2
 conda install -c bioconda kraken2
 conda install libiconv
+```
+##ragtag
+```bash
+conda create --name ragtag
+conda activate ragtag
+conda install -c bioconda ragtag
 ```
 ## codingquary
 ```bash
@@ -135,6 +189,18 @@ nano ~/.profile
 #PATH=$HOME/miniconda3/envs/codingquary/opt/codingquarry-2.0/QuarryFiles:${PATH}
 . ~/.profile
 ```
+## EffectorP
+```bash
+nano ~/.profile
+#PATH=${PATH}:/scratch/software/EffectorP-2.0/Scripts:${PATH}
+. ~/.profile
+```
+## TMHMM
+```bash
+nano ~/.profile
+#PATH=${PATH}:/data/scratch/gomeza/prog/tmhmm-2.0c/bin:${PATH}
+. ~/.profile
+```
 ## signalp
 ```bash
 mkdir /home/heavet/git_repos/tools/gene_prediction/signalp-5.0b
@@ -143,6 +209,7 @@ wget https://services.healthtech.dtu.dk/download/6e5220c3-8c8b-44ec-8835-f918406
 tar -xvzf signalp-5.0b.Linux.tar.gz
 nano ~/.profile
 #PATH=${PATH}:$HOME/git_repos/tools/gene_prediction/signalp-5.0b/signalp-5.0b/bin:${PATH}
+#PATH=${PATH}:/data/scratch/gomeza/prog/signalp/signalp-4.1 
 . ~/.profile
 ```
 ## centrifuge
@@ -219,6 +286,12 @@ conda create -n quast
 conda activate quast
 conda install python=2.7
 conda install -c bioconda quast
+```
+## tbl2asn
+```bash
+conda create -n tbl2asn
+conda activate tbl2asn
+conda install -c bioconda tbl2asn
 ```
 ## rnaQUAST
 ```bash
@@ -582,6 +655,18 @@ nano ~/.profile
 . ~/.profile
 #libbamtools.* files are not symlinked into /usr/lib/ 
 ```
+## Java
+```bash
+conda create -n Java11
+conda activate Java11
+conda install -c conda-forge openjdk
+```
+## perl
+```bash
+conda create -n perl
+conda activate perl
+conda install -c anaconda perl
+```
 ## GenemarkS-T
 ```bash
 mkdir -p ~/git_repos/tools/prog/genemark/2020
@@ -648,6 +733,21 @@ tar -xzf jellyfish-2.2.5.tar.gz
 conda create -n seqtk
 conda activate seqtk
 conda install -c bioconda seqtk
+```
+### iterproscan
+```bash
+mkdir ~/git_repos/tools/prog/Interproscan
+cd ~/git_repos/tools/prog/Interproscan
+wget https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/5.52-86.0/interproscan-5.52-86.0-64-bit.tar.gz    
+tar -xzf interproscan-5.52-86.0-64-bit.tar.gz 
+#~ area full
+cd /projects/nano_diagnostics
+mkdir tools
+cd tools
+wget https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/5.52-86.0/interproscan-5.52-86.0-64-bit.tar.gz    
+tar -xzf interproscan-5.52-86.0-64-bit.tar.gz 
+cd interproscan-5.52-86.0/
+python3 initial_setup.py
 ```
 ## MIRA
 ```bash
@@ -764,6 +864,17 @@ nano ~/.profile
 #PATH=$HOME/.local/bin:${PATH}
 ~/.local/bin
 . ~/.profile
+```
+## Biopython
+```bash
+conda create -n Biopython
+conda activate Biopython
+conda install -c anaconda biopython
+
+conda create -n biopython2.7
+conda activate biopython2.7
+python2.7 -m pip install biopython==1.76
+
 ```
 
 ## Mitofinder
