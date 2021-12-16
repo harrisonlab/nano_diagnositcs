@@ -3,7 +3,7 @@ Documentation of analyses and commands used as part of the PhD project investiga
 
 Work is documented within the following sub folders: 
 
-Scab
+V_inaequalis
 
 P_aphanis
 
