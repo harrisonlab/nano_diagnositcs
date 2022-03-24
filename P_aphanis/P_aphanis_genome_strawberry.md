@@ -2,6 +2,10 @@
 
 Documentation of analysis and commands used with P.aphanis sampled from strawberry as part of Nano Diagnistics PhD.
 
+All bowtie2 folders have been subsequently deleted to save space.
+
+All genomes that were stored in /data/scratch/heavet/assembly/genome have been moved to the crop diversity hpc to save space
+
 ## Collecting data
 
 All following commands were exectuted from the folder:
@@ -121,6 +125,7 @@ gunzip GHDE01.1.gbff.gz #Genebank file
 ```
 
 ## Data quality control
+### FastQC
 The raw sequence reads were subjected to a quality control check using FastQC.
 ```bash
 for RawData in $(ls rawdata/P_aphanis/*/*/*/*/*/*.fq.gz); do
@@ -164,6 +169,7 @@ cat rawdata/P_aphanis/MiSeq/H_Cockerton2018/paired/001/F/H_Cockerton2018_1_f.fq.
 cat rawdata/P_aphanis/MiSeq/H_Cockerton2018/paired/001/R/H_Cockerton2018_1_r.fq.gz | gunzip -cf | echo $((`wc -l`/4))
 #23,712,972
 ```
+### Trimmomatic
 Trimming was performed on data to trim adapters from sequences and remove poor quality data. This was done with trimmomatic. 
 ```bash
 for ReadDir in $(ls -d rawdata/P_aphanis/MiSeq/*/*/*);
@@ -575,7 +581,8 @@ bowtie2 \
 echo finished
 #6.03% overall alignment rate
 ```
-### Coverage
+## Coverage
+### Samtools
 There is no existing genome to use for estimated coverage.
 ```bash
 #Basic coverage calculation; coverage=(readlength*readnumber)/genomelength
@@ -1076,7 +1083,7 @@ for assembly in $(echo assembly/genome/spades/P_aphanis/H_Cockerton/C1_no_strawb
 done
 echo finished
 ```
-### Coverage
+## Coverage
 ### KAT
 KAT was used to re-estimate the coverage of our raw reads vs our draft assemblies.
 ```bash
@@ -1109,6 +1116,7 @@ kat comp -m 21 -v -h -t 8 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/camarosa
 kat plot spectra-cn -x 300 -o alignment/P_aphanis/THeavenDRCT72020_1/kat/camarosa_v_spades-21plot300 alignment/P_aphanis/THeavenDRCT72020_1/kat/camarosa_v_spades-21-main.mx
 ```
 ### Bowtie
+Representation of unfiltered reads in our assemblies was investigated using bowtie2
 ```bash
 #An alignment of trimmed reads including unpaired reads was made to the assembled genome, this produced a 66% overall alignment rate.
 screen -S bowtie
@@ -1593,10 +1601,34 @@ conda activate quast
 #780140
 conda deactivate
 ```
+Raw reads were submitted to the NCBI SRA
+```bash
+screen -S ftp
+conda activate ftp
+lftp ftp-private.ncbi.nlm.nih.gov
+login subftp
+w4pYB9VQ
+cd uploads/tcheaven_googlemail.com_mCkezA8U
+mkdir SAMN20669290
+cd SAMN20669290
+put /archives/2020_niabemr_general/EUUK2019121203GB-EU-UK-NIAB-EMR-2-RNA-WOBI-H204SC19122617/X204SC19122617-Z01-F001/raw_data/s30008508_1.fq.gz
+put /archives/2020_niabemr_general/EUUK2019121203GB-EU-UK-NIAB-EMR-2-RNA-WOBI-H204SC19122617/X204SC19122617-Z01-F001/raw_data/s30008508_2.fq.gz
+put /archives/2020_niabemr_general/EUUK2019121203GB-EU-UK-NIAB-EMR-2-RNA-WOBI-H204SC19122617/X204SC19122617-Z01-F001/raw_data/s30008509_1.fq.gz
+put /archives/2020_niabemr_general/EUUK2019121203GB-EU-UK-NIAB-EMR-2-RNA-WOBI-H204SC19122617/X204SC19122617-Z01-F001/raw_data/s30008509_2.fq.gz
+put /archives/2020_niab_general/20201203_X204SC20110698-Z01-F001/X204SC20110698-Z01-F001/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HKFFGDSXY_L4_1.fq.gz
+put /archives/2020_niab_general/20201203_X204SC20110698-Z01-F001/X204SC20110698-Z01-F001/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HKFFGDSXY_L4_2.fq.gz
+put /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HNLV2DSXY_L2_1.fq.gz 
+put /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HNLV2DSXY_L2_2.fq.gz 
+put /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HTTWTDSXY_L3_1.fq.gz 
+put /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HTTWTDSXY_L3_2.fq.gz
+put /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HNTVMDSXY_L4_1.fq.gz
+put /archives/2021_eastmall_general/H204SC20110698-X204SC20110698-Z01-F003/X204SC20110698-Z01-F003/raw_data/D3009202001/D3009202001_FDSW202589165-1r_HNTVMDSXY_L4_2.fq.gz
+exit
+conda deactivate
+exit
+```
 
-## Gene prediction
-
-### Repeat Masking
+## Repeat Masking
 Soft masking means transforming every nucleotide identified as a repeat to a lower case a, t, g or c to be included in later gene prediction stages. Hard masking means transforming every nucleotide identified as a repeat to an 'N' or 'X'.
 
 Conda installations of Repeatmodeler and transposonPSI were performed.
@@ -1655,15 +1687,18 @@ done
 ```
 The total length of the genome given by quast is 56,244,531bp if 29,988,800bp have been masked as repetative then 53.32% of the genome is made up of repeats.
 
+## Gene prediction
+RNAseq was performed on P. aphanis to guide gene prediction. Gene prediction was performed using braker supplimented by additon predctions from codingquarry. Duplicated predictions were removed.
+
 ### RNA Alignment
 
-# ERROR
-
-Trimmed RNASeq reads that did not align to the camarosa genome can be found here:
+Trimmed RNASeq reads can be found here:
 ```bash
 ls dna_qc/P_aphanis/RNAexp1/infected/F/*trim.fa
 ls dna_qc/P_aphanis/RNAexp1/infected/R/*trim.fa
 ```
+These will be a mix of strawberry and strawberry powdery mildew RNASeq reads.
+
 STAR was used to align RNAseq data for P.aphanis to our genome assembly.
 ```bash
 mkdir -p alignment/P_aphanis/THeavenDRCT72020_1/star/RNA/725715
@@ -1680,7 +1715,7 @@ done
 #785289
 ``` 
 ### Braker prediction
-Genes were predited using the program Braker1 using RNAseq wvidence.
+Genes were predited using the program Braker1 using RNAseq wvidence. BRAKER is a gene prediction pipeine using genomic and RNA-Seq data to automatically generate full gene structure annotations in novel genome. It combines two major tools: GeneMark-ES/ET and AUGUSTUS. These both use generalized hidden Markov model, a probabilistic model of a sequence and its gene structure.
 ```bash
 #Before braker predictiction is performed, double check that the genemark key is in user area and copy it over from the genemark install directory:
 conda activate braker
@@ -1698,7 +1733,7 @@ done
 #786319
 ```
 ### CodingQuary
-Additional genes were added  to Braker gene predictions using CodingQuary in pathogen mode to predict additional regions. 
+Additional genes were added  to Braker gene predictions using CodingQuary in pathogen mode to predict additional regions. Codingquarry also uses hidden Markov models for prediction.
 
 Firstly, aligned RNAseq data was assembled into transcripts using Stringtie.
 ```bash
@@ -1823,8 +1858,10 @@ cat $FinalDir/final_genes_appended_renamed.cdna.fasta | grep '>'
 grep -c -i '>' $FinalDir/final_genes_appended_renamed.cdna.fasta
 ```
 ## Genome annotation
+Predicted gene features were annotated using two datahases, the swissprot database and the interpro database.
 
 ### Interproscan
+InterPro is a database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to new protein sequences in order to functionally characterise them. The contents of InterPro consist of diagnostic signatures and the proteins that they significantly match.
 ```bash
 for Genes in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed.pep.fasta); do
     InterproDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
@@ -1951,16 +1988,10 @@ done
 wc gene_pred/P_aphanis/THeavenDRCT72020_1/swissprot/rep_modeling/787033/swissprot_vSept_2021_10_hits.tbl
 #10,919 131028 638001
 ```
-### Genome submission
-Submisison of annotations with an assembly appears to be a complex process. If a genome is to be submitted without annotation then all that is needed is the fasta file containing the assembled contigs. If an annotated genome is to be submitted then a number of processing steps are required before submission. The fasta file of contigs and the gff file of annotations must be combined to form a .asn file. The program that does this conversion (tbl2asn) requires the fasta files and gff files to be formatted correctly. In the case of the gff file, this means parsing it to a .tbl file.
+## Genome submission
+Submisison of annotations with an assembly appears to be a complex process. If a genome is to be submitted without annotation then all that is needed is the fasta file containing the assembled contigs. If an annotated genome is to be submitted then a number of processing steps are required before submission. The fasta file of contigs and the gff file of annotations must be combined to form a .asn file. The program that does this conversion (tbl2asn) requires the fasta files and gff files to be formatted correctly. In the case of the gff file, this means parsing it to a .tbl file. The program Annie parses interproscan, swissprot, blast hits etc. into a feature table file (.tbl) which is compatible with GAG. Genome annotation generator (GAG) parses annotations into a table format compatible with tbl2asn. tble2asn is NCBI's program which generates an annotated assembly including metadata, gene models, annotations and locus tag prefixes.
 
-### Generating .tbl file (GAG)
-
-The Genome Annotation Generator (GAG.py) can be used to convert gff files into .tbl format, for use by tbl2asn.
-
-It can also add annotations to features as provided by Annie the Annotation extractor.
-
-#### Annie
+### Annie
 
 Interproscan and Swissprot annotations were extracted using annie, the ANNotation Information Extractor. The output of Annie was filtered to keep only annotations with references to ncbi approved databases. Note - It is important that transcripts have been re-labelled as mRNA by this point.
 
@@ -1997,8 +2028,9 @@ done
 ProgDir=~/git_repos/tools/prog/genbank_submission
 python3 $ProgDir/edit_tbl_file/annie_corrector.py --inp_csv $OutDir/annie_output.csv --out_csv $OutDir/annie_corrected_output.csv 
 ```
-#### GAG
-Gag was run using the modified gff file as well as the annie annotation file. Gag was noted to output database references incorrectly, so these were modified.
+### GAG
+Gag was run using the modified gff file as well as the annie annotation file. The Genome Annotation Generator (GAG.py) can be used to convert gff files into .tbl format, for use by tbl2asn. It can also add annotations to features as provided by Annie the Annotation extractor. Gag was noted to output database references incorrectly, so these were modified.
+GAG requires; assembly fasta (contig lengths), gene gff (gene feature locations), annotations csv (product names, blast hit accession, database accessions)
 ```bash
 conda activate quast
 for Assembly in $(ls /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_unmasked.fa); do
@@ -2012,19 +2044,19 @@ conda deactivatae
 
 sed -i 's/Dbxref/db_xref/g' $OutDir/gag/round1/genome.tbl
 
+#We checked that genes from each annotation step were included
 /projects/nano_diagnostics/gene_pred/P_aphanis/THeavenDRCT72020_1/swissprot/rep_modeling/787033/swissprot_vSept_2021_tophit_parsed.tbl #swissprot records found in output
 /projects/nano_diagnostics/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan.tsv #interproscan - there are pfam and go annotations inn the output
-/projects/nano_diagnostics/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/out/PredictedPass.gff3 #codingquarry
+/projects/nano_diagnostics/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed.gff3  #codingquarry - records found in output
 /projects/nano_diagnostics/gene_pred/P_aphanis/THeavenDRCT72020_1/braker/725715_softmasked_TPSI_appended/augustus.gff3 #braker records found in output
 
 grep -o 'gene' $OutDir/gag_log1.txt
 ```
-### Error correction
-#### tbl2asn
+### First run of tbl2asn
 
 A template was created at https://submit.ncbi.nlm.nih.gov/genbank/template/submission/ and downloaded
 
-tbl2asn round 1
+tbl2asn was run to generate an annotated genome. tbl2asn requires; template file (.sbt), fasta file for nucleotide sequence data (.fa), feature table file (.tbl).
 ```bash
 conda activate tbl2asn
 for Assembly in $(ls /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_unmasked.fa); do
@@ -2039,7 +2071,12 @@ tbl2asn -p $OutDir/gag/round1/. -t $OutDir/gag/round1/genome.sbt -r $OutDir/tbl2
 done
 conda deactivate
 ```
-#### ncbi tbl corrector
+
+### Error correction
+
+The first run of tbl2asn reported errors in the annotated genome, these will need to be corrected before submission to NCBI.
+
+### ncbi tbl corrector
 Editing .tbl file
 
 This program allows automated correction of proteins in .tbl file after tbl2asn has identified errors. Instuctions are taken from the .val outfile on which genes / features should be modified.
@@ -2078,8 +2115,8 @@ Generating a structured comment detailing annotation methods
     > $OutDir/gag/edited/annotation_methods.strcmt.txt
   done
 ```
-#### Final run of tbl2asn
-Following correction of the GAG .tbl file, tbl2asn was re-run to provide the final genbank submission file.
+### Second run of tbl2asn
+Following correction of the GAG .tbl file, tbl2asn was re-run.
 
 The options -l paired-ends -a r10k inform how to handle runs of Ns in the sequence, these options show that paired-ends have been used to estimate gaps and that runs of N's longer than 10 bp should be labelled as gaps.
 ```bash
@@ -2097,51 +2134,351 @@ for Assembly in $(ls /projects/nano_diagnostics/assembly/metagenome/P_aphanis/TH
   cat $OutDir/tbl2asn/final/genome.sqn | sed 's/title "Saccharopine dehydrogenase.*/title "Saccharopine dehydrogenase/g' | sed 's/"Saccharopine dehydrogenase.*"/"Saccharopine dehydrogenase"/g' > $OutDir/tbl2asn/final/$FinalName.sqn
 done
 conda deactivate
+
+#Output of /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/errorsummary.val:
+#    4 ERROR:   SEQ_FEAT.BadTrailingCharacter
+#    32 ERROR:   SEQ_FEAT.MissingGeneXref
+#     9 WARNING: SEQ_FEAT.DuplicateFeat
+#     4 WARNING: SEQ_FEAT.NotSpliceConsensusDonor
+#    64 WARNING: SEQ_FEAT.PartialProblem
+#     7 WARNING: SEQ_FEAT.ProteinNameEndsInBracket
+#    86 WARNING: SEQ_FEAT.ShortExon
+#     1 INFO:    SEQ_FEAT.PartialProblem
+#   484 INFO:    SEQ_FEAT.RareSpliceConsensusDonor
+mkdir /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2
+cp /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited/genome.tbl /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome.tbl
 ```
+The second run of tbl2asn still reports some errors in the annotated assembly, these will need to be fixed manually.
+
+BadTrailingCharacter error:
+```bash
+cat /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/genome.val | grep 'BadTrailingCharacter' > /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/BadTrailingCharacter.txt
+cat /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited/manualgenome2.tbl | sed 's/Saccharopine dehydrogenase.*/Saccharopine dehydrogenase/g' > /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl
+```
+MissingGeneXref error:
+```bash
+cat /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/genome.val | grep 'MissingGeneXref' > /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/MissingGeneXref.txt
+#All hypothetical proteins, appears to be 4 proteins total wth 8 overlap/repeats each, 4 CDS, 4 mRNA
+nano /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/MissingGeneXref.txt
+
+#contig 140, geneious does not predict an ORF in this region, some hits, this is a codinguarry feature
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: CDS: hypothetical protein [(lcl|contig_140:7726-7785, 7913-8080)] [lcl|contig_140: raw, dna len= 30469] -> [gnl|NIAB-EMR|K3495_g1595a]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: CDS: hypothetical protein [(lcl|contig_140:7726-7785, 7913-8017, 8070-8093)] [lcl|contig_140: raw, dna len= 30469] -> [gnl|NIAB-EMR|K3495_g1598a]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: CDS: hypothetical protein [(lcl|contig_140:7726-7785, 7913-8080)] [lcl|contig_140: raw, dna len= 30469] -> [gnl|NIAB-EMR|K3495_g1597a]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: CDS: hypothetical protein [(lcl|contig_140:7726-7785, 7913-8017, 8070-8093)] [lcl|contig_140: raw, dna len= 30469] -> [gnl|NIAB-EMR|K3495_g1596a]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: mRNA: hypothetical protein [(lcl|contig_140:<7726-7785, 7913->8080)] [lcl|contig_140: raw, dna len= 30469]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: mRNA: hypothetical protein [(lcl|contig_140:<7726-7785, 7913-8017, 8070->8093)] [lcl|contig_140: raw, dna len= 30469]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: mRNA: hypothetical protein [(lcl|contig_140:<7726-7785, 7913->8080)] [lcl|contig_140: raw, dna len= 30469]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: mRNA: hypothetical protein [(lcl|contig_140:<7726-7785, 7913-8017, 8070->8093)] [lcl|contig_140: raw, dna len= 30469]
+
+#contig 1376, geneious does not predict an ORF in this region, some blast hits, this is a codinguarry feature
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 4 identical-length genes but has no cross-reference FEATURE: CDS: hypothetical protein [(lcl|contig_1376:4689-4691, 4790-4867, 4917-4991)] [lcl|contig_1376: raw, dna len= 11661] -> [gnl|NIAB-EMR|K3495_g7911a]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 4 identical-length genes but has no cross-reference FEATURE: CDS: hypothetical protein [(lcl|contig_1376:4689-4691, 4790-4867, 4917-4991)] [lcl|contig_1376: raw, dna len= 11661] -> [gnl|NIAB-EMR|K3495_g7913a]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 4 identical-length genes but has no cross-reference FEATURE: CDS: hypothetical protein [(lcl|contig_1376:4689-4739, 4790-4867, 4917-4991)] [lcl|contig_1376: raw, dna len= 11661] -> [gnl|NIAB-EMR|K3495_g7912a]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 4 identical-length genes but has no cross-reference FEATURE: CDS: hypothetical protein [(lcl|contig_1376:4689-4739, 4790-4867, 4917-4991)] [lcl|contig_1376: raw, dna len= 11661] -> [gnl|NIAB-EMR|K3495_g7910a]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 4 identical-length genes but has no cross-reference FEATURE: mRNA: hypothetical protein [(lcl|contig_1376:<4689-4691, 4790-4867, 4917->4991)] [lcl|contig_1376: raw, dna len= 11661]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 4 identical-length genes but has no cross-reference FEATURE: mRNA: hypothetical protein [(lcl|contig_1376:<4689-4691, 4790-4867, 4917->4991)] [lcl|contig_1376: raw, dna len= 11661]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 4 identical-length genes but has no cross-reference FEATURE: mRNA: hypothetical protein [(lcl|contig_1376:<4689-4739, 4790-4867, 4917->4991)] [lcl|contig_1376: raw, dna len= 11661]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 4 identical-length genes but has no cross-reference FEATURE: mRNA: hypothetical protein [(lcl|contig_1376:<4689-4739, 4790-4867, 4917->4991)] [lcl|contig_1376: raw, dna len= 11661]
+
+#contig 2429, geneious does not predict an ORF in this region, blast hits with low identity, this is a codinguarry feature
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: CDS: hypothetical protein [(lcl|contig_2429:6204-6324, 6372-6469)] [lcl|contig_2429: raw, dna len= 7209] -> [gnl|NIAB-EMR|K3495_g10836a]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: CDS: hypothetical protein [(lcl|contig_2429:6204-6324, 6374-6396)] [lcl|contig_2429: raw, dna len= 7209] -> [gnl|NIAB-EMR|K3495_g10839a]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: CDS: hypothetical protein [(lcl|contig_2429:6204-6324, 6372-6469)] [lcl|contig_2429: raw, dna len= 7209] -> [gnl|NIAB-EMR|K3495_g10838a]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: CDS: hypothetical protein [(lcl|contig_2429:6204-6324, 6374-6396)] [lcl|contig_2429: raw, dna len= 7209] -> [gnl|NIAB-EMR|K3495_g10837a]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: mRNA: hypothetical protein [(lcl|contig_2429:<6204-6324, 6372->6469)] [lcl|contig_2429: raw, dna len= 7209]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: mRNA: hypothetical protein [(lcl|contig_2429:<6204-6324, 6374->6396)] [lcl|contig_2429: raw, dna len= 7209]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: mRNA: hypothetical protein [(lcl|contig_2429:<6204-6324, 6372->6469)] [lcl|contig_2429: raw, dna len= 7209]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: mRNA: hypothetical protein [(lcl|contig_2429:<6204-6324, 6374->6396)] [lcl|contig_2429: raw, dna len= 7209]
+
+#contig 3502, geneious predicts ORF from 2551-2988, no blast results from region, this is a codinguarry feature
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: CDS: hypothetical protein [lcl|contig_3502:2551-2988] [lcl|contig_3502: raw, dna len= 4487] -> [gnl|NIAB-EMR|K3495_g12794a]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: CDS: hypothetical protein [(lcl|contig_3502:2551-2893, 2944-3059)] [lcl|contig_3502: raw, dna len= 4487] -> [gnl|NIAB-EMR|K3495_g12795a]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: CDS: hypothetical protein [lcl|contig_3502:2551-2988] [lcl|contig_3502: raw, dna len= 4487] -> [gnl|NIAB-EMR|K3495_g12792a]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: CDS: hypothetical protein [(lcl|contig_3502:2551-2893, 2944-3059)] [lcl|contig_3502: raw, dna len= 4487] -> [gnl|NIAB-EMR|K3495_g12793a]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: mRNA: hypothetical protein [lcl|contig_3502:<2551->2988] [lcl|contig_3502: raw, dna len= 4487]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: mRNA: hypothetical protein [(lcl|contig_3502:<2551-2893, 2944->3059)] [lcl|contig_3502: raw, dna len= 4487]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: mRNA: hypothetical protein [lcl|contig_3502:<2551->2988] [lcl|contig_3502: raw, dna len= 4487]
+ERROR: valid [SEQ_FEAT.MissingGeneXref] Feature overlapped by 2 identical-length genes but has no cross-reference FEATURE: mRNA: hypothetical protein [(lcl|contig_3502:<2551-2893, 2944->3059)] [lcl|contig_3502: raw, dna len= 4487]
+
+#Overlapping of predicted gene features was confirmeed following download of affected contigs and gff to geneious
+cat /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_unmasked.fa | grep -w -A 1 'contig_140' > /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/contig_140.fa
+cat /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_unmasked.fa | grep -w -A 1 'contig_1376' > /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/contig_1376.fa
+cat /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_unmasked.fa | grep -w -A 1 'contig_2429' > /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/contig_2429.fa
+cat /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_unmasked.fa | grep -w -A 1 'contig_3502' > /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/contig_3502.fa
+cat final_genes_appended_renamed2.gff3 | grep -w 'contig_140' > /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/contig_140.gff3
+cat final_genes_appended_renamed2.gff3 | grep -w 'contig_1376' > /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/contig_1376.gff3
+cat final_genes_appended_renamed2.gff3 | grep -w 'contig_2429' > /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/contig_2429.gff3
+cat final_genes_appended_renamed2.gff3 | grep -w 'contig_3502' > /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/contig_3502.gff3
+
+#Lines containing MissingGeneXref errors were reomved, one iteration left
+#grep -n -w -B 1 -A 13 'locus_tag	K3495_g1595' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXrefs.txt
+grep -n -w -B 1 -A 15 'locus_tag	K3495_g1596' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXrefs.txt
+grep -n -w -B 1 -A 13 'locus_tag	K3495_g1597' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXrefs.txt
+grep -n -w -B 1 -A 15 'locus_tag	K3495_g1598' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXrefs.txt
+#grep -n -w -B 1 -A 14 'locus_tag	K3495_g7910' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXrefs.txt
+grep -n -w -B 1 -A 14 'locus_tag	K3495_g7911' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXrefs.txt
+grep -n -w -B 1 -A 14 'locus_tag	K3495_g7912' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXrefs.txt
+grep -n -w -B 1 -A 14 'locus_tag	K3495_g7913' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXrefs.txt
+#grep -n -w -B 1 -A 11 'locus_tag	K3495_g10836' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXrefs.txt
+grep -n -w -B 1 -A 11 'locus_tag	K3495_g10837' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXrefs.txt
+grep -n -w -B 1 -A 11 'locus_tag	K3495_g10838' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXrefs.txt
+grep -n -w -B 1 -A 11 'locus_tag	K3495_g10839' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXrefs.txt
+#grep -n -w -B 1 -A 9 'locus_tag	K3495_g12792' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXrefs.txt
+grep -n -w -B 1 -A 11 'locus_tag	K3495_g12793' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXrefs.txt
+grep -n -w -B 1 -A 9 'locus_tag	K3495_g12794' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXrefs.txt
+grep -n -w -B 1 -A 11 'locus_tag	K3495_g12795' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXrefs.txt
+sed 's/-.*//' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXrefs.txt | sed 's/:.*//' | sed -e 's/$/d/' >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXreflines.txt 
+sed -f /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/MissingGeneXreflines.txt /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome3.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome4.tbl
+
+#features removed from the .tbl file were alse removed from the .gff3 file
+cp final_genes_appended_renamed2.gff3 final_genes_appended_renamed3.gff3
+cat final_genes_appended_renamed3.gff3 | grep -w -v 'g1596' | grep -w -v 'g1597' | grep -w -v 'g1598' | grep -w -v 'g7911' | grep -w -v 'g7912' | grep -w -v 'g7913' | grep -w -v 'g10837' | grep -w -v 'g10838' | grep -w -v 'g10839' | grep -w -v 'g12793' | grep -w -v 'g12794' | grep -w -v 'g12795' >> final_genes_appended_renamed4.gff3
+
+#none of these features were found in the swissprot output
+grep -w -E "g1596|g1597|g1598|g7911|g7912|g7913|g10837|g10838|g10839|g12793|g12794|g12795" /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/swissprot/rep_modeling/787033/swissprot_vSept_2021_10_hits.tbl
+grep -w -E "g1596|g1597|g1598|g7911|g7912|g7913|g10837|g10838|g10839|g12793|g12794|g12795" /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/swissprot/rep_modeling/787033/swissprot_vSept_2021_tophit_parsed.tbl
+
+#contig 140 and 1376 features found in the interproscan output, these were removed from the gff3 file
+grep -w -E "g1596|g1597|g1598|g7911|g7912|g7913|g10837|g10838|g10839|g12793|g12794|g12795" /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan.gff3 
+grep -w -E "g1596|g1597|g1598|g7911|g7912|g7913|g10837|g10838|g10839|g12793|g12794|g12795" /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan.tsv
+grep -w -E "g1596|g1597|g1598|g7911|g7912|g7913|g10837|g10838|g10839|g12793|g12794|g12795" /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan.xml
+cat /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan.gff3 | grep -w -v 'g1596' | grep -w -v 'g1597' | grep -w -v 'g1598' | grep -w -v 'g7911' | grep -w -v 'g7912' | grep -w -v 'g7913' | grep -w -v 'g10837' | grep -w -v 'g10838' | grep -w -v 'g10839' | grep -w -v 'g12793' | grep -w -v 'g12794' | grep -w -v 'g12795' >> /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan2.gff3
+cat /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan.tsv | grep -w -v 'g1596' | grep -w -v 'g1597' | grep -w -v 'g1598' | grep -w -v 'g7911' | grep -w -v 'g7912' | grep -w -v 'g7913' | grep -w -v 'g10837' | grep -w -v 'g10838' | grep -w -v 'g10839' | grep -w -v 'g12793' | grep -w -v 'g12794' | grep -w -v 'g12795' >> /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan2.tsv
+#HOW TO REMOVE FROM xml file?
+
+#features removed from the .tbl file were alse removed from the .cdna.fasta file
+awk '{if(NR==1) {print $0} else {if($0 ~ /^>/) {print "\n"$0} else {printf $0}}}' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed.cdna.fasta > gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.cdna.fasta
+grep -n -w -A 1 '>g1596' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.cdna.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs.txt
+grep -n -w -A 1 '>g1597' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.cdna.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs.txt
+grep -n -w -A 1 '>g1598' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.cdna.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs.txt
+grep -n -w -A 1 '>g7911' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.cdna.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs.txt
+grep -n -w -A 1 '>g7912' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.cdna.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs.txt
+grep -n -w -A 1 '>g7913' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.cdna.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs.txt
+grep -n -w -A 1 '>g10837' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.cdna.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs.txt
+grep -n -w -A 1 '>g10838' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.cdna.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs.txt
+grep -n -w -A 1 '>g10839' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.cdna.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs.txt
+grep -n -w -A 1 '>g12793' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.cdna.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs.txt
+grep -n -w -A 1 '>g12794' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.cdna.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs.txt
+grep -n -w -A 1 '>g12795' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.cdna.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs.txt
+sed 's/-.*//' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs.txt | sed 's/:.*//' | sed -e 's/$/d/' >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXreflines.txt
+sed -f gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXreflines.txt gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.cdna.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed2.cdna.fasta
+
+#features removed from the .tbl file were alse removed from the .pep.fasta file
+awk '{if(NR==1) {print $0} else {if($0 ~ /^>/) {print "\n"$0} else {printf $0}}}' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed.pep.fasta > gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.pep.fasta
+grep -n -w -A 1 '>g1596' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.pep.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs1.txt
+grep -n -w -A 1 '>g1597' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.pep.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs1.txt
+grep -n -w -A 1 '>g1598' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.pep.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs1.txt
+grep -n -w -A 1 '>g7911' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.pep.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs1.txt
+grep -n -w -A 1 '>g7912' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.pep.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs1.txt
+grep -n -w -A 1 '>g7913' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.pep.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs1.txt
+grep -n -w -A 1 '>g10837' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.pep.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs1.txt
+grep -n -w -A 1 '>g10838' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.pep.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs1.txt
+grep -n -w -A 1 '>g10839' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.pep.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs1.txt
+grep -n -w -A 1 '>g12793' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.pep.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs1.txt
+grep -n -w -A 1 '>g12794' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.pep.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs1.txt
+grep -n -w -A 1 '>g12795' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.pep.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs1.txt
+sed 's/-.*//' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXrefs1.txt | sed 's/:.*//' | sed -e 's/$/d/' >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXreflines1.txt
+sed -f gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/MissingGeneXreflines1.txt gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed1.pep.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed2.pep.fasta
+```
+ProteinNameEndsInBracket warning:
+```bash
+cat /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/genome.val | grep 'ProteinNameEndsInBracket' > /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/ProteinNameEndsInBracket.txt
+nano /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/ProteinNameEndsInBracket.txt
+#WARNING: valid [SEQ_FEAT.ProteinNameEndsInBracket] Protein name ends with bracket and may contain organism name FEATURE: Prot: GMP synthase [glutamine-hydrolyzing] [gnl|NIAB-EMR|K3495_g501a:1-558] [gnl|NIAB-EMR|K3495_g501a: raw, aa len= 558]
+#WARNING: valid [SEQ_FEAT.ProteinNameEndsInBracket] Protein name ends with bracket and may contain organism name FEATURE: Prot: putative asparagine synthetase [glutamine-hydrolyzing] [gnl|NIAB-EMR|K3495_g2889a:1-582] [gnl|NIAB-EMR|K3495_g2889a: raw, aa len= 582]
+#WARNING: valid [SEQ_FEAT.ProteinNameEndsInBracket] Protein name ends with bracket and may contain organism name FEATURE: Prot: D-lactate dehydrogenase [cytochrome] [gnl|NIAB-EMR|K3495_g3561a:1-600] [gnl|NIAB-EMR|K3495_g3561a: raw, aa len= 600]
+#WARNING: valid [SEQ_FEAT.ProteinNameEndsInBracket] Protein name ends with bracket and may contain organism name FEATURE: Prot: Nicotinate-nucleotide pyrophosphorylase [carboxylating] [gnl|NIAB-EMR|K3495_g4207a:1-295] [gnl|NIAB-EMR|K3495_g4207a: raw, aa len= 295]
+#WARNING: valid [SEQ_FEAT.ProteinNameEndsInBracket] Protein name ends with bracket and may contain organism name FEATURE: Prot: Glutamine--fructose-6-phosphate aminotransferase [isomerizing] [gnl|NIAB-EMR|K3495_g4434a:1-701] [gnl|NIAB-EMR|K3495_g4434a: raw, aa len= 701]
+#WARNING: valid [SEQ_FEAT.ProteinNameEndsInBracket] Protein name ends with bracket and may contain organism name FEATURE: Prot: Alpha,alpha-trehalose-phosphate synthase [UDP-forming] [gnl|NIAB-EMR|K3495_g4839a:1-496] [gnl|NIAB-EMR|K3495_g4839a: raw, aa len= 496]
+#WARNING: valid [SEQ_FEAT.ProteinNameEndsInBracket] Protein name ends with bracket and may contain organism name FEATURE: Prot: Methylmalonate-semialdehyde dehydrogenase [acylating] [gnl|NIAB-EMR|K3495_g14203a:1-565] [gnl|NIAB-EMR|K3495_g14203a: raw, aa len= 565]
+cat /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/P_aphanis_SAMN20669290_Heaven2022.sqn | grep -F '[' >> qwerty.txt #Warning entries all have [][P_aphanis] pattern
+
+cat /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome.tbl | sed 's/\[glutamine\-hydrolyzing\]//g' | sed 's/\[cytochrome\]//g' | sed 's/\[carboxylating\]//g' | sed 's/\[isomerizing\]//g' | sed 's/\[UDP\-forming\]//g' | sed 's/\[acylating\]//g' > /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome2.tbl 
+```
+Other warnings:
+```bash
+cat /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/genome.val | grep 'DuplicateFeat' > /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/DuplicateFeat.txt
+cat /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/genome.val | grep 'NotSpliceConsensusDonor' > /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/NotSpliceConsensusDonor.txt
+cat /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/genome.val | grep 'PartialProblem' > /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/PartialProblem.txt
+cat /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/genome.val | grep 'ShortExon' > /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/tbl2asn/final/ShortExon.txt
+```
+### Third run of tbl2asn
+tbl2asn was run a third time to generate an annotated genome for submission to NCBI.
+```bash
+cp /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome4.tbl /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/genome.tbl
+conda activate tbl2asn
+for Assembly in $(ls /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_unmasked.fa); do
+	Organism=P_aphanis
+	Strain=SAMN20669290
+	SbtFile=$(ls /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/template.sbt)
+  OutDir=/scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1
+  FinalName="$Organism"_"$Strain"_Heaven2022
+  cp $Assembly $OutDir/gag/edited2/genome.fsa
+  cp $SbtFile $OutDir/gag/edited2/genome.sbt
+  mkdir $OutDir/tbl2asn/final2
+  tbl2asn -p $OutDir/gag/edited2/. -t $OutDir/gag/edited2/genome.sbt -r $OutDir/tbl2asn/final2 -M n -X E -Z $OutDir/tbl2asn/final2/discrep.txt -j "[organism=$Organism] [strain=$Strain]" -l paired-ends -a r10k -w $OutDir/gag/edited/annotation_methods.strcmt.txt
+done
+conda deactivate
+#     2 WARNING: SEQ_FEAT.NotSpliceConsensusDonor
+#    64 WARNING: SEQ_FEAT.PartialProblem
+#    86 WARNING: SEQ_FEAT.ShortExon
+#     1 INFO:    SEQ_FEAT.PartialProblem
+#   478 INFO:    SEQ_FEAT.RareSpliceConsensusDonor
+```
+The remaining warning are considered minor and so we proceeded with submission to NCBI.
+
+Three errors were reported by NCBI.
+1.) FIND_OVERLAPPED_GENES: 2 genes completely overlapped by other genes
+Gene    K3495_g3912     lcl|contig_476:<4337->4610      K3495_g3912
+Gene    K3495_g14194    lcl|contig_4713:<1881->2006     K3495_g14194
+```bash
+#Lines containing FIND_OVERLAPPED_GENES errors were reomved.
+grep -n -w -B 1 -A 15 'locus_tag	K3495_g3912' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome4.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/FIND_OVERLAPPED_GENES.txt
+grep -n -w -B 1 -A 9 'locus_tag	K3495_g14194' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome4.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/FIND_OVERLAPPED_GENES.txt
+sed 's/-.*//' /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/FIND_OVERLAPPED_GENES.txt | sed 's/:.*//' | sed -e 's/$/d/' >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/FIND_OVERLAPPED_GENES2.txt 
+sed -f /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/FIND_OVERLAPPED_GENES2.txt /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome4.tbl >> /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome5.tbl
+
+#features removed from the .tbl file were alse removed from the .gff3 file
+cat final_genes_appended_renamed4.gff3 | grep -w -v 'g3912' | grep -w -v 'g14194' >> final_genes_appended_renamed5.gff3
+
+#none of these features were found in the swissprot output
+grep -w -E "g3912|g14194" /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/swissprot/rep_modeling/787033/swissprot_vSept_2021_10_hits.tbl
+grep -w -E "g3912|g14194" /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/swissprot/rep_modeling/787033/swissprot_vSept_2021_tophit_parsed.tbl
+
+#contig g3912 and g14194 features found in the interproscan output, these were removed from the gff3 file
+grep -w -E "g3912|g14194" /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan.gff3 
+grep -w -E "g3912|g14194" /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan.tsv
+grep -w -E "g3912|g14194" /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan.xml
+cat /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan2.gff3 | grep -w -v 'g3912' | grep -w -v 'g14194' >> /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan3.gff3
+cat /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan2.tsv | grep -w -v 'g3912' | grep -w -v 'g14194' >> /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan3.tsv
+#HOW TO REMOVE FROM xml file?
+
+#features removed from the .tbl file were alse removed from the .cdna.fasta file
+grep -n -w -A 1 '>g3912' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed2.cdna.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/FIND_OVERLAPPED_GENES.txt
+grep -n -w -A 1 '>g14194' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed2.cdna.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/FIND_OVERLAPPED_GENES.txt
+sed 's/-.*//' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/FIND_OVERLAPPED_GENES.txt | sed 's/:.*//' | sed -e 's/$/d/' >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/FIND_OVERLAPPED_GENES2.txt
+sed -f gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/FIND_OVERLAPPED_GENES2.txt gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed2.cdna.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed3.cdna.fasta
+
+#features removed from the .tbl file were alse removed from the .pep.fasta file
+grep -n -w -A 1 '>g3912' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed2.pep.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/FIND_OVERLAPPED_GENES1.txt
+grep -n -w -A 1 '>g14194' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed2.pep.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/FIND_OVERLAPPED_GENES1.txt
+sed 's/-.*//' gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/FIND_OVERLAPPED_GENES1.txt | sed 's/:.*//' | sed -e 's/$/d/' >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/FIND_OVERLAPPED_GENES12.txt
+sed -f gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/FIND_OVERLAPPED_GENES12.txt gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed2.pep.fasta >> gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed3.pep.fasta
+```
+2.) The .sqn file used the organism name P_aphanis. Please include the correct organism name Podosphaera aphanis. either in the fasta header or using the -j argument in table2asn. 
+```bash
+mkdir /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited3
+cp /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited2/manualgenome5.tbl /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/gag/edited3/genome.tbl
+conda activate tbl2asn
+for Assembly in $(ls /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_unmasked.fa); do
+    SbtFile=$(ls /scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1/template.sbt)
+  OutDir=/scratch/projects/heavet/genome_submission/P_aphanis/THeavenDRCT72020_1
+  FinalName=P_aphanis_DRCT72020_Heaven2022
+  cp $Assembly $OutDir/gag/edited3/genome.fsa
+  cp $SbtFile $OutDir/gag/edited3/genome.sbt
+  mkdir $OutDir/tbl2asn/final3
+  tbl2asn -p $OutDir/gag/edited3/. -t $OutDir/gag/edited3/genome.sbt -r $OutDir/tbl2asn/final3 -M n -X E -Z $OutDir/tbl2asn/final3/discrep.txt -j "[organism=Podosphaera aphanis] [strain=DRCT72020]" -l paired-ends -a r10k -w $OutDir/gag/edited/annotation_methods.strcmt.txt
+done
+conda deactivate
+#     2 WARNING: SEQ_FEAT.NotSpliceConsensusDonor
+#    64 WARNING: SEQ_FEAT.PartialProblem
+#    86 WARNING: SEQ_FEAT.ShortExon
+#     1 INFO:    SEQ_FEAT.PartialProblem
+#   478 INFO:    SEQ_FEAT.RareSpliceConsensusDonor
+```
+3.) LONG_NO_ANNOTATION: 66 bioseqs are longer than 5000nt and have no features
+
+We proceeded with resubmission to NCBI.
+
+# After this point pipeline is work in progress
+
+### Signal-P
+```bash
+#input used had problem NCBI genes removed in previous section
+conda activate Java11
+
+  for Proteome in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed3.pep.fasta); do
+  ProgDir=/home/heavet/git_repos/tools/seq_tools/Feature_annotation
+  SplitDir=$(dirname $Proteome | sed 's/final/final_edited_genes_split/g')
+  mkdir -p $SplitDir
+  $ProgDir/splitfile_500.py --inp_fasta $Proteome --out_dir $SplitDir --out_base P_aphanis_THeavenDRCT72020_1_final_preds # Splits input fasta in 500 genes files
+  done
+
+  for File in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_edited_genes_split/*_final_preds_*); do
+    OutDir=gene_pred/P_aphanis/THeavenDRCT72020_1/signalp
+    sbatch /home/heavet/git_repos/tools/seq_tools/Feature_annotation/pred_signalP.sh $File signalp-4.1 $OutDir
+  done
+  #14431-14466
+
+  for File in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_edited_genes_split/*_final_preds_*); do
+  InName=$(echo $File | rev | cut -d "/" -f1 | rev)
+  echo $InName
+  OutFile=$(echo $InName | sed s/.fa//)
+  echo $OutFile
+  /data/scratch/gomeza/prog/signalp/signalp-4.1/signalp-4.1 -t euk -f summary -c 70 $File > "$OutFile"_sp.txt
+  echo '----------------------------------------------------------------------' >> "$OutFile"_sp.txt
+  done
+
+  mv P_aphanis_THeavenDRCT72020_1_final_preds*sp.txt gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_genes_split/.
+
+
+  for OutFile in $(ls P_aphanis_THeavenDRCT72020_1_final_preds*sp.txt gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_genes_split/P_aphanis_THeavenDRCT72020_1_final_preds*sp.txt); do
+  /home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation/sigP_4.1_parser.py --inp_fasta gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed.pep.fasta --inp_sigP "$OutFile"_sp.txt --out_tab "$OutFile"_sp.tab --out_fasta "$OutFile"_sp.aa --out_neg "$OutFile"_sp_neg.aa
+  #sbatch $ProgDir/sub_signalP.sh $File $OutDir signalp-4.1 # Recommended for fungi
+  #sbatch $ProgDir/sub_signalP.sh $File $OutDir signalp-5.0
+  done
+  ```
+### Effector-P
+```bash
+#input used had problem NCBI genes removed in previous section
+mkdir -p /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P
+srun -p short -J signal-P --mem 100G --pty bash
+cd /scratch/projects/heavet
+conda activate Java11
+python /scratch/software/EffectorP-2.0/Scripts/EffectorP.py -o gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P/P_aphanis_THeavenDRCT72020_1_EffectorP.txt -E gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P/P_aphanis_THeavenDRCT72020_1_EffectorP.fa -i gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed3.pep.fasta
+```
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+
+### pylogenetics
+```bash
+realphy https://github.com/harrisonlab/pseudomonas/blob/master/phylogenetics/Realphy_commands
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```
 ### Signal-P
 ```bash
 conda activate Java11
@@ -2210,23 +2547,6 @@ $ProgDir/extract_from_fasta.py --fasta $SigP --headers $TmHeaders > $OutDir/"$St
 cat $OutDir/"$Strain"_final_sp_no_trans_mem.aa | grep '>' | wc -l
 done
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### Effector-P
 ```bash
 mkdir -p gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P
@@ -2689,7 +3009,7 @@ done
 
 
 
-gag, ani TSI vnn
+
 
 
 
@@ -2711,7 +3031,7 @@ For genome coverage, I would map reads back to the contigs, then use samtools de
 ```
 ```bash
 STAR was used to align RNAseq data for P.aphanis to our genome assembly.
-```bash
+
 mkdir -p alignment/P_aphanis/THeavenDRCT72020_1/star/RNA/725715
 for RNAdata in $(ls -d dna_qc/P_aphanis/RNAexp1/infected); do
     Freads=$RNAdata/*.F.fa
@@ -2725,4 +3045,241 @@ for RNAdata in $(ls -d dna_qc/P_aphanis/RNAexp1/infected); do
 done
 #785289
 ``` 
+
+
+gag, ani TSI vnn
+Assembly stats needs recording for raspberry and strawberry
+
+
+# P.aphanis genome assembly and annotation pipeline - 2021 sample
+
+Documentation of analysis and commands used with P.aphanis 2021 sample as part of Nano Diagnistics PhD.
+
+Raw MiSeq sequence data for P.leucotricha was linked from long term storage in /archives to the working folder /scratch/projects/heavet
+
+```bash
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/1/all
+
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLST21/THMLST21_ESFP220001653-1a_H223VDSX3_L4_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/THeavenDRCT72021_1_f.fq.gz
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLST21/THMLST21_ESFP220001653-1a_H223VDSX3_L4_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R/THeavenDRCT72021_1_r.fq.gz
+
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLST21/THMLST21_ESFP220001653-1a_H223VDSX3_L4_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/1/all/THeavenDRCT72021_1_f.fq.gz
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLST21/THMLST21_ESFP220001653-1a_H223VDSX3_L4_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/1/all/THeavenDRCT72021_1_r.fq.gz
 ```
+## Data quality control
+The raw sequence reads were subjected to a quality control check using FastQC.
+```bash
+for RawData in $(ls rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/*/*/*/*.fq.gz); do
+echo $RawData
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(dirname $RawData)
+Outfile=$(basename -a $RawData)_fastqc
+sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
+done
+#16846
+#16847
+```
+Trimming was performed on data to trim adapters from sequences and remove poor quality data. This was done with trimmomatic. The data was visualised following trimming using FastQC.
+```bash
+for ReadDir in $(ls -d rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/*/*);
+do
+ Fread=$(ls $ReadDir/F/*.fq.gz)
+ Rread=$(ls $ReadDir/R/*.fq.gz)
+ls $Fread
+ls $Rread
+Adapters=~/git_repos/tools/seq_tools/ncbi_adapters.fa
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(echo $ReadDir|sed 's@rawdata@dna_qc@g')
+Prefix=$(echo $ReadDir|cut -f2,3,4,5,6 -d '/' --output-delimiter '-')
+echo $Prefix
+sbatch $ProgDir/srun_trimmomatic.sh $Fread $Rread $Adapters $OutDir $Prefix
+done
+#16848 - f'd
+#17268
+```
+The data was visualised following trimming using FastQC.
+```bash
+for RawData in $(ls dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/*/*/*/*.fq.gz); do
+echo $RawData
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(dirname $RawData)
+Outfile=$(basename $RawData .fq.gz)_fastqc
+sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
+done
+#16864
+#16865
+#16866
+#16867
+```
+## Alignment
+
+### bowtie2
+A bioconda installation of bowtie was performed
+
+Alignments were made to the strawberry genome and our first P aphanis assembly from 2020.
+
+```bash
+screen -S bowtie
+srun -p himem  --mem 350G --pty bash
+conda activate bowtie2
+mkdir -p alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/strawberry
+cd alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/strawberry
+bowtie2-build /projects/nano_diagnostics/rawdata/F_ananassa/camarosa/genome/F_ana_Camarosa_6-28-17.fasta camarosa_index
+bowtie2 \
+-x camarosa_index \
+-1 /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_F_trim.fq.gz \
+-2 /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_R_trim.fq.gz \
+-U /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_F_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72021_1unalignedstrawberry.sam \
+--un-gz THeavenDRCT72021_1unalignedstrawberry_s.fq.gz \
+--un-conc-gz THeavenDRCT72021_1unalignedstrawberry_fr.fq.gz \
+-S THeavenDRCT72021_1unalignedstrawberry.sam 2>&1 | tee -a report.txt
+#11.05% overall alignment rate
+conda deactivate
+exit
+exit
+
+screen -S bowtie2
+srun -p himem  --mem 350G --pty bash
+conda activate bowtie2
+mkdir -p /projects/nano_diagnostics/alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/paphanis
+cd /projects/nano_diagnostics/alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/paphanis
+bowtie2-build /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/contigs_min_500bp_renamed2.fasta paphanis_index
+bowtie2 \
+-x paphanis_index \
+-1 /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_F_trim.fq.gz \
+-2 /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_R_trim.fq.gz \
+-U /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_F_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72021_1unalignedpaphanis.sam \
+--un-gz THeavenDRCT72021_1unalignedpaphanis_s.fq.gz \
+--un-conc-gz THeavenDRCT72021_1unalignedpaphanis_fr.fq.gz \
+-S THeavenDRCT72021_1alignedpaphanis.sam 2>&1 | tee -a report.txt
+#27.36%
+conda deactivate
+exit
+exit
+```
+## Coverage
+Coverage of data was estimated and the quality of sequencing data assessed using KAT comparison to our P.aphanis genome.
+```bash
+screen -S KAT
+srun -p himem --mem 1000G --pty bash
+conda activate kat
+mkdir -p alignment/P_aphanis/THeavenDRCT72021_1/kat/paphanis
+kat comp -m 21 -v -h -t 8 -o alignment/P_aphanis/THeavenDRCT72021_1/kat/paphanis/reads_v_paphanis '/scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_F_trim.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_R_trim.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_F_trim_unpaired.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_R_trim_unpaired.fq.gz' /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/contigs_min_500bp_renamed2.fasta
+
+kat plot spectra-cn -x 300 -o alignment/P_aphanis/THeavenDRCT72021_1/kat/paphanis/reads_v_paphanisplot300 alignment/P_aphanis/THeavenDRCT72021_1/kat/paphanis/reads_v_paphanis-main.mx
+kat plot spectra-cn -x 2000 -o alignment/P_aphanis/THeavenDRCT72021_1/kat/paphanis/reads_v_paphanisplot2000 alignment/P_aphanis/THeavenDRCT72021_1/kat/paphanis/reads_v_paphanis-main.mx
+conda deactivate
+exit
+exit
+echo finished
+```
+```bash
+#Coverage of the sequence data was also estimated via alignmnet with the unpublished low coverage P.aphanis assembly.
+cd /projects/nano_diagnostics/alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/paphanis
+samtools view --threads 8 -bS THeavenDRCT72021_1alignedpaphanis.sam -o THeavenDRCT72021_1alignedpaphanis.bam
+samtools sort --threads 8 -o THeavenDRCT72021_1alignedpaphanis_sorted.bam THeavenDRCT72021_1alignedpaphanis.bam
+samtools index -@ 8 THeavenDRCT72021_1alignedpaphanis_sorted.bam THeavenDRCT72021_1alignedpaphanis_sorted.bam.index
+samtools coverage THeavenDRCT72021_1alignedpaphanis_sorted.bam -o coverage.txt
+#median depth 2.84, mean depth x12.64 12460/12702 contigs
+```
+Attempt kraken with reads
+```bash
+mkdir krakentest
+mv /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_F_trim.fq.gz krakentest/.
+mv /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_R_trim.fq.gz krakentest/.
+mv /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_F_trim_unpaired.fq.gz krakentest/.
+mv /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_R_trim_unpaired.fq.gz krakentest/.
+gunzip krakentest/*
+
+screen -S kraken2
+srun -p long -J kraken2 --mem 350G --pty bash
+conda activate kraken2
+mkdir -p krakentest/out
+kraken2 \
+--paired \
+--db /projects/nano_diagnostics/analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt \
+--output krakentest/out/ntreport.txt \
+--unclassified-out krakentest/out/ntunclassified#.txt \
+--classified-out krakentest/out/ntclassified#.txt \
+--report krakentest/out/ntreport.txt \
+--use-names \
+krakentest/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_F_trim.fq krakentest/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_R_trim.fq
+#  2376731 sequences classified (55.06%)
+#  1939974 sequences unclassified (44.94%)
+conda deactivate
+exit
+exit
+echo finished
+mkdir /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/kraken
+mv krakentest/out/* /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/kraken/.
+rm -r krakentest
+```
+## Assembly
+Trimmed reads that did not align to the apple genome were taken as raw data for assembly. Reads were renamed for input into SPAdes.
+```bash
+#files were renamed to correct extensions for spades
+mv alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/strawberry/THeavenDRCT72021_1unalignedstrawberry_fr.fq.1.gz alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/strawberry/THeavenDRCT72021_1unalignedstrawberry_fr-f.fq.gz
+mv alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/strawberry/THeavenDRCT72021_1unalignedstrawberry_fr.fq.2.gz alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/strawberry/THeavenDRCT72021_1unalignedstrawberry_fr-r.fq.gz
+mv alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/strawberry/THeavenDRCT72021_1unalignedstrawberry_s.fq.gz alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/strawberry/THeavenDRCT72021_1unalignedstrawberry_s-s.fq.gz
+
+gunzip alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/strawberry/THeavenDRCT72021_1unalignedstrawberry_fr-f.fq.gz
+gunzip alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/strawberry/THeavenDRCT72021_1unalignedstrawberry_fr-r.fq.gz
+gunzip alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/strawberry/THeavenDRCT72021_1unalignedstrawberry_s-s.fq.gz
+```
+### SPAdes
+A conda installation of SPAdes was performed
+
+Trimmed MiSeq reads were assembled using the program SPAdes, contigs <500bp filtered out with abyss.
+```bash
+conda activate spades
+  for ReadDir in $(ls -d alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/strawberry); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    S_Read=$(ls $ReadDir/*s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/strawberry@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 10
+  done
+#17260
+conda deactivate
+conda activate quast
+python /projects/oldhome/armita/git_repos/emr_repos/tools/seq_tools/assemblers/abyss/filter_abyss_contigs.py assembly/metagenome/P_aphanis/THeavenDRCT72021_1/SPAdes/17260/scaffolds.fasta 500 > assembly/metagenome/P_aphanis/THeavenDRCT72021_1/SPAdes/17260/contigs_min_500bp.fasta
+    for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72021_1/SPAdes/17260/contigs_min_500bp.fasta); do
+        ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+        OutDir=$(dirname $Assembly)
+        echo $Assembly
+        echo $OutDir
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#17264
+conda deactivate
+```
+```bash
+screen -S kraken
+srun -p long -J kraken2 --mem 350G --pty bash
+conda activate kraken2
+mkdir -p analysis/P_aphanis/THeavenDRCT72021_1/kraken2/nt/1
+kraken2 \
+--db /projects/nano_diagnostics/analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt \
+--output analysis/P_aphanis/THeavenDRCT72021_1/kraken2/nt/1/ntoutput17260.txt \
+--unclassified-out analysis/P_aphanis/THeavenDRCT72021_1/kraken2/nt/1/ntunclassified-out17260.txt \
+--classified-out analysis/P_aphanis/THeavenDRCT72021_1/kraken2/nt/1/ntclassified-out17260.txt \
+--report analysis/P_aphanis/THeavenDRCT72021_1/kraken2/nt/1/ntreport17260.txt \
+--use-names \
+/scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_aphanis/THeavenDRCT72021_1/SPAdes/17260/contigs_min_500bp.fasta
+#  1176 sequences classified (91.66%)
+#  107 sequences unclassified (8.34%)
+conda deactivate
+exit
+exit
+echo finished
+```
+/scratch/projects/heavet/gene_pred_vAG/_sigP/split/
