@@ -21,6 +21,12 @@ conda create -n eDIRECT
 conda activate eDIRECT
 conda install -y -c conda-forge -c bioconda -c defaults entrez-direct
 ```
+## SRA toolkit
+```bash
+conda create -n sratoolkit
+conda activate sratoolkit
+conda install -c daler sratoolkit
+```
 
 ## Conterminator
 ```bash
@@ -140,6 +146,19 @@ nano ~/.profile
 #PATH=$HOME/git_repos/tools/prog/kraken2/1/kraken2-build:${PATH}
 #PATH=$HOME/git_repos/tools/prog/kraken2/1/kraken2-inspect:${PATH}
 . ~/.profile
+
+mkdir -p apps/kraken2/1
+cd apps/kraken2
+git clone https://github.com/DerrickWood/kraken2.git
+cd kraken2
+./install_kraken2.sh ~/scratch/apps/kraken2/1
+nano ~/.bash_profile
+#edited with:
+#PATH=$HOME/scratch/apps/kraken2/1:${PATH}
+#PATH=$HOME/scratch/apps/kraken2/1/kraken2:${PATH}
+#PATH=$HOME/scratch/apps/kraken2/1/kraken2-build:${PATH}
+#PATH=$HOME/scratch/apps/kraken2/1/kraken2-inspect:${PATH}
+. ~/.bash_profile
 ```
 ## assembly stats
 ```bash
@@ -191,6 +210,10 @@ nano ~/.profile
 ```
 ## EffectorP
 ```bash
+conda create -n effectorP
+conda activate effectorP
+conda install -c hcc effector-p
+
 nano ~/.profile
 #PATH=${PATH}:/scratch/software/EffectorP-2.0/Scripts:${PATH}
 . ~/.profile
@@ -209,7 +232,7 @@ wget https://services.healthtech.dtu.dk/download/6e5220c3-8c8b-44ec-8835-f918406
 tar -xvzf signalp-5.0b.Linux.tar.gz
 nano ~/.profile
 #PATH=${PATH}:$HOME/git_repos/tools/gene_prediction/signalp-5.0b/signalp-5.0b/bin:${PATH}
-#PATH=${PATH}:/data/scratch/gomeza/prog/signalp/signalp-4.1 
+#PATH=${PATH}:/data/scratch/gomeza/prog/signalp/signalp-4.1:${PATH}
 . ~/.profile
 ```
 ## centrifuge
@@ -225,6 +248,7 @@ conda install cufflinks
 ```
 ## Braker
 ```bash
+#https://github.com/Gaius-Augustus/BRAKER#installation
 conda create -n braker
 conda activate braker
 conda install -c bioconda braker
@@ -232,7 +256,15 @@ conda install YAML
 conda install -c bioconda perl-hash-merge
 conda install -c bioconda perl-logger-simple
 conda install augustus
+conda install -c bioconda perl-parallel-forkmanager
+conda update perl-parallel-forkmanager
 conda install numpy
+
+git clone https://github.com/Gaius-Augustus/Augustus.git
+cd Augustus
+singularity build augustus.sif Singularity.def
+
+#gmes.cfg min_contig set from 50000 to 500 for genemark
 ```
 ## FastQC
 ```bash
@@ -282,10 +314,15 @@ conda install -c bioconda bowtie2
 ```
 ## QUAST
 ```bash
-conda create -n quast
+conda create -n quast python=2.7
 conda activate quast
 conda install python=2.7
 conda install -c bioconda quast
+
+wget https://downloads.sourceforge.net/project/quast/quast-5.0.2.tar.gz
+tar -xzf quast-5.0.2.tar.gz
+ cd quast-5.0.2
+./setup.py install_full
 ```
 ## tbl2asn
 ```bash
@@ -657,9 +694,11 @@ nano ~/.profile
 ```
 ## Java
 ```bash
+#this is a python 2.7 environment
 conda create -n Java11
 conda activate Java11
 conda install -c conda-forge openjdk
+pip install numpy
 ```
 ## perl
 ```bash
@@ -700,6 +739,10 @@ nano ~/.profile
 #star added to PATH
 #PATH=$HOME/git_repos/tools/prog/STAR/STAR-2.7.3a/bin/Linux_x86_64:${PATH}
 . ~/.profile
+
+conda create -n STAR
+conda activate STAR
+conda install -c bioconda star
 ```
 ## Picard
 ```bash
@@ -755,6 +798,13 @@ python3 initial_setup.py
 conda create -n MIRA
 conda activate MIRA
 conda install -c bioconda mira
+```
+## R
+```bash
+conda create -n Rstat
+conda activate Rstat
+#conda install -c r r
+conda install -c r r-essentials
 ```
 
 The fungal gene prediction software FunGAP was installed along with the transcriptome assembler trinity and gene prediction software MAKER :
@@ -896,3 +946,4 @@ nano ~/.profile
 #PATH=$HOME/git_repos/tools/prog/mitofinder/MitoFinder/:${PATH}
 . ~/.profile
 ```
+
