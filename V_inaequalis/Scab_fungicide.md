@@ -669,6 +669,8 @@ done
 ```
 
 ```bash
+scp -r /data/scratch/gomeza/prog/count_nucl.pl  theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/apps/trimmomatic/.
+
 for ReadDir in $(ls -d dna_qc/venturia/inaequalis/LLimon/*/THSC*); do
 	Isolate=$(echo $ReadDir | cut -d '/' -f6)
 	echo $Isolate
@@ -680,8 +682,6 @@ for ReadDir in $(ls -d dna_qc/venturia/inaequalis/LLimon/*/THSC*); do
 	sbatch $ProgDir/sub_count_nuc.sh $F_Read $R_Read 72 $OutDir
 done
 #1206-1251,-2491970
-
-scp -r /data/scratch/gomeza/prog/count_nucl.pl  theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/apps/trimmomatic/.
 ```
 
 ## SNP
@@ -710,31 +710,35 @@ for mapfile in $(ls alignment/venturia/inaequalis/LLimon/bowtie/*/passey/*.sam);
 done
 ```
 ```bash
+scp -r ~/git_repos/tools/popgen/snp/pre_SNP_calling.slurm2.sh  theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/apps/snp/.
+
 conda activate Picard
-for mapfile in $(ls alignment/V_inaequalis/LLimon/bowtie/*/THSCRS*/passey/*.sam); do
+for mapfile in $(ls alignment/venturia/inaequalis/LLimon/bowtie/THSC*/passey/*.sam); do
 	Isolate=$(echo $mapfile | cut -d '/' -f6)
 	echo $Isolate
     OutDir=$(dirname $mapfile)/nomulti
     mkdir $OutDir
-    ProgDir=~/git_repos/tools/popgen/snp
+    ProgDir=~/scratch/apps/snp
     sbatch $ProgDir/pre_SNP_calling.slurm2.sh $mapfile $Isolate $OutDir 
 done
-#1422-1468
+#1422-1468, -2495733
 conda deactivate
 ``` 
 Redundant?:
 ```bash 
+scp -r ~/git_repos/tools/popgen/snp/pre_indel_realignment_v2.sh  theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/apps/snp/.
+
 conda activate Picard
-for input in $(ls alignment/V_inaequalis/LLimon/bowtie/paired/THSCA*/passey/nomulti/*.bam); do
-	Isolate=$(echo $mapfile | cut -d '/' -f6)
+for input in $(ls alignment/venturia/inaequalis/LLimon/bowtie/THSC*/passey/nomulti/*.bam); do
+	Isolate=$(echo $input | cut -d '/' -f6)
 	echo $Isolate
     OutDir=$(dirname $input  | sed 's@nomulti@pre_indel_realignment@g')
     mkdir -p $OutDir
-    Reference=/projects/nano_diagnostics/assembly/genome/NCBI/venturia/V_inaequalis/GCA_003351075.1_ASM335107v1_genomic.fna
-    ProgDir=~/git_repos/tools/popgen/snp
+    Reference=/home/theaven/scratch/data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.fna
+    ProgDir=~/scratch/apps/snp
     sbatch $ProgDir/pre_indel_realignment_v2.sh $Reference $input $Strain $Outdir
 done
-#
+#-2496529
 conda deactivate  
 ```
 The next step in the GATK SNP calling pileup pipeline is base quality score recalibration (BQSR) which uses known variant sets to mask out positions where variations are commonly found. 
