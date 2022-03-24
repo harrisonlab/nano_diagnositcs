@@ -15,46 +15,236 @@ for rawdata in $(ls -d /archives/2021_eastmall_general/thomas_heaven_X204SC21063
 	ln -s $Fread rawdata/V_inaequalis/LLimon/paired/$Isolate/1/all/$Fname
 	ln -s $Rread rawdata/V_inaequalis/LLimon/paired/$Isolate/1/all/$Rname
 done
+for rawdata in $(ls -d /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THSC*); do
+	Isolate=$(echo $rawdata | cut -d '/' -f8)
+	mkdir -p rawdata/V_inaequalis/LLimon/paired/$Isolate/F
+	mkdir -p rawdata/V_inaequalis/LLimon/paired/$Isolate/R
+	mkdir -p rawdata/V_inaequalis/LLimon/paired/$Isolate/1/all
+	Fread=$(ls $rawdata/*1.fq.gz)
+	Rread=$(ls $rawdata/*2.fq.gz)
+	Fname=$(basename $Fread | cut -d '_' -f1)_f.fq.gz
+	Rname=$(basename $Rread | cut -d '_' -f1)_r.fq.gz
+	ln -s $Fread rawdata/V_inaequalis/LLimon/paired/$Isolate/F/$Fname
+	ln -s $Rread rawdata/V_inaequalis/LLimon/paired/$Isolate/R/$Rname
+	ln -s $Fread rawdata/V_inaequalis/LLimon/paired/$Isolate/1/all/$Fname
+	ln -s $Rread rawdata/V_inaequalis/LLimon/paired/$Isolate/1/all/$Rname
+done
+for rawdata in $(ls -d /archives/2021_eastmall_general/thomas_heaven_X204SC21091991-Z01-F003/X204SC21091991-Z01-F003/raw_data/THSC*83); do
+	Isolate=$(echo $rawdata | cut -d '/' -f7)
+	mkdir -p rawdata/V_inaequalis/LLimon/paired/$Isolate/F
+	mkdir -p rawdata/V_inaequalis/LLimon/paired/$Isolate/R
+	mkdir -p rawdata/V_inaequalis/LLimon/paired/$Isolate/1/all	
+	echo $Isolate
+	Fread=$(ls $rawdata/*L1_1.fq.gz)
+	Rread=$(ls $rawdata/*L1_2.fq.gz)
+	Fname=$(basename $Fread | cut -d '_' -f1)_f.fq.gz
+	Rname=$(basename $Rread | cut -d '_' -f1)_r.fq.gz
+	ln -s $Fread rawdata/V_inaequalis/LLimon/paired/$Isolate/F/$Fname
+	ln -s $Rread rawdata/V_inaequalis/LLimon/paired/$Isolate/R/$Rname
+	ln -s $Fread rawdata/V_inaequalis/LLimon/paired/$Isolate/1/all/$Fname
+	ln -s $Rread rawdata/V_inaequalis/LLimon/paired/$Isolate/1/all/$Rname
+done
+
+scp -r rawdata/V_inaequalis/LLimon theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/projects/niab/theaven/raw_data/DNA/venturia/inaequalis/.
+```
+Raw reads were submitted to the NCBI SRA
+```bash
+screen -S ftp
+conda activate ftp
+lftp ftp-private.ncbi.nlm.nih.gov
+login subftp
+w4pYB9VQ
+cd uploads/tcheaven_googlemail.com_mCkezA8U
+mkdir PRJNA817384
+cd PRJNA817384
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCAF28/1/all/THSCAF28_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCAF28/1/all/THSCAF28_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS101/1/all/THSCRS101_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS101/1/all/THSCRS101_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS102/1/all/THSCRS102_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS102/1/all/THSCRS102_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS103/1/all/THSCRS103_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS103/1/all/THSCRS103_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS104/1/all/THSCRS104_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS104/1/all/THSCRS104_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS106/1/all/THSCRS106_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS106/1/all/THSCRS106_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS109/1/all/THSCRS109_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS109/1/all/THSCRS109_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS110/1/all/THSCRS110_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS110/1/all/THSCRS110_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS111/1/all/THSCRS111_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS111/1/all/THSCRS111_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS11/1/all/THSCRS11_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS11/1/all/THSCRS11_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS115/1/all/THSCRS115_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS115/1/all/THSCRS115_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS116/1/all/THSCRS116_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS116/1/all/THSCRS116_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS117/1/all/THSCRS117_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS117/1/all/THSCRS117_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS118/1/all/THSCRS118_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS118/1/all/THSCRS118_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS119/1/all/THSCRS119_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS119/1/all/THSCRS119_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS1/1/all/THSCRS1_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS1/1/all/THSCRS1_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS121/1/all/THSCRS121_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS121/1/all/THSCRS121_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS12/1/all/THSCRS12_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS12/1/all/THSCRS12_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS123/1/all/THSCRS123_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS123/1/all/THSCRS123_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS124/1/all/THSCRS124_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS124/1/all/THSCRS124_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS125/1/all/THSCRS125_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS125/1/all/THSCRS125_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS127/1/all/THSCRS127_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS127/1/all/THSCRS127_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS128/1/all/THSCRS128_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS128/1/all/THSCRS128_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS13/1/all/THSCRS13_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS13/1/all/THSCRS13_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS14/1/all/THSCRS14_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS14/1/all/THSCRS14_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS16/1/all/THSCRS16_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS16/1/all/THSCRS16_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS17/1/all/THSCRS17_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS17/1/all/THSCRS17_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS21/1/all/THSCRS21_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS21/1/all/THSCRS21_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS2/1/all/THSCRS2_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS2/1/all/THSCRS2_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS229/1/all/THSCRS229_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS229/1/all/THSCRS229_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS29/1/all/THSCRS29_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS29/1/all/THSCRS29_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS31/1/all/THSCRS31_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS31/1/all/THSCRS31_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS3/1/all/THSCRS3_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS3/1/all/THSCRS3_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS32/1/all/THSCRS32_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS32/1/all/THSCRS32_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS33/1/all/THSCRS33_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS33/1/all/THSCRS33_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS36/1/all/THSCRS36_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS36/1/all/THSCRS36_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS37/1/all/THSCRS37_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS37/1/all/THSCRS37_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS38/1/all/THSCRS38_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS38/1/all/THSCRS38_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS39/1/all/THSCRS39_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS39/1/all/THSCRS39_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS40/1/all/THSCRS40_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS40/1/all/THSCRS40_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS41/1/all/THSCRS41_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS41/1/all/THSCRS41_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS42/1/all/THSCRS42_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS42/1/all/THSCRS42_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS43/1/all/THSCRS43_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS43/1/all/THSCRS43_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS44/1/all/THSCRS44_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS44/1/all/THSCRS44_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS48/1/all/THSCRS48_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS48/1/all/THSCRS48_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS49/1/all/THSCRS49_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS49/1/all/THSCRS49_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS50/1/all/THSCRS50_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS50/1/all/THSCRS50_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS54/1/all/THSCRS54_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS54/1/all/THSCRS54_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS57/1/all/THSCRS57_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS57/1/all/THSCRS57_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS58/1/all/THSCRS58_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS58/1/all/THSCRS58_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS59/1/all/THSCRS59_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS59/1/all/THSCRS59_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS60/1/all/THSCRS60_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS60/1/all/THSCRS60_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS70/1/all/THSCRS70_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS70/1/all/THSCRS70_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS736/1/all/THSCRS736_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS736/1/all/THSCRS736_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS77/1/all/THSCRS77_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS77/1/all/THSCRS77_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS78/1/all/THSCRS78_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS78/1/all/THSCRS78_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS79/1/all/THSCRS79_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS79/1/all/THSCRS79_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS80/1/all/THSCRS80_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS80/1/all/THSCRS80_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS81/1/all/THSCRS81_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS81/1/all/THSCRS81_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS82/1/all/THSCRS82_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS82/1/all/THSCRS82_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS83/1/all/THSCRS83_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS83/1/all/THSCRS83_r.fq.gz
+
+mv /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS83_2/1/all/THSCRS83_f.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS83_2/1/all/THSCRS83_replicate_f.fq.gz
+mv /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS83_2/1/all/THSCRS83_r.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS83_2/1/all/THSCRS83_replicate_r.fq.gz
+
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS83_2/1/all/THSCRS83_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS83_2/1/all/THSCRS83_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS85/1/all/THSCRS85_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCRS85/1/all/THSCRS85_r.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCSP1/1/all/THSCSP1_f.fq.gz
+put /scratch/projects/heavet/gene_pred_vAG/_sigP/split/rawdata/V_inaequalis/LLimon/paired/THSCSP1/1/all/THSCSP1_r.fq.gz
+
+put /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THSCSP1/THSCSP1_FDSW210224376-1r_HGCMMDSX2_L4_1.fq.gz
+put /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THSCSP1/THSCSP1_FDSW210224376-1r_HGCMMDSX2_L4_2.fq.gz
+put /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THSCSP1/THSCSP1_FDSW210224376-1r_HGH5KDSX2_L1_1.fq.gz
+put /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THSCSP1/THSCSP1_FDSW210224376-1r_HGH5KDSX2_L1_2.fq.gz
+put /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THSCAF28/THSCAF28_FDSW210224375-1r_HGCMMDSX2_L4_1.fq.gz
+put /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THSCAF28/THSCAF28_FDSW210224375-1r_HGCMMDSX2_L4_2.fq.gz
+put /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THSCAF28/THSCAF28_FDSW210224375-1r_HGH5KDSX2_L1_1.fq.gz
+put /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THSCAF28/THSCAF28_FDSW210224375-1r_HGH5KDSX2_L1_2.fq.gz
+
+exit
+conda deactivate
+exit
 ```
 ```bash
-wget -P assembly/genome/NCBI/venturia/V_inaequalis https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/003/351/075/GCA_003351075.1_ASM335107v1/GCA_003351075.1_ASM335107v1_genomic.fna.gz 
-gunzip assembly/genome/NCBI/venturia/V_inaequalis/GCA_003351075.1_ASM335107v1_genomic.fna.gz 
+wget -P /projects/nano_diagnostics/assembly/genome/NCBI/venturia/V_inaequalis https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/003/351/075/GCA_003351075.1_ASM335107v1/GCA_003351075.1_ASM335107v1_genomic.fna.gz 
+gunzip /projects/nano_diagnostics/assembly/genome/NCBI/venturia/V_inaequalis/GCA_003351075.1_ASM335107v1_genomic.fna.gz 
 ```
 ```bash
-for RawData in $(ls rawdata/V_inaequalis/LLimon/*/*/*/*.fq.gz); do
+for RawData in $(ls /home/theaven/projects/niab/theaven/raw_data/DNA/venturia/inaequalis/LLimon/*/*/*/*.fq.gz); do
 echo $RawData
-ProgDir=~/git_repos/tools/seq_tools/dna_qc
+ProgDir=~/scratch/apps/fastqc
 OutDir=$(dirname $RawData)
 Outfile=$(basename -a $RawData)_fastqc
 sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
 done
-#791086 etc
+#16884-17007,2491082-2491209
 ```
 ```bash
-for ReadDir in $(ls -d rawdata/V_inaequalis/LLimon/*/*);
+conda activate trimmomatic
+for ReadDir in $(ls -d /home/theaven/projects/niab/theaven/raw_data/DNA/venturia/inaequalis/LLimon/*/*);
 do
  Fread=$(ls $ReadDir/F/*.fq.gz)
  Rread=$(ls $ReadDir/R/*.fq.gz)
 ls $Fread
 ls $Rread
-Adapters=~/git_repos/tools/seq_tools/ncbi_adapters.fa
-ProgDir=~/git_repos/tools/seq_tools/dna_qc
-OutDir=$(echo $ReadDir|sed 's@rawdata@dna_qc@g')
-Prefix=$(echo $ReadDir|cut -f2,3,4,5,6 -d '/' --output-delimiter '-')
+Adapters=~/scratch/apps/trimmomatic/ncbi_adapters.fa
+ProgDir=~/scratch/apps/trimmomatic
+OutDir=$(echo $ReadDir|sed 's@/home/theaven/projects/niab/theaven/raw_data/DNA@/home/theaven/scratch/dna_qc@g')
+Prefix=$(echo $ReadDir|cut -f9,10,11,13,14 -d '/' --output-delimiter '-')
 echo $Prefix
+echo $OutDir
 sbatch $ProgDir/srun_trimmomatic.sh $Fread $Rread $Adapters $OutDir $Prefix
 done
-#791135 etc
+conda dactivate
+#17008-17072,2491429-2491577,2491648
 ```
 ```bash
-for QCData in $(ls dna_qc/V_inaequalis/LLimon/*/*/*/*.fq.gz); do
+for QCData in $(ls dna_qc/venturia/inaequalis/LLimon/*/*/*/*.fq.gz); do
 echo $QCData
-ProgDir=~/git_repos/tools/seq_tools/dna_qc
+ProgDir=~/scratch/apps/fastqc
 OutDir=$(dirname $QCData)
 Outfile=$(basename -a $QCData)_fastqc
 sbatch $ProgDir/srun_fastqc.sh $QCData $OutDir $Outfile
 done
-#558-741
+#558-741,-2491904
 ```
 ```bash
 screen -S KAT
@@ -479,17 +669,19 @@ done
 ```
 
 ```bash
-for ReadDir in $(ls -d dna_qc/V_inaequalis/LLimon/*/THSC*); do
-	Isolate=$(echo $ReadDir | cut -d '/' -f5)
+for ReadDir in $(ls -d dna_qc/venturia/inaequalis/LLimon/*/THSC*); do
+	Isolate=$(echo $ReadDir | cut -d '/' -f6)
 	echo $Isolate
 	F_Read=$(ls $ReadDir/F/*trim.fq.gz)
 	R_Read=$(ls $ReadDir/R/*trim.fq.gz)
 	OutDir=$(echo $ReadDir/genome_coverage)
 	mkdir -p $OutDir
-	ProgDir=~/git_repos/tools/seq_tools/dna_qc
+	ProgDir=~/scratch/apps/trimmomatic
 	sbatch $ProgDir/sub_count_nuc.sh $F_Read $R_Read 72 $OutDir
 done
-#1206-1251
+#1206-1251,-2491970
+
+scp -r /data/scratch/gomeza/prog/count_nucl.pl  theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/apps/trimmomatic/.
 ```
 
 ## SNP
@@ -498,20 +690,20 @@ Mapping reads to reference, cleaning the mapped files and calling SNPs. Filterin
 Reads were mapped using the Passey Scab genome as a reference.
 ```bash
 conda activate bowtie2
-for ReadDir in $(ls -d dna_qc/V_inaequalis/LLimon/*/THSC*); do
-	Isolate=$(echo $ReadDir | cut -d '/' -f5)
+for ReadDir in $(ls -d dna_qc/venturia/inaequalis/LLimon/*/THSC*); do
+	Isolate=$(echo $ReadDir | cut -d '/' -f6)
 	echo $Isolate
-	Reference=assembly/genome/NCBI/venturia/V_inaequalis/GCA_003351075.1_ASM335107v1_genomic.fna
+	Reference=data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.fna
 	F_Read=$(ls $ReadDir/F/*trim.fq.gz)
 	R_Read=$(ls $ReadDir/R/*trim.fq.gz)
-	OutDir=$(echo $ReadDir/passey | sed 's@LLimon@LLimon/bowtie@g' | sed 's@dna_qc@alignment@g')
-	ProgDir=/home/heavet/git_repos/tools/seq_tools/genome_alignment/bowtie
-	sbatch $ProgDir/sub_bowtie.sh $Reference $F_Read $R_Read $OutDir
+	OutDir=$(echo $ReadDir/passey | sed 's@LLimon/paired@LLimon/bowtie@g' | sed 's@dna_qc@alignment@g')
+	ProgDir=~/scratch/apps/bowtie2
+	sbatch $ProgDir/bowtie2.sh $Reference $F_Read $R_Read $OutDir
 done
-#752, 754-798 
+#752, 754-798, -2492726
 conda deactivate
 
-for mapfile in $(ls alignment/V_inaequalis/LLimon/bowtie/*/*/passey/*.sam); do
+for mapfile in $(ls alignment/venturia/inaequalis/LLimon/bowtie/*/passey/*.sam); do
 	Isolate=$(echo $mapfile | cut -d '/' -f6)
 	echo $Isolate
 	mv $mapfile $(dirname $mapfile)/$(echo $Isolate)_$(basename $mapfile)
@@ -656,14 +848,98 @@ Outdir=/scratch/projects/heavet/snp_calling/V_inaequalis/LLimon/gatk/passey_hapl
 mkdir -p $Outdir
 ProgDir=~/git_repos/tools/popgen/snp
 Rscript --vanilla $ProgDir/plot_filter_results.R $SnpTsv
+
+#packages are not able to install properly as /user area is set to read only,  therefore have to use Rstudio on local machine
 ```
+Files downloaded for use in Rstudio:
+/scratch/projects/heavet/snp_calling/V_inaequalis/LLimon/gatk/passey_haplotype_calls/table/LLimon50_SNPs_gatk_indels_stats.tsv
+/scratch/projects/heavet/snp_calling/V_inaequalis/LLimon/gatk/passey_haplotype_calls/table/LLimon50_SNPs_gatk_snps_stats.tsv
+
+Following R script run locally:
+```R
+
+setwd("C:/Users/heavt/OneDrive - NIAB/Documents/R/bioinfo")
+library('ggplot2')
+library('tools')
+library('tidyverse')
+library('ggpubr')
 
 
+df1<-read.table("LLimon50_SNPs_gatk_snps_stats.tsv" , sep = '\t', header = TRUE)
+
+str(df1)
+
+df1$PASS <- df1$FILTER
+df1$PASS[df1$PASS!="PASS"] <- "FAIL"
+df1$PASS <- as.factor(df1$PASS)
+## Histogram with density plot
+geom_histogram(aes(y=..density..), alpha=0.2, bins=50)
+
+p0 <- ggplot(df1, aes(x=QD)) +
+  geom_density(alpha=.2) +
+  theme(legend.position="none")
+print(p0)
+ggsave("../QD_all.pdf", p0)
+
+p1 <- ggplot(df1, aes(x=QD, colour=PASS, fill=PASS)) +
+  geom_density(alpha=.2) +
+  theme(legend.position="right") 
+print(p1)
+
+p2 <- ggplot(df1, aes(x=FS, colour=PASS, fill=PASS)) +
+  geom_density(alpha=.2) +
+  theme(legend.position="") +
+  scale_x_continuous(trans='log10')
+print(p2)
+
+p3 <- ggplot(df1, aes(x=SOR, colour=PASS, fill=PASS)) +
+  geom_density(alpha=.2) +
+  theme(legend.position="none")
+print(p3)
+
+p4 <- ggplot(df1, aes(x=MQ, colour=PASS, fill=PASS)) +
+  geom_density(alpha=.2) +
+  theme(legend.position="none")
+print(p4)
+
+p5 <- ggplot(df1, aes(x=MQRankSum, colour=PASS, fill=PASS)) +
+  geom_density(alpha=.2) +
+  theme(legend.position="none")
+print(p5)
+
+p6 <- ggplot(df1, aes(x=ReadPosRankSum, colour=PASS, fill=PASS)) +
+  geom_density(alpha=.2) +
+  theme(legend.position="none")
+print(p6)
 
 
+df2<-read.table("LLimon50_SNPs_gatk_indels_stats.tsv" , sep = '\t', header = TRUE)
 
+str(df1)
 
+df2$PASS <- df2$FILTER
+df2$PASS[df2$PASS!="PASS"] <- "FAIL"
+df2$PASS <- as.factor(df1$PASS)
+## Histogram with density plot
+geom_histogram(aes(y=..density..), alpha=0.4, bins=50)
 
+p7 <- ggplot(df2, aes(x=QD, colour=PASS, fill=PASS)) +
+ geom_density(alpha=.4) +
+  theme(legend.position="none")
+print(p7)
+
+p8 <- ggplot(df2, aes(x=FS, colour=PASS, fill=PASS)) +
+  geom_density(alpha=.2) +
+  theme(legend.position="none") +
+  scale_x_continuous(trans='log10')
+print(p8)
+
+p9 <- ggplot(df2, aes(x=ReadPosRankSum, colour=PASS, fill=PASS)) +
+  geom_density(alpha=.2) +
+  theme(legend.position="none")
+print(p9)
+
+```
 
 
 
@@ -684,109 +960,6 @@ Rscript --vanilla $ProgDir/plot_filter_results.R $SnpTsv
 
 KLARA pipeline:
 
-
-##-------------------------------------------------11. Plot filtering results (R)------------------------------------------------------------------------
-
-##setwd("C:/Users/hajdk/OneDrive/New folder/Thesis/Chapter4_Hop_genome_analysis")
-##library('ggplot2')
-##library('tools')
-##library('tidyverse')
-##library('ggpubr')
-##
-##
-##df1<-read.table("cohort_snps_stats.tsv" , sep = '\t', header = TRUE)
-##
-##str(df1)
-##
-##df1$PASS <- df1$FILTER
-##df1$PASS[df1$PASS!="PASS"] <- "FAIL"
-##df1$PASS <- as.factor(df1$PASS)
-#### Histogram with density plot
-##geom_histogram(aes(y=..density..), alpha=0.2, bins=50)
-##
-##p0 <- ggplot(df1, aes(x=QD)) +
-##  geom_density(alpha=.2) +
-##  theme(legend.position="none")
-##print(p0)
-##ggsave("../QD_all.pdf", p0)
-##
-##p1 <- ggplot(df1, aes(x=QD, colour=PASS, fill=PASS)) +
-##  geom_density(alpha=.2) +
-##  theme(legend.position="right") 
-##print(p1)
-##
-##p2 <- ggplot(df1, aes(x=FS, colour=PASS, fill=PASS)) +
-##  geom_density(alpha=.2) +
-##  theme(legend.position="") +
-##  scale_x_continuous(trans='log10')
-##print(p2)
-##
-##p3 <- ggplot(df1, aes(x=SOR, colour=PASS, fill=PASS)) +
-##  geom_density(alpha=.2) +
-##  theme(legend.position="none")
-##print(p3)
-##
-##p4 <- ggplot(df1, aes(x=MQ, colour=PASS, fill=PASS)) +
-##  geom_density(alpha=.2) +
-##  theme(legend.position="none")
-##print(p4)
-##
-##p5 <- ggplot(df1, aes(x=MQRankSum, colour=PASS, fill=PASS)) +
-##  geom_density(alpha=.2) +
-##  theme(legend.position="none")
-##print(p5)
-##
-##p6 <- ggplot(df1, aes(x=ReadPosRankSum, colour=PASS, fill=PASS)) +
-##  geom_density(alpha=.2) +
-##  theme(legend.position="none")
-##print(p6)
-##
-##
-##df2<-read.table("cohort_indels_stats.tsv" , sep = '\t', header = TRUE)
-##
-##str(df1)
-##
-##df2$PASS <- df2$FILTER
-##df2$PASS[df2$PASS!="PASS"] <- "FAIL"
-##df2$PASS <- as.factor(df1$PASS)
-#### Histogram with density plot
-##geom_histogram(aes(y=..density..), alpha=0.4, bins=50)
-##
-##p7 <- ggplot(df2, aes(x=QD, colour=PASS, fill=PASS)) +
-## geom_density(alpha=.4) +
-##  theme(legend.position="none")
-##print(p7)
-##
-##p8 <- ggplot(df2, aes(x=FS, colour=PASS, fill=PASS)) +
-##  geom_density(alpha=.2) +
-##  theme(legend.position="none") +
-##  scale_x_continuous(trans='log10')
-##print(p8)
-##
-##p9 <- ggplot(df2, aes(x=ReadPosRankSum, colour=PASS, fill=PASS)) +
-##  geom_density(alpha=.2) +
-##  theme(legend.position="none")
-##print(p9)
-
-
-#alternatively use bash command to execute R script for visualising filtering results (this didn't work for me and just ran the script above directly from R)
-#```bash
-#srun --partition long --time 0-04:00:00 --mem 10gb --cpus-per-task 10 --pty bash
-#SnpTsv=$(ls projects/hop/SNP_calling/haplotype_calls/cohort/filtered_gatk5/*_snps_stats.tsv)
-#Outdir=/projects/hop/SNP_calling/haplotype_calls/cohort/filtering_plots_R
-#mkdir -p $Outdir
-#ProgDir=/home/hajduk/git_repos/scripts/hop_genomics/SNP_calling
-#Rscript --vanilla $ProgDir/plot_filter_results_KH.R $SnpTsv
-#```
-#
-#```bash
-#srun --partition long --time 0-04:00:00 --mem 10gb --cpus-per-task 10 --pty bash
-#IndelTsv=$(ls projects/hop/SNP_calling/haplotype_calls/cohort/filtered_gatk5/*_indels_stats.tsv)
-#Outdir=/projects/hop/SNP_calling/haplotype_calls/cohort/filtering_plots_R
-#mkdir -p $Outdir
-#ProgDir=/home/hajduk/git_repos/scripts/hop_genomics/SNP_calling
-#Rscript --vanilla $ProgDir/plot_filter_results_KH.R $IndelTsv
-#``` 
 
 
 ##--------------------------------------------12. Annotate filtered VCF file for SNP effects (snpeff)---------------------------------------------------------------------------------- 
