@@ -1,14 +1,39 @@
-# P.leucotricha genome assembly and annotation pipeline
+# P.leucotricha genome assembly and annotation pipeline - 2020 sample
 
 Documentation of analysis and commands used with P.leucotricha as part of Nano Diagnistics PhD.
 
-## Collecting data
+All bowtie2 folders have been subsequently deleted to save space.
 
+All genomes that were stored in /data/scratch/heavet/assembly/genome have been moved to the crop diversity hpc to save space
+
+## Collecting data
+QEU2007200002 NVUK2020071401MY
 All following commands were exectuted from the folder:
 ```bash
 /projects/nano_diagnostics
 ```
 Raw MiSeq sequence data for P.leucotricha was linked from long term storage in /archives to the working folder /projects/nano_diagnostics/
+
+RNA:
+```bash
+mkdir -p rawdata/P_leucotricha/THeavenp11_1/paired/RNA1/F
+mkdir -p rawdata/P_leucotricha/THeavenp11_1/paired/RNA1/R
+mkdir -p rawdata/P_leucotricha/THeavenp11_1/paired/RNA2/F
+mkdir -p rawdata/P_leucotricha/THeavenp11_1/paired/RNA2/R
+mkdir -p rawdata/P_leucotricha/THeavenp11_1/paired/RNA/1/all
+
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22012893-Z01-F001/X204SC22012893-Z01-F001/raw_data/THMLAP201/THMLAP201_1.fq.gz rawdata/P_leucotricha/THeavenp11_1/paired/RNA1/F/.
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22012893-Z01-F001/X204SC22012893-Z01-F001/raw_data/THMLAP201/THMLAP201_2.fq.gz rawdata/P_leucotricha/THeavenp11_1/paired/RNA1/R/.
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22012893-Z01-F001/X204SC22012893-Z01-F001/raw_data/THMLAP202/THMLAP202_1.fq.gz rawdata/P_leucotricha/THeavenp11_1/paired/RNA2/F/.
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22012893-Z01-F001/X204SC22012893-Z01-F001/raw_data/THMLAP202/THMLAP202_2.fq.gz rawdata/P_leucotricha/THeavenp11_1/paired/RNA2/R/.
+
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22012893-Z01-F001/X204SC22012893-Z01-F001/raw_data/THMLAP201/THMLAP201_1.fq.gz rawdata/P_leucotricha/THeavenp11_1/paired/RNA/1/all/.
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22012893-Z01-F001/X204SC22012893-Z01-F001/raw_data/THMLAP201/THMLAP201_2.fq.gz rawdata/P_leucotricha/THeavenp11_1/paired/RNA/1/all/.
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22012893-Z01-F001/X204SC22012893-Z01-F001/raw_data/THMLAP202/THMLAP202_1.fq.gz rawdata/P_leucotricha/THeavenp11_1/paired/RNA/1/all/.
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22012893-Z01-F001/X204SC22012893-Z01-F001/raw_data/THMLAP202/THMLAP202_2.fq.gz rawdata/P_leucotricha/THeavenp11_1/paired/RNA/1/all/.
+```
+
+DNA:
 
 ```bash
 mkdir -p rawdata/P_leucotricha/THeavenp11_1/paired/001/F
@@ -477,11 +502,11 @@ Quast was used to assess the quality of genome assemblys:
 conda activate quast
 
     for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/*/contigs_min_500bp.fasta); do
-    	ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
-    	OutDir=$(dirname $Assembly)
-    	echo $Assembly
-    	echo $OutDir
-    	sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+        ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+        OutDir=$(dirname $Assembly)
+        echo $Assembly
+        echo $OutDir
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
     done
 ```
 ### metaSPAdes
@@ -510,11 +535,11 @@ Quast was used to assess the quality of genome assembly:
 conda activate quast
 
     for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/metaSPAdes/*/*/contigs_min_500bp.fasta); do
-    	ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
-    	OutDir=$(dirname $Assembly)
-    	echo $Assembly
-    	echo $OutDir
-    	sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+        ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+        OutDir=$(dirname $Assembly)
+        echo $Assembly
+        echo $OutDir
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
     done
 ```
 ### MEGAHIT
@@ -595,122 +620,122 @@ BUSCO was used to assess the completeness of the assemblies
 conda activate BUSCO
 
 for assembly in $(echo assembly/metagenome/P_leucotricha/THeavenp11_1/*/*/filtered_contigs); do
-	Data=$(ls $assembly/contigs_min_500bp.fasta) 
-	Input=$(dirname $assembly)
-	mkdir -p $Input/BUSCO/fungi/1
-	cd $Input/BUSCO/fungi
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
-	cd /projects/nano_diagnostics
+    Data=$(ls $assembly/contigs_min_500bp.fasta) 
+    Input=$(dirname $assembly)
+    mkdir -p $Input/BUSCO/fungi/1
+    cd $Input/BUSCO/fungi
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
+    cd /projects/nano_diagnostics
 done
 for assembly in $(echo assembly/metagenome/P_leucotricha/THeavenp11_1/*/*/filtered_contigs); do
-	Data=$(ls $assembly/contigs_min_500bp.fasta) 
-	Input=$(dirname $assembly)
-	mkdir -p $Input/BUSCO/ascomycota/1
-	cd $Input/BUSCO/ascomycota
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
-	cd /projects/nano_diagnostics
+    Data=$(ls $assembly/contigs_min_500bp.fasta) 
+    Input=$(dirname $assembly)
+    mkdir -p $Input/BUSCO/ascomycota/1
+    cd $Input/BUSCO/ascomycota
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
+    cd /projects/nano_diagnostics
 done
 for assembly in $(echo assembly/metagenome/P_leucotricha/THeavenp11_1/*/*/filtered_contigs); do
-	Data=$(ls $assembly/contigs_min_500bp.fasta) 
-	Input=$(dirname $assembly)
-	mkdir -p $Input/BUSCO/leotiomycetes/1
-	cd $Input/BUSCO/leotiomycetes
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
-	cd /projects/nano_diagnostics
+    Data=$(ls $assembly/contigs_min_500bp.fasta) 
+    Input=$(dirname $assembly)
+    mkdir -p $Input/BUSCO/leotiomycetes/1
+    cd $Input/BUSCO/leotiomycetes
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
+    cd /projects/nano_diagnostics
 done
 
 for assembly in $(echo assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs); do 
-	Data=$(ls $assembly/contigs_min_500bp.fasta) 
-	; Input=$(dirname $assembly);  
-	mkdir -p $Input/BUSCO/fungi/1/2; 
-	cd $Input/BUSCO/fungi/1;
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 2 -l fungi_odb10; 
-	cd /projects/nano_diagnostics; 
-	mkdir -p $Input/BUSCO/ascomycota/1/2; 
-	cd $Input/BUSCO/ascomycota/1; 
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 2 -l ascomycota_odb10; 
-	cd /projects/nano_diagnostics;  
-	mkdir -p $Input/BUSCO/leotiomycetes/1/2; 
-	cd $Input/BUSCO/leotiomycetes/1; 
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 2 -l leotiomycetes_odb10; 
-	cd /projects/nano_diagnostics; done
+    Data=$(ls $assembly/contigs_min_500bp.fasta) 
+    ; Input=$(dirname $assembly);  
+    mkdir -p $Input/BUSCO/fungi/1/2; 
+    cd $Input/BUSCO/fungi/1;
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o 2 -l fungi_odb10; 
+    cd /projects/nano_diagnostics; 
+    mkdir -p $Input/BUSCO/ascomycota/1/2; 
+    cd $Input/BUSCO/ascomycota/1; 
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o 2 -l ascomycota_odb10; 
+    cd /projects/nano_diagnostics;  
+    mkdir -p $Input/BUSCO/leotiomycetes/1/2; 
+    cd $Input/BUSCO/leotiomycetes/1; 
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o 2 -l leotiomycetes_odb10; 
+    cd /projects/nano_diagnostics; done
 ```
 For comparison purposes BUSCO was also run on a number of other species downloaded from NCBI; the published P.leucotricha genome, the yeast genome and the apple genome.
 ```bash
 conda activate BUSCO
 for assembly in $(echo assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa); do
-	Data=$(ls $assembly) 
-	Input=$(dirname $assembly)
-	mkdir -p $Input/BUSCO/fungi/1
-	cd $Input/BUSCO/fungi
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
-	cd /projects/nano_diagnostics
+    Data=$(ls $assembly) 
+    Input=$(dirname $assembly)
+    mkdir -p $Input/BUSCO/fungi/1
+    cd $Input/BUSCO/fungi
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
+    cd /projects/nano_diagnostics
 done
 for assembly in $(echo assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa); do
-	Data=$(ls $assembly) 
-	Input=$(dirname $assembly)
-	mkdir -p $Input/BUSCO/ascomycota/1
-	cd $Input/BUSCO/ascomycota
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
-	cd /projects/nano_diagnostics
+    Data=$(ls $assembly) 
+    Input=$(dirname $assembly)
+    mkdir -p $Input/BUSCO/ascomycota/1
+    cd $Input/BUSCO/ascomycota
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
+    cd /projects/nano_diagnostics
 done
 for assembly in $(echo assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa); do
-	Data=$(ls $assembly) 
-	Input=$(dirname $assembly)
-	mkdir -p $Input/BUSCO/leotiomycetes/1
-	cd $Input/BUSCO/leotiomycetes
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
-	cd /projects/nano_diagnostics
+    Data=$(ls $assembly) 
+    Input=$(dirname $assembly)
+    mkdir -p $Input/BUSCO/leotiomycetes/1
+    cd $Input/BUSCO/leotiomycetes
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
+    cd /projects/nano_diagnostics
 done
 conda activate BUSCO
 for assembly in $(echo assembly/genome/NCBI/S.cerevisiae/GCF_000146045.2_R64_genomic.fna); do
-	Data=$(ls $assembly) 
-	Input=$(dirname $assembly)
-	mkdir -p $Input/BUSCO/fungi/1
-	cd $Input/BUSCO/fungi
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
-	cd /projects/nano_diagnostics
+    Data=$(ls $assembly) 
+    Input=$(dirname $assembly)
+    mkdir -p $Input/BUSCO/fungi/1
+    cd $Input/BUSCO/fungi
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
+    cd /projects/nano_diagnostics
 done
 for assembly in $(echo assembly/genome/NCBI/S.cerevisiae/GCF_000146045.2_R64_genomic.fna); do
-	Data=$(ls $assembly) 
-	Input=$(dirname $assembly)
-	mkdir -p $Input/BUSCO/ascomycota/1
-	cd $Input/BUSCO/ascomycota
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
-	cd /projects/nano_diagnostics
+    Data=$(ls $assembly) 
+    Input=$(dirname $assembly)
+    mkdir -p $Input/BUSCO/ascomycota/1
+    cd $Input/BUSCO/ascomycota
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
+    cd /projects/nano_diagnostics
 done
 for assembly in $(echo assembly/genome/NCBI/S.cerevisiae/GCF_000146045.2_R64_genomic.fna); do
-	Data=$(ls $assembly) 
-	Input=$(dirname $assembly)
-	mkdir -p $Input/BUSCO/leotiomycetes/1
-	cd $Input/BUSCO/leotiomycetes
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
-	cd /projects/nano_diagnostics
+    Data=$(ls $assembly) 
+    Input=$(dirname $assembly)
+    mkdir -p $Input/BUSCO/leotiomycetes/1
+    cd $Input/BUSCO/leotiomycetes
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
+    cd /projects/nano_diagnostics
 done
 
 for assembly in $(echo assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta); do
-	Data=$(ls $assembly) 
-	Input=$(dirname $assembly)
-	mkdir -p $Input/BUSCO/fungi/1
-	cd $Input/BUSCO/fungi
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
-	cd /projects/nano_diagnostics
+    Data=$(ls $assembly) 
+    Input=$(dirname $assembly)
+    mkdir -p $Input/BUSCO/fungi/1
+    cd $Input/BUSCO/fungi
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l fungi_odb10
+    cd /projects/nano_diagnostics
 done
 for assembly in $(echo assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta); do
-	Data=$(ls $assembly) 
-	Input=$(dirname $assembly)
-	mkdir -p $Input/BUSCO/ascomycota/1
-	cd $Input/BUSCO/ascomycota
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
-	cd /projects/nano_diagnostics
+    Data=$(ls $assembly) 
+    Input=$(dirname $assembly)
+    mkdir -p $Input/BUSCO/ascomycota/1
+    cd $Input/BUSCO/ascomycota
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l ascomycota_odb10
+    cd /projects/nano_diagnostics
 done
 for assembly in $(echo assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta); do
-	Data=$(ls $assembly) 
-	Input=$(dirname $assembly)
-	mkdir -p $Input/BUSCO/leotiomycetes/1
-	cd $Input/BUSCO/leotiomycetes
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
-	cd /projects/nano_diagnostics
+    Data=$(ls $assembly) 
+    Input=$(dirname $assembly)
+    mkdir -p $Input/BUSCO/leotiomycetes/1
+    cd $Input/BUSCO/leotiomycetes
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o 1 -l leotiomycetes_odb10
+    cd /projects/nano_diagnostics
 done
 echo fin
 ```
@@ -822,13 +847,13 @@ mkdir -p analysis/P_leucotricha/THeavenp11_1/centrifuge
     R_Read=$(ls $ReadDir/*r.fq)
     S_Read=$(ls $ReadDir/*s.fq)
     echo $F_Read
-	echo $R_Read
-	echo $S_Read
+    echo $R_Read
+    echo $S_Read
     Database=fungi
     OutDir=analysis/P_leucotricha/THeavenp11_1/centrifuge/reads
     ProgDir=~/git_repos/tools/seq_tools/metagenomics
     sbatch $ProgDir/centrifuge.sh $Database $OutDir $F_Read $R_Read $S_Read
-	done
+    done
 #731047 - ERROR
 
 #attempted with unedited version of a.gomez wrapper script.
@@ -836,12 +861,12 @@ mkdir -p analysis/P_leucotricha/THeavenp11_1/centrifuge
     F_Read=$(ls $ReadDir/*f.fq)
     R_Read=$(ls $ReadDir/*r.fq)
     echo $F_Read
-	echo $R_Read
+    echo $R_Read
     Database=fungi
     OutDir=analysis/P_leucotricha/THeavenp11_1/centrifuge/reads
     ProgDir=~/git_repos/tools/seq_tools/metagenomics
     sbatch $ProgDir/ag_centrifuge.sh $Database $OutDir $F_Read $R_Read
-	done
+    done
 #737390 
 
 #Following this a run with assembled contigs was attempted. -f flag used.
@@ -852,7 +877,7 @@ mkdir -p analysis/P_leucotricha/THeavenp11_1/centrifuge
     OutDir=analysis/P_leucotricha/THeavenp11_1/centrifuge/contigs
     ProgDir=~/git_repos/tools/seq_tools/metagenomics
     sbatch $ProgDir/ag_centrifuge.sh $Database $OutDir $F_Read
-	done
+    done
 #740029 - unsuccessful
 ```
 Centrifuge was run with nt database.
@@ -862,12 +887,12 @@ Centrifuge was run with nt database.
     F_Read=$(ls $ReadDir/*f.fq)
     R_Read=$(ls $ReadDir/*r.fq)
     echo $F_Read
-	echo $R_Read
+    echo $R_Read
     Database=nt
     OutDir=analysis/P_leucotricha/THeavenp11_1/centrifuge/reads/nt
     ProgDir=~/git_repos/tools/seq_tools/metagenomics
     sbatch $ProgDir/ag_centrifuge.sh $Database $OutDir $F_Read $R_Read
-	done
+    done
 #740638
 ```
 ###  Conterminator
@@ -1048,7 +1073,7 @@ python ../peptides-master/download_domain.py --domain nt --ext dna #unable to op
 screen -S kraken2
 srun -p himem  --mem 100G --pty bash
 for file in $(ls /scratch/public_data/tch/tmp123/fungi/*.fna); do
-	#echo $file
+    #echo $file
     kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi 
 done
 exit
@@ -1076,31 +1101,31 @@ assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/co
  screen -S kraken2
 srun -p long  --mem 100G --pty bash
 for file in $(ls /scratch/public_data/tch/tmp123/archaea/*.fna); do
-	#echo $file
+    #echo $file
     kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
 done
 for file in $(ls /scratch/public_data/tch/tmp123/bacteria/*.fna); do
-	#echo $file
+    #echo $file
     kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
 done
 for file in $(ls /scratch/public_data/tch/tmp123/fungi/*.fna); do
-	#echo $file
+    #echo $file
     kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
 done
 for file in $(ls /scratch/public_data/tch/tmp123/plant/*.fna); do
-	#echo $file
+    #echo $file
     kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
 done
 for file in $(ls /scratch/public_data/tch/tmp123/protozoa/*.fna); do
-	#echo $file
+    #echo $file
     kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
 done
 for file in $(ls /scratch/public_data/tch/tmp123/viral/*.fna); do
-	#echo $file
+    #echo $file
     kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
 done
 for file in $(ls /scratch/public_data/tch/tmp123/vertebrate_mammalian/*.fna); do
-	#echo $file
+    #echo $file
     kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/1 
 done
 exit
@@ -1274,61 +1299,6 @@ assembly/genome/NCBI/venturia/V_inaequalis/GCA_003351075.1_ASM335107v1_genomic.f
 #  228 sequences classified (95.80%)
 #  10 sequences unclassified (4.20%)
 ```
-#### Kraken2 - final
-A fungi database was created for the analysis of the assembly.
-```bash
-screen -S kraken
-srun -p himem  --mem 350G --pty bash
-conda activate kraken2
-mkdir -p analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3
-kraken2-build --download-taxonomy --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 2>&1 | tee 1.log
-for file in $(ls /scratch/public_data/tch/tmp123/fungi/*.fna); do
-	#echo $file
-    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 2>&1 | tee -a 1.log
-done
-kraken2-build --add-to-library /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.mod.1.fa --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 2>&1 | tee -a 1.log
-kraken2-build --build --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 2>&1 | tee -a 1.log
-kraken2-build --clean --threads 20 --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3
-exit
-exit
-echo finished
-
-#The database was tested on a genome that should be within the database
-kraken2 \
---db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 \
---output analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/outputganan.txt \
---unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/unclassified-outganan.txt \
---classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/classified-outganan.txt \
---report analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/reportganan.txt \
---use-names \
-assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa 
-#  8921 sequences classified (100.00%)
-#  0 sequences unclassified (0.00%)
-
-#The database was tested on a published genome not within the database
-kraken2 \
---db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 \
---output analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/outputscab.txt \
---unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/unclassified-outscab.txt \
---classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/classified-outscab.txt \
---report analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/reportscab.txt \
---use-names \
-assembly/genome/NCBI/venturia/V_inaequalis/GCA_003351075.1_ASM335107v1_genomic.fna 
-#  222 sequences classified (93.28%)
-#  16 sequences unclassified (6.72%)
-
-#The database was used on our assembly
-kraken2 \
---db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 \
---output analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/output.txt \
---unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/unclassified-out.txt \
---classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/classified-out.txt \
---report analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/report.txt \
---use-names \
-assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
-#  6723 sequences classified (85.53%)
-#  1137 sequences unclassified (14.47%)
-```
 A database containing all clades was created for the analysis of the assembly.
 ```bash
 screen -S kraken
@@ -1337,31 +1307,31 @@ conda activate kraken2
 mkdir -p analysis/P_leucotricha/THeavenp11_1/kraken2/nt2
 kraken2-build --download-taxonomy --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee 3.log
 for file in $(ls /scratch/public_data/tch/tmp123/archaea/*.fna); do
-	#echo $file
+    #echo $file
     kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee -a 3.log 
 done
 for file in $(ls /scratch/public_data/tch/tmp123/bacteria/*.fna); do
-	#echo $file
+    #echo $file
     kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee -a 3.log 
 done
 for file in $(ls /scratch/public_data/tch/tmp123/fungi/*.fna); do
-	#echo $file
+    #echo $file
     kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee -a 3.log 
 done
 for file in $(ls /scratch/public_data/tch/tmp123/plant/*.fna); do
-	#echo $file
+    #echo $file
     kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee -a 3.log 
 done
 for file in $(ls /scratch/public_data/tch/tmp123/protozoa/*.fna); do
-	#echo $file
+    #echo $file
     kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee -a 3.log 
 done
 for file in $(ls /scratch/public_data/tch/tmp123/viral/*.fna); do
-	#echo $file
+    #echo $file
     kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee -a 3.log 
 done
 for file in $(ls /scratch/public_data/tch/tmp123/vertebrate_mammalian/*.fna); do
-	#echo $file
+    #echo $file
     kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee -a 3.log 
 done
 kraken2-build --add-to-library /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.mod.1.fa --db analysis/P_leucotricha/THeavenp11_1/kraken2/nt2 2>&1 | tee -a 3.log
@@ -1411,6 +1381,61 @@ kraken2 \
 assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
 #  7416 sequences classified (94.35%)
 #  444 sequences unclassified (5.65%)
+```
+#### Kraken2 - final
+A fungi database was created for the analysis of the assembly.
+```bash
+screen -S kraken
+srun -p himem  --mem 350G --pty bash
+conda activate kraken2
+mkdir -p analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3
+kraken2-build --download-taxonomy --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 2>&1 | tee 1.log
+for file in $(ls /scratch/public_data/tch/tmp123/fungi/*.fna); do
+    #echo $file
+    kraken2-build --add-to-library $file --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 2>&1 | tee -a 1.log
+done
+kraken2-build --add-to-library /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.mod.1.fa --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 2>&1 | tee -a 1.log
+kraken2-build --build --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 2>&1 | tee -a 1.log
+kraken2-build --clean --threads 20 --db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3
+exit
+exit
+echo finished
+
+#The database was tested on a genome that should be within the database
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/outputganan.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/unclassified-outganan.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/classified-outganan.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/reportganan.txt \
+--use-names \
+assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa 
+#  8921 sequences classified (100.00%)
+#  0 sequences unclassified (0.00%)
+
+#The database was tested on a published genome not within the database
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/outputscab.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/unclassified-outscab.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/classified-outscab.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/reportscab.txt \
+--use-names \
+assembly/genome/NCBI/venturia/V_inaequalis/GCA_003351075.1_ASM335107v1_genomic.fna 
+#  222 sequences classified (93.28%)
+#  16 sequences unclassified (6.72%)
+
+#The database was used on our assembly
+kraken2 \
+--db analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3 \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/output.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/unclassified-out.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/classified-out.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/fungi3/report.txt \
+--use-names \
+assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp.fasta
+#  6723 sequences classified (85.53%)
+#  1137 sequences unclassified (14.47%)
 ```
 Kraken rerun on our assembly using database containing all published mildew genomes and strawberry genome. Database creation detailed in https://github.com/harrisonlab/nano_diagnositcs/blob/master/P_aphanis/P_aphanis_genome_raspberry.md
 ```bash
@@ -1645,23 +1670,23 @@ conda deactivate
 conda activate BUSCO
 
 for assembly in $(echo assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs); do
-	Data=$(ls $assembly/contigs_min_500bp_filtered.fasta) 
-	Input=$(dirname $assembly)
+    Data=$(ls $assembly/contigs_min_500bp_filtered.fasta) 
+    Input=$(dirname $assembly)
 
-	mkdir -p $Input/BUSCO/fungi/1/filtered
-	cd $Input/BUSCO/fungi/1
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o filtered -l fungi_odb10
-	cd /projects/nano_diagnostics
+    mkdir -p $Input/BUSCO/fungi/1/filtered
+    cd $Input/BUSCO/fungi/1
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o filtered -l fungi_odb10
+    cd /projects/nano_diagnostics
 
-	mkdir -p $Input/BUSCO/ascomycota/1/filtered
-	cd $Input/BUSCO/ascomycota/1
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o filtered -l ascomycota_odb10
-	cd /projects/nano_diagnostics
+    mkdir -p $Input/BUSCO/ascomycota/1/filtered
+    cd $Input/BUSCO/ascomycota/1
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o filtered -l ascomycota_odb10
+    cd /projects/nano_diagnostics
 
-	mkdir -p $Input/BUSCO/leotiomycetes/1/filtered
-	cd $Input/BUSCO/leotiomycetes/1
-	busco -f -m genome -i /projects/nano_diagnostics/$Data -o filtered -l leotiomycetes_odb10
-	cd /projects/nano_diagnostics
+    mkdir -p $Input/BUSCO/leotiomycetes/1/filtered
+    cd $Input/BUSCO/leotiomycetes/1
+    busco -f -m genome -i /projects/nano_diagnostics/$Data -o filtered -l leotiomycetes_odb10
+    cd /projects/nano_diagnostics
 done
 exit
 exit
@@ -1671,11 +1696,11 @@ conda deactivate
 conda activate quast
 
     for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/contigs_min_500bp_filtered.fasta); do
-    	ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
-    	OutDir=$(dirname $Assembly)/filtered
-    	echo $Assembly
-    	echo $OutDir
-    	sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+        ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+        OutDir=$(dirname $Assembly)/filtered
+        echo $Assembly
+        echo $OutDir
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
     done
 #756881
 ```
@@ -1702,11 +1727,11 @@ conda deactivate
 
 conda activate quast
     for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/contigs_min_500bp_renamed.fasta); do
-    	ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
-    	OutDir=$(dirname $Assembly)
-    	echo $Assembly
-    	echo $OutDir
-    	sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+        ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+        OutDir=$(dirname $Assembly)
+        echo $Assembly
+        echo $OutDir
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
     done
 #780365
 conda deactivate
@@ -1782,20 +1807,20 @@ Repeatmodeler and transposonPSI were run on our assembly.
 ```bash
 conda activate repeatmasking
 for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/contigs_min_500bp_renamed.fasta); do
-	ProgDir=~/git_repos/tools/seq_tools/repeat_masking
-	OutDir=$(dirname $Assembly)/filteredmasked
-	mkdir -p $OutDir/rep_modeling
-	sbatch $ProgDir/rep_modeling.sh $Assembly $OutDir/rep_modeling
+    ProgDir=~/git_repos/tools/seq_tools/repeat_masking
+    OutDir=$(dirname $Assembly)/filteredmasked
+    mkdir -p $OutDir/rep_modeling
+    sbatch $ProgDir/rep_modeling.sh $Assembly $OutDir/rep_modeling
 done
 #784845
 conda deactivate
 
 conda activate transposonpsi
 for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/contigs_min_500bp_renamed.fasta); do
-	ProgDir=~/git_repos/tools/seq_tools/repeat_masking
-	OutDir=$(dirname $Assembly)/filteredmasked
-	mkdir -p $OutDir/transposonPSI
-	sbatch $ProgDir/gomez_transposonPSI.sh $Assembly $OutDir/transposonPSI
+    ProgDir=~/git_repos/tools/seq_tools/repeat_masking
+    OutDir=$(dirname $Assembly)/filteredmasked
+    mkdir -p $OutDir/transposonPSI
+    sbatch $ProgDir/gomez_transposonPSI.sh $Assembly $OutDir/transposonPSI
 done
 #784846
 conda deactivate
@@ -1804,7 +1829,7 @@ The number of bases masked by transposonPSI and Repeatmasker were summarised usi
 ```bash
 RepMaskGff=/projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/rep_modeling/*_contigs_hardmasked.gff
 TransPSIGff=/projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/transposonPSI/heavet_contigs_unmasked.fa.TPSI.allHits
-printf "P_aphanis/THeavenDRCT72020_1\n"
+printf "P_leucotricha/THeavenp11_1\n"
 printf "The number of bases masked by RepeatMasker:\t"
 sortBed -i $RepMaskGff | bedtools merge | awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}'
 #22,212,886
@@ -1815,7 +1840,7 @@ printf "The total number of masked bases are:\t"
 cat $RepMaskGff $TransPSIGff | sortBed | bedtools merge | awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}'
 #Differing number of GFF fields encountered at line: 76245.  Exiting...
 ```
-The TransposonPSI asked bases were used to mask additional bases from the repearmasker softmasked files.
+The TransposonPSI asked bases were used to mask additional bases from the repeatmasker softmasked files.
 ```bash
 for File in $(ls /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/rep_modeling/*_contigs_softmasked.fa); do
 OutDir=$(dirname $File)
@@ -1830,6 +1855,383 @@ done
 ```
 The total length of the genome given by quast is 49,429,334bp if 23,281,445bp have been masked as repetative then 47.1% of the genome is made up of repeats.
 
+## Gene prediction
+RNAseq was performed on P. leucotricha to guide gene prediction. Gene prediction was performed using braker supplimented by additon predctions from codingquarry. Duplicated predictions were removed.
+
+### RNA Alignment
+
+Raw RNASeq reads can be found here:
+```bash
+ls rawdata/P_leucotricha/THeavenp11_1/paired/RNA1/
+ls rawdata/P_leucotricha/THeavenp11_1/paired/RNA2/
+```
+These will be a mix of apple and strawberry powdery mildew RNASeq reads.
+
+The raw RNAseq reads were subjected to a quality control check using FastQC.
+```bash
+for RawData in $(ls rawdata/P_leucotricha/THeavenp11_1/paired/RNA*/*/*.fq.gz); do
+echo $RawData
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(dirname $RawData)
+sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir
+done
+#17664
+#17665
+#17666
+#17667
+```
+Raw RNASeq reads were trimmed using trimmomatic
+```bash
+for ReadDir in $(ls -d rawdata/P_leucotricha/THeavenp11_1/paired/RNA*); do
+ Fread=$(ls $ReadDir/F/*.fq.gz)
+ Rread=$(ls $ReadDir/R/*.fq.gz)
+ls $Fread
+ls $Rread
+Adapters=~/git_repos/tools/seq_tools/ncbi_adapters.fa
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(echo $ReadDir|sed 's@rawdata@dna_qc@g')
+Prefix=$(echo $ReadDir|cut -f2,3,4,5 -d '/' --output-delimiter '-')
+sbatch $ProgDir/srun_trimmomatic.sh $Fread $Rread $Adapters $OutDir $Prefix
+done
+#17662
+#17663
+```
+The trimmed reads were subjected to a quality control check using FastQC.
+```bash
+for RawData in $(ls dna_qc/P_leucotricha/THeavenp11_1/paired/RNA*/*/*.fq.gz); do
+echo $RawData
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(dirname $RawData)
+sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir
+done
+#17815-17824
+```
+```bash
+mkdir dna_qc/P_leucotricha/THeavenp11_1/paired/RNA/F
+mkdir dna_qc/P_leucotricha/THeavenp11_1/paired/RNA/R
+cat dna_qc/P_leucotricha/THeavenp11_1/paired/RNA1/F/*trim.fq.gz dna_qc/P_leucotricha/THeavenp11_1/paired/RNA2/F/*trim.fq.gz > dna_qc/P_leucotricha/THeavenp11_1/paired/RNA/F/P_leucotricha-THeavenp11_1-paired-RNA_F_trim.fq.gz
+cat dna_qc/P_leucotricha/THeavenp11_1/paired/RNA1/R/*trim.fq.gz dna_qc/P_leucotricha/THeavenp11_1/paired/RNA2/R/*trim.fq.gz > dna_qc/P_leucotricha/THeavenp11_1/paired/RNA/R/P_leucotricha-THeavenp11_1-paired-RNA_R_trim.fq.gz
+```
+STAR was used to align RNAseq data for P.aphanis to our genome assembly.
+```bash
+mkdir -p alignment/P_leucotricha/THeavenp11_1/star/RNA/580029
+conda activate STAR
+for RNAdata in $(ls -d dna_qc/P_leucotricha/THeavenp11_1/paired/RNA); do
+	Freads=$RNAdata/F/*trim.fq.gz
+	Rreads=$RNAdata/R/*trim.fq.gz
+	ls $Freads
+	ls $Rreads
+	InGenome=assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/contigs_min_500bp_renamed2.fasta
+	ProgDir=~/git_repos/tools/seq_tools/RNAseq
+	OutDir=alignment/P_leucotricha/THeavenp11_1/star/RNAx2/580029
+	sbatch $ProgDir/star_alignment.sh $InGenome $Freads $Rreads $OutDir
+done
+#17826, 18221
+conda deactivate
+
+mkdir -p alignment/P_leucotricha/THeavenp11_1/star/RNA1/580029
+conda activate STAR
+for RNAdata in $(ls -d dna_qc/P_leucotricha/THeavenp11_1/paired/RNA1); do
+    Freads=$RNAdata/F/*trim.fq.gz
+    Rreads=$RNAdata/R/*trim.fq.gz
+    ls $Freads
+    ls $Rreads
+    InGenome=assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/contigs_min_500bp_renamed2.fasta
+    ProgDir=~/git_repos/tools/seq_tools/RNAseq
+    OutDir=alignment/P_leucotricha/THeavenp11_1/star/RNA/580029
+    sbatch $ProgDir/star_alignment.sh $InGenome $Freads $Rreads $OutDir
+done
+#18219
+conda deactivate
+
+scp -r /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/contigs_min_500bp_renamed2.fasta theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/.
+scp -r /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/RNA/* theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/dna_qc/P_leucotricha/THeavenp11_1/paired/RNA/.
+scp -r ~/git_repos/tools/seq_tools/RNAseq/star_alignment.sh theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/apps/star/.
+
+mkdir -p alignment/P_leucotricha/THeavenp11_1/star/RNAx2/580029_2
+conda activate STAR
+for RNAdata in $(ls -d dna_qc/P_leucotricha/THeavenp11_1/paired/RNA); do
+    Freads=$RNAdata/F/*trim.fq.gz
+    Rreads=$RNAdata/R/*trim.fq.gz
+    ls $Freads
+    ls $Rreads
+    InGenome=assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa
+    ProgDir=~/scratch/apps/star
+    OutDir=alignment/P_leucotricha/THeavenp11_1/star/RNAx2/580029_2
+    sbatch $ProgDir/star_alignment.sh $InGenome $Freads $Rreads $OutDir
+done
+#2489433
+conda deactivate
+
+mkdir -p alignment/P_leucotricha/THeavenp11_1/star/RNAx2/580029_4
+conda activate STAR
+for RNAdata in $(ls -d dna_qc/P_leucotricha/THeavenp11_1/paired/RNA); do
+    Freads=$RNAdata/F/*trim.fq.gz
+    Rreads=$RNAdata/R/*trim.fq.gz
+    ls $Freads
+    ls $Rreads
+    InGenome=assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/contigs_min_500bp_renamed2.fasta
+    ProgDir=~/scratch/apps/star
+    OutDir=alignment/P_leucotricha/THeavenp11_1/star/RNAx2/580029_4
+    sbatch $ProgDir/star_alignment.sh $InGenome $Freads $Rreads $OutDir
+done
+#2494316
+conda deactivate
+``` 
+### Braker prediction
+Genes were predited using the program Braker1 using RNAseq wvidence. BRAKER is a gene prediction pipeine using genomic and RNA-Seq data to automatically generate full gene structure annotations in novel genome. It combines two major tools: GeneMark-ES/ET and AUGUSTUS. These both use generalized hidden Markov model, a probabilistic model of a sequence and its gene structure.
+```bash
+#Before braker predictiction is performed, double check that the genemark key is in user area and copy it over from the genemark install directory:
+conda activate braker
+cp /home/gomeza/miniconda3/envs/gene_pred/bin/filterGenesIn_mRNAname.pl /home/heavet/miniconda3/envs/braker/bin/filterGenesIn_mRNAname.pl
+cp /home/gomeza/git_repos/scripts/bioinformatics_tools/Gene_prediction/braker_fungi.sh /home/heavet/git_repos/tools/gene_prediction/braker1/gom_braker_fungi.sh
+#new key downloaded, unzipped and copied from ~/gm_key_64 to ~/.gm_key for genemark-ET from http://topaz.gatech.edu/GeneMark/license_download.cgi
+
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+OutDir=gene_pred/P_leucotricha/THeavenp11_1/braker
+AcceptedHits=$(ls alignment/P_leucotricha/THeavenp11_1/star/RNA/580029/star_aligmentAligned.sortedByCoord.out.bam)
+GeneModelName=580029_softmasked_TPSI_appended
+ProgDir=/home/heavet/git_repos/tools/gene_prediction/braker1
+sbatch $ProgDir/gom_braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+done
+#18124
+
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+OutDir=gene_pred/P_leucotricha/THeavenp11_1/braker
+AcceptedHits=$(ls alignment/P_leucotricha/THeavenp11_1/star/RNAx2/580029/star_aligmentAligned.sortedByCoord.out.bam)
+GeneModelName=580029_softmasked_TPSI_appended
+ProgDir=/home/heavet/git_repos/tools/gene_prediction/braker1
+sbatch $ProgDir/gom_braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+done
+#18220
+conda deactivate
+
+scp -r /projects/nano_diagnostics/alignment/P_leucotricha/THeavenp11_1/star/RNA/580029/star_aligmentAligned.sortedByCoord.out.bam theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/alignment/P_leucotricha/THeavenp11_1/star/RNA/580029
+scp -r /projects/nano_diagnostics/alignment/P_leucotricha/THeavenp11_1/star/RNAx2/580029/star_aligmentAligned.sortedByCoord.out.bam theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/alignment/P_leucotricha/THeavenp11_1/star/RNAx2/580029
+scp -r /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/rep_modeling
+
+conda activate braker
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+OutDir=gene_pred/P_leucotricha/THeavenp11_1/braker
+AcceptedHits=$(ls alignment/P_leucotricha/THeavenp11_1/star/RNA/580029/star_aligmentAligned.sortedByCoord.out.bam)
+GeneModelName=580029_softmasked_TPSI_appended
+ProgDir=/home/theaven/scratch/apps/braker
+sbatch $ProgDir/braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+done
+#2470243, 2470304, 2483899
+conda deactivate
+
+align2hints.pl                                       findGenesInIntrons.pl  log_reg_prothints.pl
+braker_cleanup.pl           downsample_traingenes.pl    gatech_pmp2hints.pl    merge_transcript_sets.pl
+braker.pl                   ensure_n_training_genes.py  helpMod.pm                                  filter_augustus_gff.pl      licence.txt            rename_tsebra_transcripts.pl
+compare_intervals_exact.pl  filterGenemark.pl                       sortGeneMark.py
+compute_accuracies.sh       filterIntronsFindStrand.pl         startAlign.pl
+
+
+#newest braker installed to /home/theaven/scratch/apps/braker/braker_2.1.6/BRAKER/scripts/braker.pl
+cp /home/theaven/scratch/apps/braker/braker_fungi.sh /home/theaven/scratch/apps/braker/braker_fungi_2.1.9.sh
+nano /home/theaven/scratch/apps/braker/braker_fungi_2.1.9.sh #add /home/theaven/scratch/apps/braker/braker_2.1.6/BRAKER/scripts/braker.pl
+conda activate braker
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+OutDir=gene_pred/P_leucotricha/THeavenp11_1/braker
+AcceptedHits=$(ls alignment/P_leucotricha/THeavenp11_1/star/RNA/580029/star_aligmentAligned.sortedByCoord.out.bam)
+GeneModelName=580029_softmasked_TPSI_appended
+ProgDir=/home/theaven/scratch/apps/braker
+sbatch $ProgDir/braker_fungi_2.1.9.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+done
+#2487526
+conda deactivate
+#ERROR in file /home/theaven/scratch/apps/braker/braker_2.1.6/BRAKER/scripts/braker.pl at line 6675
+
+
+cp -r /home/theaven/scratch/apps/braker/braker_2.1.6/BRAKER/scripts/* /home/theaven/scratch/apps/braker/augustus/augustus-3.4.0/config/. 
+
+#set --AUGUSTUS_CONFIG_PATH, --DIAMOND_PATH, --PROHINT_PATH
+conda activate braker
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+OutDir=gene_pred/P_leucotricha/THeavenp11_1/braker
+AcceptedHits=$(ls alignment/P_leucotricha/THeavenp11_1/star/RNA/580029/star_aligmentAligned.sortedByCoord.out.bam)
+GeneModelName=580029_softmasked_TPSI_appended_1
+ProgDir=/home/theaven/scratch/apps/braker
+sbatch $ProgDir/braker_fungi_2.1.9.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+done
+#2487527
+conda deactivate
+#cannot find samtools SAMTOOLS_PATH 
+#braker.pl error line 4609
+#apps/conda/envs/braker/config//species/580029_softmasked_TPSI_appended already exists - delete
+#/var/spool/slurm/job2487527/slurm_script: line 40: --AUGUSTUS_CONFIG_PATH=/home/theaven/scratch/apps/braker/augustus/augustus-3.4.0/config/: No such file or directory
+#2487966
+
+#Augustus path hashed out
+conda activate braker
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+OutDir=gene_pred/P_leucotricha/THeavenp11_1/braker2.1.6_1
+AcceptedHits=$(ls alignment/P_leucotricha/THeavenp11_1/star/RNAx2/580029/star_aligmentAligned.sortedByCoord.out.bam)
+GeneModelName=580029_softmasked_TPSI_appended_2
+ProgDir=/home/theaven/scratch/apps/braker
+sbatch $ProgDir/braker_fungi_2.1.9.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+done
+#2489426, 2492839
+conda deactivate
+
+conda activate braker
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+OutDir=gene_pred/P_leucotricha/THeavenp11_1/braker
+AcceptedHits=$(ls alignment/P_leucotricha/THeavenp11_1/star/RNAx2/580029_2/star_aligmentAligned.sortedByCoord.out.bam)
+GeneModelName=580029_softmasked_TPSI_appended_3
+ProgDir=/home/theaven/scratch/apps/braker
+sbatch $ProgDir/braker_fungi_2.1.9.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+done
+#2491360
+conda deactivate
+
+conda activate braker
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+OutDir=gene_pred/P_leucotricha/THeavenp11_1/braker1.9_2
+AcceptedHits=$(ls alignment/P_leucotricha/THeavenp11_1/star/RNAx2/580029_2/star_aligmentAligned.sortedByCoord.out.bam)
+GeneModelName=580029_softmasked_TPSI_appended_4
+ProgDir=/home/theaven/scratch/apps/braker
+sbatch $ProgDir/braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+done
+#2492840 <--works, but why?
+conda deactivate
+
+conda activate braker
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+OutDir=gene_pred/P_leucotricha/THeavenp11_1/braker1.9_2
+AcceptedHits=$(ls alignment/P_leucotricha/THeavenp11_1/star/RNAx2/580029_4/star_aligmentAligned.sortedByCoord.out.bam)
+GeneModelName=580029_softmasked_TPSI_appended_5
+ProgDir=/home/theaven/scratch/apps/braker
+sbatch $ProgDir/braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+done
+#2494401
+conda deactivate
+
+conda activate braker
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+OutDir=gene_pred/P_leucotricha/THeavenp11_1/braker_2.1.9
+AcceptedHits=$(ls alignment/P_leucotricha/THeavenp11_1/star/RNAx2/580029_4/star_aligmentAligned.sortedByCoord.out.bam)
+GeneModelName=580029_softmasked_TPSI_appended_5
+ProgDir=/home/theaven/scratch/apps/braker
+sbatch $ProgDir/braker_fungi_2.1.9.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+done
+#2494402
+conda deactivate
+
+PERL5LIB=/home/heavet/perl5/lib/perl5
+PERL_MB_OPT=--install_base "/home/heavet/perl5"
+PERL_MM_OPT=INSTALL_BASE=/home/heavet/perl5
+PERL_LOCAL_LIB_ROOT=/home/heavet/perl5
+
+PERL5LIB= PERL_LOCAL_LIB_ROOT= cpanm List::Util
+cpan> install Hash::Merge
+cpan> install Parallel::ForkManager
+cpan> 'Logger::Simple'
+
+perl change_path_in_perl_scripts.pl "/usr/bin/env perl"
+perl change_path_in_perl_scripts.pl "/home/theaven/scratch/apps/conda/envs/braker/bin/perl"
+perl change_path_in_perl_scripts.pl "/mnt/shared/scratch/theaven/apps/conda/envs/braker/bin/perl"
+
+tar xvfz gmes_linux_64.tar.gz
+
+mv /home/heavet/miniconda3/envs/braker/config//species/725715_softmasked_TPSI_appended /home/heavet/miniconda3/envs/braker/config//species/725715_softmasked_TPSI_appended_og
+for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+OutDir=123
+AcceptedHits=$(ls alignment/P_aphanis/THeavenDRCT72020_1/star/RNA/725715/star_aligmentAligned.sortedByCoord.out.bam)
+GeneModelName=725715_softmasked_TPSI_appended
+ProgDir=/home/heavet/git_repos/tools/gene_prediction/braker1
+sbatch $ProgDir/gom_braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+done
+#18216
+
+perl /home/theaven/scratch/apps/braker/genemark/gmes_linux_64/gmes_petap.pl --sequence=assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa --ET=/tmp/theaven_2470304/theaven_2470304/braker/580029_softmasked_TPSI_appended/hintsfile.gff --cores=1 --fungus --soft 1000 1>/tmp/theaven_2470304/theaven_2470304/braker/580029_softmasked_TPSI_appended/GeneMark-ET.stdout 2>/tmp/theaven_2470304/theaven_2470304/braker/580029_softmasked_TPSI_appended/errors/GeneMark-ET.stderr
+
+
+--------------------------------------------------------------------------------------
+scp -r /projects/nano_diagnostics/alignment/P_aphanis/THeavenDRCT72020_1/star/RNA/725715/star_aligmentAligned.sortedByCoord.out.bam theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/alignment/P_aphanis/THeavenDRCT72020_1/star/RNA/725715
+
+scp -r /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/filteredmasked/rep_modeling
+
+conda activate braker
+for Assembly in $(ls assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+OutDir=gene_pred/P_aphanis/THeavenDRCT72020_1/braker
+AcceptedHits=$(ls alignment/P_aphanis/THeavenDRCT72020_1/star/RNA/725715/star_aligmentAligned.sortedByCoord.out.bam)
+GeneModelName=725715_softmasked_TPSI_appended
+ProgDir=/home/theaven/scratch/apps/braker
+sbatch $ProgDir/braker_fungi_2.1.9.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+done
+#2488279
+conda deactivate
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# After this point pipeline is work in progress
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
 
 
 
@@ -1875,18 +2277,18 @@ Insert sizes of the RNA seq library were unknown until a draft alignment could b
 ```bash
 #in the abscence of apple mildew rnaseq data P.aphanis read were used
 for assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/masked/transposonPSI/3/man_contigs_unmasked.fa); do
-	for RNAdata in $(ls -d dna_qc/P_aphanis/RNAexp1/infected); do
-	 Freads=$(ls $RNAdata/F/*trim.fq.gz)
-	 Rreads=$(ls $RNAdata/R/*trim.fq.gz)
+    for RNAdata in $(ls -d dna_qc/P_aphanis/RNAexp1/infected); do
+     Freads=$(ls $RNAdata/F/*trim.fq.gz)
+     Rreads=$(ls $RNAdata/R/*trim.fq.gz)
 
-	OutDir=alignment/P_leucotricha/THeavenp11_1/tophat
-	ProgDir=/home/heavet/git_repos/tools/seq_tools/RNAseq
-	ls $Freads
-	ls $Rreads
-	ls $assembly
-	ls $OutDir
-	sbatch $ProgDir/tophat_alignment.sh $assembly $Freads $Rreads $OutDir
-	done
+    OutDir=alignment/P_leucotricha/THeavenp11_1/tophat
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/RNAseq
+    ls $Freads
+    ls $Rreads
+    ls $assembly
+    ls $OutDir
+    sbatch $ProgDir/tophat_alignment.sh $assembly $Freads $Rreads $OutDir
+    done
 done
 echo finished
 #620250
@@ -1969,9 +2371,1105 @@ echo finished
 
 
 
+# /projects has been read only for months and I can't put of work any longer, I will run the pipeline with additional data in the /scratch area
+
+# P.leucotricha genome assembly and annotation pipeline - 2019 sample
+
+Documentation of analysis and commands used with P.leucotricha 2019 sample as part of Nano Diagnistics PhD.
+
+Raw MiSeq sequence data for P.leucotricha was linked from long term storage in /archives to the working folder /scratch/projects/heavet
+```bash
+mkdir -p rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/F
+mkdir -p rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/R
+mkdir -p rawdata/P_leucotricha/THeavenpOGB2019_1/paired/002/F
+mkdir -p rawdata/P_leucotricha/THeavenpOGB2019_1/paired/002/R
+mkdir -p rawdata/P_leucotricha/THeavenpOGB2019_1/paired/003/F
+mkdir -p rawdata/P_leucotricha/THeavenpOGB2019_1/paired/003/R
+mkdir -p rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/1/all
+
+ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLAP19/THMLAP19_FDSW210224377-1r_HTN5VDSXY_L3_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/F/THeavenpOGB2019_1_f.fq.gz
+ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLAP19/THMLAP19_FDSW210224377-1r_HTN5VDSXY_L3_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/R/THeavenpOGB2019_1_r.fq.gz
+ln -s /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THMLAP19/THMLAP19_FDSW210224377-1r_HGHJ7DSX2_L1_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2019_1/paired/002/F/THeavenpOGB2019_2_f.fq.gz
+ln -s /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THMLAP19/THMLAP19_FDSW210224377-1r_HGHJ7DSX2_L1_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2019_1/paired/002/R/THeavenpOGB2019_2_r.fq.gz
+ln -s /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THMLAP19/THMLAP19_FDSW210224377-1r_HKTV5DSX2_L2_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2019_1/paired/003/F/THeavenpOGB2019_3_f.fq.gz
+ln -s /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THMLAP19/THMLAP19_FDSW210224377-1r_HKTV5DSX2_L2_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2019_1/paired/003/R/THeavenpOGB2019_3_r.fq.gz
+
+ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLAP19/THMLAP19_FDSW210224377-1r_HTN5VDSXY_L3_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/1/all/THeavenpOGB2019_1_f.fq.gz
+ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLAP19/THMLAP19_FDSW210224377-1r_HTN5VDSXY_L3_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/1/all/THeavenpOGB2019_1_r.fq.gz
+ln -s /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THMLAP19/THMLAP19_FDSW210224377-1r_HGHJ7DSX2_L1_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/1/all/THeavenpOGB2019_2_f.fq.gz
+ln -s /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THMLAP19/THMLAP19_FDSW210224377-1r_HGHJ7DSX2_L1_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/1/all/THeavenpOGB2019_2_r.fq.gz
+ln -s /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THMLAP19/THMLAP19_FDSW210224377-1r_HKTV5DSX2_L2_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/1/all/THeavenpOGB2019_3_f.fq.gz
+ln -s /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THMLAP19/THMLAP19_FDSW210224377-1r_HKTV5DSX2_L2_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/1/all/THeavenpOGB2019_3_r.fq.gz
+```
+## Data quality control
+The raw sequence reads were subjected to a quality control check using FastQC.
+```bash
+for RawData in $(ls rawdata/P_leucotricha/THeavenpOGB2019_1/*/*/*/*.fq.gz); do
+echo $RawData
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(dirname $RawData)
+Outfile=$(basename -a $RawData)_fastqc
+sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
+done
+#11846
+#11847
+#11848
+#11849
+#11850
+#11851
+```
+Trimming was performed on data to trim adapters from sequences and remove poor quality data. This was done with trimmomatic. The data was visualised following trimming using FastQC.
+```bash
+for ReadDir in $(ls -d rawdata/P_leucotricha/THeavenpOGB2019_1/*/*);
+do
+ Fread=$(ls $ReadDir/F/*.fq.gz)
+ Rread=$(ls $ReadDir/R/*.fq.gz)
+ls $Fread
+ls $Rread
+Adapters=~/git_repos/tools/seq_tools/ncbi_adapters.fa
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(echo $ReadDir|sed 's@rawdata@dna_qc@g')
+Prefix=$(echo $ReadDir|cut -f2,3,4,5,6 -d '/' --output-delimiter '-')
+echo $Prefix
+sbatch $ProgDir/srun_trimmomatic.sh $Fread $Rread $Adapters $OutDir $Prefix
+done
+#11860
+#11861
+#11862
+```
+The data was visualised following trimming using FastQC.
+```bash
+for RawData in $(ls dna_qc/P_leucotricha/THeavenpOGB2019_1/*/*/*/*.fq.gz); do
+echo $RawData
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(dirname $RawData)
+Outfile=$(basename $RawData .fq.gz)_fastqc
+sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
+done
+#11881
+#11882
+#11883
+#11884
+#11885
+#11886
+#11887
+#11888
+#11889
+#11890
+#11891
+#11892
+```
+
+## Alignment
+
+### bowtie2
+A bioconda installation of bowtie was performed
+
+Alignments were made to the available apple genome downloaded from NCBI and our first P leucotricha assembly from 2020.
+```bash
+screen -S bowtie2
+srun -p himem  --mem 350G --pty bash
+conda activate bowtie2
+mkdir -p alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple
+cd alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple
+bowtie2-build /projects/nano_diagnostics/assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta apple_index
+bowtie2 \
+-x apple_index \
+-1 /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/F/P_leucotricha-THeavenpOGB2019_1-paired-001_F_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/002/F/P_leucotricha-THeavenpOGB2019_1-paired-002_F_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/003/F/P_leucotricha-THeavenpOGB2019_1-paired-003_F_trim.fq.gz \
+-2 /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/R/P_leucotricha-THeavenpOGB2019_1-paired-001_R_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/002/R/P_leucotricha-THeavenpOGB2019_1-paired-002_R_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/003/R/P_leucotricha-THeavenpOGB2019_1-paired-003_R_trim.fq.gz \
+-U /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/F/P_leucotricha-THeavenpOGB2019_1-paired-001_F_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/R/P_leucotricha-THeavenpOGB2019_1-paired-001_R_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/002/F/P_leucotricha-THeavenpOGB2019_1-paired-002_F_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/002/R/P_leucotricha-THeavenpOGB2019_1-paired-002_R_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/003/F/P_leucotricha-THeavenpOGB2019_1-paired-003_F_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/003/R/P_leucotricha-THeavenpOGB2019_1-paired-003_R_trim_unpaired.fq.gz \
+--un THeavenpOGB2019_1unalignedapple.sam \
+--un-gz THeavenpOGB2019_1unalignedapple_s.fq.gz \
+--un-conc-gz THeavenpOGB2019_1unalignedapple_fr.fq.gz \
+-S THeavenpOGB2019_1alignedapple.sam 2>&1 | tee -a report.txt
+#7.42% overall alignment
+exit
+exit
+exit
+echo finished
+
+screen -S bowtie3
+srun -p himem  --mem 350G --pty bash
+conda activate bowtie2
+cd /scratch/projects/heavet
+mkdir -p alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/P_leucotricha
+cd alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/P_leucotricha
+bowtie2-build /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa P_leucotricha_index
+bowtie2 \
+-x P_leucotricha_index \
+-1 /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/F/P_leucotricha-THeavenpOGB2019_1-paired-001_F_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/002/F/P_leucotricha-THeavenpOGB2019_1-paired-002_F_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/003/F/P_leucotricha-THeavenpOGB2019_1-paired-003_F_trim.fq.gz \
+-2 /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/R/P_leucotricha-THeavenpOGB2019_1-paired-001_R_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/002/R/P_leucotricha-THeavenpOGB2019_1-paired-002_R_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/003/R/P_leucotricha-THeavenpOGB2019_1-paired-003_R_trim.fq.gz \
+-U /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/F/P_leucotricha-THeavenpOGB2019_1-paired-001_F_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/R/P_leucotricha-THeavenpOGB2019_1-paired-001_R_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/002/F/P_leucotricha-THeavenpOGB2019_1-paired-002_F_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/002/R/P_leucotricha-THeavenpOGB2019_1-paired-002_R_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/003/F/P_leucotricha-THeavenpOGB2019_1-paired-003_F_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/003/R/P_leucotricha-THeavenpOGB2019_1-paired-003_R_trim_unpaired.fq.gz \
+--un THeavenpOGB2019_1unalignedP_leucotricha.sam \
+--un-gz THeavenpOGB2019_1unalignedP_leucotricha_s.fq.gz \
+--un-conc-gz THeavenpOGB2019_1unalignedP_leucotricha_fr.fq.gz \
+-S THeavenpOGB2019_1alignedP_leucotricha.sam 2>&1 | tee -a report.txt
+#28.91% overall alignment
+exit
+exit
+exit
+echo finished
+```
+## Coverage
+Coverage of data was estimated and the quality of sequencing data assessed using KAT comparison to the publoshed P.leucotricha genome.
+```bash
+#Coverage of the sequence data was also estimated via alignmnet with the unpublished low coverage P.aphanis assembly.
+cd alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/P_leucotricha
+samtools view --threads 8 -bS THeavenpOGB2019_1alignedP_leucotricha.sam -o THeavenpOGB2019_1alignedP_leucotricha.bam
+samtools sort --threads 8 -o THeavenpOGB2019_1alignedP_leucotricha_sorted.bam THeavenpOGB2019_1alignedP_leucotricha.bam
+samtools index -@ 8 THeavenpOGB2019_1alignedP_leucotricha_sorted.bam THeavenpOGB2019_1alignedP_leucotricha_sorted.bam.index
+samtools coverage THeavenpOGB2019_1alignedP_leucotricha_sorted.bam -o coverage.txt
+#median depth 298, mean depth 72.5 7933/8921 contigs
+```
+```bash
+screen -S KAT
+srun -p himem --mem 1000G --pty bash
+conda activate kat
+mkdir -p alignment/P_leucotricha/THeavenpOGB2019_1/kat/ganan
+kat comp -m 21 -v -h -t 8 -o alignment/P_leucotricha/THeavenpOGB2019_1/kat/ganan/reads_v_ganan '/scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/F/P_leucotricha-THeavenpOGB2019_1-paired-001_F_trim.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/002/F/P_leucotricha-THeavenpOGB2019_1-paired-002_F_trim.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/003/F/P_leucotricha-THeavenpOGB2019_1-paired-003_F_trim.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/R/P_leucotricha-THeavenpOGB2019_1-paired-001_R_trim.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/002/R/P_leucotricha-THeavenpOGB2019_1-paired-002_R_trim.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/003/R/P_leucotricha-THeavenpOGB2019_1-paired-003_R_trim.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/F/P_leucotricha-THeavenpOGB2019_1-paired-001_F_trim_unpaired.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/R/P_leucotricha-THeavenpOGB2019_1-paired-001_R_trim_unpaired.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/002/F/P_leucotricha-THeavenpOGB2019_1-paired-002_F_trim_unpaired.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/002/R/P_leucotricha-THeavenpOGB2019_1-paired-002_R_trim_unpaired.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/003/F/P_leucotricha-THeavenpOGB2019_1-paired-003_F_trim_unpaired.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/003/R/P_leucotricha-THeavenpOGB2019_1-paired-003_R_trim_unpaired.fq.gz' /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa
+
+kat plot spectra-cn -x 300 -o alignment/P_leucotricha/THeavenpOGB2019_1/kat/ganan/reads_v_gananplot300 alignment/P_leucotricha/THeavenpOGB2019_1/kat/ganan/reads_v_ganan-main.mx
+conda deactivate
+exit
+exit
+echo finished
+
+#Shows ~60x coverage, clear contamination at ~100x coverage
+```
+## Assembly
+Trimmed reads that did not align to the apple genome were taken as raw data for assembly. Reads were renamed for input into SPAdes.
+```bash
+#files were renamed to correct extensions for spades
+mv alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_fr.fq.1.gz alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_fr-f.fq.gz
+mv alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_fr.fq.2.gz alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_fr-r.fq.gz
+mv alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_s.fq.gz alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_s-s.fq.gz
+
+#files were unzipped
+gunzip alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_fr-f.fq.gz
+gunzip alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_fr-r.fq.gz 
+gunzip alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_s-s.fq.gz
+```
+### SPAdes
+A conda installation of SPAdes was performed
+
+Trimmed MiSeq reads were assembled using the program SPAdes, contigs <500bp filtered out with abyss.
+```bash
+conda activate spades
+  for ReadDir in $(ls -d alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    S_Read=$(ls $ReadDir/*s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/apple@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 10
+  done
+#11943
+conda deactivate
+#contigs_min_500bp.fasta is an empty file /scratch/projects/heavet/assembly/metagenome/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/scaffolds.fasta isn't and contigs are clearly longer than 500bp therefore filtering step is messing up.
+
+conda activate quast
+python /projects/oldhome/armita/git_repos/emr_repos/tools/seq_tools/assemblers/abyss/filter_abyss_contigs.py /scratch/projects/heavet/assembly/metagenome/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/scaffolds.fasta 500 > /scratch/projects/heavet/assembly/metagenome/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/filtered_contigs/contigs_min_500bp.fasta
+    for Assembly in $(ls assembly/metagenome/P_leucotricha/*/SPAdes/11943/*/contigs_min_500bp.fasta); do
+        ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+        OutDir=$(dirname $Assembly)
+        echo $Assembly
+        echo $OutDir
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#11993
+conda deactivate
+
+conda activate spades
+  for ReadDir in $(ls -d alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    S_Read=$(ls $ReadDir/*s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/apple@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 20
+  done
+#12093
+conda deactivate
+
+
+conda activate spades
+  for ReadDir in $(ls -d alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    S_Read=$(ls $ReadDir/*s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/apple@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 30
+  done
+#12094
+conda deactivate
+
+conda activate spades
+  for ReadDir in $(ls -d alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    S_Read=$(ls $ReadDir/*s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/apple@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 40
+  done
+#12095
+conda deactivate
+
+conda activate spades
+  for ReadDir in $(ls -d alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    S_Read=$(ls $ReadDir/*s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/apple@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 50
+  done
+#12096
+conda deactivate
+```
+## Filtering
+As our samples were taken from wild outbreaks of powdery mildew we anticipate that they will contain contaminants. The program kraken2 was used to assign taxonomic identity to each assembled contig and thereby identify any contaminants in the sample.
+### Kraken2
+Kraken2 was used to screen the assembly for contaminant contigs.
+```bash
+screen -S kraken
+srun -p short -J kraken2 --mem 350G --pty bash
+conda activate kraken2
+cd /scratch/projects/heavet
+mkdir -p analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt
+kraken2 \
+--db /projects/nano_diagnostics/analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt \
+--output analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/ntoutput11943.txt \
+--unclassified-out analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/ntunclassified-out11943.txt \
+--classified-out analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/ntclassified-out11943.txt \
+--report analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/ntreport11943.txt \
+--use-names \
+/scratch/projects/heavet/assembly/metagenome/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/filtered_contigs/contigs_min_500bp.fasta
+#   37720 sequences classified (64.35%)
+#   20899 sequences unclassified (35.65%)
+conda deactivate
+exit
+exit
+echo finished
+# Shows that there are a large number of contaminants
+
+#A kraken database was created for fungi with our draft podosphaera leucotricha and podosphaera aphanis assemblies included. Unclassified reads were run against this to investigate whether any unclassified reads were captured in the strawberry sample.
+screen -S kraken2
+srun -p himem -J kraken2 --mem 350G --pty bash
+conda activate kraken2
+mkdir analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/fungi4/
+kraken2 \
+--db analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/fungi4 \
+--output analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/fungi4/output11943.txt \
+--unclassified-out analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/fungi4/unclassified-out11943.txt \
+--classified-out analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/fungi4/classified-out11943.txt \
+--report analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/fungi4/report11943.txt \
+--use-names \
+/scratch/projects/heavet/gene_pred_vAG/_sigP/split/analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/ntunclassified-out11943.txt
+#  166 sequences classified (0.79%)
+#  20733 sequences unclassified (99.21%)
+exit
+exit
+echo finished 
+```
+Contaminants were removed
+```bash
+touch analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/contlist.txt
+nano analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/contlist.txt #edited to include all entries in analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/ntreport11943.txt that were not leotiomycete fungi, including unclassified. These were removed from the assembly as contaminants.
+grep -f analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/contlist.txt analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/ntoutput11943.txt > analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/contaminantcontigs11943.txt
+nawk -F"\\t" '{print $2}' analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/contaminantcontigs11943.txt > analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/contaminantcontignames11943.txt
+conda activate seqtk
+seqtk subseq /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/*/SPAdes/11943/filtered_contigs/contigs_min_500bp.fasta analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/contaminantcontignames11943.txt > analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/contaminants11943.fasta
+conda deactivate
+conda activate Biopython
+/home/heavet/git_repos/tools/DIY/filter.py /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/filtered_contigs/contigs_min_500bp.fasta /scratch/projects/heavet/gene_pred_vAG/_sigP/split/analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/contaminantcontignames11943.txt > /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/filtered_contigs/filtered_contigs_min_500bp.fasta
+conda deactivate
+awk '/^>/ { print (NR==1 ? "" : RS) $0; next } { printf "%s", $0 } END { printf RS }' /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/filtered_contigs/filtered_contigs_min_500bp.fasta > /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/filtered_contigs/contigs_min_500bp_filtered.fasta
+wc -l analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/contlist.txt #3709
+wc -l analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/contaminantcontigs11943.txt #50579
+wc -l analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/contaminantcontignames11943.txt #50579
+wc -l analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/nt/contaminants11943.fasta #101158
+wc -l /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/filtered_contigs/filtered_contigs_min_500bp.fasta #896016
+wc -l assembly/metagenome/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/filtered_contigs/contigs_min_500bp.fasta #117238
+wc -l assembly/metagenome/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/filtered_contigs/contigs_min_500bp_filtered.fasta #16080
+#Those newly classified reads were added back into the genome
+cat analysis/P_leucotricha/THeavenpOGB2019_1/kraken2/fungi4/classified-out11943.txt >> assembly/metagenome/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/filtered_contigs/contigs_min_500bp_filtered.fasta
+wc -l assembly/metagenome/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/filtered_contigs/contigs_min_500bp_filtered.fasta #16412
+```
+Quality of filtered assembly was assessed
+```bash
+conda activate quast
+    for Assembly in $(ls /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/filtered_contigs/contigs_min_500bp_filtered.fasta); do
+        ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+        OutDir=$(dirname $Assembly)
+        echo $Assembly
+        echo $OutDir
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#18025
+conda deactivate
+
+screen -S BUSCO7
+srun -p long -J busco  --mem 250G --pty bash
+conda activate BUSCO
+for assembly in $(echo assembly/metagenome/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/filtered_contigs); do
+    Data=$(ls $assembly/contigs_min_500bp_filtered.fasta) 
+    Input=$(dirname $assembly)
+
+    mkdir -p $Input/BUSCO/fungi/1/filtered
+    cd $Input/BUSCO/fungi/1
+    busco -f -m genome -i /scratch/projects/heavet/gene_pred_vAG/_sigP/split/$Data -o filtered -l fungi_odb10
+    cd /scratch/projects/heavet/gene_pred_vAG/_sigP/split
+
+    mkdir -p $Input/BUSCO/ascomycota/1/filtered
+    cd $Input/BUSCO/ascomycota/1
+    busco -f -m genome -i /scratch/projects/heavet/gene_pred_vAG/_sigP/split/$Data -o filtered -l ascomycota_odb10
+    cd /scratch/projects/heavet/gene_pred_vAG/_sigP/split
+
+    mkdir -p $Input/BUSCO/leotiomycetes/1/filtered
+    cd $Input/BUSCO/leotiomycetes/1
+    busco -f -m genome -i /scratch/projects/heavet/gene_pred_vAG/_sigP/split/$Data -o filtered -l leotiomycetes_odb10
+    cd /scratch/projects/heavet/gene_pred_vAG/_sigP/split
+done
+conda deactivate
+exit
+exit
+echo finished
+```
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# P.leucotricha genome assembly and annotation pipeline - 2021 sample
+
+Documentation of analysis and commands used with P.leucotricha 2021 sample as part of Nano Diagnistics PhD.
+
+Raw MiSeq sequence data for P.leucotricha was linked from long term storage in /archives to the working folder /scratch/projects/heavet
+
+```bash
+mkdir -p rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/F
+mkdir -p rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/R
+mkdir -p rawdata/P_leucotricha/THeavenpOGB2021_1/paired/002/F
+mkdir -p rawdata/P_leucotricha/THeavenpOGB2021_1/paired/002/R
+mkdir -p rawdata/P_leucotricha/THeavenpOGB2021_1/paired/003/F
+mkdir -p rawdata/P_leucotricha/THeavenpOGB2021_1/paired/003/R
+mkdir -p rawdata/P_leucotricha/THeavenpOGB2021_1/paired/004/F
+mkdir -p rawdata/P_leucotricha/THeavenpOGB2021_1/paired/004/R
+mkdir -p rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/1/all
+
+ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLAP21/THMLAP21_FDMS210224378-1r_HK5KKDSX2_L1_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/F/THeavenpOGB2021_1_f.fq.gz
+ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLAP21/THMLAP21_FDMS210224378-1r_HK5KKDSX2_L1_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/R/THeavenpOGB2021_1_r.fq.gz
+ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLRA02/THMLRA02_FDMS210224380-1r_HK5KKDSX2_L1_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/002/F/THeavenpOGB2021_2_f.fq.gz
+ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLRA02/THMLRA02_FDMS210224380-1r_HK5KKDSX2_L1_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/002/R/THeavenpOGB2021_2_r.fq.gz
+ln -s /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THMLAP21/THMLAP21_FDMS210224378-1r_HGHJ7DSX2_L2_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/003/F/THeavenpOGB2021_3_f.fq.gz
+ln -s /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THMLAP21/THMLAP21_FDMS210224378-1r_HGHJ7DSX2_L2_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/003/R/THeavenpOGB2021_3_r.fq.gz
+ln -s /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THMLAP21/THMLAP21_FDMS210224378-1r_HKTV5DSX2_L2_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/004/F/THeavenpOGB2021_4_f.fq.gz
+ln -s /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THMLAP21/THMLAP21_FDMS210224378-1r_HKTV5DSX2_L2_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/004/R/THeavenpOGB2021_4_r.fq.gz
+
+ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLAP21/THMLAP21_FDMS210224378-1r_HK5KKDSX2_L1_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_1_f.fq.gz
+ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLAP21/THMLAP21_FDMS210224378-1r_HK5KKDSX2_L1_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_1_r.fq.gz
+ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLRA02/THMLRA02_FDMS210224380-1r_HK5KKDSX2_L1_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_2_f.fq.gz
+ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLRA02/THMLRA02_FDMS210224380-1r_HK5KKDSX2_L1_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_2_r.fq.gz
+ln -s /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THMLAP21/THMLAP21_FDMS210224378-1r_HGHJ7DSX2_L2_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_3_f.fq.gz
+ln -s /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THMLAP21/THMLAP21_FDMS210224378-1r_HGHJ7DSX2_L2_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_3_r.fq.gz
+ln -s /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THMLAP21/THMLAP21_FDMS210224378-1r_HKTV5DSX2_L2_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_4_f.fq.gz
+ln -s /main/temp-archives/2021_eastmall_general/UKI-NIAB-50-fungus-reseq-WOBI_X204SC21063461-Z01-F003/X204SC21063461-Z01-F003/raw_data/THMLAP21/THMLAP21_FDMS210224378-1r_HKTV5DSX2_L2_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_4_r.fq.gz
+```
+## Data quality control
+The raw sequence reads were subjected to a quality control check using FastQC.
+```bash
+for RawData in $(ls rawdata/P_leucotricha/THeavenpOGB2021_1/*/*/*/*.fq.gz); do
+echo $RawData
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(dirname $RawData)
+Outfile=$(basename -a $RawData)_fastqc
+sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
+done
+#11852
+#11853
+#11854
+#11855
+#11856
+#11857
+#11858
+#11859
+```
+Trimming was performed on data to trim adapters from sequences and remove poor quality data. This was done with trimmomatic. The data was visualised following trimming using FastQC.
+```bash
+for ReadDir in $(ls -d rawdata/P_leucotricha/THeavenpOGB2021_1/*/*);
+do
+ Fread=$(ls $ReadDir/F/*.fq.gz)
+ Rread=$(ls $ReadDir/R/*.fq.gz)
+ls $Fread
+ls $Rread
+Adapters=~/git_repos/tools/seq_tools/ncbi_adapters.fa
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(echo $ReadDir|sed 's@rawdata@dna_qc@g')
+Prefix=$(echo $ReadDir|cut -f2,3,4,5,6 -d '/' --output-delimiter '-')
+echo $Prefix
+sbatch $ProgDir/srun_trimmomatic.sh $Fread $Rread $Adapters $OutDir $Prefix
+done
+#11863
+#11864
+#11865
+#11866
+```
+The data was visualised following trimming using FastQC.
+```bash
+for RawData in $(ls dna_qc/P_leucotricha/THeavenpOGB2021_1/*/*/*/*.fq.gz); do
+echo $RawData
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(dirname $RawData)
+Outfile=$(basename $RawData .fq.gz)_fastqc
+sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
+done
+#11893
+#11894
+#11895
+#11896
+#11897
+#11898
+#11899
+#11900
+#11901
+#11902
+#11903
+#11904
+#11905
+#11906
+#11907
+#11908
+```
+
+## Alignment
+
+### bowtie2
+A bioconda installation of bowtie was performed
+
+Alignments were made to the available apple genome downloaded from NCBI and our first P leucotricha assembly from 2020.
+```bash
+screen -S bowtie4
+srun -p himem  --mem 350G --pty bash
+conda activate bowtie2
+cd /scratch/projects/heavet
+mkdir -p alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple
+cd alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple
+bowtie2-build /projects/nano_diagnostics/assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta apple_index
+bowtie2 \
+-x apple_index \
+-1 /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/F/P_leucotricha-THeavenpOGB2021_1-paired-001_F_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/F/P_leucotricha-THeavenpOGB2021_1-paired-002_F_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/003/F/P_leucotricha-THeavenpOGB2021_1-paired-003_F_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/004/F/P_leucotricha-THeavenpOGB2021_1-paired-004_F_trim.fq.gz \
+-2 /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/R/P_leucotricha-THeavenpOGB2021_1-paired-001_R_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/R/P_leucotricha-THeavenpOGB2021_1-paired-002_R_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/003/R/P_leucotricha-THeavenpOGB2021_1-paired-003_R_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/004/R/P_leucotricha-THeavenpOGB2021_1-paired-004_R_trim.fq.gz \
+-U /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/F/P_leucotricha-THeavenpOGB2021_1-paired-001_F_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/R/P_leucotricha-THeavenpOGB2021_1-paired-001_R_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/F/P_leucotricha-THeavenpOGB2021_1-paired-002_F_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/R/P_leucotricha-THeavenpOGB2021_1-paired-002_R_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/003/F/P_leucotricha-THeavenpOGB2021_1-paired-003_F_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/003/R/P_leucotricha-THeavenpOGB2021_1-paired-003_R_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/004/F/P_leucotricha-THeavenpOGB2021_1-paired-004_F_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/004/R/P_leucotricha-THeavenpOGB2021_1-paired-004_R_trim_unpaired.fq.gz \
+--un THeavenpOGB2021_1unalignedapple.sam \
+--un-gz THeavenpOGB2021_1unalignedapple_s.fq.gz \
+--un-conc-gz THeavenpOGB2021_1unalignedapple_fr.fq.gz \
+-S THeavenpOGB2021_1alignedapple.sam 2>&1 | tee -a report.txt
+#31.90% overall alignment rate
+exit
+exit
+exit
+echo finished
+
+screen -S bowtie5
+srun -p himem  --mem 350G --pty bash
+conda activate bowtie2
+cd /scratch/projects/heavet
+mkdir -p alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/P_leucotricha
+cd alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/P_leucotricha
+bowtie2-build /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa P_leucotricha_index
+bowtie2 \
+-x P_leucotricha_index \
+-1 /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/F/P_leucotricha-THeavenpOGB2021_1-paired-001_F_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/F/P_leucotricha-THeavenpOGB2021_1-paired-002_F_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/003/F/P_leucotricha-THeavenpOGB2021_1-paired-003_F_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/004/F/P_leucotricha-THeavenpOGB2021_1-paired-004_F_trim.fq.gz \
+-2 /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/R/P_leucotricha-THeavenpOGB2021_1-paired-001_R_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/R/P_leucotricha-THeavenpOGB2021_1-paired-002_R_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/003/R/P_leucotricha-THeavenpOGB2021_1-paired-003_R_trim.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/004/R/P_leucotricha-THeavenpOGB2021_1-paired-004_R_trim.fq.gz \
+-U /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/F/P_leucotricha-THeavenpOGB2021_1-paired-001_F_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/R/P_leucotricha-THeavenpOGB2021_1-paired-001_R_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/F/P_leucotricha-THeavenpOGB2021_1-paired-002_F_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/R/P_leucotricha-THeavenpOGB2021_1-paired-002_R_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/003/F/P_leucotricha-THeavenpOGB2021_1-paired-003_F_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/003/R/P_leucotricha-THeavenpOGB2021_1-paired-003_R_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/004/F/P_leucotricha-THeavenpOGB2021_1-paired-004_F_trim_unpaired.fq.gz, /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/004/R/P_leucotricha-THeavenpOGB2021_1-paired-004_R_trim_unpaired.fq.gz \
+--un THeavenpOGB2021_1unalignedP_leucotricha.sam \
+--un-gz THeavenpOGB2021_1unalignedP_leucotricha_s.fq.gz \
+--un-conc-gz THeavenpOGB2021_1unalignedP_leucotricha_fr.fq.gz \
+-S THeavenpOGB2021_1alignedP_leucotricha.sam 2>&1 | tee -a report.txt
+#24.08% overall alignment rate
+exit
+exit
+exit
+echo finished
+```
+## Coverage
+Coverage of data was estimated and the quality of sequencing data assessed using KAT comparison to the published P.leucotricha genome.
+```bash
+#Coverage of the sequence data was also estimated via alignmnet with the unpublished low coverage P.aphanis assembly.
+cd alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/P_leucotricha
+samtools view --threads 8 -bS THeavenpOGB2021_1alignedP_leucotricha.sam -o THeavenpOGB2021_1alignedP_leucotricha.bam
+samtools sort --threads 8 -o THeavenpOGB2021_1alignedP_leucotricha_sorted.bam THeavenpOGB2021_1alignedP_leucotricha.bam
+samtools index -@ 8 THeavenpOGB2021_1alignedP_leucotricha_sorted.bam THeavenpOGB2021_1alignedP_leucotricha_sorted.bam.index
+samtools coverage THeavenpOGB2021_1alignedP_leucotricha_sorted.bam -o coverage.txt
+#median depth 272, mean depth x77.5 7945/8922 contigs
+```
+```bash
+screen -S KAT3
+srun -p himem --mem 1000G --pty bash
+conda activate kat
+mkdir -p alignment/P_leucotricha/THeavenpOGB2021_1/kat/ganan
+kat comp -m 21 -v -h -t 8 -o alignment/P_leucotricha/THeavenpOGB2021_1/kat/ganan/reads_v_ganan '/scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/F/P_leucotricha-THeavenpOGB2021_1-paired-001_F_trim.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/F/P_leucotricha-THeavenpOGB2021_1-paired-002_F_trim.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/003/F/P_leucotricha-THeavenpOGB2021_1-paired-003_F_trim.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/004/F/P_leucotricha-THeavenpOGB2021_1-paired-004_F_trim.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/R/P_leucotricha-THeavenpOGB2021_1-paired-001_R_trim.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/R/P_leucotricha-THeavenpOGB2021_1-paired-002_R_trim.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/003/R/P_leucotricha-THeavenpOGB2021_1-paired-003_R_trim.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/004/R/P_leucotricha-THeavenpOGB2021_1-paired-004_R_trim.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/F/P_leucotricha-THeavenpOGB2021_1-paired-001_F_trim_unpaired.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/R/P_leucotricha-THeavenpOGB2021_1-paired-001_R_trim_unpaired.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/F/P_leucotricha-THeavenpOGB2021_1-paired-002_F_trim_unpaired.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/R/P_leucotricha-THeavenpOGB2021_1-paired-002_R_trim_unpaired.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/003/F/P_leucotricha-THeavenpOGB2021_1-paired-003_F_trim_unpaired.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/003/R/P_leucotricha-THeavenpOGB2021_1-paired-003_R_trim_unpaired.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/004/F/P_leucotricha-THeavenpOGB2021_1-paired-004_F_trim_unpaired.fq.gz /scratch/projects/heavet/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/004/R/P_leucotricha-THeavenpOGB2021_1-paired-004_R_trim_unpaired.fq.gz' /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa
+
+kat plot spectra-cn -x 300 -o alignment/P_leucotricha/THeavenpOGB2021_1/kat/ganan/reads_v_gananplot300 alignment/P_leucotricha/THeavenpOGB2021_1/kat/ganan/reads_v_ganan-main.mx
+conda deactivate
+exit
+exit
+echo finished
+#shows no coverage?
+```
+##kraken
+```bash
+mkdir dna_qc/P_leucotricha/THeavenpOGB2021_1/kraken
+cp dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/*/*/*.fq.gz dna_qc/P_leucotricha/THeavenpOGB2021_1/kraken/.
+gunzip dna_qc/P_leucotricha/THeavenpOGB2021_1/kraken/*
+
+screen -S kraken2
+srun -p himem -J kraken2 --mem 350G --pty bash
+conda activate kraken2
+kraken2 \
+--paired \
+--db /projects/nano_diagnostics/analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt \
+--output dna_qc/P_leucotricha/THeavenpOGB2021_1/kraken/ntreport.txt \
+--unclassified-out dna_qc/P_leucotricha/THeavenpOGB2021_1/kraken/ntunclassified#.txt \
+--classified-out dna_qc/P_leucotricha/THeavenpOGB2021_1/kraken/ntclassified#.txt \
+--report dna_qc/P_leucotricha/THeavenpOGB2021_1/kraken/ntreport.txt \
+--use-names \
+dna_qc/P_leucotricha/THeavenpOGB2021_1/kraken/P_leucotricha-THeavenpOGB2021_1-paired-001_F_trim.fq dna_qc/P_leucotricha/THeavenpOGB2021_1/kraken/P_leucotricha-THeavenpOGB2021_1-paired-002_F_trim.fq dna_qc/P_leucotricha/THeavenpOGB2021_1/kraken/P_leucotricha-THeavenpOGB2021_1-paired-003_F_trim.fq dna_qc/P_leucotricha/THeavenpOGB2021_1/kraken/P_leucotricha-THeavenpOGB2021_1-paired-004_F_trim.fq dna_qc/P_leucotricha/THeavenpOGB2021_1/kraken/P_leucotricha-THeavenpOGB2021_1-paired-001_R_trim.fq dna_qc/P_leucotricha/THeavenpOGB2021_1/kraken/P_leucotricha-THeavenpOGB2021_1-paired-002_R_trim.fq dna_qc/P_leucotricha/THeavenpOGB2021_1/kraken/P_leucotricha-THeavenpOGB2021_1-paired-003_R_trim.fq dna_qc/P_leucotricha/THeavenpOGB2021_1/kraken/P_leucotricha-THeavenpOGB2021_1-paired-004_R_trim.fq
+#
+#
+conda deactivate
+exit
+exit
+echo finished
+```
+## Assembly
+Trimmed reads that did not align to the apple genome were taken as raw data for assembly. Reads were renamed for input into SPAdes.
+```bash
+#files were renamed to correct extensions for spades
+mv alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple/THeavenpOGB2021_1unalignedapple_fr.fq.1.gz alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple/THeavenpOGB2021_1unalignedapple_fr-f.fq.gz
+mv alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple/THeavenpOGB2021_1unalignedapple_fr.fq.2.gz alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple/THeavenpOGB2021_1unalignedapple_fr-r.fq.gz
+mv alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple/THeavenpOGB2021_1unalignedapple_s.fq.gz alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple/THeavenpOGB2021_1unalignedapple_s-s.fq.gz
+
+#files were unzipped
+gunzip alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple/THeavenpOGB2021_1unalignedapple_fr-f.fq.gz
+gunzip alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple/THeavenpOGB2021_1unalignedapple_fr-r.fq.gz 
+gunzip alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple/THeavenpOGB2021_1unalignedapple_s-s.fq.gz
+```
+### SPAdes
+A conda installation of SPAdes was performed
+
+Trimmed MiSeq reads were assembled using the program SPAdes, contigs <500bp filtered out with abyss.
+```bash
+conda activate spades
+  for ReadDir in $(ls -d alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    S_Read=$(ls $ReadDir/*s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/apple@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 10
+  done
+#11944
+conda deactivate
+conda activate quast
+python /projects/oldhome/armita/git_repos/emr_repos/tools/seq_tools/assemblers/abyss/filter_abyss_contigs.py /scratch/projects/heavet/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/11944/scaffolds.fasta 500 > /scratch/projects/heavet/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/11944/contigs_min_500bp.fasta
+    for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/11944/contigs_min_500bp.fasta); do
+        ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+        OutDir=$(dirname $Assembly)
+        echo $Assembly
+        echo $OutDir
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#17082
+conda deactivate
+
+conda activate spades
+  for ReadDir in $(ls -d alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    S_Read=$(ls $ReadDir/*s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/apple@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 50
+  done
+#17255
+conda deactivate
+
+conda activate spades
+  for ReadDir in $(ls -d alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    S_Read=$(ls $ReadDir/*s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/apple@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 40
+  done
+#17257
+conda deactivate
+conda activate quast
+python /projects/oldhome/armita/git_repos/emr_repos/tools/seq_tools/assemblers/abyss/filter_abyss_contigs.py /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17257/scaffolds.fasta 500 > /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17257/contigs_min_500bp.fasta
+    for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17257/contigs_min_500bp.fasta); do
+        ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+        OutDir=$(dirname $Assembly)
+        echo $Assembly
+        echo $OutDir
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#18030
+conda deactivate
+
+conda activate spades
+  for ReadDir in $(ls -d alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    S_Read=$(ls $ReadDir/*s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/apple@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 30
+  done
+#17258
+conda deactivate
+conda activate quast
+python /projects/oldhome/armita/git_repos/emr_repos/tools/seq_tools/assemblers/abyss/filter_abyss_contigs.py /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/scaffolds.fasta 500 > /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/contigs_min_500bp.fasta
+    for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/contigs_min_500bp.fasta); do
+        ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+        OutDir=$(dirname $Assembly)
+        echo $Assembly
+        echo $OutDir
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#18029
+conda deactivate
+
+conda activate spades
+  for ReadDir in $(ls -d alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
+    F_Read=$(ls $ReadDir/*f.fq)
+    R_Read=$(ls $ReadDir/*r.fq)
+    S_Read=$(ls $ReadDir/*s.fq)
+    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/apple@SPAdes@g')
+    echo $F_Read
+    echo $R_Read
+    echo $S_Read
+    echo $OutDir
+    sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 20
+  done
+#17256
+conda deactivate
+conda activate quast
+python /projects/oldhome/armita/git_repos/emr_repos/tools/seq_tools/assemblers/abyss/filter_abyss_contigs.py /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17256/scaffolds.fasta 500 > /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17256/contigs_min_500bp.fasta
+    for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17256/contigs_min_500bp.fasta); do
+        ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+        OutDir=$(dirname $Assembly)
+        echo $Assembly
+        echo $OutDir
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#18028
+conda deactivate
+```
+## Filtering
+As our samples were taken from wild outbreaks of powdery mildew we anticipate that they will contain contaminants. The program kraken2 was used to assign taxonomic identity to each assembled contig and thereby identify any contaminants in the sample.
+### Kraken2
+Kraken2 was used to screen the assembly for contaminant contigs.
+```bash
+screen -S kraken
+srun -p himem -J kraken2 --mem 350G --pty bash
+conda activate kraken2
+cd /scratch/projects/heavet/gene_pred_vAG/_sigP/split
+mkdir -p analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt
+kraken2 \
+--db /projects/nano_diagnostics/analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt \
+--output analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/ntoutput17256.txt \
+--unclassified-out analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/ntunclassified-out17256.txt \
+--classified-out analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/ntclassified-out17256.txt \
+--report analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/ntreport17256.txt \
+--use-names \
+/scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17256/contigs_min_500bp.fasta
+#  16221 sequences classified (81.00%)
+#  3805 sequences unclassified (19.00%)
+
+# Shows that there are a large number of contaminants
+
+screen -S kraken
+srun -p short -J kraken2 --mem 350G --pty bash
+conda activate kraken2
+cd /scratch/projects/heavet/gene_pred_vAG/_sigP/split
+mkdir -p analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2
+kraken2 \
+--db /projects/nano_diagnostics/analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt \
+--output analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/ntoutput17258.txt \
+--unclassified-out analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/ntunclassified-out17258.txt \
+--classified-out analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/ntclassified-out17258.txt \
+--report analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/ntreport17258.txt \
+--use-names \
+/scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/contigs_min_500bp.fasta
+#  11075 sequences classified (93.20%)
+#  808 sequences unclassified (6.80%)
+conda deactivate
+exit
+exit
+echo finished
+# Shows that there are a large number of contaminants
+```
+Contaminants were removed
+```bash
+touch analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/contlist.txt
+nano analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/contlist.txt #edited to include all entries in analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/ntreport17256.txt that were not leotiomycete fungi, including unclassified. These were removed from the assembly as contaminants.
+grep -f analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/contlist.txt analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/ntoutput17256.txt > analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/contaminantcontigs17256.txt
+nawk -F"\\t" '{print $2}' analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/contaminantcontigs17256.txt > analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/contaminantcontignames17256.txt
+conda activate seqtk
+seqtk subseq /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17256/contigs_min_500bp.fasta analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/contaminantcontignames17256.txt > analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/contaminants17256.fasta
+conda deactivate
+conda activate Biopython
+/home/heavet/git_repos/tools/DIY/filter.py /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17256/contigs_min_500bp.fasta /scratch/projects/heavet/gene_pred_vAG/_sigP/split/analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/contaminantcontignames17256.txt > /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17256/filtered_contigs/filtered_contigs_min_500bp.fasta
+conda deactivate
+awk '/^>/ { print (NR==1 ? "" : RS) $0; next } { printf "%s", $0 } END { printf RS }' /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17256/filtered_contigs/filtered_contigs_min_500bp.fasta > /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17256/filtered_contigs/contigs_min_500bp_filtered.fasta
+wc -l analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/contlist.txt #1832
+wc -l analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/contaminantcontigs17256.txt #12491
+wc -l analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/contaminantcontignames17256.txt #12491
+wc -l analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/contaminants17256.fasta #24982
+wc -l /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17256/filtered_contigs/filtered_contigs_min_500bp.fasta #86842
+wc -l assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17256/contigs_min_500bp.fasta #40052
+wc -l assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17256/filtered_contigs/contigs_min_500bp_filtered.fasta #15070
+```
+```bash
+touch analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/contlist.txt
+nano analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/contlist.txt #edited to include all entries in analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/ntreport17256.txt that were not leotiomycete fungi, including unclassified. These were removed from the assembly as contaminants.
+grep -f analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/contlist.txt analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/ntoutput17258.txt > analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/contaminantcontigs17258.txt
+nawk -F"\\t" '{print $2}' analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/contaminantcontigs17258.txt > analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/contaminantcontignames17258.txt
+conda activate seqtk
+seqtk subseq /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/contigs_min_500bp.fasta analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/contaminantcontignames17258.txt > analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/contaminants17258.fasta
+conda deactivate
+conda activate Biopython
+/home/heavet/git_repos/tools/DIY/filter.py /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/contigs_min_500bp.fasta /scratch/projects/heavet/gene_pred_vAG/_sigP/split/analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/contaminantcontignames17258.txt > /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/filtered_contigs/filtered_contigs_min_500bp.fasta
+conda deactivate
+awk '/^>/ { print (NR==1 ? "" : RS) $0; next } { printf "%s", $0 } END { printf RS }' /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/filtered_contigs/filtered_contigs_min_500bp.fasta > /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/filtered_contigs/contigs_min_500bp_filtered.fasta
+wc -l analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/contlist.txt #1127
+wc -l analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/contaminantcontigs17258.txt #4558
+wc -l analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/contaminantcontignames17258.txt #4558
+wc -l analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/contaminants17258.fasta #9116
+wc -l /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/filtered_contigs/filtered_contigs_min_500bp.fasta #848584
+wc -l assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/contigs_min_500bp.fasta #23766
+wc -l assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/filtered_contigs/contigs_min_500bp_filtered.fasta #14650
+#Those newly classified reads were added back into the genome
+cat analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/fungi4/classified-out17258.txt >> assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/filtered_contigs/contigs_min_500bp_filtered.fasta
+wc -l assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/filtered_contigs/contigs_min_500bp_filtered.fasta #16412
+```
+
+```bash
+screen -S kraken
+srun -p short -J kraken2 --mem 350G --pty bash
+conda activate kraken2
+cd /scratch/projects/heavet/gene_pred_vAG/_sigP/split
+
+mkdir analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/fungi4/
+kraken2 \
+--db analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/fungi4 \
+--output analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/fungi4/output17256.txt \
+--unclassified-out analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/fungi4/unclassified-out17256.txt \
+--classified-out analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/fungi4/classified-out17256.txt \
+--report analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/fungi4/report17256.txt \
+--use-names \
+/scratch/projects/heavet/gene_pred_vAG/_sigP/split/analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt/ntunclassified-out17256.txt
+#  97 sequences classified (2.55%)
+#  3708 sequences unclassified (97.45%)
+mkdir analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/fungi42/
+kraken2 \
+--db analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/fungi4 \
+--output analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/fungi42/output17258.txt \
+--unclassified-out analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/fungi42/unclassified-out17258.txt \
+--classified-out analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/fungi42/classified-out17258.txt \
+--report analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/fungi42/report17258.txt \
+--use-names \
+/scratch/projects/heavet/gene_pred_vAG/_sigP/split/analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/nt2/ntunclassified-out17258.txt
+#  80 sequences classified (9.90%)
+#  728 sequences unclassified (90.10%)
+
+conda deactivate
+exit
+exit
+echo finished
+```
+```bash
+#Those newly classified reads were added back into the genome
+cat analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/fungi4/classified-out17256.txt >> assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17256/filtered_contigs/contigs_min_500bp_filtered.fasta
+wc -l assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17256/filtered_contigs/contigs_min_500bp_filtered.fasta #15264
+
+#Those newly classified reads were added back into the genome
+cat analysis/P_leucotricha/THeavenpOGB2021_1/kraken2/fungi42/classified-out17258.txt >> assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/filtered_contigs/contigs_min_500bp_filtered.fasta
+wc -l assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/filtered_contigs/contigs_min_500bp_filtered.fasta #14810
+```
+Quality of filtered assembly was assessed
+```bash
+conda activate quast
+    for Assembly in $(ls /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17256/filtered_contigs/contigs_min_500bp_filtered.fasta); do
+        ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+        OutDir=$(dirname $Assembly)
+        echo $Assembly
+        echo $OutDir
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#18092
+    for Assembly in $(ls /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/filtered_contigs/contigs_min_500bp_filtered.fasta); do
+        ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+        OutDir=$(dirname $Assembly)
+        echo $Assembly
+        echo $OutDir
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#18093
+conda deactivate
+
+screen -S BUSCO7
+srun -p himem -J busco  --mem 250G --pty bash
+conda activate BUSCO
+for assembly in $(ls -d assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/1725*/filtered_contigs); do
+    Data=$(ls $assembly/contigs_min_500bp_filtered.fasta) 
+    Input=$(dirname $assembly)
+
+    mkdir -p $Input/BUSCO/fungi/1/filtered
+    cd $Input/BUSCO/fungi/1
+    busco -f -m genome -i /scratch/projects/heavet/gene_pred_vAG/_sigP/split/$Data -o filtered -l fungi_odb10
+    cd /scratch/projects/heavet/gene_pred_vAG/_sigP/split
+
+    mkdir -p $Input/BUSCO/ascomycota/1/filtered
+    cd $Input/BUSCO/ascomycota/1
+    busco -f -m genome -i /scratch/projects/heavet/gene_pred_vAG/_sigP/split/$Data -o filtered -l ascomycota_odb10
+    cd /scratch/projects/heavet/gene_pred_vAG/_sigP/split
+
+    mkdir -p $Input/BUSCO/leotiomycetes/1/filtered
+    cd $Input/BUSCO/leotiomycetes/1
+    busco -f -m genome -i /scratch/projects/heavet/gene_pred_vAG/_sigP/split/$Data -o filtered -l leotiomycetes_odb10
+    cd /scratch/projects/heavet/gene_pred_vAG/_sigP/split
+done
+conda deactivate
+exit
+exit
+echo finished
+```
+Based on these quality reading we judge the assembly with 30 cuttoff to be of the highest quality although 20 and 30 are very close.
+
+## NCBI submission
+Following filtering our assembly was submitted to NCBI with a request that they run it through their own contamination detection pipelines. The returned report was used to correct the assembly to NCBI standards. Contigs were renamed in accordance with ncbi recomendations.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# P.leucotricha genome assembly and annotation pipeline - 2021 sample - #2
+
+
+Documentation of analysis and commands used with P.leucotricha 2021 sample as part of Nano Diagnistics PhD.
+
+Raw MiSeq sequence data for P.leucotricha was linked from long term storage in /archives to the working folder /scratch/projects/heavet
+
+```bash
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/F
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/R
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/002/F
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/002/R
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/003/F
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/003/R
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/1/all
+
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLAP21DIL/THMLAP21DIL_ESFP220001654-1a_H223VDSX3_L4_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/F/THeavenpOGB2021_1_f.fq.gz
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLAP21DIL/THMLAP21DIL_ESFP220001654-1a_H223VDSX3_L4_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/R/THeavenpOGB2021_1_r.fq.gz
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLAP21SPIN/THMLAP21SPIN_ESFP220001656-1b_H25W7DSX3_L1_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/002/F/THeavenpOGB2021_2_f.fq.gz
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLAP21SPIN/THMLAP21SPIN_ESFP220001656-1b_H25W7DSX3_L1_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/002/R/THeavenpOGB2021_2_r.fq.gz
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLAP21SPUN/THMLAP21SPUN_ESFP220001655-1b_H2C32DSX3_L1_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/003/F/THeavenpOGB2021_3_f.fq.gz
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLAP21SPUN/THMLAP21SPUN_ESFP220001655-1b_H2C32DSX3_L1_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/003/R/THeavenpOGB2021_3_r.fq.gz
+
+
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLAP21DIL/THMLAP21DIL_ESFP220001654-1a_H223VDSX3_L4_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_1_f.fq.gz
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLAP21DIL/THMLAP21DIL_ESFP220001654-1a_H223VDSX3_L4_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_1_r.fq.gz
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLAP21SPIN/THMLAP21SPIN_ESFP220001656-1b_H25W7DSX3_L1_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_2_f.fq.gz
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLAP21SPIN/THMLAP21SPIN_ESFP220001656-1b_H25W7DSX3_L1_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_2_r.fq.gz
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLAP21SPUN/THMLAP21SPUN_ESFP220001655-1b_H2C32DSX3_L1_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_3_f.fq.gz
+ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLAP21SPUN/THMLAP21SPUN_ESFP220001655-1b_H2C32DSX3_L1_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_3_r.fq.gz
+```
+## Data quality control
+The raw sequence reads were subjected to a quality control check using FastQC.
+```bash
+for RawData in $(ls rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/*/*/*/*.fq.gz); do
+echo $RawData
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(dirname $RawData)
+Outfile=$(basename -a $RawData)_fastqc
+sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
+done
+#16849
+#16850
+#16860
+#16861
+#16858
+#16859
+```
+Trimming was performed on data to trim adapters from sequences and remove poor quality data. This was done with trimmomatic. The data was visualised following trimming using FastQC.
+```bash
+for ReadDir in $(ls -d rawdata/P_aphanis/MiSeq/THeavenpOGB2021_1/*/*3);
+do
+ Fread=$(ls $ReadDir/F/*.fq.gz)
+ Rread=$(ls $ReadDir/R/*.fq.gz)
+ls $Fread
+ls $Rread
+Adapters=~/git_repos/tools/seq_tools/ncbi_adapters.fa
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(echo $ReadDir|sed 's@rawdata@dna_qc@g')
+Prefix=$(echo $ReadDir|cut -f2,3,4,5,6 -d '/' --output-delimiter '-')
+echo $Prefix
+sbatch $ProgDir/srun_trimmomatic.sh $Fread $Rread $Adapters $OutDir $Prefix
+done
+#16855
+#16862
+#16863
+```
+The data was visualised following trimming using FastQC.
+```bash
+for RawData in $(ls dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/*/*/*/*.fq.gz); do
+echo $RawData
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(dirname $RawData)
+Outfile=$(basename -a $RawData)_fastqc
+sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
+done
+#16870-16881
+```
+## Alignment
+
+### bowtie2
+A bioconda installation of bowtie was performed
+
+Alignments were made to the available apple genome downloaded from NCBI and our first P leucotricha assembly from 2020.
+```bash
+screen -S bowtie3
+srun -p himem  --mem 350G --pty bash
+conda activate bowtie2
+mkdir -p alignment/P_leucotricha/THeavenpOGB2021_2/bowtie2/apple
+cd alignment/P_leucotricha/THeavenpOGB2021_2/bowtie2/apple
+bowtie2-build /projects/nano_diagnostics/assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta apple_index
+bowtie2 \
+-x apple_index \
+-1 /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-001_F_trim.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/002/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-002_F_trim.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/003/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-003_F_trim.fq.gz \
+-2 /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-001_R_trim.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/002/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-002_R_trim.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/003/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-003_R_trim.fq.gz \
+-U /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-001_F_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-001_R_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/002/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-002_F_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/002/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-002_R_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/003/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-003_F_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/003/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-003_R_trim_unpaired.fq.gz \
+--un THeavenpOGB2021_2unalignedapple.sam \
+--un-gz THeavenpOGB2021_2unalignedapple_s.fq.gz \
+--un-conc-gz THeavenpOGB2021_1unalignedapple_fr.fq.gz \
+-S THeavenpOGB2021_2alignedapple.sam 2>&1 | tee -a report.txt
+#31.02% overall alignment rate
+conda deactivate
+exit
+exit
+echo finished
+
+screen -S bowtie4
+srun -p himem  --mem 350G --pty bash
+conda activate bowtie2
+mkdir -p alignment/P_leucotricha/THeavenpOGB2021_2/bowtie2/P_leucotricha
+cd alignment/P_leucotricha/THeavenpOGB2021_2/bowtie2/P_leucotricha
+bowtie2-build /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa P_leucotricha_index
+bowtie2 \
+-x P_leucotricha_index \
+-1 /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-001_F_trim.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/002/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-002_F_trim.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/003/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-003_F_trim.fq.gz \
+-2 /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-001_R_trim.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/002/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-002_R_trim.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/003/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-003_R_trim.fq.gz \
+-U /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-001_F_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-001_R_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/002/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-002_F_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/002/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-002_R_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/003/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-003_F_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/003/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-003_R_trim_unpaired.fq.gz \
+--un THeavenpOGB2021_2unalignedP_leucotricha.sam \
+--un-gz THeavenpOGB2021_2unalignedP_leucotricha_s.fq.gz \
+--un-conc-gz THeavenpOGB2021_2unalignedP_leucotricha_fr.fq.gz \
+-S THeavenpOGB2021_2alignedP_leucotricha.sam 2>&1 | tee -a report.txt
+#23.90% overall alignment rate
+conda deactivate
+exit
+exit
+echo finished
+```
+## Coverage
+Coverage of data was estimated and the quality of sequencing data assessed using KAT comparison to our P.aphanis genome.
+```bash
+screen -S KAT
+srun -p himem --mem 1000G --pty bash
+conda activate kat
+mkdir -p alignment/P_leucotricha/THeavenpOGB2021_2/kat/ganan
+kat comp -m 21 -v -h -t 8 -o alignment/P_leucotricha/THeavenpOGB2021_2/kat/ganan/reads_v_ganan '/scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-001_F_trim.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/002/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-002_F_trim.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/003/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-003_F_trim.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-001_R_trim.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/002/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-002_R_trim.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/003/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-003_R_trim.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-001_F_trim_unpaired.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/001/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-001_R_trim_unpaired.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/002/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-002_F_trim_unpaired.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/002/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-002_R_trim_unpaired.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/003/F/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-003_F_trim_unpaired.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenpOGB2021_1/paired/003/R/P_aphanis-MiSeq-THeavenpOGB2021_1-paired-003_R_trim_unpaired.fq.gz' /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa
+
+kat plot spectra-cn -x 300 -o alignment/P_leucotricha/THeavenpOGB2021_2/kat/ganan/reads_v_gananplot300 alignment/P_leucotricha/THeavenpOGB2021_2/kat/ganan/reads_v_ganan-main.mx
+conda deactivate
+exit
+exit
+echo finished
+```
 
 
 
@@ -2077,261 +3575,413 @@ conda activate spades
   done
 ```
 
-# Further P.leucotricha genome assembly and annotation pipeline
 
-Documentation of analysis and commands used with P.leucotricha secondary samples as part of Nano Diagnistics PhD.
 
-Raw MiSeq sequence data for P.leucotricha was linked from long term storage in /archives to the working folder /projects/nano_diagnostics/
+
+
+
+
+
+
+
+
+
+
+
+
+file:///C:/Users/lapto/Downloads/S5%20Comparative%20genomics.pdf
+
+https://bioinformaticsworkbook.org/phylogenetics/reconstructing-species-phylogenetic-tree-with-busco-genes-using-maximum-liklihood-method.html#gsc.tab=0
+
+# Podosphaera comparative genomics
+
+Documentation of analysis and commands used in comparative genomics between mildew species as part of Nano Diagnostics PhD.
+
+## Collecting data
+
+Our powdery mildew genomes:
 ```bash
-#2019 sample:
-mkdir -p rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/F
-mkdir -p rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/R
-mkdir -p rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/1/all
-
-ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLAP19/THMLAP19_FDSW210224377-1r_HTN5VDSXY_L3_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/F/THeavenpOGB2019_1_f.fq.gz
-ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLAP19/THMLAP19_FDSW210224377-1r_HTN5VDSXY_L3_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/R/THeavenpOGB2019_1_r.fq.gz
-
-ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLAP19/THMLAP19_FDSW210224377-1r_HTN5VDSXY_L3_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/1/all/THeavenpOGB2019_1_f.fq.gz
-ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLAP19/THMLAP19_FDSW210224377-1r_HTN5VDSXY_L3_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2019_1/paired/001/1/all/THeavenpOGB2019_1_r.fq.gz
-
-#2021 sample:
-mkdir -p rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/F
-mkdir -p rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/R
-mkdir -p rawdata/P_leucotricha/THeavenpOGB2021_1/paired/002/F
-mkdir -p rawdata/P_leucotricha/THeavenpOGB2021_1/paired/002/R
-mkdir -p rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/1/all
-
-ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLAP21/THMLAP21_FDMS210224378-1r_HK5KKDSX2_L1_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/F/THeavenpOGB2021_1_f.fq.gz
-ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLAP21/THMLAP21_FDMS210224378-1r_HK5KKDSX2_L1_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/R/THeavenpOGB2021_1_r.fq.gz
-ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLRA02/THMLRA02_FDMS210224380-1r_HK5KKDSX2_L1_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/002/F/THeavenpOGB2021_2_f.fq.gz
-ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLRA02/THMLRA02_FDMS210224380-1r_HK5KKDSX2_L1_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/002/R/THeavenpOGB2021_2_r.fq.gz
-
-ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLAP21/THMLAP21_FDMS210224378-1r_HK5KKDSX2_L1_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_1_f.fq.gz
-ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLAP21/THMLAP21_FDMS210224378-1r_HK5KKDSX2_L1_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_1_r.fq.gz
-ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLRA02/THMLRA02_FDMS210224380-1r_HK5KKDSX2_L1_1.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_2_f.fq.gz
-ln -s /archives/2021_eastmall_general/thomas_heaven_X204SC21063461-Z01-F001/X204SC21063461-Z01-F001/raw_data/THMLRA02/THMLRA02_FDMS210224380-1r_HK5KKDSX2_L1_2.fq.gz rawdata/P_leucotricha/THeavenpOGB2021_1/paired/001/1/all/THeavenpOGB2021_2_r.fq.gz
+mkdir -p /data/scratch/heavet/assembly/genome/Podosphaera/aphanis
+cp /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/contigs_min_500bp_renamed2.fasta /data/scratch/heavet/assembly/genome/Podosphaera/aphanis/THeavenDRCT72020_1.fna
+cp /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenSCOTT2020_1/SPAdes/773223/filtered_contigs/contigs_min_500bp_filtered.fasta /data/scratch/heavet/assembly/genome/Podosphaera/aphanis/THeavenSCOTT2020_1.fna
+cp /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/contigs_min_500bp_renamed.fasta /data/scratch/heavet/assembly/genome/Podosphaera/leucotricha/THeavenp11_1.fna
+cp /data/scratch/heavet/assembly/genome/Podosphaera/leucotricha/JAATOF01.1.fsa_nt /data/scratch/heavet/assembly/genome/Podosphaera/leucotricha/JAATOF01.fna
 ```
-## Data quality control
-The raw sequence reads were subjected to a quality control check using FastQC.
-```bash
-for RawData in $(ls rawdata/P_leucotricha/THeavenpOGB2019_1/*/*/*/*.fq.gz); do
-echo $RawData
-ProgDir=~/git_repos/tools/seq_tools/dna_qc
-OutDir=$(dirname $RawData)
-Outfile=$(basename -a $RawData)_fastqc
-sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
-done
-#788781
-#788782
 
-for RawData in $(ls rawdata/P_leucotricha/THeavenpOGB2021_1/*/*/*/*.fq.gz); do
-echo $RawData
-ProgDir=~/git_repos/tools/seq_tools/dna_qc
-OutDir=$(dirname $RawData)
-Outfile=$(basename -a $RawData)_fastqc
-sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
-done
-#788783
-#788784
-#788785
-#788786
+Downloaded powdery mildew genomes:
+```bash
+#wheat powdery  mildew genome
+wget -P assembly/genome/NCBI/erysiphales/B_graminis https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/900/237/765/GCA_900237765.1_BghRACE1_v1/GCA_900237765.1_BghRACE1_v1_genomic.fna.gz 
+gunzip assembly/genome/NCBI/erysiphales/B_graminis/GCA_900237765.1_BghRACE1_v1_genomic.fna.gz
+
+#grape powdery mildew genome
+wget -P assembly/genome/NCBI/erysiphales/E_necator https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/798/715/GCA_000798715.1_ASM79871v1/GCA_000798715.1_ASM79871v1_genomic.fna.gz 
+gunzip assembly/genome/NCBI/erysiphales/E_necator/GCA_000798715.1_ASM79871v1_genomic.fna.gz
+
+
+wget -P /data/scratch/heavet/assembly/genome/Erysiphe/pisi https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/208/805/GCA_000208805.1_ASM20880v1/GCA_000208805.1_ASM20880v1_genomic.fna.gz 
+wget -P /data/scratch/heavet/assembly/genome/Erysiphe/pisi https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/214/055/GCA_000214055.1_ASM21405v1/GCA_000214055.1_ASM21405v1_genomic.fna.gz 
+gunzip /data/scratch/heavet/assembly/genome/Erysiphe/pisi/*.gz
+
+wget -P /data/scratch/heavet/assembly/genome/Erysiphe/necator https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/798/715/GCA_000798715.1_ASM79871v1/GCA_000798715.1_ASM79871v1_genomic.fna.gz 
+wget -P /data/scratch/heavet/assembly/genome/Erysiphe/necator https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/016/906/895/GCA_016906895.1_ASM1690689v1/GCA_016906895.1_ASM1690689v1_genomic.fna.gz  
+wget -P /data/scratch/heavet/assembly/genome/Erysiphe/necator https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/798/795/GCA_000798795.1_ASM79879v1/GCA_000798795.1_ASM79879v1_genomic.fna.gz   
+wget -P /data/scratch/heavet/assembly/genome/Erysiphe/necator https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/798/775/GCA_000798775.1_ASM79877v1/GCA_000798775.1_ASM79877v1_genomic.fna.gz 
+wget -P /data/scratch/heavet/assembly/genome/Erysiphe/necator https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/798/755/GCA_000798755.1_ASM79875v1/GCA_000798755.1_ASM79875v1_genomic.fna.gz  
+wget -P /data/scratch/heavet/assembly/genome/Erysiphe/necator https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/798/735/GCA_000798735.1_ASM79873v1/GCA_000798735.1_ASM79873v1_genomic.fna.gz 
+gunzip /data/scratch/heavet/assembly/genome/Erysiphe/necator/*.gz
+
+wget -P /data/scratch/heavet/assembly/genome/Erysiphe/pulchra https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/918/395/GCA_002918395.1_ASM291839v1/GCA_002918395.1_ASM291839v1_genomic.fna.gz 
+gunzip /data/scratch/heavet/assembly/genome/Erysiphe/pulchra/*.gz
+
+wget -P /data/scratch/heavet/assembly/genome/Golovinomyces/cichoracearum https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/003/611/235/GCA_003611235.1_ASM361123v1/GCA_003611235.1_ASM361123v1_genomic.fna.gz
+wget -P /data/scratch/heavet/assembly/genome/Golovinomyces/cichoracearum https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/003/611/195/GCA_003611195.1_ASM361119v1/GCA_003611195.1_ASM361119v1_genomic.fna.gz 
+wget -P /data/scratch/heavet/assembly/genome/Golovinomyces/cichoracearum https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/003/611/215/GCA_003611215.1_ASM361121v1/GCA_003611215.1_ASM361121v1_genomic.fna.gz
+gunzip /data/scratch/heavet/assembly/genome/Golovinomyces/cichoracearum/*.gz
+
+wget -P /data/scratch/heavet/assembly/genome/Golovinomyces/magnicellulatus https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/006/912/115/GCA_006912115.1_ASM691211v1/GCA_006912115.1_ASM691211v1_genomic.fna.gz 
+gunzip /data/scratch/heavet/assembly/genome/Golovinomyces/magnicellulatus/*.gz
+
+wget -P /data/scratch/heavet/assembly/genome/Oidium/neolycopersicim https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/003/610/855/GCA_003610855.1_ASM361085v1/GCA_003610855.1_ASM361085v1_genomic.fna.gz   
+gunzip /data/scratch/heavet/assembly/genome/Oidium/neolycopersicim/*.gz
+
+wget -P /data/scratch/heavet/assembly/genome/Oidium/heveae https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/003/957/845/GCA_003957845.1_ASM395784v1/GCA_003957845.1_ASM395784v1_genomic.fna.gz 
+gunzip /data/scratch/heavet/assembly/genome/Oidium/heveae/*.gz
+
+wget -P /data/scratch/heavet/assembly/genome/Blumeria/graminis https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/900/237/765/GCA_900237765.1_BghRACE1_v1/GCA_900237765.1_BghRACE1_v1_genomic.fna.gz
+wget -P /data/scratch/heavet/assembly/genome/Blumeria/graminis https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/900/239/735/GCA_900239735.1_BGH_DH14_v4/GCA_900239735.1_BGH_DH14_v4_genomic.fna.gz 
+wget -P /data/scratch/heavet/assembly/genome/Blumeria/graminis https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/900/638/725/GCA_900638725.1_BGH_K1_v2/GCA_900638725.1_BGH_K1_v2_genomic.fna.gz 
+wget -P /data/scratch/heavet/assembly/genome/Blumeria/graminis https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/418/435/GCA_000418435.1_Bgt_454_newbler_assembly/GCA_000418435.1_Bgt_454_newbler_assembly_genomic.fna.gz  
+wget -P /data/scratch/heavet/assembly/genome/Blumeria/graminis https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/401/675/GCA_000401675.1_A6_trimmed_clc_assembly_flt.fa/GCA_000401675.1_A6_trimmed_clc_assembly_flt.fa_genomic.fna.gz  
+wget -P /data/scratch/heavet/assembly/genome/Blumeria/graminis https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/441/875/GCA_000441875.1_Bgt_70_1/GCA_000441875.1_Bgt_70_1_genomic.fna.gz 
+wget -P /data/scratch/heavet/assembly/genome/Blumeria/graminis https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/417/865/GCA_000417865.1_Bgt_94202_1/GCA_000417865.1_Bgt_94202_1_genomic.fna.gz 
+wget -P /data/scratch/heavet/assembly/genome/Blumeria/graminis https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/417/025/GCA_000417025.1_ASM41702v1/GCA_000417025.1_ASM41702v1_genomic.fna.gz  
+wget -P /data/scratch/heavet/assembly/genome/Blumeria/graminis https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/900/519/115/GCA_900519115.1_Bgt_genome_v3.16/GCA_900519115.1_Bgt_genome_v3.16_genomic.fna.gz  
+wget -P /data/scratch/heavet/assembly/genome/Blumeria/graminis https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/905/067/625/GCA_905067625.1_Bgtriticale_THUN12_genome_v1_2/GCA_905067625.1_Bgtriticale_THUN12_genome_v1_2_genomic.fna.gz 
+gunzip /data/scratch/heavet/assembly/genome/Blumeria/graminis/*.gz
+
+wget -P /data/scratch/heavet/assembly/genome/Podosphaera/xanthii https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/010/015/925/GCA_010015925.1_POXAN_niab_assembly/GCA_010015925.1_POXAN_niab_assembly_genomic.fna.gz
+wget -P /data/scratch/heavet/assembly/genome/Podosphaera/xanthii https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/014/884/795/GCA_014884795.1_ASM1488479v1/GCA_014884795.1_ASM1488479v1_genomic.fna.gz
+gunzip /data/scratch/heavet/assembly/genome/Erysiphe/xanthii/*.gz
+
+wget -P /data/scratch/heavet/assembly/genome/Podosphaera/cerasi https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/018/398/735/GCA_018398735.1_WSU_PS_Poc_1.0/GCA_018398735.1_WSU_PS_Poc_1.0_genomic.fna.gz 
+gunzip /data/scratch/heavet/assembly/genome/Podosphaera/cerasi/*.gz
+
+wget -P /data/scratch/heavet/assembly/genome/Podosphaera/leucotricha https://sra-download.ncbi.nlm.nih.gov/traces/wgs01/wgs_aux/JA/AT/OF/JAATOF01/JAATOF01.1.fsa_nt.gz
+gunzip /data/scratch/heavet/assembly/genome/Podosphaera/leucotricha/*.gz
 ```
-Trimming was performed on data to trim adapters from sequences and remove poor quality data. This was done with trimmomatic. The data was visualised following trimming using FastQC.
+Download host genomes:
 ```bash
-for ReadDir in $(ls -d rawdata/P_leucotricha/THeavenpOGB2019_1/*/*);
-do
- Fread=$(ls $ReadDir/F/*.fq.gz)
- Rread=$(ls $ReadDir/R/*.fq.gz)
-ls $Fread
-ls $Rread
-Adapters=~/git_repos/tools/seq_tools/ncbi_adapters.fa
-ProgDir=~/git_repos/tools/seq_tools/dna_qc
-OutDir=$(echo $ReadDir|sed 's@rawdata@dna_qc@g')
-Prefix=$(echo $ReadDir|cut -f2,3,4,5,6 -d '/' --output-delimiter '-')
-echo $Prefix
-sbatch $ProgDir/srun_trimmomatic.sh $Fread $Rread $Adapters $OutDir $Prefix
-done
-#788787
+#Apple
+cp /projects/oldhome/groups/harrisonlab/project_files/root_architecture/Apple_genome/GDDH13_1-1_formatted.fasta /data/scratch/heavet/assembly/genome/malus/domestica/GDDH13_1-1_formatted.fna
 
-for ReadDir in $(ls -d rawdata/P_leucotricha/THeavenpOGB2021_1/*/*);
-do
- Fread=$(ls $ReadDir/F/*.fq.gz)
- Rread=$(ls $ReadDir/R/*.fq.gz)
-ls $Fread
-ls $Rread
-Adapters=~/git_repos/tools/seq_tools/ncbi_adapters.fa
-ProgDir=~/git_repos/tools/seq_tools/dna_qc
-OutDir=$(echo $ReadDir|sed 's@rawdata@dna_qc@g')
-Prefix=$(echo $ReadDir|cut -f2,3,4,5,6 -d '/' --output-delimiter '-')
-echo $Prefix
-sbatch $ProgDir/srun_trimmomatic.sh $Fread $Rread $Adapters $OutDir $Prefix
-done
-#788788
-#788790
+#Strawberry
+cp /projects/nano_diagnostics/rawdata/F_ananassa/camarosa/genome/F_ana_Camarosa_6-28-17.fasta /data/scratch/heavet/assembly/genome/fragaria/ananassa/F_ana_Camarosa_6-28-17.fna
+
+#Raspberry
+cp /data/scratch/heavet/assembly/genome/rubus/idaeus/AnitraCuratedED_HiC.fasta /data/scratch/heavet/assembly/genome/rubus/idaeus/AnitraCuratedED_HiC.fna
+
+wget -P /data/scratch/heavet/assembly/genome/rubus/idaeus/media-5.fna.gz https://www.biorxiv.org/content/biorxiv/early/2019/02/18/546135/DC5/embed/media-5.gz?download=true
+gunzip /data/scratch/heavet/assembly/genome/rubus/idaeus/*.gz
+
+wget -P /data/scratch/heavet/assembly/genome/rubus/occidentalis/Rubus_occ_V3_10-12-17.fna.gz https://www.rosaceae.org/rosaceae_downloads/Rubus_occidentalis/Rubus_occidentalis-genome.v3.0/assembly/Rubus_occ_V3_10-12-17.fasta.gz
+gunzip /data/scratch/heavet/assembly/genome/rubus/occidentalis/*.gz
+
+#Barley GCA_904849725.1
+wget -P /data/scratch/heavet/assembly/genome/hordeum/vulgare/. https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/904/849/725/GCA_904849725.1_MorexV3_pseudomolecules_assembly/GCA_904849725.1_MorexV3_pseudomolecules_assembly_genomic.fna.gz  
+gunzip /data/scratch/heavet/assembly/genome/hordeum/vulgare/*.gz
+
+#Rye GCA_016097815.1 - powdery mildew raw data available but not assembly :( https://www.ncbi.nlm.nih.gov/sra/?term=SRP062198+secalis - menardo
+wget -P /data/scratch/heavet/assembly/genome/secale/cereale/. https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/016/097/815/GCA_016097815.1_HAU_Weining_v1.0/GCA_016097815.1_HAU_Weining_v1.0_genomic.fna.gz
+gunzip /data/scratch/heavet/assembly/genome/secale/cereale/*.gz
+
+#Triticale - no genome available
+
+#Wheat GCA_018294505.1
+wget -P /data/scratch/heavet/assembly/genome/triticum/aestivum/. https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/018/294/505/GCA_018294505.1_IWGSC_CS_RefSeq_v2.1/GCA_018294505.1_IWGSC_CS_RefSeq_v2.1_genomic.fna.gz  
+gunzip /data/scratch/heavet/assembly/genome/triticum/aestivum/*.gz
+
+#Grapevine  GCA_000003745.2
+wget -P /data/scratch/heavet/assembly/genome/vitus/vinifera/. https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/003/745/GCA_000003745.2_12X/GCA_000003745.2_12X_genomic.fna.gz   
+gunzip /data/scratch/heavet/assembly/genome/vitus/vinifera/*.gz
+
+#Pea    GCA_900700895.2
+wget -P /data/scratch/heavet/assembly/genome/pisum/sativum/. https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/900/700/895/GCA_900700895.2_Pisum_sativum_v1a/GCA_900700895.2_Pisum_sativum_v1a_genomic.fna.gz 
+gunzip /data/scratch/heavet/assembly/genome/pisum/sativum/*.gz
+
+#Flowering Dogwood - no genome available
+
+#Sow thistle - no genome available
+
+#Tobacco    GCA_000715135.1
+wget -P /data/scratch/heavet/assembly/genome/nicotiana/tabacum/. https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/715/135/GCA_000715135.1_Ntab-TN90/GCA_000715135.1_Ntab-TN90_genomic.fna.gz
+gunzip /data/scratch/heavet/assembly/genome/nicotiana/tabacum/*.gz
+
+#Arabidopsis    GCA_000001735.2
+wget -P /data/scratch/heavet/assembly/genome/Arabidopsis/thaliana/. https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/735/GCA_000001735.2_TAIR10.1/GCA_000001735.2_TAIR10.1_genomic.fna.gz 
+gunzip /data/scratch/heavet/assembly/genome/Arabidopsis/thaliana/*.gz
+
+#Phlox paniculata - no genome available
+
+#Rubber tree    GCA_001654055.1
+wget -P /data/scratch/heavet/assembly/genome/hevea/brasiliensis/. https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/001/654/055/GCA_001654055.1_ASM165405v1/GCA_001654055.1_ASM165405v1_genomic.fna.gz 
+gunzip /data/scratch/heavet/assembly/genome/hevea/brasiliensis/*.gz
+
+#Tomato     GCA_000188115.3
+wget -P /data/scratch/heavet/assembly/genome/solanum/lycopersicum/. https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/188/115/GCA_000188115.3_SL3.0/GCA_000188115.3_SL3.0_genomic.fna.gz 
+gunzip /data/scratch/heavet/assembly/genome/solanum/lycopersicum/*.gz
+
+#Sweet cherry   GCA_002207925.1
+wget -P /data/scratch/heavet/assembly/genome/prunus/avium/. https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/207/925/GCA_002207925.1_PAV_r1.0/GCA_002207925.1_PAV_r1.0_genomic.fna.gz 
+gunzip /data/scratch/heavet/assembly/genome/prunus/avium/*.gz
+
+#Cucumber   GCA_000004075.3
+wget -P /data/scratch/heavet/assembly/genome/cucumis/sativus/. https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/004/075/GCA_000004075.3_Cucumber_9930_V3/GCA_000004075.3_Cucumber_9930_V3_genomic.fna.gz 
+gunzip /data/scratch/heavet/assembly/genome/cucumis/sativus/*.gz
+
+#Courgette  GCA_002806865.2
+wget -P /data/scratch/heavet/assembly/genome/cucurbita/pepo/. https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/806/865/GCA_002806865.2_ASM280686v2/GCA_002806865.2_ASM280686v2_genomic.fna.gz 
+gunzip /data/scratch/heavet/assembly/genome/cucurbita/pepo/*.gz
 ```
-The data was visualised following trimming using FastQC.
+Outgroup genomes downloaded:
 ```bash
-for RawData in $(ls dna_qc/P_leucotricha/THeavenpOGB2019_1/*/*/*/*.fq.gz); do
-echo $RawData
-ProgDir=~/git_repos/tools/seq_tools/dna_qc
-OutDir=$(dirname $RawData)
-Outfile=$(basename $RawData .fq.gz)_fastqc
-sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
-done
-#788791
-#788792
-#788793
-#788794
-for RawData in $(ls dna_qc/P_leucotricha/THeavenpOGB2021_1/*/*/*/*.fq.gz); do
-echo $RawData
-ProgDir=~/git_repos/tools/seq_tools/dna_qc
-OutDir=$(dirname $RawData)
-Outfile=$(basename $RawData .fq.gz)_fastqc
-sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
-done
-#788795
-#788796
-#788797
-#788798
-#788799
-#788800
-#788801
-#788802
+mkdir -p assembly/genome/NCBI/S.cerevisiae
+cd assembly/genome/NCBI/S.cerevisiae
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/146/045/GCF_000146045.2_R64/GCF_000146045.2_R64_genomic.fna.gz
+gunzip GCF_000146045.2_R64_genomic.fna.gz
+mkdir -p /data/scratch/heavet/assembly/genome/Saccharomyces/cerevisiae
+cp /projects/nano_diagnostics/assembly/genome/NCBI/S.cerevisiae/GCF_000146045.2_R64_genomic.fna /data/scratch/heavet/assembly/genome/Saccharomyces/cerevisiae/GCF_000146045.2_R64_genomic.d.fna
 ```
-## Alignment
 
-### bowtie2
-A bioconda installation of bowtie was performed
+## Phylogeny
 
-Alignments were made to the available apple genome downloaded from NCBI.
+### Maximum likelihood phylogenetic tree - BUSCOs
+
+BUSCO was run using an ascomycotal database to predict conserved genes in the Erysiphales clade with yeast as an outgroup.
 ```bash
-#2019 sample:
-screen -S bowtie2
-srun -p himem  --mem 350G --pty bash
-conda activate bowtie2
-mkdir -p alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple
-cd alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple
-bowtie2-build /projects/nano_diagnostics/assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta apple_index
-bowtie2 \
--x apple_index \
--1 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/F/P_leucotricha-THeavenpOGB2019_1-paired-001_F_trim.fq.gz \
--2 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/R/P_leucotricha-THeavenpOGB2019_1-paired-001_R_trim.fq.gz \
--U /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/F/P_leucotricha-THeavenpOGB2019_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/R/P_leucotricha-THeavenpOGB2019_1-paired-001_R_trim_unpaired.fq.gz \
---un THeavenpOGB2019_1unalignedapple.sam \
---un-gz THeavenpOGB2019_1unalignedapple_s.fq.gz \
---un-conc-gz THeavenpOGB2019_1unalignedapple_fr.fq.gz \
--S THeavenpOGB2019_1alignedapple.sam 2>&1 | tee -a report.txt
-#7.37% overall alignment rate
-cd /projects/nano_diagnostics
-mkdir -p alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/P_leucotricha
-cd alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/P_leucotricha
-bowtie2-build /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa P_leucotricha_index
-bowtie2 \
--x P_leucotricha_index \
--1 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/F/P_leucotricha-THeavenpOGB2019_1-paired-001_F_trim.fq.gz \
--2 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/R/P_leucotricha-THeavenpOGB2019_1-paired-001_R_trim.fq.gz \
--U /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/F/P_leucotricha-THeavenpOGB2019_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/R/P_leucotricha-THeavenpOGB2019_1-paired-001_R_trim_unpaired.fq.gz \
---un THeavenpOGB2019_1unalignedP_leucotricha.sam \
---un-gz THeavenpOGB2019_1unalignedP_leucotricha_s.fq.gz \
---un-conc-gz THeavenpOGB2019_1unalignedP_leucotricha_fr.fq.gz \
--S THeavenpOGB2019_1alignedP_leucotricha.sam 2>&1 | tee -a report.txt
-#29.14% overall alignment rate
-exit
-exit
-echo finished
-
-#2021 sample:
-screen -S bowtie3
-srun -p himem  --mem 350G --pty bash
-conda activate bowtie2
-cd /projects/nano_diagnostics
-mkdir -p alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple
-cd alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/apple
-bowtie2-build /projects/nano_diagnostics/assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta apple_index
-bowtie2 \
--x apple_index \
--1 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/F/P_leucotricha-THeavenpOGB2021_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/F/P_leucotricha-THeavenpOGB2021_1-paired-002_F_trim.fq.gz \
--2 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/R/P_leucotricha-THeavenpOGB2021_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/R/P_leucotricha-THeavenpOGB2021_1-paired-002_R_trim.fq.gz \
--U /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/F/P_leucotricha-THeavenpOGB2021_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/R/P_leucotricha-THeavenpOGB2021_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/F/P_leucotricha-THeavenpOGB2021_1-paired-002_F_trim_unpaired.fq.gz ,/projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/R/P_leucotricha-THeavenpOGB2021_1-paired-002_R_trim_unpaired.fq.gz \
---un THeavenpOGB2021_1unalignedapple.sam \
---un-gz THeavenpOGB2021_1unalignedapple_s.fq.gz \
---un-conc-gz THeavenpOGB2021_1unalignedapple_fr.fq.gz \
--S THeavenpOGB2021_1alignedapple.sam 2>&1 | tee -a report.txt
-#32.30% overall alignment rate
-cd /projects/nano_diagnostics
-mkdir -p alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/P_leucotricha
-cd alignment/P_leucotricha/THeavenpOGB2021_1/bowtie2/P_leucotricha
-bowtie2-build /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa P_leucotricha_index
-bowtie2 \
--x P_leucotricha_index \
--1 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/F/P_leucotricha-THeavenpOGB2021_1-paired-001_F_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/F/P_leucotricha-THeavenpOGB2021_1-paired-002_F_trim.fq.gz \
--2 /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/R/P_leucotricha-THeavenpOGB2021_1-paired-001_R_trim.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/R/P_leucotricha-THeavenpOGB2021_1-paired-002_R_trim.fq.gz \
--U /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/F/P_leucotricha-THeavenpOGB2021_1-paired-001_F_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/R/P_leucotricha-THeavenpOGB2021_1-paired-001_R_trim_unpaired.fq.gz, /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/F/P_leucotricha-THeavenpOGB2021_1-paired-002_F_trim_unpaired.fq.gz ,/projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/R/P_leucotricha-THeavenpOGB2021_1-paired-002_R_trim_unpaired.fq.gz \
---un THeavenpOGB2021_1unalignedP_leucotricha.sam \
---un-gz THeavenpOGB2021_1unalignedP_leucotricha_s.fq.gz \
---un-conc-gz THeavenpOGB2021_1unalignedP_leucotricha_fr.fq.gz \
--S THeavenpOGB2021_1alignedP_leucotricha.sam 2>&1 | tee -a report.txt
-#23.89% overall alignment rate
-exit
-exit
-echo finished
-```
-## Coverage
-Coverage of data was estimated and the quality of sequencing data assessed using KAT.
-```bash
-#Sequencing reads were compared with our in house p.aphanis genome, results were plotted with various settings
-screen -S KAT
-srun -p himem --mem 1000G --pty bash
-conda activate kat
-mkdir -p alignment/P_aphanis/THeavenpOGB2019_1/kat/ganan
-kat comp -m 21 -v -h -t 8 -o alignment/P_aphanis/THeavenpOGB2019_1/kat/THeavenp11_1/reads_v_ganan '/projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/F/P_leucotricha-THeavenpOGB2019_1-paired-001_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/R/P_leucotricha-THeavenpOGB2019_1-paired-001_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/F/P_leucotricha-THeavenpOGB2019_1-paired-001_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/R/P_leucotricha-THeavenpOGB2019_1-paired-001_R_trim_unpaired.fq.gz' /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa
-
-kat plot spectra-cn -x 300 -o alignment/P_aphanis/THeavenpOGB2019_1/kat/ganan/reads_v_gananplot300 alignment/P_aphanis/THeavenpOGB2019_1/kat/THeavenp11_1/reads_v_ganan-main.mx
-exit
-exit
-echo finished
-
-screen -S KAT
-srun -p himem --mem 1000G --pty bash
-conda activate kat
-mkdir -p alignment/P_leucotricha/THeavenpOGB2021_1/kat/ganan
-kat comp -m 21 -v -h -t 8 -o alignment/P_leucotricha/THeavenpOGB2021_1/kat/ganan/reads_v_ganan '/projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/F/P_leucotricha-THeavenpOGB2021_1-paired-001_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/F/P_leucotricha-THeavenpOGB2021_1-paired-002_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/R/P_leucotricha-THeavenpOGB2021_1-paired-001_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/R/P_leucotricha-THeavenpOGB2021_1-paired-002_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/F/P_leucotricha-THeavenpOGB2021_1-paired-001_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/R/P_leucotricha-THeavenpOGB2021_1-paired-001_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/F/P_leucotricha-THeavenpOGB2021_1-paired-002_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/R/P_leucotricha-THeavenpOGB2021_1-paired-002_R_trim_unpaired.fq.gz' /projects/nano_diagnostics/assembly/genome/NCBI/erysiphales/P_leocotricha/JAATOF01.1.fa
-
-kat plot spectra-cn -x 300 -o alignment/P_leucotricha/THeavenpOGB2021_1/kat/ganan/reads_v_gananplot300 alignment/P_leucotricha/THeavenpOGB2021_1/kat/ganan/reads_v_ganan-main.mx
-exit
+screen -S BUSCO
+srun -p long -J busco  --mem 150G --pty bash
+conda activate BUSCO
+for assembly in $(echo /data/scratch/heavet/assembly/genome/*/*/*d.fna); do
+    #Blumeria Erysiphe Golovinomyces Oidium Podosphaera Saccharomyces
+    Output=$(dirname $assembly)
+    Output2=$(basename $assembly)
+    mkdir -p $Output/BUSCO/ascomycota/$Output2
+    cd $Output/BUSCO/ascomycota
+    busco -f -m genome -i $assembly -o $Output2 -l ascomycota_odb10
+    cd /scratch/projects/heavet
+done
+conda deactivate
 exit
 echo finished
 ```
-## Assembly
-Trimmed reads that did not align to either raspberry genome were taken as raw data for assembly. Reads were renamed for input into SPAdes.
 ```bash
-#files were renamed to correct extensions for spades
-mv alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_fr.fq.1.gz alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_fr-f.fq.gz
-mv alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_fr.fq.2.gz alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_fr-r.fq.gz
-mv alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_s.fq.gz alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_s-s.fq.gz
+screen -S BUSCO
+srun -p long -J busco  --mem 150G --pty bash
+conda activate BUSCO
+for assembly in $(echo /data/scratch/heavet/assembly/genome/hordeum/*/*.fna); do
+    #Blumeria Erysiphe Golovinomyces Oidium Podosphaera Saccharomyces
+    Output=$(dirname $assembly)
+    Output2=$(basename $assembly)
+    mkdir -p $Output/BUSCO/ascomycota/$Output2
+    cd $Output/BUSCO/ascomycota
+    busco -f -m genome -i $assembly -o $Output2 -l ascomycota_odb10
+    cd /scratch/projects/heavet
+done
+conda deactivate
+exit
+echo finished
 
-#files were unzipped
-gunzip alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_fr-f.fq.gz
-gunzip alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_fr-r.fq.gz 
-gunzip alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple/THeavenpOGB2019_1unalignedapple_s-s.fq.gz
-```
-### SPAdes
-A conda installation of SPAdes was performed
+screen -S BUSCO2
+srun -p long -J busco  --mem 150G --pty bash
+conda activate BUSCO
+for assembly in $(echo /data/scratch/heavet/assembly/genome/secale/*/*.fna); do
+    #Blumeria Erysiphe Golovinomyces Oidium Podosphaera Saccharomyces
+    Output=$(dirname $assembly)
+    Output2=$(basename $assembly)
+    mkdir -p $Output/BUSCO/ascomycota/$Output2
+    cd $Output/BUSCO/ascomycota
+    busco -f -m genome -i $assembly -o $Output2 -l ascomycota_odb10
+    cd /scratch/projects/heavet
+done
+conda deactivate
+exit
+echo finished
 
-Trimmed MiSeq reads were assembled using the program SPAdes, contigs <500bp filtered out with abyss.
-```bash
-conda activate spades
-  for ReadDir in $(ls -d alignment/P_leucotricha/THeavenpOGB2019_1/bowtie2/apple); do
-    ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/spades
-    F_Read=$(ls $ReadDir/*f.fq)
-    R_Read=$(ls $ReadDir/*r.fq)
-    S_Read=$(ls $ReadDir/*s.fq)
-    OutDir=$(echo $ReadDir|sed 's@alignment@assembly/metagenome@g'|sed 's@bowtie2/apple@SPAdes@g')
-    echo $F_Read
-    echo $R_Read
-    echo $S_Read
-    echo $OutDir
-    sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 10
-  done
-#788813
+screen -S BUSCO3
+srun -p long -J busco  --mem 150G --pty bash
+conda activate BUSCO
+for assembly in $(echo /data/scratch/heavet/assembly/genome/triticum/*/*.fna); do
+    #Blumeria Erysiphe Golovinomyces Oidium Podosphaera Saccharomyces
+    Output=$(dirname $assembly)
+    Output2=$(basename $assembly)
+    mkdir -p $Output/BUSCO/ascomycota/$Output2
+    cd $Output/BUSCO/ascomycota
+    busco -f -m genome -i $assembly -o $Output2 -l ascomycota_odb10
+    cd /scratch/projects/heavet
+done
+conda deactivate
+exit
+echo finished
+
+screen -S BUSCO4
+srun -p long -J busco  --mem 150G --pty bash
+conda activate BUSCO
+for assembly in $(echo /data/scratch/heavet/assembly/genome/vitus/*/*.fna); do
+    #Blumeria Erysiphe Golovinomyces Oidium Podosphaera Saccharomyces
+    Output=$(dirname $assembly)
+    Output2=$(basename $assembly)
+    mkdir -p $Output/BUSCO/ascomycota/$Output2
+    cd $Output/BUSCO/ascomycota
+    busco -f -m genome -i $assembly -o $Output2 -l ascomycota_odb10
+    cd /scratch/projects/heavet
+done
+conda deactivate
+exit
+echo finished
+
+screen -S BUSCO5
+srun -p himem -J busco  --mem 150G --pty bash
+conda activate BUSCO
+for assembly in $(echo /data/scratch/heavet/assembly/genome/pisum/*/*.fna); do
+    #Blumeria Erysiphe Golovinomyces Oidium Podosphaera Saccharomyces
+    Output=$(dirname $assembly)
+    Output2=$(basename $assembly)
+    mkdir -p $Output/BUSCO/ascomycota/$Output2
+    cd $Output/BUSCO/ascomycota
+    busco -f -m genome -i $assembly -o $Output2 -l ascomycota_odb10
+    cd /scratch/projects/heavet
+done
+conda deactivate
+exit
+echo finished
+
+screen -S BUSCO6
+srun -p himem -J busco  --mem 150G --pty bash
+conda activate BUSCO
+for assembly in $(echo /data/scratch/heavet/assembly/genome/nicotiana/*/*.fna); do
+    #Blumeria Erysiphe Golovinomyces Oidium Podosphaera Saccharomyces
+    Output=$(dirname $assembly)
+    Output2=$(basename $assembly)
+    mkdir -p $Output/BUSCO/ascomycota/$Output2
+    cd $Output/BUSCO/ascomycota
+    busco -f -m genome -i $assembly -o $Output2 -l ascomycota_odb10
+    cd /scratch/projects/heavet
+done
+conda deactivate
+exit
+echo finished
+
+screen -S BUSCO7
+srun -p himem -J busco  --mem 150G --pty bash
+conda activate BUSCO
+for assembly in $(echo /data/scratch/heavet/assembly/genome/Arabidopsis/*/*.fna); do
+    #Blumeria Erysiphe Golovinomyces Oidium Podosphaera Saccharomyces
+    Output=$(dirname $assembly)
+    Output2=$(basename $assembly)
+    mkdir -p $Output/BUSCO/ascomycota/$Output2
+    cd $Output/BUSCO/ascomycota
+    busco -f -m genome -i $assembly -o $Output2 -l ascomycota_odb10
+    cd /scratch/projects/heavet
+done
+conda deactivate
+exit
+echo finished
+
+screen -S BUSCO8
+srun -p himem -J busco  --mem 150G --pty bash
+conda activate BUSCO
+for assembly in $(echo /data/scratch/heavet/assembly/genome/hevea/*/*.fna); do
+    #Blumeria Erysiphe Golovinomyces Oidium Podosphaera Saccharomyces
+    Output=$(dirname $assembly)
+    Output2=$(basename $assembly)
+    mkdir -p $Output/BUSCO/ascomycota/$Output2
+    cd $Output/BUSCO/ascomycota
+    busco -f -m genome -i $assembly -o $Output2 -l ascomycota_odb10
+    cd /scratch/projects/heavet
+done
+conda deactivate
+exit
+echo finished
+
+screen -S BUSCO9
+srun -p himem -J busco  --mem 150G --pty bash
+conda activate BUSCO
+for assembly in $(echo /data/scratch/heavet/assembly/genome/solanum/*/*.fna); do
+    #Blumeria Erysiphe Golovinomyces Oidium Podosphaera Saccharomyces
+    Output=$(dirname $assembly)
+    Output2=$(basename $assembly)
+    mkdir -p $Output/BUSCO/ascomycota/$Output2
+    cd $Output/BUSCO/ascomycota
+    busco -f -m genome -i $assembly -o $Output2 -l ascomycota_odb10
+    cd /scratch/projects/heavet
+done
+conda deactivate
+exit
+echo finished
+
+screen -S BUSCO10
+srun -p himem -J busco  --mem 150G --pty bash
+conda activate BUSCO
+for assembly in $(echo /data/scratch/heavet/assembly/genome/prunus/*/*.fna); do
+    #Blumeria Erysiphe Golovinomyces Oidium Podosphaera Saccharomyces
+    Output=$(dirname $assembly)
+    Output2=$(basename $assembly)
+    mkdir -p $Output/BUSCO/ascomycota/$Output2
+    cd $Output/BUSCO/ascomycota
+    busco -f -m genome -i $assembly -o $Output2 -l ascomycota_odb10
+    cd /scratch/projects/heavet
+done
+conda deactivate
+exit
+echo finished
+
+screen -S BUSCO11
+srun -p himem -J busco  --mem 150G --pty bash
+conda activate BUSCO
+for assembly in $(echo /data/scratch/heavet/assembly/genome/cucumis/*/*.fna); do
+    #Blumeria Erysiphe Golovinomyces Oidium Podosphaera Saccharomyces
+    Output=$(dirname $assembly)
+    Output2=$(basename $assembly)
+    mkdir -p $Output/BUSCO/ascomycota/$Output2
+    cd $Output/BUSCO/ascomycota
+    busco -f -m genome -i $assembly -o $Output2 -l ascomycota_odb10
+    cd /scratch/projects/heavet
+done
+conda deactivate
+exit
+echo finished
+
+screen -S BUSCO12
+srun -p himem -J busco  --mem 150G --pty bash
+conda activate BUSCO
+for assembly in $(echo /data/scratch/heavet/assembly/genome/cucurbita/*/*.fna); do
+    #Blumeria Erysiphe Golovinomyces Oidium Podosphaera Saccharomyces
+    Output=$(dirname $assembly)
+    Output2=$(basename $assembly)
+    mkdir -p $Output/BUSCO/ascomycota/$Output2
+    cd $Output/BUSCO/ascomycota
+    busco -f -m genome -i $assembly -o $Output2 -l ascomycota_odb10
+    cd /scratch/projects/heavet
+done
+conda deactivate
+exit
+echo finished
+
+screen -S BUSCO13
+srun -p himem -J busco --mem-per-cpu 6G --cpus-per-task 20 --pty bash
+
+conda activate BUSCO
+for assembly in $(echo /data/scratch/heavet/assembly/genome/Oidium/neolycopersicim/*.fna); do
+    #Blumeria Erysiphe Golovinomyces Oidium Podosphaera Saccharomyces
+    Output=$(dirname $assembly)
+    Output2=$(basename $assembly)
+    mkdir -p $Output/BUSCO/ascomycota/$Output2
+    cd $Output/BUSCO/ascomycota
+    busco -f -m genome -i $assembly -o $Output2 -l ascomycota_odb10
+    cd /scratch/projects/heavet
+done
+conda deactivate
+exit
+echo finished
 ```
