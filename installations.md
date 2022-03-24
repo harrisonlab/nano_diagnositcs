@@ -319,6 +319,7 @@ conda activate quast
 conda install python=2.7
 conda install -c bioconda quast
 
+#conda install does not work on crop diversity hpc
 wget https://downloads.sourceforge.net/project/quast/quast-5.0.2.tar.gz
 tar -xzf quast-5.0.2.tar.gz
  cd quast-5.0.2
@@ -444,17 +445,6 @@ mkdir ~/prog/blast
 cd ~/prog/blast
 wget https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.10.0+-x64-linux.tar.gz
 tar -zxvf ncbi-blast-2.10.0+-x64-linux.tar.gz
-```
-prepend this to your ~/.profile
-
-
-
-
-
-
-
-
-
 ```
 ##GMAP
 ```bash
