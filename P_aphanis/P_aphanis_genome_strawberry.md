@@ -2,16 +2,14 @@
 
 Documentation of analysis and commands used with P.aphanis sampled from strawberry as part of Nano Diagnistics PhD.
 
+All following commands were execited on the NIAB HPC from the folder /projects/nano_diagnostics.
+
 All bowtie2 folders have been subsequently deleted to save space.
 
 All genomes that were stored in /data/scratch/heavet/assembly/genome have been moved to the crop diversity hpc to save space
 
 ## Collecting data
 
-All following commands were exectuted from the folder:
-```bash
-/projects/nano_diagnostics
-```
 Raw MiSeq sequence data for P.aphanis was linked from long term storage in /archives to the working folder /projects/nano_diagnostics/
 
 ```bash
