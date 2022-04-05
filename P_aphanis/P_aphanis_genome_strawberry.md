@@ -3058,6 +3058,10 @@ Raw MiSeq sequence data for P.leucotricha was linked from long term storage in /
 ```bash
 mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F
 mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/002/F
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/002/R
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/003/F
+mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/003/R
 mkdir -p rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/1/all
 
 ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLST21/THMLST21_ESFP220001653-1a_H223VDSX3_L4_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/THeavenDRCT72021_1_f.fq.gz
@@ -3065,6 +3069,18 @@ ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01
 
 ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLST21/THMLST21_ESFP220001653-1a_H223VDSX3_L4_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/1/all/THeavenDRCT72021_1_f.fq.gz
 ln -s /main/temp-archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F001/X204SC22010737-Z01-F001/raw_data/THMLST21/THMLST21_ESFP220001653-1a_H223VDSX3_L4_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/1/all/THeavenDRCT72021_1_r.fq.gz
+
+ln -s /archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F002/X204SC22010737-Z01-F002/raw_data/THMLST21/THMLST21_ESFP220001653-1a_HG7Y2DSX3_L3_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/002/F/THeavenDRCT72021_2_f.fq.gz
+ln -s /archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F002/X204SC22010737-Z01-F002/raw_data/THMLST21/THMLST21_ESFP220001653-1a_HG7Y2DSX3_L3_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/002/R/THeavenDRCT72021_2_r.fq.gz
+
+ln -s /archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F002/X204SC22010737-Z01-F002/raw_data/THMLST21/THMLST21_ESFP220001653-1a_H223VDSX3_L4_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/003/F/THeavenDRCT72021_3_f.fq.gz
+ln -s /archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F002/X204SC22010737-Z01-F002/raw_data/THMLST21/THMLST21_ESFP220001653-1a_H223VDSX3_L4_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/003/R/THeavenDRCT72021_3_r.fq.gz
+
+ln -s /archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F002/X204SC22010737-Z01-F002/raw_data/THMLST21/THMLST21_ESFP220001653-1a_HG7Y2DSX3_L3_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/1/all/THeavenDRCT72021_2_f.fq.gz
+ln -s /archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F002/X204SC22010737-Z01-F002/raw_data/THMLST21/THMLST21_ESFP220001653-1a_HG7Y2DSX3_L3_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/1/all/THeavenDRCT72021_2_r.fq.gz
+
+ln -s /archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F002/X204SC22010737-Z01-F002/raw_data/THMLST21/THMLST21_ESFP220001653-1a_H223VDSX3_L4_1.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/1/all/THeavenDRCT72021_3_f.fq.gz
+ln -s /archives/2022_eastmall_general/thomas_heaven_X204SC22010737-Z01-F002/X204SC22010737-Z01-F002/raw_data/THMLST21/THMLST21_ESFP220001653-1a_H223VDSX3_L4_2.fq.gz rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/1/all/THeavenDRCT72021_3_r.fq.gz
 ```
 ## Data quality control
 The raw sequence reads were subjected to a quality control check using FastQC.
@@ -3078,10 +3094,11 @@ sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
 done
 #16846
 #16847
+#18844-18849
 ```
 Trimming was performed on data to trim adapters from sequences and remove poor quality data. This was done with trimmomatic. The data was visualised following trimming using FastQC.
 ```bash
-for ReadDir in $(ls -d rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/*/*);
+for ReadDir in $(ls -d rawdata/P_aphanis/MiSeq/THeavenDRCT72021_1/*/*3);
 do
  Fread=$(ls $ReadDir/F/*.fq.gz)
  Rread=$(ls $ReadDir/R/*.fq.gz)
@@ -3096,10 +3113,12 @@ sbatch $ProgDir/srun_trimmomatic.sh $Fread $Rread $Adapters $OutDir $Prefix
 done
 #16848 - f'd
 #17268
+#18850
+#18851
 ```
 The data was visualised following trimming using FastQC.
 ```bash
-for RawData in $(ls dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/*/*/*/*.fq.gz); do
+for RawData in $(ls dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/*/*3/*/*.fq.gz); do
 echo $RawData
 ProgDir=~/git_repos/tools/seq_tools/dna_qc
 OutDir=$(dirname $RawData)
@@ -3110,6 +3129,7 @@ done
 #16865
 #16866
 #16867
+#18852-18859
 ```
 ## Alignment
 
@@ -3119,6 +3139,47 @@ A bioconda installation of bowtie was performed
 Alignments were made to the strawberry genome and our first P aphanis assembly from 2020.
 
 ```bash
+screen -S bowtie
+srun -p himem  --mem 350G --pty bash
+conda activate bowtie2
+mkdir -p alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/strawberry
+cd alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/strawberry
+bowtie2-build /projects/nano_diagnostics/rawdata/F_ananassa/camarosa/genome/F_ana_Camarosa_6-28-17.fasta camarosa_index
+bowtie2 \
+-x camarosa_index \
+-1 /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_F_trim.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-002_F_trim.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-003_F_trim.fq.gz \
+-2 /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_R_trim.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-002_R_trim.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-003_R_trim.fq.gz \
+-U /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_F_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_R_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-002_F_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-002_R_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-003_F_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-003_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72021_allvsunalignedstrawberry.sam \
+--un-gz THeavenDRCT72021_allvsunalignedstrawberry_s.fq.gz \
+--un-conc-gz THeavenDRCT72021_allvsunalignedstrawberry_fr.fq.gz \
+-S THeavenDRCT72021_allvsunalignedstrawberry.sam 2>&1 | tee -a report2.txt
+#10.82% overall alignment rate
+conda deactivate
+exit
+exit
+
+screen -S bowtie2
+srun -p himem  --mem 350G --pty bash
+conda activate bowtie2
+mkdir -p /projects/nano_diagnostics/alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/paphanis
+cd /projects/nano_diagnostics/alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/paphanis
+bowtie2-build /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/contigs_min_500bp_renamed2.fasta paphanis_index
+bowtie2 \
+-x paphanis_index \
+-1 /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_F_trim.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-002_F_trim.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-003_F_trim.fq.gz \
+-2 /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_R_trim.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-002_R_trim.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-003_R_trim.fq.gz \
+-U /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_F_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_R_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-002_F_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-002_R_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-003_F_trim_unpaired.fq.gz, /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-003_R_trim_unpaired.fq.gz \
+--un THeavenDRCT72021_allvsunalignedpaphanis.sam \
+--un-gz THeavenDRCT72021_allvsunalignedpaphanis_s.fq.gz \
+--un-conc-gz THeavenDRCT72021_allvsunalignedpaphanis_fr.fq.gz \
+-S THeavenDRCT72021_allvsalignedpaphanis.sam 2>&1 | tee -a report2.txt
+#27.62% overall alignment rate
+conda deactivate
+exit
+exit
+
+#Initial low coverage sequencing run:
 screen -S bowtie
 srun -p himem  --mem 350G --pty bash
 conda activate bowtie2
@@ -3165,6 +3226,21 @@ Coverage of data was estimated and the quality of sequencing data assessed using
 screen -S KAT
 srun -p himem --mem 1000G --pty bash
 conda activate kat
+cd /projects/nano_diagnostics
+mkdir -p alignment/P_aphanis/THeavenDRCT72021_1/kat/paphanis
+kat comp -m 21 -v -h -t 8 -o alignment/P_aphanis/THeavenDRCT72021_1/kat/paphanis/allreads_v_paphanis '/scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_F_trim.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-002_F_trim.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-003_F_trim.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_R_trim.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-002_R_trim.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-003_R_trim.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_F_trim_unpaired.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_R_trim_unpaired.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/002/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-002_F_trim_unpaired.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/002/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-002_R_trim_unpaired.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/003/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-003_F_trim_unpaired.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/003/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-003_R_trim_unpaired.fq.gz' /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/contigs_min_500bp_renamed2.fasta
+
+kat plot spectra-cn -x 300 -o alignment/P_aphanis/THeavenDRCT72021_1/kat/paphanis/allreads_v_paphanisplot300 alignment/P_aphanis/THeavenDRCT72021_1/kat/paphanis/allreads_v_paphanis-main.mx
+kat plot spectra-cn -x 2000 -o alignment/P_aphanis/THeavenDRCT72021_1/kat/paphanis/allreads_v_paphanisplot2000 alignment/P_aphanis/THeavenDRCT72021_1/kat/paphanis/allreads_v_paphanis-main.mx
+conda deactivate
+exit
+exit
+echo finished
+
+#Initial low coverage sequencing run:
+screen -S KAT
+srun -p himem --mem 1000G --pty bash
+conda activate kat
 mkdir -p alignment/P_aphanis/THeavenDRCT72021_1/kat/paphanis
 kat comp -m 21 -v -h -t 8 -o alignment/P_aphanis/THeavenDRCT72021_1/kat/paphanis/reads_v_paphanis '/scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_F_trim.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_R_trim.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/F/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_F_trim_unpaired.fq.gz /scratch/projects/heavet/gene_pred_vAG/_sigP/split/dna_qc/P_aphanis/MiSeq/THeavenDRCT72021_1/paired/001/R/P_aphanis-MiSeq-THeavenDRCT72021_1-paired-001_R_trim_unpaired.fq.gz' /projects/nano_diagnostics/assembly/metagenome/P_aphanis/THeavenDRCT72020_1/SPAdes/725715/ncbi_edits/contigs_min_500bp_renamed2.fasta
 
@@ -3176,7 +3252,20 @@ exit
 echo finished
 ```
 ```bash
-#Coverage of the sequence data was also estimated via alignmnet with the unpublished low coverage P.aphanis assembly.
+#Coverage of the sequence data was also estimated via alignmnet with our unpublished low P.aphanis assembly.
+screen -S paphanis_coverage
+srun -p long --mem 50G --pty bash
+cd /projects/nano_diagnostics/alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/paphanis
+samtools view --threads 8 -bS THeavenDRCT72021_allvsalignedpaphanis.sam -o THeavenDRCT72021_allvsalignedpaphanis.bam
+samtools sort --threads 8 -o THeavenDRCT72021_allvsalignedpaphanis_sorted.bam THeavenDRCT72021_allvsalignedpaphanis.bam
+samtools index -@ 8 THeavenDRCT72021_allvsalignedpaphanis_sorted.bam THeavenDRCT72021_allvsalignedpaphanis_sorted.bam.index
+samtools coverage THeavenDRCT72021_allvsalignedpaphanis_sorted.bam -o coverage.txt
+exit
+exit
+echo finished
+#median depth ####, mean depth x##### ####### contigs
+
+#Initial low coverage sequencing run:
 cd /projects/nano_diagnostics/alignment/P_aphanis/THeavenDRCT72021_1/bowtie2/paphanis
 samtools view --threads 8 -bS THeavenDRCT72021_1alignedpaphanis.sam -o THeavenDRCT72021_1alignedpaphanis.bam
 samtools sort --threads 8 -o THeavenDRCT72021_1alignedpaphanis_sorted.bam THeavenDRCT72021_1alignedpaphanis.bam
