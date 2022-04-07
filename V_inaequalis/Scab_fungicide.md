@@ -724,7 +724,7 @@ done
 #1422-1468, -2495733
 conda deactivate
 ``` 
-Redundant?:
+Redundant?:" starting in GATK4 the indel realignment step will no longer be part of the pipeline""variant calling workflows that use HaplotypeCaller or MuTect2 now omit indel realignment.-HaplotypeCaller and MuTect2 do their own internal realignment"
 ```bash 
 scp -r ~/git_repos/tools/popgen/snp/pre_indel_realignment_v2.sh  theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/apps/snp/.
 
@@ -748,17 +748,17 @@ Call snps
 ```bash
 #Standard annotation:
 conda activate Picard
-for input in $(ls alignment/V_inaequalis/LLimon/bowtie/paired/THSC*/passey/nomulti/*.bam); do
+for input in $(ls alignment/venturia/inaequalis/LLimon/bowtie/THSC*/passey/nomulti/*.bam); do
 	Isolate=$(echo $input | cut -d '/' -f6)
 	echo $Isolate
     OutDir=$(dirname $input  | sed 's@nomulti@@g' | sed 's@alignment@snp_calling@g' | sed 's@bowtie/paired@gatk@g')
     mkdir -p $OutDir
-    Reference=/projects/nano_diagnostics/assembly/genome/NCBI/venturia/V_inaequalis/GCA_003351075.1_ASM335107v1_genomic.fna 
+    Reference=/home/theaven/scratch/data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.fna 
     Ploidy="1"
-    ProgDir=~/git_repos/tools/popgen/snp
+    ProgDir=~/scratch/apps/snp
     sbatch $ProgDir/haplotyp_caller.sh $Reference $Isolate $input $OutDir $Ploidy
 done
-#1554-1600
+#1554-1600,-2521348
 ```
 Combine samples pre-called with HaplotypeCaller and Perform joint genotyping.
 
