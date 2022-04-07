@@ -1978,6 +1978,33 @@ zcat dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/003/R/P_aphanis-MiSeq-THea
 zcat dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/003/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-003_R_trim_unpaired.fq.gz | echo $((`wc -l`/4))
 #235,815
 ```
+
+```bash
+mkdir -p dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/all/F
+touch dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/all/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-all_F_trim.fq.gz
+
+cat dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/001/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-001_F_trim.fq.gz dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/002/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-002_F_trim.fq.gz dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/003/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-003_F_trim.fq.gz > dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/all/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-all_F_trim.fq.gz
+touch dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/all/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-all_F_trim_unpaired.fq.gz
+cat dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/001/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-001_F_trim_unpaired.fq.gz dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/002/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-002_F_trim_unpaired.fq.gz dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/003/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-003_F_trim_unpaired.fq.gz dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/all/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-all_F_trim.fq.gz > dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/all/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-all_F_trim_unpaired.fq.gz
+
+mkdir -p dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/all/R
+touch dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/all/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-all_R_trim.fq.gz
+cat dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/001/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-001_R_trim.fq.gz dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/002/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-002_R_trim.fq.gz dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/003/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-003_R_trim.fq.gz > dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/all/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-all_R_trim.fq.gz
+touch dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/all/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-all_R_trim_unpaired.fq.gz
+cat dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/001/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-001_R_trim_unpaired.fq.gz dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/002/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-002_R_trim_unpaired.fq.gz dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/003/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-003_R_trim_unpaired.fq.gz dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/all/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-all_R_trim.fq.gz > dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/all/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-all_R_trim_unpaired.fq.gz
+
+touch dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/all/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-all_trim_unpaired.fq.gz
+cat dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/all/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-all_F_trim_unpaired.fq.gz dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/all/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-all_R_trim_unpaired.fq.gz > dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/all/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-all_trim_unpaired.fq.gz
+
+for RawData in $(ls dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/all/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-all_trim_unpaired.fq.gz); do
+echo $RawData
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(dirname $RawData)
+Outfile=$(basename $RawData)_fastqc
+sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
+done
+#18878
+```
 ## Alignment
 
 ### bowtie2
@@ -2151,6 +2178,8 @@ mkdir -p alignment/P_aphanis/THeavenSCOTT2020_1/kat/rubusidaeusanitra
 kat comp -m 21 -v -H 800000000 -I 800000000 -h -t 8 -o alignment/P_aphanis/THeavenSCOTT2020_1/kat/rubusidaeusanitra/reads_v_rubusidaeus '/scratch/projects/heavet/dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/001/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-001_F_trim.fq.gz /scratch/projects/heavet/dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/002/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-002_F_trim.fq.gz /scratch/projects/heavet/dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/003/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-003_F_trim.fq.gz /scratch/projects/heavet/dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/001/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-001_R_trim.fq.gz /scratch/projects/heavet/dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/002/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-002_R_trim.fq.gz /scratch/projects/heavet/dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/003/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-003_R_trim.fq.gz /scratch/projects/heavet/dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/001/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-001_F_trim_unpaired.fq.gz /scratch/projects/heavet/dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/001/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-001_R_trim_unpaired.fq.gz /scratch/projects/heavet/dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/002/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-002_F_trim_unpaired.fq.gz /scratch/projects/heavet/dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/002/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-002_R_trim_unpaired.fq.gz /scratch/projects/heavet/dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/003/F/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-003_F_trim_unpaired.fq.gz /scratch/projects/heavet/dna_qc/P_aphanis/MiSeq/THeavenSCOTT2020_1/paired/003/R/P_aphanis-MiSeq-THeavenSCOTT2020_1-paired-003_R_trim_unpaired.fq.gz' /data/scratch/heavet/assembly/genome/rubus/idaeus/AnitraCuratedED_HiC.fasta
 
 kat plot spectra-cn -x 1100 -o alignment/P_aphanis/THeavenSCOTT2020_1/kat/rubusidaeusanitra/reads_v_rubusidaeusplot1100 alignment/P_aphanis/THeavenSCOTT2020_1/kat/rubusidaeusanitra/reads_v_rubusidaeus-main.mx
+
+kat plot spectra-cn -x 300 -o alignment/P_aphanis/THeavenSCOTT2020_1/kat/rubusidaeusanitra/reads_v_rubusidaeusplot300 alignment/P_aphanis/THeavenSCOTT2020_1/kat/rubusidaeusanitra/reads_v_rubusidaeus-main.mx
 
 conda deactivate
 exit
