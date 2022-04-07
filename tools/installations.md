@@ -15,6 +15,32 @@ conda config --add channels bioconda
 conda config --add channels conda-forge
 conda update -n base -c defaults conda
 ```
+### blobtools2
+```bash
+conda create -n blobtools2 -y python=3.6 docopt pyyaml ujson pysam tqdm nodejs seqtk
+conda activate blobtools2
+mkdir -p taxdump
+cd taxdump
+curl -L ftp://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz | tar xzf -
+cd ..
+git clone https://github.com/blobtoolkit/blobtools2
+git clone https://github.com/blobtoolkit/viewer
+cd viewer
+npm install
+cd ..
+```
+### blobtools
+```bash
+conda create -n blobtools
+conda activate blobtools
+conda install -c bioconda blobtools
+```
+### blast
+```bash
+conda create -n blast+
+conda activate blast+
+conda install -c bioconda blast #fails
+```
 ## eDIRECT
 ```bash
 conda create -n eDIRECT
