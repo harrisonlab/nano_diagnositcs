@@ -419,11 +419,13 @@ BUSCOs that were only present in less than 3 genomes were filtered out:
 ```bash
 #Mildew BUSCOs:
 sort analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt |uniq -c > analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids_with_counts.txt
-awk '$NF > 2 {print $1}' analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids_with_counts.txt > analysis/phylogeny/busco/mildew_leotiomycetes_final_busco_ids.txt
+grep -v " 2 " analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids_with_counts.txt | grep -v " 1 " > analysis/phylogeny/busco/mildew_leotiomycetes_final_busco_ids.txt
+awk '{print $2}' analysis/phylogeny/busco/mildew_leotiomycetes_final_busco_ids.txt > analysis/phylogeny/busco/mildew_leotiomycetes_final_buscos_ids.txt
 
 #Host BUSCOs:
 sort analysis/phylogeny/busco/host_viridiplantae_complete_busco_ids.txt |uniq -c > analysis/phylogeny/busco/host_viridiplantae_complete_busco_ids_with_counts.txt
-awk '$NF > 2 {print $1}' analysis/phylogeny/busco/host_viridiplantae_complete_busco_ids_with_counts.txt > analysis/phylogeny/busco/host_viridiplantae_final_busco_ids.txt
+grep -v " 2 " analysis/phylogeny/busco/host_viridiplantae_complete_busco_ids_with_counts.txt | grep -v " 1 " > analysis/phylogeny/busco/host_viridiplantae_final_busco_ids.txt
+awk '{print $2}' analysis/phylogeny/busco/host_viridiplantae_complete_busco_ids_with_counts.txt > analysis/phylogeny/busco/host_viridiplantae_final_buscos_ids.txt
 ```
 Genes (both nucleotides and amino acids) were copied to a different directory. - Note that the gene names for each BUSCO output are only indetified by BUSCO id with either faa or fna extenstions. If you try to copy them directly to a single directory, you will likely overwrite all the files and end up with only the last set of files. Therefore each BUSCO gene for each genome was assigned a unique name and then all were merged together, writing them to a single busco id file. Ssequence nameS (fasta header) were edited so to include organism identifiers.
 
@@ -482,7 +484,35 @@ for dir in $(ls -d gene_pred/triticum/*/*/BUSCO/viridiplantae_odb10/*/run_viridi
 #  done
 done
 ```
+Now that BUSCO genes have been named uniquely for each genome analysed they were copied into a single .fasta file one for each gene.
+```bash
+srun -p long  --mem 10G --pty bash
+cd /home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa
+buscos=/home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_final_buscos_ids.txt
+lines=$(cat $buscos)
+for line in $lines; do
+  for faa in $(ls *_$line.faa); do
+  echo $faa
+  output=$(echo $line)_aa.fasta
+  echo $output
+  cat $faa >> $output
+  done
+done
 
+cd /home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa
+buscos=/home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_final_buscos_ids.txt
+lines=$(cat $buscos)
+for line in $lines; do
+  for faa in $(ls *_$line.faa); do
+  echo $faa
+  output=$(echo $line)_aa.fasta
+  echo $output
+  cat $faa >> $output
+  done
+done
+exit
+exit
+```
 
 
 Arabidopsis/     Erysiphe/        malus/           P_leucotricha/   secale/          vitus/
