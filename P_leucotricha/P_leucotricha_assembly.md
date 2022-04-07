@@ -153,6 +153,33 @@ Outfile=$(basename -a $RawData)_fastqc
 sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
 done
 ```
+```bash
+mkdir -p dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/F
+touch dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim.fq.gz
+
+cat dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim.fq.gz dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim.fq.gz > dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim.fq.gz
+touch dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim_unpaired.fq.gz
+cat dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim_unpaired.fq.gz dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim_unpaired.fq.gz dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim.fq.gz > dna_qc/P_leucotricha/MiSeq/THeavenp11_1THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim_unpaired.fq.gz
+
+mkdir -p dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/R
+touch dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim.fq.gz
+cat dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim.fq.gz dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim.fq.gz > dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim.fq.gz
+touch dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim_unpaired.fq.gz
+cat dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim_unpaired.fq.gz dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim_unpaired.fq.gz dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim.fq.gz > dna_qc/P_leucotricha/MiSeq/THeavenp11_1THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim_unpaired.fq.gz
+
+touch dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/P_leucotricha-MiSeq-THeavenp11_1-paired-all_trim_unpaired.fq.gz
+cat dna_qc/P_leucotricha/MiSeq/THeavenp11_1THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim_unpaired.fq.gz dna_qc/P_leucotricha/MiSeq/THeavenp11_1THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim_unpaired.fq.gz > dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/P_leucotricha-MiSeq-THeavenp11_1-paired-all_trim_unpaired.fq.gz
+
+for RawData in $(ls dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/P_leucotricha-MiSeq-THeavenp11_1-paired-all_trim_unpaired.fq.gz); do
+echo $RawData
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(dirname $RawData)
+Outfile=$(basename $RawData)_fastqc
+sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
+done
+#18887
+```
+
 ## Alignment
 
 ### bowtie2
@@ -439,6 +466,10 @@ cd /projects/nano_diagnostics
 kat comp -m 21 -v -h -t 8 -o alignment/P_leucotricha/THeavenp11_1/kat/apple/reads_v_gdel1+2-21 '/projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/F/P_leucotricha-THeavenp11_1-paired-001_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/001/R/P_leucotricha-THeavenp11_1-paired-001_R_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/F/P_leucotricha-THeavenp11_1-paired-002_F_trim_unpaired.fq.gz /projects/nano_diagnostics/dna_qc/P_leucotricha/THeavenp11_1/paired/002/R/P_leucotricha-THeavenp11_1-paired-002_R_trim_unpaired.fq.gz' assembly/genome/NCBI/rosales/GDDH13_1-1_formatted.fasta
 
 kat plot spectra-cn -x 300 -o alignment/P_leucotricha/THeavenp11_1/kat/apple/reads_v_gdel1+2-21plot300 alignment/P_leucotricha/THeavenp11_1/kat/apple/reads_v_gdel1+2-21-main.mx
+
+kat plot spectra-cn -x 800 -o alignment/P_leucotricha/THeavenp11_1/kat/apple/reads_v_gdel1+2-21plot800 alignment/P_leucotricha/THeavenp11_1/kat/apple/reads_v_gdel1+2-21-main.mx
+
+kat plot spectra-cn -x 1000 -o alignment/P_leucotricha/THeavenp11_1/kat/apple/reads_v_gdel1+2-21plot1000 alignment/P_leucotricha/THeavenp11_1/kat/apple/reads_v_gdel1+2-21-main.mx
 ```
 ## Assembly
 Trimmed read that did not align to the apple genome were taken as raw data for assembly. Several assemblers; SPAdes, SPAdes --isolate, ATLAS, metaSPAdes and MEGAHIT were trialled. SPAdes was ultimately used.
@@ -1960,6 +1991,17 @@ sbatch $ProgDir/braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
 done
 #2492840 <--works, but why?
 conda deactivate
+
+conda activate braker
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+OutDir=gene_pred/P_leucotricha/THeavenp11_1/braker1.9
+AcceptedHits=$(ls alignment/P_leucotricha/THeavenp11_1/star/RNAx2/580029_1/star_aligmentAligned.sortedByCoord.out.bam)
+GeneModelName=580029_softmasked_TPSI_appended_0
+ProgDir=/home/theaven/scratch/apps/braker
+sbatch $ProgDir/braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+done
+#2496561
+conda deactivate
 ```
 
 
@@ -2125,6 +2167,32 @@ done
 #11890
 #11891
 #11892
+```
+```bash
+mkdir -p dna_qc/P_leucotricha/MiSeq/THeavenpOGB2019_1/paired/all/F
+touch dna_qc/P_leucotricha/MiSeq/THeavenpOGB2019_1/paired/all/F/P_leucotricha-MiSeq-THeavenpOGB2019_1-paired-all_F_trim.fq.gz
+
+cat dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/F/P_leucotricha-THeavenpOGB2019_1-paired-001_F_trim.fq.gz dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/002/F/P_leucotricha-THeavenpOGB2019_1-paired-002_F_trim.fq.gz dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/003/F/P_leucotricha-THeavenpOGB2019_1-paired-003_F_trim.fq.gz > dna_qc/P_leucotricha/MiSeq/THeavenpOGB2019_1/paired/all/F/P_leucotricha-MiSeq-THeavenpOGB2019_1-paired-all_F_trim.fq.gz
+touch dna_qc/P_leucotricha/MiSeq/THeavenpOGB2019_1/paired/all/F/P_leucotricha-MiSeq-THeavenpOGB2019_1-paired-all_F_trim_unpaired.fq.gz
+cat dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/F/P_leucotricha-THeavenpOGB2019_1-paired-001_F_trim_unpaired.fq.gz dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/002/F/P_leucotricha-THeavenpOGB2019_1-paired-002_F_trim_unpaired.fq.gz dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/003/F/P_leucotricha-THeavenpOGB2019_1-paired-003_F_trim_unpaired.fq.gz dna_qc/P_leucotricha/MiSeq/THeavenpOGB2019_1/paired/all/F/P_leucotricha-MiSeq-THeavenpOGB2019_1-paired-all_F_trim.fq.gz > dna_qc/P_leucotricha/MiSeq/THeavenpOGB2019_1/paired/all/F/P_leucotricha-MiSeq-THeavenpOGB2019_1-paired-all_F_trim_unpaired.fq.gz
+
+mkdir -p dna_qc/P_leucotricha/MiSeq/THeavenpOGB2019_1/paired/all/R
+touch dna_qc/P_leucotricha/MiSeq/THeavenpOGB2019_1/paired/all/R/P_leucotricha-MiSeq-THeavenpOGB2019_1-paired-all_R_trim.fq.gz
+cat dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/R/P_leucotricha-THeavenpOGB2019_1-paired-001_R_trim.fq.gz dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/002/R/P_leucotricha-THeavenpOGB2019_1-paired-002_R_trim.fq.gz dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/003/R/P_leucotricha-THeavenpOGB2019_1-paired-003_R_trim.fq.gz > dna_qc/P_leucotricha/MiSeq/THeavenpOGB2019_1/paired/all/R/P_leucotricha-MiSeq-THeavenpOGB2019_1-paired-all_R_trim.fq.gz
+touch dna_qc/P_leucotricha/MiSeq/THeavenpOGB2019_1/paired/all/R/P_leucotricha-MiSeq-THeavenpOGB2019_1-paired-all_R_trim_unpaired.fq.gz
+cat dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/001/R/P_leucotricha-THeavenpOGB2019_1-paired-001_R_trim_unpaired.fq.gz dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/002/R/P_leucotricha-THeavenpOGB2019_1-paired-002_R_trim_unpaired.fq.gz dna_qc/P_leucotricha/THeavenpOGB2019_1/paired/003/R/P_leucotricha-THeavenpOGB2019_1-paired-003_R_trim_unpaired.fq.gz dna_qc/P_leucotricha/MiSeq/THeavenpOGB2019_1/paired/all/R/P_leucotricha-MiSeq-THeavenpOGB2019_1-paired-all_R_trim.fq.gz > dna_qc/P_leucotricha/MiSeq/THeavenpOGB2019_1/paired/all/R/P_leucotricha-MiSeq-THeavenpOGB2019_1-paired-all_R_trim_unpaired.fq.gz
+
+touch dna_qc/P_leucotricha/MiSeq/THeavenpOGB2019_1/paired/all/P_leucotricha-MiSeq-THeavenpOGB2019_1-paired-all_trim_unpaired.fq.gz
+cat dna_qc/P_leucotricha/MiSeq/THeavenpOGB2019_1/paired/all/F/P_leucotricha-MiSeq-THeavenpOGB2019_1-paired-all_F_trim_unpaired.fq.gz dna_qc/P_leucotricha/MiSeq/THeavenpOGB2019_1/paired/all/R/P_leucotricha-MiSeq-THeavenpOGB2019_1-paired-all_R_trim_unpaired.fq.gz > dna_qc/P_leucotricha/MiSeq/THeavenpOGB2019_1/paired/all/P_leucotricha-MiSeq-THeavenpOGB2019_1-paired-all_trim_unpaired.fq.gz
+
+for RawData in $(ls dna_qc/P_leucotricha/MiSeq/THeavenpOGB2019_1/paired/all/P_leucotricha-MiSeq-THeavenpOGB2019_1-paired-all_trim_unpaired.fq.gz); do
+echo $RawData
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(dirname $RawData)
+Outfile=$(basename $RawData)_fastqc
+sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
+done
+#18893
 ```
 
 ## Alignment
@@ -2751,6 +2819,32 @@ done
 #11906
 #11907
 #11908
+```
+```bash
+mkdir -p dna_qc/P_leucotricha/MiSeq/THeavenpOGB2021_1/paired/all/F
+touch dna_qc/P_leucotricha/MiSeq/THeavenpOGB2021_1/paired/all/F/P_leucotricha-MiSeq-THeavenpOGB2021_1-paired-all_F_trim.fq.gz
+
+cat dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/F/P_leucotricha-THeavenpOGB2021_1-paired-001_F_trim.fq.gz dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/F/P_leucotricha-THeavenpOGB2021_1-paired-002_F_trim.fq.gz dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/003/F/P_leucotricha-THeavenpOGB2021_1-paired-003_F_trim.fq.gz dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/004/F/P_leucotricha-THeavenpOGB2021_1-paired-004_F_trim.fq.gz > dna_qc/P_leucotricha/MiSeq/THeavenpOGB2021_1/paired/all/F/P_leucotricha-MiSeq-THeavenpOGB2021_1-paired-all_F_trim.fq.gz
+touch dna_qc/P_leucotricha/MiSeq/THeavenpOGB2021_1/paired/all/F/P_leucotricha-MiSeq-THeavenpOGB2021_1-paired-all_F_trim_unpaired.fq.gz
+cat dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/F/P_leucotricha-THeavenpOGB2021_1-paired-001_F_trim_unpaired.fq.gz dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/F/P_leucotricha-THeavenpOGB2021_1-paired-002_F_trim_unpaired.fq.gz dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/003/F/P_leucotricha-THeavenpOGB2021_1-paired-003_F_trim_unpaired.fq.gz dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/004/F/P_leucotricha-THeavenpOGB2021_1-paired-004_F_trim_unpaired.fq.gz dna_qc/P_leucotricha/MiSeq/THeavenpOGB2021_1/paired/all/F/P_leucotricha-MiSeq-THeavenpOGB2021_1-paired-all_F_trim.fq.gz > dna_qc/P_leucotricha/MiSeq/THeavenpOGB2021_1/paired/all/F/P_leucotricha-MiSeq-THeavenpOGB2021_1-paired-all_F_trim_unpaired.fq.gz
+
+mkdir -p dna_qc/P_leucotricha/MiSeq/THeavenpOGB2021_1/paired/all/R
+touch dna_qc/P_leucotricha/MiSeq/THeavenpOGB2021_1/paired/all/R/P_leucotricha-MiSeq-THeavenpOGB2021_1-paired-all_R_trim.fq.gz
+cat dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/R/P_leucotricha-THeavenpOGB2021_1-paired-001_R_trim.fq.gz dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/R/P_leucotricha-THeavenpOGB2021_1-paired-002_R_trim.fq.gz dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/003/R/P_leucotricha-THeavenpOGB2021_1-paired-003_R_trim.fq.gz dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/004/R/P_leucotricha-THeavenpOGB2021_1-paired-004_R_trim.fq.gz > dna_qc/P_leucotricha/MiSeq/THeavenpOGB2021_1/paired/all/R/P_leucotricha-MiSeq-THeavenpOGB2021_1-paired-all_R_trim.fq.gz
+touch dna_qc/P_leucotricha/MiSeq/THeavenpOGB2021_1/paired/all/R/P_leucotricha-MiSeq-THeavenpOGB2021_1-paired-all_R_trim_unpaired.fq.gz
+cat dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/001/R/P_leucotricha-THeavenpOGB2021_1-paired-001_R_trim_unpaired.fq.gz dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/002/R/P_leucotricha-THeavenpOGB2021_1-paired-002_R_trim_unpaired.fq.gz dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/003/R/P_leucotricha-THeavenpOGB2021_1-paired-003_R_trim_unpaired.fq.gz dna_qc/P_leucotricha/THeavenpOGB2021_1/paired/004/R/P_leucotricha-THeavenpOGB2021_1-paired-004_R_trim_unpaired.fq.gz dna_qc/P_leucotricha/MiSeq/THeavenpOGB2021_1/paired/all/R/P_leucotricha-MiSeq-THeavenpOGB2021_1-paired-all_R_trim.fq.gz > dna_qc/P_leucotricha/MiSeq/THeavenpOGB2021_1/paired/all/R/P_leucotricha-MiSeq-THeavenpOGB2021_1-paired-all_R_trim_unpaired.fq.gz
+
+touch dna_qc/P_leucotricha/MiSeq/THeavenpOGB2021_1/paired/all/P_leucotricha-MiSeq-THeavenpOGB2021_1-paired-all_trim_unpaired.fq.gz
+cat dna_qc/P_leucotricha/MiSeq/THeavenpOGB2021_1/paired/all/F/P_leucotricha-MiSeq-THeavenpOGB2021_1-paired-all_F_trim_unpaired.fq.gz dna_qc/P_leucotricha/MiSeq/THeavenpOGB2021_1/paired/all/R/P_leucotricha-MiSeq-THeavenpOGB2021_1-paired-all_R_trim_unpaired.fq.gz > dna_qc/P_leucotricha/MiSeq/THeavenpOGB2021_1/paired/all/P_leucotricha-MiSeq-THeavenpOGB2021_1-paired-all_trim_unpaired.fq.gz
+
+for RawData in $(ls dna_qc/P_leucotricha/MiSeq/THeavenpOGB2021_1/paired/all/P_leucotricha-MiSeq-THeavenpOGB2021_1-paired-all_trim_unpaired.fq.gz); do
+echo $RawData
+ProgDir=~/git_repos/tools/seq_tools/dna_qc
+OutDir=$(dirname $RawData)
+Outfile=$(basename $RawData)_fastqc
+sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
+done
+#18894
 ```
 
 ## Alignment
