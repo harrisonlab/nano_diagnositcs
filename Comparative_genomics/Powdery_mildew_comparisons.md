@@ -81,6 +81,26 @@ gunzip /data/scratch/heavet/assembly/genome/Podosphaera/cerasi/*.gz
 wget -P /data/scratch/heavet/assembly/genome/Podosphaera/leucotricha https://sra-download.ncbi.nlm.nih.gov/traces/wgs01/wgs_aux/JA/AT/OF/JAATOF01/JAATOF01.1.fsa_nt.gz
 gunzip /data/scratch/heavet/assembly/genome/Podosphaera/leucotricha/*.gz
 ```
+```bash
+conda activate quast
+    for Assembly in $(ls data/assembly/genome/Podosphaera/xanthii/GCA_010015925.1_POXAN_niab_assembly_genomic.mod.fna); do
+      ProgDir=apps/quast
+      OutDir=$(dirname $Assembly)/quast
+      echo $Assembly
+      echo $OutDir
+      sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#2538596
+    for Assembly in $(ls data/assembly/genome/Podosphaera/leucotricha/JAATOF01.mod.fna); do
+      ProgDir=apps/quast
+      OutDir=$(dirname $Assembly)/quast
+      echo $Assembly
+      echo $OutDir
+      sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#2538597
+conda deactivate
+```
 Download host genomes:
 ```bash
 #Apple
@@ -498,6 +518,7 @@ for line in $lines; do
   cat $faa >> $output
   done
 done
+rm *.faa
 
 cd /home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa
 buscos=/home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_final_buscos_ids.txt
@@ -512,12 +533,218 @@ for line in $lines; do
 done
 exit
 exit
+rm *.faa
 ```
+Submit alignment for single copy busco genes with a hit in each organism
+```bash
+  AlignDir=/home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa
+  ProgDir=/home/theaven/scratch/apps/phylogeny
+  sbatch $ProgDir/sub_mafft_alignment.sh $AlignDir
 
+  AlignDir=/home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa
+  ProgDir=/home/theaven/scratch/apps/phylogeny
+  sbatch $ProgDir/sub_mafft_alignment.sh $AlignDir
+```
 
 Arabidopsis/     Erysiphe/        malus/           P_leucotricha/   secale/          vitus/
 Blumeria/        fragaria/        nicotiana/       Podosphaera/     solanum/
 busco_summaries/ Golovinomyces/   Oidium/          prunus/          Sporidiobolus/
 cucumis/         hevea/           P_aphanis/       rubus/           Sporobolomyces/
 cucurbita/       hordeum/         pisum/           Saccharomyces/   triticum/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# After this point pipeline is work in progress
+
+### Signal-P
+```bash
+#input used had problem NCBI genes removed in previous section
+conda activate Java11
+
+  for Proteome in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed3.pep.fasta); do
+  ProgDir=/home/heavet/git_repos/tools/seq_tools/Feature_annotation
+  SplitDir=$(dirname $Proteome | sed 's/final/final_edited_genes_split/g')
+  mkdir -p $SplitDir
+  $ProgDir/splitfile_500.py --inp_fasta $Proteome --out_dir $SplitDir --out_base P_aphanis_THeavenDRCT72020_1_final_preds # Splits input fasta in 500 genes files
+  done
+
+  for File in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_edited_genes_split/*_final_preds_*); do
+    OutDir=gene_pred/P_aphanis/THeavenDRCT72020_1/signalp
+    sbatch /home/heavet/git_repos/tools/seq_tools/Feature_annotation/pred_signalP.sh $File signalp-4.1 $OutDir
+  done
+  #14431-14466
+
+  for File in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_edited_genes_split/*_final_preds_*); do
+  InName=$(echo $File | rev | cut -d "/" -f1 | rev)
+  echo $InName
+  OutFile=$(echo $InName | sed s/.fa//)
+  echo $OutFile
+  /data/scratch/gomeza/prog/signalp/signalp-4.1/signalp-4.1 -t euk -f summary -c 70 $File > "$OutFile"_sp.txt
+  echo '----------------------------------------------------------------------' >> "$OutFile"_sp.txt
+  done
+
+  mv P_aphanis_THeavenDRCT72020_1_final_preds*sp.txt gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_genes_split/.
+
+
+  for OutFile in $(ls P_aphanis_THeavenDRCT72020_1_final_preds*sp.txt gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_genes_split/P_aphanis_THeavenDRCT72020_1_final_preds*sp.txt); do
+  /home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation/sigP_4.1_parser.py --inp_fasta gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed.pep.fasta --inp_sigP "$OutFile"_sp.txt --out_tab "$OutFile"_sp.tab --out_fasta "$OutFile"_sp.aa --out_neg "$OutFile"_sp_neg.aa
+  #sbatch $ProgDir/sub_signalP.sh $File $OutDir signalp-4.1 # Recommended for fungi
+  #sbatch $ProgDir/sub_signalP.sh $File $OutDir signalp-5.0
+  done
+  ```
+### Effector-P
+```bash
+#input used had problem NCBI genes removed in previous section
+mkdir -p /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P
+srun -p short -J signal-P --mem 100G --pty bash
+cd /scratch/projects/heavet
+conda activate Java11
+python /scratch/software/EffectorP-2.0/Scripts/EffectorP.py -o gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P/P_aphanis_THeavenDRCT72020_1_EffectorP.txt -E gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P/P_aphanis_THeavenDRCT72020_1_EffectorP.fa -i gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed3.pep.fasta
+```
+### pylogenetics
+```bash
+realphy https://github.com/harrisonlab/pseudomonas/blob/master/phylogenetics/Realphy_commands
+
+
+
+```
+### Signal-P
+```bash
+conda activate Java11
+
+  for Proteome in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed.pep.fasta); do
+  ProgDir=/home/heavet/git_repos/tools/seq_tools/Feature_annotation
+  SplitDir=$(dirname $Proteome | sed 's/final/final_genes_split/g')
+  mkdir -p $SplitDir
+  $ProgDir/splitfile_500.py --inp_fasta $Proteome --out_dir $SplitDir --out_base P_aphanis_THeavenDRCT72020_1_final_preds # Splits input fasta in 500 genes files
+  done
+  for File in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_genes_split/*_final_preds_*); do
+  InName=$(echo $File | rev | cut -d "/" -f1 | rev)
+  echo $InName
+  OutFile=$(echo $InName | sed s/.fa//)
+  echo $OutFile
+  signalp-4.1 -t euk -f summary -c 70 $File > "$OutFile"_sp.txt
+  echo '----------------------------------------------------------------------' >> "$OutFile"_sp.txt
+  done
+  mv P_aphanis_THeavenDRCT72020_1_final_preds*sp.txt gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_genes_split/.
+
+
+  for OutFile in $(ls P_aphanis_THeavenDRCT72020_1_final_preds*sp.txt gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_genes_split/P_aphanis_THeavenDRCT72020_1_final_preds*sp.txt); do
+  /home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation/sigP_4.1_parser.py --inp_fasta gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed.pep.fasta --inp_sigP "$OutFile"_sp.txt --out_tab "$OutFile"_sp.tab --out_fasta "$OutFile"_sp.aa --out_neg "$OutFile"_sp_neg.aa
+  #sbatch $ProgDir/sub_signalP.sh $File $OutDir signalp-4.1 # Recommended for fungi
+  #sbatch $ProgDir/sub_signalP.sh $File $OutDir signalp-5.0
+  done
+#788728-788763
+
+OutDir=$(dirname $Proteome | sed 's/codingquarry/signalp/g'| sed 's/final/split/g')
+
+Change output directory name to "final_genes_signalp-4.1" mv gene_pred/F.oxysporum_fsp_fragariae_signalp-4.1 gene_pred/final_genes_signalp-4.1
+
+Need to combine the output of the first signal-P run
+
+for Strain in DSA14_003; do for SplitDir in $(ls -d gene_pred/final_genes_split/F.oxysporum_fsp_fragariae/$Strain/flye); do Strain=$(echo $SplitDir | rev |cut -d '/' -f2 | rev) Organism=$(echo $SplitDir | rev |cut -d '/' -f3 | rev) InStringAA='' InStringNeg='' InStringTab='' InStringTxt='' SigpDir=final_genes_signalp-4.1 for GRP in $(ls -l $SplitDir/final_preds.fa | rev | cut -d '' -f1 | rev | sort -n); do InStringAA="$InStringAA gene_pred/$SigpDir/$Organism/$Strain/"$Organism""$Strain"final_preds$GRP""sp.aa"; InStringNeg="$InStringNeg gene_pred/$SigpDir/$Organism/$Strain/"$Organism""$Strain"final_preds$GRP""sp_neg.aa"; InStringTab="$InStringTab gene_pred/$SigpDir/$Organism/$Strain/"$Organism""$Strain"final_preds$GRP""sp.tab"; InStringTxt="$InStringTxt gene_pred/$SigpDir/$Organism/$Strain/"$Organism""$Strain"final_preds$GRP""_sp.txt"; done cat $InStringAA > gene_pred/$SigpDir/$Organism/$Strain/"$Strain"_final_sp.aa cat $InStringNeg > gene_pred/$SigpDir/$Organism/$Strain/"$Strain"_final_neg_sp.aa tail -n +2 -q $InStringTab > gene_pred/$SigpDir/$Organism/$Strain/"$Strain"_final_sp.tab cat $InStringTxt > gene_pred/$SigpDir/$Organism/$Strain/"$Strain"_final_sp.txt done done
+
+Having flye in directory path caused small issues therefore I stopped including it from here Things may be in the wrong directory - use "mv" command to change directory names
+
+
+  signalp-4.1 -t euk -f summary -c 70 $File > "$OutFile"_sp.txt
+  echo '----------------------------------------------------------------------' >> "$OutFile"_sp.txt
+  PathToAnnotateSigP=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+  $PathToAnnotateSigP/sigP_4.1_parser.py --inp_sigP "$OutFile"_sp.txt --out_tab "$OutFile"_sp.tab --out_fasta "$OutFile"_sp.aa --out_neg "$OutFile"_sp_neg.aa -$
+
+```
+
+### TMHMM
+Identify transmembrane proteins
+```bash
+for Proteome in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed.pep.fasta); do 
+  ProgDir=/home/heavet/git_repos/tools/seq_tools/Feature_annotation
+  OutDir=$(dirname $Proteome | sed 's/codingquarry/TMHMM/g')
+  sbatch $ProgDir/TMHMM.sh $Proteome $OutDir
+done 
+#788768
+
+Proteins with transmembrane domains were removed from lists of Signal peptide containing proteins
+
+for File in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/TMHMM/rep_modeling/787033/final/TM_genes_neg.txt); do
+TmHeaders=$(echo "$File" | sed 's/neg.txt/neg_headers.txt/g')
+cat $File | cut -f1 > $TmHeaders
+SigP=$(ls gene_pred/final_genes_signalp-4.1/$Organism/$Strain/*_final_sp.aa)
+OutDir=$(dirname $SigP)
+ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+$ProgDir/extract_from_fasta.py --fasta $SigP --headers $TmHeaders > $OutDir/"$Strain"_final_sp_no_trans_mem.aa
+cat $OutDir/"$Strain"_final_sp_no_trans_mem.aa | grep '>' | wc -l
+done
+```
+### Effector-P
+```bash
+mkdir -p gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P
+srun -p short  --mem 100G --pty bash
+EffectorP.py -o gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P/P_aphanis_THeavenDRCT72020_1_EffectorP.txt -E gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P/P_aphanis_THeavenDRCT72020_1_EffectorP.fa -i gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed.pep.fasta
+
+for File in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P/P_aphanis_THeavenDRCT72020_1_EffectorP.txt); do
+  Headers=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_headers.txt/g')
+  cat $File | grep 'Effector' | cut -f1 > $Headers
+  Secretome=$(ls gene_pred/final_genes_signalp-4.1/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_final_sp_no_trans_mem.aa)
+  OutFile=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted.aa/g')
+  ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+  $ProgDir/extract_from_fasta.py --fasta $Secretome --headers $Headers > $OutFile
+  OutFileHeaders=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted_headers.txt/g')
+  cat $OutFile | grep '>' | tr -d '>' > $OutFileHeaders
+  cat $OutFileHeaders | wc -l
+  Gff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3)
+  EffectorP_Gff=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted.gff/g')
+  $ProgDir/extract_gff_for_sigP_hits.pl $OutFileHeaders $Gff effectorP ID > $EffectorP_Gff
+  cat $EffectorP_Gff | grep -w 'gene' | wc -l
+done > tmp.txt
+```
 
