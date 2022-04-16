@@ -2656,6 +2656,47 @@ exit
 exit
 echo finished
 ```
+Following feedback from reviews it was decided to remove all reads not classified as leotiomycetes as contaminants.
+```bash
+screen -S kraken
+srun -p himem -J kraken2 --mem 350G --pty bash
+conda activate kraken2
+cd /scratch/projects/heavet/gene_pred_vAG/_sigP/split
+kraken2 \
+--db /projects/nano_diagnostics/analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt \
+--output analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/ntoutput13760-2.txt \
+--unclassified-out analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/ntunclassified-out13760-2.txt \
+--classified-out analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/ntclassified-out13760-2.txt \
+--report analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/ntreport13760-2.txt \
+--use-names \
+/scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_aphanis/THeavenSCOTT2020_1/SPAdes/13760/ncbi_edits2/contigs_min_500bp_renamed.fasta
+# 
+# 
+conda deactivate
+exit
+exit
+echo finished
+
+#Contaminants were removed
+touch analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/contlistanitra2.txt
+nano analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/contlistanitra2.txt #edited to include all entries in analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/ntreport13760.txt that were not leotiomycete fungi, including unclassified. These were removed from the assembly as contaminants.
+grep -f analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/contlistanitra2.txt analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/ntoutput13760-2.txt > analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/contaminantcontigs137602.txt
+nawk -F"\\t" '{print $2}' analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/contaminantcontigs137602.txt > analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/contaminantcontignames137602.txt
+conda activate seqtk
+seqtk subseq /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_aphanis/THeavenSCOTT2020_1/SPAdes/13760/ncbi_edits2/contigs_min_500bp_renamed.fasta analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/contaminantcontignames137602.txt > analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/contaminants137602.fasta
+conda deactivate
+conda activate Biopython
+/home/heavet/git_repos/tools/DIY/filter.py /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_aphanis/THeavenSCOTT2020_1/SPAdes/13760/ncbi_edits2/contigs_min_500bp_renamed.fasta /scratch/projects/heavet/gene_pred_vAG/_sigP/split/analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/contaminantcontignames137602.txt > /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_aphanis/THeavenSCOTT2020_1/SPAdes/13760/filtered_contigs/filtered_contigs_min_500bp2.fasta
+conda deactivate
+awk '/^>/ { print (NR==1 ? "" : RS) $0; next } { printf "%s", $0 } END { printf RS }' /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_aphanis/THeavenSCOTT2020_1/SPAdes/13760/filtered_contigs/filtered_contigs_min_500bp2.fasta > /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_aphanis/THeavenSCOTT2020_1/SPAdes/13760/filtered_contigs/contigs_min_500bp_filtered2.fasta
+wc -l analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/contlistanitra2.txt #1405
+wc -l analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/contaminantcontigs137602.txt #8065
+wc -l analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/contaminantcontignames137602.txt #8065
+wc -l analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt/contaminants137602.fasta #16130
+wc -l /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_aphanis/THeavenSCOTT2020_1/SPAdes/13760/filtered_contigs/filtered_contigs_min_500bp2.fasta #882832
+wc -l assembly/metagenome/P_aphanis/THeavenSCOTT2020_1/SPAdes/13760/filtered_contigs/contigs_min_500bp.fasta #36842
+wc -l assembly/metagenome/P_aphanis/THeavenSCOTT2020_1/SPAdes/13760/filtered_contigs/contigs_min_500bp_filtered2.fasta #20712
+```
 ## NCBI submission
 Following filtering our assembly was submitted to NCBI with a request that they run it through their own contamination detection pipelines. The returned report was used to correct the assembly to NCBI standards. Contigs were renamed in accordance with ncbi recomendations.
 
