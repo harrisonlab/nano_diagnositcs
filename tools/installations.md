@@ -19,8 +19,8 @@ conda update -n base -c defaults conda
 ```bash
 conda create -n blobtools2 -y python=3.6 docopt pyyaml ujson pysam tqdm nodejs seqtk
 conda activate blobtools2
-mkdir -p taxdump
-cd taxdump
+mkdir -p apps/blobtools2/taxdump
+cd apps/blobtools2/taxdump
 curl -L ftp://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz | tar xzf -
 cd ..
 git clone https://github.com/blobtoolkit/blobtools2
@@ -34,6 +34,13 @@ cd ..
 conda create -n blobtools
 conda activate blobtools
 conda install -c bioconda blobtools
+```
+### jellyfish
+```bash
+conda create -n jellyfish
+conda activate jellyfish
+conda install -c conda-forge jellyfish
+conda install jellyfish=2.2.3
 ```
 ### blast
 ```bash
@@ -130,7 +137,7 @@ conda activate Picard
 conda install -c bioconda gatk
 conda install gatk4
 ```
-##concoct
+## concoct
 ```bash
 conda create -n concoct
 conda activate concoct
@@ -190,6 +197,16 @@ nano ~/.bash_profile
 ```bash
 mkdir -p /scratch/projects/heavet/prog/assemblystats
 cd /scratch/projects/heavet/prog/assemblystats
+git clone https://github.com/rjchallis/assembly-stats
+cd assembly-stats
+
+conda create -n assembly-stats
+conda activate assembly-stats
+conda install -c bioconda assembly-stats
+conda install -c conda-forge jq
+
+mkdir apps/assemblystats
+cd apps/assemblystats
 git clone https://github.com/rjchallis/assembly-stats
 cd assembly-stats
 
@@ -948,6 +965,7 @@ python2.7 -m pip install biopython==1.76
 conda create -n Mitofinder
 conda activate Mitofinder
 conda install mitofinder
+conda install -c bioconda mitofinder
 
 mkdir -p ~/git_repos/tools/prog/mitofinder
 cd ~/git_repos/tools/prog/mitofinder
