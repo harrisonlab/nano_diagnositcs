@@ -1735,7 +1735,6 @@ conda activate quast
     done
 #756881
 ```
-
 ## NCBI submission
 Following filtering our assembly was submitted to NCBI with a request that they run it through their own contamination detection pipelines. The returned report was used to correct the assembly to NCBI standards. Contigs were renamed in accordance with ncbi recomendations.
 
@@ -1766,6 +1765,47 @@ conda activate quast
     done
 #780365
 conda deactivate
+```
+Following feedback from reviews all contigs not identified as Leotiomycetes were removed.
+```bash
+screen -S kraken5
+srun -p himem -J kraken2 --mem 350G --pty bash
+conda activate kraken2
+mkdir -p analysis/P_leucotricha/THeavenp11_1/kraken2/nt/580029
+kraken2 \
+--db /projects/nano_diagnostics/analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt \
+--output analysis/P_leucotricha/THeavenp11_1/kraken2/nt/580029/ntoutput.txt \
+--unclassified-out analysis/P_leucotricha/THeavenp11_1/kraken2/nt/580029/ntunclassified-out.txt \
+--classified-out analysis/P_leucotricha/THeavenp11_1/kraken2/nt/580029/ntclassified-out.txt \
+--report analysis/P_leucotricha/THeavenp11_1/kraken2/nt/580029/ntreport.txt \
+--use-names \
+/projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/contigs_min_500bp_renamed.fasta
+#    6854 sequences classified (95.69%)
+#    309 sequences unclassified (4.31%) 
+conda deactivate
+exit
+exit
+echo finished
+
+touch analysis/P_leucotricha/THeavenp11_1/kraken2/nt/contaminantlist2.txt
+nano analysis/P_leucotricha/THeavenp11_1/kraken2/nt/contaminantlist2.txt #edited to include all taxonomic hits not leotiomycetes
+
+grep -f analysis/P_leucotricha/THeavenp11_1/kraken2/nt/contaminantlist2.txt analysis/P_leucotricha/THeavenp11_1/kraken2/nt/580029/ntoutput.txt > analysis/P_leucotricha/THeavenp11_1/kraken2/nt/contaminantcontigs2.txt
+nawk -F"\\t" '{print $2}' analysis/P_leucotricha/THeavenp11_1/kraken2/nt/contaminantcontigs2.txt > analysis/P_leucotricha/THeavenp11_1/kraken2/nt/contaminantcontignames2.txt
+conda activate seqtk
+seqtk subseq /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/contigs_min_500bp_renamed.fasta analysis/P_leucotricha/THeavenp11_1/kraken2/nt/contaminantcontignames2.txt > analysis/P_leucotricha/THeavenp11_1/kraken2/nt/contaminants2.fasta
+conda deactivate
+conda activate biopython
+/home/heavet/git_repos/tools/DIY/filter.py /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/contigs_min_500bp_renamed.fasta analysis/P_leucotricha/THeavenp11_1/kraken2/nt/contaminantcontignames2.txt > assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/filtered_contigs_min_500bp2.fasta
+conda deactivate
+awk '/^>/ { print (NR==1 ? "" : RS) $0; next } { printf "%s", $0 } END { printf RS }' assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/filtered_contigs/filtered_contigs_min_500bp2.fasta > /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/contigs_min_500bp_renamed2.fasta
+wc -l analysis/P_leucotricha/THeavenp11_1/kraken2/nt/contaminantlist2.txt #43
+wc -l analysis/P_leucotricha/THeavenp11_1/kraken2/nt/contaminantcontignames2.txt #358
+wc -l /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/contigs_min_500bp_renamed.fasta #14327
+wc -l /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/contigs_min_500bp_renamed2.fasta #13610
+```
+```bash
+scp -r /projects/nano_diagnostics/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/contigs_min_500bp_renamed2.fasta theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/.
 ```
 ## Annotation
 
@@ -1837,23 +1877,25 @@ Conda installations of Repeatmodeler and transposonPSI were performed.
 Repeatmodeler and transposonPSI were run on our assembly.
 ```bash
 conda activate repeatmasking
-for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/contigs_min_500bp_renamed.fasta); do
-    ProgDir=~/git_repos/tools/seq_tools/repeat_masking
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/contigs_min_500bp_renamed2.fasta); do
+    ID=$(echo $Assembly| rev |cut -f3 -d '/'| rev | cut -f1 -d '/'  )
+    ProgDir=~/scratch/apps/repeat_masking
     OutDir=$(dirname $Assembly)/filteredmasked
     mkdir -p $OutDir/rep_modeling
-    sbatch $ProgDir/rep_modeling.sh $Assembly $OutDir/rep_modeling
+    sbatch $ProgDir/rep_modeling.sh $Assembly $OutDir/rep_modeling $ID
 done
-#784845
+#784845, 2542133
 conda deactivate
 
 conda activate transposonpsi
-for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/contigs_min_500bp_renamed.fasta); do
-    ProgDir=~/git_repos/tools/seq_tools/repeat_masking
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenp11_1/SPAdes/580029/ncbi_edits/contigs_min_500bp_renamed2.fasta); do
+    ID=$(echo $Assembly| rev |cut -f3 -d '/'| rev | cut -f1 -d '/'  )
+    ProgDir=~/scratch/apps/repeat_masking
     OutDir=$(dirname $Assembly)/filteredmasked
     mkdir -p $OutDir/transposonPSI
-    sbatch $ProgDir/gomez_transposonPSI.sh $Assembly $OutDir/transposonPSI
+    sbatch $ProgDir/gomez_transposonPSI.sh $Assembly $OutDir/transposonPSI $ID
 done
-#784846
+#784846, 2542134
 conda deactivate
 ```
 The number of bases masked by transposonPSI and Repeatmasker were summarised using the following commands:
@@ -2498,8 +2540,34 @@ echo finished
 ## NCBI submission
 Following filtering our assembly was submitted to NCBI with a request that they run it through their own contamination detection pipelines. The returned report was used to correct the assembly to NCBI standards. Contigs were renamed in accordance with ncbi recomendations.
 
+NCBI reports (FCSreport.txt) were manually downloaded to the following locations:
+```bash
+mkdir -p /scratch/projects/heavet/gene_pred_vAG/_sigP/split/genome_submission/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/NCBI_report_dir
+mv /scratch/projects/heavet/gene_pred_vAG/_sigP/split/genome_submission/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/NCBI_report_dir/Contamination2.txt /scratch/projects/heavet/gene_pred_vAG/_sigP/split/genome_submission/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/NCBI_report_dir/FCSreport.txt
+```
+These downloaded files were used to correct assemblies:
+```bash
+conda activate codingquary
+for Assembly in $(ls /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/filtered_contigs/contigs_min_500bp_filtered.fasta); do
+NCBI_report=$(ls /scratch/projects/heavet/gene_pred_vAG/_sigP/split/genome_submission/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/NCBI_report_dir/FCSreport.txt)
+OutDir=$(dirname $Assembly|sed 's@filtered_contigs@ncbi_edits@g')
+mkdir -p $OutDir
+ProgDir=~/git_repos/tools/seq_tools/assemblers/assembly_qc/remove_contaminants
+python $ProgDir/remove_contaminants.py --inp $Assembly --out $OutDir/contigs_min_500bp_renamed.fasta --coord_file $NCBI_report > $OutDir/log.txt
+done
+conda deactivate
 
-
+conda activate quast
+    for Assembly in $(ls /scratch/projects/heavet/gene_pred_vAG/_sigP/split/assembly/metagenome/P_leucotricha/THeavenpOGB2019_1/SPAdes/11943/ncbi_edits/contigs_min_500bp_renamed.fasta); do
+        ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+        OutDir=$(dirname $Assembly)
+        echo $Assembly
+        echo $OutDir
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+#18960
+conda deactivate
+```
 
 
 
