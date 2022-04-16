@@ -292,7 +292,7 @@ Kraken2 was used to screen the assembly for contaminant contigs.
 ```bash
 #kraken was run with a general database containing all erysiphales genomes published on NCBI and the red and black raspberry genomes.
 screen -S kraken
-srun -p long -J kraken2 --mem 350G --pty bash
+srun -p himem -J kraken2 --mem 550G --pty bash
 
 mkdir /home/theaven/scratch/apps/kraken2/nt
 scp -r /projects/nano_diagnostics/analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/apps/kraken2/nt 
@@ -360,10 +360,12 @@ for file in $(ls ~/scratch/apps/kraken2/nt2/tmp123/archaea/*.fna); do
     #echo $file
     kraken2-build --add-to-library $file --db ~/scratch/apps/kraken2/nt2 2>&1 | tee -a ~/scratch/apps/kraken2/nt2/krakenbuild.log 
 done
-for file in $(ls ~/scratch/apps/kraken2/nt2/tmp123/bacteria/*.fna); do
+cd ~/scratch/apps/kraken2/nt2/tmp123/bacteria
+for file in $(ls *.fna); do
     #echo $file
     kraken2-build --add-to-library $file --db ~/scratch/apps/kraken2/nt2 2>&1 | tee -a ~/scratch/apps/kraken2/nt2/krakenbuild.log 
 done
+cd ~/scratch
 for file in $(ls ~/scratch/apps/kraken2/nt2/tmp123/fungi/*.fna); do
     #echo $file
     kraken2-build --add-to-library $file --db ~/scratch/apps/kraken2/nt2 2>&1 | tee -a ~/scratch/apps/kraken2/nt2/krakenbuild.log 
@@ -386,13 +388,13 @@ for file in $(ls ~/scratch/apps/kraken2/nt2/tmp123/vertebrate_mammalian/*.fna); 
 done
 
 #Missing genomes added to database
-for assembly in $(ls /data/scratch/heavet/assembly/genome/*/*/*.mod.fna); do
-kraken2-build --add-to-library $assembly --db analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt 2>&1 | tee -a 2.log
+for assembly in $(ls data/assembly/genome/*/*/*.mod.fna); do
+kraken2-build --add-to-library $assembly --db ~/scratch/apps/kraken2/nt2 2>&1 | tee -a 2.log
 done
 
 #Databse was built:
-kraken2-build --build --db analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt 2>&1 | tee -a 3.log
-kraken2-build --clean --threads 20 --db analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt
+kraken2-build --build --db ~/scratch/apps/kraken2/nt2 2>&1 | tee -a 3.log
+kraken2-build --clean --threads 20 --db ~/scratch/apps/kraken2/nt2
 exit
 exit
 echo finished
