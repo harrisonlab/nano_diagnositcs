@@ -17,6 +17,8 @@ conda update -n base -c defaults conda
 ```
 ### blobtools2
 ```bash
+#https://blobtoolkit.genomehubs.org/install/
+
 conda create -n blobtools2 -y python=3.6 docopt pyyaml ujson pysam tqdm nodejs seqtk
 conda activate blobtools2
 mkdir -p apps/blobtools2/taxdump
@@ -28,6 +30,32 @@ git clone https://github.com/blobtoolkit/viewer
 cd viewer
 npm install
 cd ..
+conda install -c bioconda -y psutil
+conda install -c conda-forge -y geckodriver selenium pyvirtualdisplay
+pip install fastjsonschema
+git clone https://github.com/blobtoolkit/specification
+git clone https://github.com/blobtoolkit/insdc-pipeline
+mkdir -p nt
+wget "ftp://ftp.ncbi.nlm.nih.gov/blast/db/nt.??.tar.gz" -P nt/ && \
+        for file in nt/*.tar.gz; \
+            do tar xf $file -C nt && rm $file; \
+        done
+conda install -c bioconda diamond
+mkdir -p uniprot
+newest=$(curl -vs ftp.ebi.ac.uk/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/ 2>&1 | awk '/tar.gz/ {print $9}')
+wget -q -O uniprot/reference_proteomes.tar.gz ftp.ebi.ac.uk/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/$newest
+
+cd uniprot
+tar xf reference_proteomes.tar.gz
+
+touch reference_proteomes.fasta.gz
+find . -mindepth 2 | grep "fasta.gz" | grep -v 'DNA' | grep -v 'additional' | xargs cat >> reference_proteomes.fasta.gz
+
+echo -e "accession\taccession.version\ttaxid\tgi" > reference_proteomes.taxid_map
+zcat */*/*.idmapping.gz | grep "NCBI_TaxID" | awk '{print $1 "\t" $1 "\t" $3 "\t" 0}' >> reference_proteomes.taxid_map
+
+diamond makedb -p 16 --in reference_proteomes.fasta.gz --taxonmap reference_proteomes.taxid_map --taxonnodes ../taxdump/nodes.dmp -d reference_proteomes.dmnd
+cd -
 ```
 ### blobtools
 ```bash
@@ -46,7 +74,7 @@ conda install jellyfish=2.2.3
 ```bash
 conda create -n blast+
 conda activate blast+
-conda install -c bioconda blast #fails
+conda install blast 
 ```
 ## eDIRECT
 ```bash
@@ -124,6 +152,12 @@ nano ~/.profile
 conda create -n repeatmasking
 conda activate repeatmasking
 conda install -c bioconda repeatmodeler
+```
+## bwa
+```bash
+conda create -n 
+conda activate bwa
+conda install -c bioconda bwa
 ```
 ## transposonPSI
 ```bash
@@ -269,6 +303,8 @@ nano ~/.profile
 ```
 ## signalp
 ```bash
+#download links expire after 4 hours
+#https://services.healthtech.dtu.dk/service.php?SignalP
 mkdir /home/heavet/git_repos/tools/gene_prediction/signalp-5.0b
 cd /home/heavet/git_repos/tools/gene_prediction/signalp-5.0b
 wget https://services.healthtech.dtu.dk/download/6e5220c3-8c8b-44ec-8835-f9184061d75b/signalp-5.0b.Linux.tar.gz
@@ -277,6 +313,12 @@ nano ~/.profile
 #PATH=${PATH}:$HOME/git_repos/tools/gene_prediction/signalp-5.0b/signalp-5.0b/bin:${PATH}
 #PATH=${PATH}:/data/scratch/gomeza/prog/signalp/signalp-4.1:${PATH}
 . ~/.profile
+
+mkdir /home/theaven/scratch/apps/signalp
+cd /home/theaven/scratch/apps/signalp
+wget https://services.healthtech.dtu.dk/download/4ab221bd-33f6-4702-87c4-240027ee4ea1/signalp-5.0b.Linux.tar.gz
+tar -xvzf signalp-5.0b.Linux.tar.gz
+#/home/theaven/scratch/apps/signalp/signalp-5.0b/bin
 ```
 ## centrifuge
 ```bash
