@@ -81,6 +81,13 @@ gunzip /data/scratch/heavet/assembly/genome/Podosphaera/cerasi/*.gz
 wget -P /data/scratch/heavet/assembly/genome/Podosphaera/leucotricha https://sra-download.ncbi.nlm.nih.gov/traces/wgs01/wgs_aux/JA/AT/OF/JAATOF01/JAATOF01.1.fsa_nt.gz
 gunzip /data/scratch/heavet/assembly/genome/Podosphaera/leucotricha/*.gz
 ```
+Secalis genomes
+```bash
+for Assembly in $(ls /home/theaven/scratch/assembly/metagenome/blumeria/graminis/secalis/*/SPAdes/256935*/filtered_contigs/S*contigs_min_500bp.fasta); do
+Outname=$(echo $Assembly|rev|cut -f1 -d '/'|rev|sed 's@.fasta@.c.fna@g')
+cp $Assembly data/assembly/genome/Blumeria/graminis/$Outname
+done
+```
 ```bash
 conda activate quast
     for Assembly in $(ls data/assembly/genome/Podosphaera/xanthii/GCA_010015925.1_POXAN_niab_assembly_genomic.mod.fna); do
@@ -303,7 +310,22 @@ while read file; do
 done < piped.txt
 
 conda activate BUSCO
-for assembly in $(ls data/assembly/genome/*/*/*.fna); do
+for assembly in $(ls data/assembly/genome/P*/c*/**1c.fna); do
+  echo $assembly
+  ProgDir=~/scratch/apps/busco
+  BuscoDB=fungi_odb10
+  OutDir=$(dirname $assembly|sed 's@data/assembly/genome@gene_pred@g')/$(echo $assembly|rev|cut -f1 -d '/' --output-delimiter '-'|rev|sed 's@.fna@@g'|sed 's@_genomic@@g'|sed 's@.mod@@g')/BUSCO
+  echo $OutDir
+  echo $BuscoDB
+  sbatch $ProgDir/sub_busco.sh $assembly $BuscoDB $OutDir
+done
+#2734247,51,53,56,58,60,62
+conda deactivate
+exit
+echo finished
+
+conda activate BUSCO
+for assembly in $(ls data/assembly/genome/B*/g*/S*.fna); do
   echo $assembly
   ProgDir=~/scratch/apps/busco
   BuscoDB=viridiplantae_odb10
@@ -312,13 +334,13 @@ for assembly in $(ls data/assembly/genome/*/*/*.fna); do
   echo $BuscoDB
   sbatch $ProgDir/sub_busco.sh $assembly $BuscoDB $OutDir
 done
-#2462675-2462728, 2487763-8, 2488333-2488367
+#2462675-2462728, 2487763-8, 2488333-2488367, 2569867-71
 conda deactivate
 exit
 echo finished
 
 conda activate BUSCO
-for assembly in $(ls data/assembly/genome/*/*/*.fna); do
+for assembly in $(ls data/assembly/genome/B*/g*/S*.fna); do
   echo $assembly
   ProgDir=~/scratch/apps/busco
   BuscoDB=ascomycota_odb10
@@ -327,13 +349,13 @@ for assembly in $(ls data/assembly/genome/*/*/*.fna); do
   echo $BuscoDB
   sbatch $ProgDir/sub_busco.sh $assembly $BuscoDB $OutDir
 done
-#2463015-2463068,2488280-2488332
+#2463015-2463068,2488280-2488332, 2569873-77
 conda deactivate
 exit
 echo finished
 
 conda activate BUSCO
-for assembly in $(ls data/assembly/genome/*/*/*.fna); do
+for assembly in $(ls data/assembly/genome/B*/g*/S*.fna); do
   echo $assembly
   ProgDir=~/scratch/apps/busco
   BuscoDB=leotiomycetes_odb10
@@ -342,7 +364,7 @@ for assembly in $(ls data/assembly/genome/*/*/*.fna); do
   echo $BuscoDB
   sbatch $ProgDir/sub_busco.sh $assembly $BuscoDB $OutDir
 done
-#2463069-2463122, 2487770-2487809
+#2463069-2463122, 2487770-2487809, 2569879-83
 conda deactivate
 exit
 echo finished
@@ -456,7 +478,7 @@ NOTE:.fna files containing nucleotide information will not be created by busco u
 mkdir -p analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa
 mkdir -p analysis/phylogeny/busco/mildew_leotiomycetes_busco_nt
 
-for dir in $(ls -d gene_pred/Saccharomyces/*/*4/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/busco_sequences/single_copy_busco_sequences); do
+for dir in $(ls -d gene_pred/B*/g*/S_*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/busco_sequences/single_copy_busco_sequences); do
   sppname=$(echo $dir |cut -f 2-4 -d "/" | sed 's@/@_@g');
   abbrv=$(echo $sppname | sed 's@_@@g')
   echo $sppname
@@ -506,6 +528,7 @@ done
 ```
 Now that BUSCO genes have been named uniquely for each genome analysed they were copied into a single .fasta file one for each gene.
 ```bash
+screen -S comps
 srun -p long  --mem 10G --pty bash
 cd /home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa
 buscos=/home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_final_buscos_ids.txt
@@ -536,14 +559,23 @@ exit
 rm *.faa
 ```
 Submit alignment for single copy busco genes with a hit in each organism
-```bash
+```bash 
+conda activate mafft
+
   AlignDir=/home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa
+  cd $AlignDir
   ProgDir=/home/theaven/scratch/apps/phylogeny
   sbatch $ProgDir/sub_mafft_alignment.sh $AlignDir
+#2569979
 
   AlignDir=/home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa
+  cd $AlignDir
   ProgDir=/home/theaven/scratch/apps/phylogeny
   sbatch $ProgDir/sub_mafft_alignment.sh $AlignDir
+#2569980
+conda deactivate
+
+cd ~/scratch  
 ```
 
 Arabidopsis/     Erysiphe/        malus/           P_leucotricha/   secale/          vitus/
