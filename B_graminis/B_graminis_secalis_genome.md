@@ -272,19 +272,24 @@ conda activate spades
     echo $OutDir
     sbatch $ProgDir/submit_SPAdes.sh $F_Read $R_Read $S_Read $OutDir correct 10
   done
-#2474997-2475002
+#2569350-55
 conda deactivate
+
+for Assembly in $(ls assembly/metagenome/blumeria/graminis/secalis/*/SPAdes/256935*/scaffolds.fasta);do
+    Output=$(dirname $Assembly)/filtered_contigs/contigs_min_500bp.fasta
+    python /home/theaven/scratch/apps/abyss/filter_abyss_contigs.py $Assembly 500 > $Output
+done
 ```
 ```bash
 conda activate quast
-    for Assembly in $(ls assembly/metagenome/blumeria/graminis/secalis/*/SPAdes/*/filtered_contigs/contigs_min_500bp_filtered.fasta); do
-        ProgDir=/home/heavet/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+    for Assembly in $(ls assembly/metagenome/blumeria/graminis/secalis/*/SPAdes/256935*/filtered_contigs/contigs_min_500bp.fasta); do
+        ProgDir=~/scratch/apps/quast
         OutDir=$(dirname $Assembly)
         echo $Assembly
         echo $OutDir
         sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
     done
-#
+# 2569776-81
 conda deactivate
 ```
 ### Kraken2
@@ -314,9 +319,44 @@ done
 exit
 exit
 echo finished
+# running kraken with a database copied from the NIAB cluster does not seem to work
 
-scp -r /home/theaven/scratch/assembly/metagenome/blumeria/graminis/secalis/S_1459/SPAdes/2475002/filtered_contigs/contigs_min_500bp.fasta heavet@10.2.20.1:/projects/nano_diagnostics/assembly/metagenome/blumeria/graminis/secalis/S_1459/SPAdes/1/filtered_contigs
+scp -r /home/theaven/scratch/assembly/metagenome/blumeria/graminis/secalis/S_1459/SPAdes/2475002/filtered_contigs/contigs_min_500bp.fasta heavet@10.2.20.1:/projects/nano_diagnostics/assembly/metagenome/blumeria/graminis/secalis/S_1459/SPAdes/1/filtered_contigs/.
+#scp is not working to transfer files from the crop diversity server to the NIAB hpc
 
+#Files were downloaded locally and then re-uploaded to the NIAB hpc to be run with kraken. They needed to be given unique names first:
+for Assembly in $(ls /home/theaven/scratch/assembly/metagenome/blumeria/graminis/secalis/*/SPAdes/256935*/filtered_contigs/contigs_min_500bp.fasta); do
+OutDir=$(dirname $Assembly)
+Outname=$(echo $Assembly|rev|cut -f5 -d '/'|rev)
+cp $Assembly ${OutDir}/${Outname}_contigs_min_500bp.fasta
+done
+
+mkdir -p assembly/metagenome/blumeria/graminis/secalis/S_1201/SPAdes/2569351/filtered_contigs
+mkdir -p assembly/metagenome/blumeria/graminis/secalis/S_1203/SPAdes/2569352/filtered_contigs
+mkdir -p assembly/metagenome/blumeria/graminis/secalis/S_1391/SPAdes/2569353/filtered_contigs
+mkdir -p assembly/metagenome/blumeria/graminis/secalis/S_1400/SPAdes/2569354/filtered_contigs
+mkdir -p assembly/metagenome/blumeria/graminis/secalis/S_1459/SPAdes/2569355/filtered_contigs
+
+cd /scratch/projects/heavet/gene_pred_vAG/_sigP/split
+for Assembly in $(ls tmp/S*contigs_min_500bp.fasta); do
+prefix=$(echo $Assembly|rev|cut -f1 -d '/'|cut -f4,5 -d '_'|rev)
+OutDir=assembly/metagenome/blumeria/graminis/secalis/$prefix/SPAdes/*/filtered_contigs/.
+mv $Assembly ${OutDir}
+done
+
+cd /scratch/projects/heavet/gene_pred_vAG/_sigP/split
+conda activate kraken2
+for Assembly in $(ls assembly/metagenome/blumeria/graminis/secalis/S*/SPAdes/*/filtered_contigs/*contigs_min_500bp.fasta); do
+    Database=/projects/nano_diagnostics/analysis/P_aphanis/THeavenSCOTT2020_1/kraken2/nt
+    ID=$(echo $Assembly|rev|cut -f3 -d '/'|rev)
+    OutDir=$(dirname $Assembly | sed 's@assembly/metagenome@analysis@g'| sed 's@SPAdes@kraken2/nt@g'| sed 's@filtered_contigs@@g')
+    mkdir -p $OutDir
+    ProgDir=/home/heavet/git_repos/tools/kraken2
+    sbatch $ProgDir/sub_kraken2.sh $Assembly $Database $ID $OutDir
+done
+#19019-23
+conda deactivate
+#kraken showed the genomes to be 99.99% Blumeria graminis
 
 screen -S kraken2
 #Genomes were downloaded:
@@ -393,9 +433,51 @@ kraken2-build --add-to-library $assembly --db ~/scratch/apps/kraken2/nt2 2>&1 | 
 done
 
 #Databse was built:
-kraken2-build --build --db ~/scratch/apps/kraken2/nt2 2>&1 | tee -a 3.log
+kraken2-build --build --db ~/scratch/apps/kraken2/nt2 2>&1 | tee -a 3.log #stuck here for 7 days
 kraken2-build --clean --threads 20 --db ~/scratch/apps/kraken2/nt2
 exit
 exit
 echo finished
+
+screen -S kraken2
+srun -p himem -J kraken2 --mem 550G --pty bash
+conda activate biopython
+mkdir ~/scratch/apps/kraken2/nt3
+ln -s ~/scratch/apps/kraken2/nt2/krakenbuild.log ~/scratch/apps/kraken2/nt3/krakenbuild.log
+ln -s ~/scratch/apps/kraken2/nt2/library ~/scratch/apps/kraken2/nt3/library
+ln -s ~/scratch/apps/kraken2/nt2/master.zip ~/scratch/apps/kraken2/nt3/master.zip
+ln -s ~/scratch/apps/kraken2/nt2/peptides-master ~/scratch/apps/kraken2/nt3/peptides-master
+ln -s ~/scratch/apps/kraken2/nt2/seqid2taxid.map ~/scratch/apps/kraken2/nt3/seqid2taxid.map
+ln -s ~/scratch/apps/kraken2/nt2/taxonomy ~/scratch/apps/kraken2/nt3/taxonomy
+ln -s ~/scratch/apps/kraken2/nt2/tmp123 ~/scratch/apps/kraken2/nt3/tmp123
+ln -s ~/scratch/apps/kraken2/nt2/unmapped.txt ~/scratch/apps/kraken2/nt3/unmapped.txt
+cd ~/scratch/apps/kraken2/nt3
+kraken2-build --build --fast-build --db ~/scratch/apps/kraken2/nt3 2>&1 | tee -a 4.log
+conda deactivate
+exit
+exit
+echo finished
+
+screen -S kraken3
+srun -p himem -J kraken2 --mem 550G --pty bash
+conda activate biopython
+mkdir ~/scratch/apps/kraken2/nt4
+ln -s ~/scratch/apps/kraken2/nt2/krakenbuild.log ~/scratch/apps/kraken2/nt4/krakenbuild.log
+ln -s ~/scratch/apps/kraken2/nt2/library ~/scratch/apps/kraken2/nt4/library
+ln -s ~/scratch/apps/kraken2/nt2/master.zip ~/scratch/apps/kraken2/nt4/master.zip
+ln -s ~/scratch/apps/kraken2/nt2/peptides-master ~/scratch/apps/kraken2/nt4/peptides-master
+#ln -s ~/scratch/apps/kraken2/nt2/seqid2taxid.map ~/scratch/apps/kraken2/nt4/seqid2taxid.map
+ln -s ~/scratch/apps/kraken2/nt2/taxonomy ~/scratch/apps/kraken2/nt4/taxonomy
+ln -s ~/scratch/apps/kraken2/nt2/tmp123 ~/scratch/apps/kraken2/nt4/tmp123
+ln -s ~/scratch/apps/kraken2/nt2/unmapped.txt ~/scratch/apps/kraken2/nt4/unmapped.txt
+cd ~/scratch/apps/kraken2/nt4
+kraken2-build --build --threads 1 --db ~/scratch/apps/kraken2/nt4 2>&1 | tee -a 5.log
+conda deactivate
+exit
+exit
+echo finished
+```
+```bash
+touch analysis/P_aphanis/THeavenDRCT72021_1/kraken2/nt/18868/contaminantlist18868.txt
+nano analysis/P_aphanis/THeavenDRCT72021_1/kraken2/nt/18868/contaminantlist18868.txt ##edited to include all taxonomic hits not leotiomycetes
 ```
