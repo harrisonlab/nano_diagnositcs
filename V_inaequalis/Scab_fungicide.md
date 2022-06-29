@@ -1916,10 +1916,10 @@ data <- read_excel("Laura scab.xlsx")
 head(data)
 
 #Extract parent data and plot:
-AF28 <- data[data$Isolate=="AF28", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea")]
-Spartan <-  data[data$Isolate=="Spartan 1", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea")]
-AF28model<- drm(growtharea~Concentration, data=AF28, Isolate, fct=W2.4(names = c("Slope", "Lower Limit", "Upper Limit", "ED50")))
-Spartanmodel<- drm(growtharea~Concentration, data=Spartan, Isolate, fct=W2.4(names = c("Slope", "Lower Limit", "Upper Limit", "ED50")))
+AF28 <- data[data$Isolate=="AF28", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+Spartan <-  data[data$Isolate=="Spartan 1", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+AF28model<- drm(Av_growtharea~Concentration, data=AF28, Isolate, fct=W2.4(names = c("Slope", "Lower Limit", "Upper Limit", "ED50")))
+Spartanmodel<- drm(Av_growtharea~Concentration, data=Spartan, Isolate, fct=W2.4(names = c("Slope", "Lower Limit", "Upper Limit", "ED50")))
 par(mfrow = c(1, 2)) #create a 1 x 2 plotting matrix
 plot(AF28model, type="all", main="AF28")
 plot(Spartanmodel, type="all", main="Spartan 1")
@@ -2027,12 +2027,14 @@ maED(Spartan.W23,
      interval="kang")
 
 #Changed to %:
-pdata <- data %>% 
-  mutate(percent_response = growtharea/(mean(data$growtharea[data$Concentration==0]))*100) #converts growth areas to %s where 100% is tne average growth area at zero fungicide concentration. GROWTH RATE WILL VARY BY ISOLATE SO NEED TO DO AVERAGE FOR EACH
-pAF28 <- AF28 %>% 
-  mutate(percent_response = growtharea/(mean(AF28$growtharea[AF28$Concentration==0]))*100)
-pSpartan <- Spartan %>% 
-  mutate(percent_response = growtharea/(mean(Spartan$growtharea[Spartan$Concentration==0]))*100)
+pdata<-na.omit(data)
+pAF28 <- pdata[pdata$Isolate=="AF28", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")] 
+pSpartan <-  pdata[pdata$Isolate=="Spartan 1", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+
+pAF28 <- pAF28 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pAF28$Av_growtharea[pAF28$Concentration==0]))*100)#converts growth areas to %s where 100% is tne average growth area at zero fungicide concentration. GROWTH RATE WILL VARY BY ISOLATE SO NEED TO DO AVERAGE FOR EACH
+pSpartan <- pSpartan %>% 
+  mutate(percent_response = Av_growtharea/(mean(pSpartan$Av_growtharea[pSpartan$Concentration==0]))*100)
 fAF28<- drm(percent_response~Concentration, data=pAF28, 
                   fct=LL.4(fixed=c(NA, 0, 100, NA),
                            names = c("Slope", "Lower Limit", "Upper Limit", "ED50")))
@@ -2078,6 +2080,39 @@ maED(Spartan.W23,
      list(W1.2(upper = 100, fixed=c(NA, NA)),W1.3(fixed=c(NA, NA, NA)),W1.4(fixed=c(NA, NA, NA, NA)),W2.2(upper = 100, fixed=c(NA, NA)), W2.3(fixed=c(NA, NA, NA)), W2.4(fixed=c(NA, NA, NA, NA)),LL.2(upper = 100, fixed=c(NA, NA)), LL.3(fixed=c(NA, NA, NA)), LL.4(fixed=c(NA, NA, NA, NA))), c(50),
      interval="kang")
 
+
+#Find estimated slope for each Isolate
+Isolates <- unique(data$Isolate)
+outputslope <- data.frame(matrix(ncol = 2, nrow = 0))
+colnames(outputslope) <- c("Isolate", "Slope_estimate")
+for (x in Isolates)
+{df <- data[data$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+model <- drm(Av_growtharea~Concentration, data=df, Isolate, fct=W2.3(fixed=c(NA, NA, NA)))
+summary <- summary(model)
+y<-summary$coefficients[[1]]
+summary_df<-data.frame(x,y)
+colnames(summary_df) <- colnames(outputslope)
+outputslope <- rbind(summary_df, outputslope)
+}
+write_xlsx(outputslope,"outputslope.xlsx")
+
+pdata<-na.omit(data)
+Isolates <- unique(data$Isolate)
+outputslope <- data.frame(matrix(ncol = 2, nrow = 0))
+colnames(outputslope) <- c("Isolate", "Slope_estimate")
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% 
+  mutate(percent_response = Av_growtharea/(mean(df$Av_growtharea[df$Concentration==0]))*100)
+model <- drm(percent_response~Concentration, data=df, Isolate, fct=W2.4(fixed=c(NA, 0, 100, NA)))
+summary <- summary(model)
+y<-summary$coefficients[[1]]
+summary_df<-data.frame(x,y)
+colnames(summary_df) <- colnames(outputslope)
+outputslope <- rbind(summary_df, outputslope)
+}
+write_xlsx(outputslope,"outputslope_pcent.xlsx")
+
 #Calculate EC50s for all isolates:
 Isolates <- unique(data$Isolate)
 
@@ -2087,7 +2122,7 @@ colnames(outputED50) <- c("Estimate", "Std. Error", "Lower", "Upper")
 for (x in Isolates)
 {df <- data[data$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea")]
 pdf <- df %>% 
-  mutate(percent_response = growtharea/(mean(df$growtharea[df$Concentration==0]))*100)
+  mutate(percent_response = Av_growtharea/(mean(df$Av_growtharea[df$Concentration==0]))*100)
 model <- drm(percent_response~Concentration, data=pdf, Isolate, fct=W2.2(upper = 100, fixed=c(NA, NA)))
 output <- ED(model, c(50), interval="delta")
 colnames(output) <- colnames(outputED50)
@@ -2103,14 +2138,14 @@ colnames(outputED50_3) <- c("EstimateED50", "Std. Error", "Lower", "Upper")
 Isolates <- unique(data$Isolate)
 for (x in Isolates)
 {df <- data[data$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea")]
-model <- drm(growtharea~Concentration, data=df, Isolate, fct=W2.3(fixed=c(NA, NA, NA)))
+model <- drm(Av_growtharea~Concentration, data=df, Isolate, fct=W2.3(fixed=c(NA, NA, NA)))
 output <- ED(model, c(50), interval="delta")
 colnames(output) <- colnames(outputED50_3)
 outputED50_3 <- rbind(output, outputED50_3)
 }
 outputED50_3$Isolate <- rownames(outputED50_3)
 outputED50_3 <- outputED50_3[, c(5,1,2,3,4)]
-write_xlsx(outputED50_3,"outputED50_3.xlsx")
+write_xlsx(outputED50_3,"outputED50_3_2.xlsx")
 
 #ED10:
 outputED10_3 <- data.frame(matrix(ncol = 4, nrow = 0))
@@ -2141,6 +2176,229 @@ outputED90_3 <- rbind(output, outputED90_3)
 outputED90_3$Isolate <- rownames(outputED90_3)
 outputED90_3 <- outputED90_3[, c(5,1,2,3,4)]
 write_xlsx(outputED90_3,"outputED90_3.xlsx")
+
+#Compparm
+data <- read_excel("Laura scab.xlsx", sheet = 2)#must use only isolates with all conc.s for model to run successfully
+model <- drm(Av_growtharea~Concentration, data=data, Isolate, fct=W2.3(fixed=c(NA, NA, NA), names = c("Slope", "Upper Limit",  "ED50")))
+comp<-compParm(model, "Slope")
+dat<-as.data.frame(comp)
+a <- ggplot(dat, aes(x = Estimate))
+a + geom_density(aes(y = ..count..), fill = "lightgray") +
+  geom_vline(aes(xintercept = mean(Estimate)), 
+             linetype = "dashed", size = 0.6,
+             color = "#FC4E07") + xlim(0,10) #Removed 28 rows containing non-finite values
+(stat_density)
+
+#Calculate EC50s for all isolates, with fixed slope:
+#ED50:
+outputED50_3 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputED50_3) <- c("EstimateED50", "StdError_50", "Lower_50", "Upper_50")
+Isolates <- unique(data$Isolate)
+for (x in Isolates)
+{df <- data[data$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+model <- drm(Av_growtharea~Concentration, data=df, Isolate, fct=W2.3(fixed=c(-1.06791, NA, NA)))
+output <- ED(model, c(50), interval="delta")
+colnames(output) <- colnames(outputED50_3)
+outputED50_3 <- rbind(output, outputED50_3)
+}
+outputED50_3$Isolate <- rownames(outputED50_3)
+outputED50_3 <- outputED50_3[, c(5,1,2,3,4)]
+write_xlsx(outputED50_3,"outputED50_3_2.xlsx")
+
+#ED10:
+outputED10_3 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputED10_3) <- c("EstimateED10", "StdError_10", "Lower_10", "Upper_10")
+Isolates <- unique(data$Isolate)
+for (x in Isolates)
+{df <- data[data$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+model <- drm(growtharea~Concentration, data=df, Isolate, fct=W2.3(fixed=c(-1.06791, NA, NA)))
+output <- ED(model, c(10), interval="delta")
+colnames(output) <- colnames(outputED10_3)
+outputED10_3 <- rbind(output, outputED10_3)
+}
+outputED10_3$Isolate <- rownames(outputED10_3)
+outputED10_3 <- outputED10_3[, c(5,1,2,3,4)]
+write_xlsx(outputED10_3,"outputED10_3_2.xlsx")
+
+#ED90:
+outputED90_3 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputED90_3) <- c("EstimateED90", "StdError_90", "Lower_90", "Upper_90")
+Isolates <- unique(data$Isolate)
+for (x in Isolates)
+{df <- data[data$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+model <- drm(growtharea~Concentration, data=df, Isolate, fct=W2.3(fixed=c(-1.06791, NA, NA)))
+output <- ED(model, c(90), interval="delta")
+colnames(output) <- colnames(outputED90_3)
+outputED90_3 <- rbind(output, outputED90_3)
+}
+outputED90_3$Isolate <- rownames(outputED90_3)
+outputED90_3 <- outputED90_3[, c(5,1,2,3,4)]
+write_xlsx(outputED90_3,"outputED90_3_2.xlsx")
+
+#combine dataframes:
+outputED50_3$EstimateED10 <-outputED10_3$EstimateED10
+outputED50_3$StdError_10 <-outputED10_3$StdError_10
+outputED50_3$Lower_10 <-outputED10_3$Lower_10
+outputED50_3$Upper_10 <-outputED10_3$Upper_10
+outputED50_3$EstimateED90 <-outputED90_3$EstimateED90
+outputED50_3$StdError_90 <-outputED90_3$StdError_90
+outputED50_3$Lower_90 <-outputED90_3$Lower_90
+outputED50_3$Upper_90 <-outputED90_3$Upper_90 
+write_xlsx(outputED50_3,"outputED50_3_2.xlsx")
+
+#Calculate EC50s for all isolates, with fixed for missing, estimated for no-missing:
+data <- read_excel("Laura scab.xlsx")#all
+datan <- read_excel("Laura scab.xlsx", sheet = 2)#only no-missing
+datam <- read_excel("Laura scab.xlsx", sheet = 3)#missing only
+data <- na.omit(data)
+datan <- na.omit(datan)
+datam <- na.omit(datam)
+
+outputED90_3 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputED90_3) <- c("EstimateED90", "StdError", "Lower", "Upper")
+Isolates <- unique(datan$Isolate)
+for (x in Isolates)
+{df <- datan[datan$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+model <- drm(Av_growtharea~Concentration, data=df, Isolate, fct=W2.3(fixed=c(NA, NA, NA)))
+output <- ED(model, c(90), interval="delta")
+colnames(output) <- colnames(outputED90_3)
+outputED90_3 <- rbind(output, outputED90_3)
+}
+outputED90_3$Isolate <- rownames(outputED90_3)
+outputED90_3 <- outputED90_3[, c(5,1,2,3,4)]
+outputED50_3 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputED50_3) <- c("EstimateED50", "StdError", "Lower", "Upper")
+Isolates <- unique(datan$Isolate)
+for (x in Isolates)
+{df <- datan[datan$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+model <- drm(Av_growtharea~Concentration, data=df, Isolate, fct=W2.3(fixed=c(NA, NA, NA)))
+output <- ED(model, c(50), interval="delta")
+colnames(output) <- colnames(outputED50_3)
+outputED50_3 <- rbind(output, outputED50_3)
+}
+outputED50_3$Isolate <- rownames(outputED50_3)
+outputED50_3 <- outputED50_3[, c(5,1,2,3,4)]
+outputED10_3 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputED10_3) <- c("EstimateED10", "StdError", "Lower", "Upper")
+Isolates <- unique(datan$Isolate)
+for (x in Isolates)
+{df <- datan[datan$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+model <- drm(Av_growtharea~Concentration, data=df, Isolate, fct=W2.3(fixed=c(NA, NA, NA)))
+output <- ED(model, c(10), interval="delta")
+colnames(output) <- colnames(outputED10_3)
+outputED10_3 <- rbind(output, outputED10_3)
+}
+outputED10_3$Isolate <- rownames(outputED10_3)
+outputED10_3 <- outputED10_3[, c(5,1,2,3,4)]
+outputED50_3$EstimateED10 <-outputED10_3$EstimateED10
+outputED50_3$StdError_10 <-outputED10_3$StdError
+outputED50_3$Lower_10 <-outputED10_3$Lower
+outputED50_3$Upper_10 <-outputED10_3$Upper
+outputED50_3$EstimateED90 <-outputED90_3$EstimateED90
+outputED50_3$StdError_90 <-outputED90_3$StdError
+outputED50_3$Lower_90 <-outputED90_3$Lower
+outputED50_3$Upper_90 <-outputED90_3$Upper 
+outputED50_nomissing<-outputED50_3
+write_xlsx(outputED50_nomissing,"outputED50_3_3.xlsx")
+
+outputED90_3 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputED90_3) <- c("EstimateED90", "StdError", "Lower", "Upper")
+Isolates <- unique(datam$Isolate)
+for (x in Isolates)
+{df <- datam[datam$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+model <- drm(Av_growtharea~Concentration, data=df, Isolate, fct=W2.3(fixed=c(-1.06791, NA, NA)))
+output <- ED(model, c(90), interval="delta")
+colnames(output) <- colnames(outputED90_3)
+outputED90_3 <- rbind(output, outputED90_3)
+}
+outputED90_3$Isolate <- rownames(outputED90_3)
+outputED90_3 <- outputED90_3[, c(5,1,2,3,4)]
+outputED50_3 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputED50_3) <- c("EstimateED50", "StdError", "Lower", "Upper")
+Isolates <- unique(datam$Isolate)
+for (x in Isolates)
+{df <- datam[datam$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+model <- drm(Av_growtharea~Concentration, data=df, Isolate, fct=W2.3(fixed=c(-1.06791, NA, NA)))
+output <- ED(model, c(50), interval="delta")
+colnames(output) <- colnames(outputED50_3)
+outputED50_3 <- rbind(output, outputED50_3)
+}
+outputED50_3$Isolate <- rownames(outputED50_3)
+outputED50_3 <- outputED50_3[, c(5,1,2,3,4)]
+outputED10_3 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputED10_3) <- c("EstimateED10", "StdError", "Lower", "Upper")
+Isolates <- unique(datam$Isolate)
+for (x in Isolates)
+{df <- datam[datam$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+model <- drm(Av_growtharea~Concentration, data=df, Isolate, fct=W2.3(fixed=c(-1.06791, NA, NA)))
+output <- ED(model, c(10), interval="delta")
+colnames(output) <- colnames(outputED10_3)
+outputED10_3 <- rbind(output, outputED10_3)
+}
+outputED10_3$Isolate <- rownames(outputED10_3)
+outputED10_3 <- outputED10_3[, c(5,1,2,3,4)]
+outputED50_3$EstimateED10 <-outputED10_3$EstimateED10
+outputED50_3$StdError_10 <-outputED10_3$StdError
+outputED50_3$Lower_10 <-outputED10_3$Lower
+outputED50_3$Upper_10 <-outputED10_3$Upper
+outputED50_3$EstimateED90 <-outputED90_3$EstimateED90
+outputED50_3$StdError_90 <-outputED90_3$StdError
+outputED50_3$Lower_90 <-outputED90_3$Lower
+outputED50_3$Upper_90 <-outputED90_3$Upper 
+outputED50_missing<-outputED50_3
+write_xlsx(outputED50_missing,"outputED50_3_4.xlsx")
+
+outputED10_comb <- rbind(outputED50_missing, outputED50_nomissing)
+write_xlsx(outputED10_comb,"outputED50_3_5.xlsx")
+
+###############################################################################
+
+outputED90_3 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputED90_3) <- c("EstimateED90", "StdError", "Lower", "Upper")
+Isolates <- unique(data$Isolate)
+for (x in Isolates)
+{df <- data[data$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+model <- drm(Av_growtharea~Concentration, data=df, Isolate, fct=W2.3(fixed=c(NA, NA, NA)))
+output <- ED(model, c(90), interval="delta")
+colnames(output) <- colnames(outputED90_3)
+outputED90_3 <- rbind(output, outputED90_3)
+}
+outputED90_3$Isolate <- rownames(outputED90_3)
+outputED90_3 <- outputED90_3[, c(5,1,2,3,4)]
+outputED50_3 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputED50_3) <- c("EstimateED50", "StdError", "Lower", "Upper")
+Isolates <- unique(data$Isolate)
+for (x in Isolates)
+{df <- data[data$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+model <- drm(Av_growtharea~Concentration, data=df, Isolate, fct=W2.3(fixed=c(NA, NA, NA)))
+output <- ED(model, c(50), interval="delta")
+colnames(output) <- colnames(outputED50_3)
+outputED50_3 <- rbind(output, outputED50_3)
+}
+outputED50_3$Isolate <- rownames(outputED50_3)
+outputED50_3 <- outputED50_3[, c(5,1,2,3,4)]
+outputED10_3 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputED10_3) <- c("EstimateED10", "StdError", "Lower", "Upper")
+Isolates <- unique(data$Isolate)
+for (x in Isolates)
+{df <- data[data$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+model <- drm(Av_growtharea~Concentration, data=df, Isolate, fct=W2.3(fixed=c(NA, NA, NA)))
+output <- ED(model, c(10), interval="delta")
+colnames(output) <- colnames(outputED10_3)
+outputED10_3 <- rbind(output, outputED10_3)
+}
+outputED10_3$Isolate <- rownames(outputED10_3)
+outputED10_3 <- outputED10_3[, c(5,1,2,3,4)]
+outputED50_3$EstimateED10 <-outputED10_3$EstimateED10
+outputED50_3$StdError_10 <-outputED10_3$StdError
+outputED50_3$Lower_10 <-outputED10_3$Lower
+outputED50_3$Upper_10 <-outputED10_3$Upper
+outputED50_3$EstimateED90 <-outputED90_3$EstimateED90
+outputED50_3$StdError_90 <-outputED90_3$StdError
+outputED50_3$Lower_90 <-outputED90_3$Lower
+outputED50_3$Upper_90 <-outputED90_3$Upper 
+outputED<-outputED50_3
+write_xlsx(outputED,"outputED.xlsx")
 ```
 Cumulative frequency plots:
 ```R
@@ -2149,15 +2407,16 @@ install.packages("tidyverse")
 library(tidyverse)
 install.packages("drc")
 library(drc)
-
+install.packages("gridExtra")
+library(gridExtra)
 library(ggplot2)
 library("readxl")
 install.packages("writexl")
 library("writexl")
 #read in data:
-data <- read_excel("outputED10_3.xlsx")
+data <- read_excel("outputED50_3_2.xlsx")
 str(data)
-parents<-subset(data, Isolate=='e:RS24:10' | Isolate=='e:Spartan 1:10')
+parents<-subset(data, Isolate=='e:RS24:50' | Isolate=='e:Spartan 1:50')
 
 require(gridExtra)
 plot1<-ggplot(data, aes(x=EstimateED10_log, y=ED10_order))+geom_point()+labs(y="Cumulative Frequency",  x=expression(lnED[10])) + geom_point(data=parents, aes(x=EstimateED10_log, y=ED10_order), colour="red", size=3)
@@ -2176,22 +2435,22 @@ library("ggpubr")
 library("readxl")
 
 #read in data:
-outputED50_3 <- read_excel("outputED50_3.xlsx")
+outputED50_3_2 <- read_excel("outputED50_3_2.xlsx")
 
 
-barplot(height = outputED50_3$Estimate, names = outputED50_3$Isolate, main = "ED50 of different isolates", ylab = "ED50 (mg/L)", xlab = "Isolate", las=2, cex.names=0.6)
+barplot(height = outputED50_3_2$EstimateED50, names = outputED50_3_2$Isolate, main = "ED50 of different isolates", ylab = "ED50 (mg/L)", xlab = "Isolate", las=2, cex.names=0.6)
 install.packages("dplyr")
 install.packages("ggpubr")
 library("dplyr")
 library("ggpubr")
 #rIf the sample size is large enough (n > 30), we can ignore the distribution of the data and use parametric tests. However, to be consistent, normality can be checked by visual inspection [normal plots (histogram), Q-Q plot (quantile-quantile plot)] or by significance tests].
 #Density plot: the density plot provides a visual judgment about whether the distribution is bell shaped.
-ggdensity(outputED50_3$Estimate, 
+ggdensity(outputED50_3_2$EstimateED50, 
           main = "Density plot of ED50",
           xlab = "ED50") #Density plot: the density plot provides a visual judgment about whether the distribution is bell shaped.
 #The R function shapiro.test() can be used to perform the Shapiro-Wilk test of normality for one variable (univariate):
-shapiro.test(outputED50_3$EstimateED50)
-#   W = 0.69881, p-value = 6.497e-12
+shapiro.test(outputED50_3_2$EstimateED50)
+#   W = 0.68365, p-value = 3.063e-12
 # From the output, the p-value <0.05 implying that the distribution of the data are significantly different from normal distribution.
 
 #check for ED10 and ED90
@@ -2213,12 +2472,12 @@ library(dplyr)
 install.packages("readxl")
 library(readxl)
 
+#Unfixed, with individual colonies:
 #For ED50:
 genopheno <- read_excel("outputED50_3.xlsx")
 genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
 genopheno<-as.data.table(genopheno)
-good.columns <- names(genopheno)[sapply(genopheno, nlevels) > 1] #if marker has only one level it gets filtered out as kruskal doesnt like it, in fact we have already filtered for snps with no difference between our isolates so this has no effect on our data
-filtered.df <- genopheno %>% select(good.columns) #%>% is a pipe like |, converting back to dataframe?
+filtered.df <- genopheno[,3:863] #%>% is a pipe like |, converting back to dataframe?
 filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
 filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
 p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
@@ -2246,13 +2505,11 @@ for (i in 2){
   testing[,i]<-test}
 write.csv(testing,"kruskal.test_pvaluesFDRcorrected2022test.csv")
 
-
 #For ED10:
 genopheno <- read_excel("outputED10_3.xlsx")
 genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
 genopheno<-as.data.table(genopheno)
-good.columns <- names(genopheno)[sapply(genopheno, nlevels) > 1] #if marker has only one level it gets filtered out as kruskal doesnt like it, in fact we have already filtered for snps with no difference between our isolates so this has no effect on our data
-filtered.df <- genopheno %>% select(good.columns) #%>% is a pipe like |, converting back to dataframe?
+filtered.df <- genopheno[,3:863] #%>% is a pipe like |, converting back to dataframe?
 filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
 filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
 p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
@@ -2284,8 +2541,7 @@ write.csv(testing,"kruskal.test_pvaluesFDRcorrected2022test_ED10.csv")
 genopheno <- read_excel("outputED90_3.xlsx")
 genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
 genopheno<-as.data.table(genopheno)
-good.columns <- names(genopheno)[sapply(genopheno, nlevels) > 1] #if marker has only one level it gets filtered out as kruskal doesnt like it, in fact we have already filtered for snps with no difference between our isolates so this has no effect on our data
-filtered.df <- genopheno %>% select(good.columns) #%>% is a pipe like |, converting back to dataframe?
+filtered.df <- genopheno[,3:863] #%>% is a pipe like |, converting back to dataframe?
 filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
 filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
 p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
@@ -2312,8 +2568,464 @@ for (i in 2){
   test<-p.adjust(kk90[,i], method="fdr") #false discovery rate correction
   testing[,i]<-test}
 write.csv(testing,"kruskal.test_pvaluesFDRcorrected2022test_ED90.csv")
+
+#With a fixed slope:
+#For ED50:
+genopheno <- read_excel("EDbySNP.xlsx",sheet = 2)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+#good.columns <- names(genopheno)[sapply(genopheno, nlevels) > 1] #if marker has only one level it gets filtered out as kruskal doesnt like it, in fact we have already filtered for snps with no difference between our isolates so this has no effect on our data
+#filtered.df <- genopheno %>% select(good.columns) #%>% is a pipe like |, converting back to dataframe?
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk[1:861,1:2]<-NA
+kk[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk)[1]<-"snp:"
+colnames(kk)[2]<-"ED50 pvalues:"
+
+test50<-as.data.frame(NA)
+test50[1:861,1:2]<-NA
+rownames(test50)<-rownames(kk)
+colnames(test50)<-colnames(kk)
+colnames(test50)[2]<-"ED50 pvaluesFDRcorrected:"
+test50[,1]<-kk[,1]
+for (i in 2){
+  test<-p.adjust(kk[,i], method="fdr") #false discovery rate correction
+  test50[,i]<-test}
+kk$ED50_pvaluesFDRcorrected <-test50$"ED50 pvaluesFDRcorrected"
+
+#For ED10:
+genopheno <- read_excel("EDbySNP.xlsx",sheet = 1)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk10<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk10[1:861,1:2]<-NA
+kk10[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk10[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk10)[1]<-"snp:"
+colnames(kk10)[2]<-"ED10_pvalues:"
+kk$ED10_pvalues <-kk10$"ED10_pvalues"
+
+test10<-as.data.frame(NA)
+test10[1:861,1:2]<-NA
+rownames(test10)<-rownames(kk10)
+colnames(test10)<-colnames(kk10)
+colnames(test10)[2]<-"ED10_pvaluesFDRcorrected:"
+test10[,1]<-kk10[,1]
+for (i in 2){
+  test<-p.adjust(kk10[,i], method="fdr") #false discovery rate correction
+  test10[,i]<-test}
+kk$ED10_pvaluesFDRcorrected <-test10$"ED10_pvaluesFDRcorrected"
+
+#For ED90:
+genopheno <- read_excel("EDbySNP.xlsx",sheet = 3)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk90<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk90[1:861,1:2]<-NA
+kk90[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk90[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk90)[1]<-"snp:"
+colnames(kk90)[2]<-"ED90_pvalues:"
+kk$ED90_pvalues <-kk90$"ED90_pvalues"
+
+test90<-as.data.frame(NA)
+test90[1:861,1:2]<-NA
+rownames(test90)<-rownames(kk90)
+colnames(test90)<-colnames(kk90)
+colnames(test90)[2]<-"ED90_pvaluesFDRcorrected:"
+test90[,1]<-kk90[,1]
+for (i in 2){
+  test<-p.adjust(kk90[,i], method="fdr") #false discovery rate correction
+  test90[,i]<-test}
+kk$ED90_pvaluesFDRcorrected <-test90$"ED90_pvaluesFDRcorrected"
+write_xlsx(kk,"kruskal_pvalues.csv")
+
+#Slope:
+#All:
+genopheno <- read_excel("SlopebySNP.xlsx",sheet = 1)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kksa<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kksa[1:861,1:2]<-NA
+kksa[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kksa[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kksa)[1]<-"snp:"
+colnames(kksa)[2]<-"slope_pvalues:"
+
+testsa<-as.data.frame(NA)
+testsa[1:861,1:2]<-NA
+rownames(testsa)<-rownames(kksa)
+colnames(testsa)<-colnames(kksa)
+colnames(testsa)[2]<-"Slope_pvaluesFDRcorrected"
+testsa[,1]<-kksa[,1]
+for (i in 2){
+  test<-p.adjust(kksa[,i], method="fdr") #false discovery rate correction
+  testsa[,i]<-test}
+kksa$Slope_pvaluesFDRcorrected <-testsa$"Slope_pvaluesFDRcorrected"
+
+
+#No-missing:
+genopheno <- read_excel("SlopebySNP.xlsx",sheet = 2)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kksam<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kksam[1:861,1:2]<-NA
+kksam[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kksam[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kksam)[1]<-"snp:"
+colnames(kksam)[2]<-"slope_pvalues_nomissing:"
+
+testsam<-as.data.frame(NA)
+testsam[1:861,1:2]<-NA
+rownames(testsam)<-rownames(kksam)
+colnames(testsam)<-colnames(kksam)
+colnames(testsam)[2]<-"Slope_pvaluesFDRcorrected_nomissing"
+testsam[,1]<-kksam[,1]
+for (i in 2){
+  test<-p.adjust(kksam[,i], method="fdr") #false discovery rate correction
+  testsam[,i]<-test}
+kksam$Slope_pvaluesFDRcorrected_nomissing <-testsam$"Slope_pvaluesFDRcorrected_nomissing"
+kksa$Slope_pvalues_nomissing <-kksam$"slope_pvalues_nomissing:"
+kksa$Slope_pvaluesFDRcorrected_nomissing <-kksam$"Slope_pvaluesFDRcorrected_nomissing"
+write_xlsx(kksa,"kruskal_slope_pvalues.csv")
+
+#By ED:
+#Comb
+#For ED50:
+genopheno <- read_excel("EDbySNP_2.xlsx",sheet = 4)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+#good.columns <- names(genopheno)[sapply(genopheno, nlevels) > 1] #if marker has only one level it gets filtered out as kruskal doesnt like it, in fact we have already filtered for snps with no difference between our isolates so this has no effect on our data
+#filtered.df <- genopheno %>% select(good.columns) #%>% is a pipe like |, converting back to dataframe?
+filtered.df2 <-as.data.frame(genopheno)
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk[1:861,1:2]<-NA
+kk[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk)[1]<-"snp:"
+colnames(kk)[2]<-"ED50 pvalues:"
+
+test50<-as.data.frame(NA)
+test50[1:861,1:2]<-NA
+rownames(test50)<-rownames(kk)
+colnames(test50)<-colnames(kk)
+colnames(test50)[2]<-"ED50 pvaluesFDRcorrected:"
+test50[,1]<-kk[,1]
+for (i in 2){
+  test<-p.adjust(kk[,i], method="fdr") #false discovery rate correction
+  test50[,i]<-test}
+kk$ED50_pvaluesFDRcorrected <-test50$"ED50 pvaluesFDRcorrected"
+
+#For ED10:
+genopheno <- read_excel("EDbySNP_2.xlsx",sheet = 1)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df2 <-as.data.frame(genopheno)
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk10<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk10[1:861,1:2]<-NA
+kk10[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk10[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk10)[1]<-"snp:"
+colnames(kk10)[2]<-"ED10_pvalues:"
+kk$ED10_pvalues <-kk10$"ED10_pvalues"
+
+test10<-as.data.frame(NA)
+test10[1:861,1:2]<-NA
+rownames(test10)<-rownames(kk10)
+colnames(test10)<-colnames(kk10)
+colnames(test10)[2]<-"ED10_pvaluesFDRcorrected:"
+test10[,1]<-kk10[,1]
+for (i in 2){
+  test<-p.adjust(kk10[,i], method="fdr") #false discovery rate correction
+  test10[,i]<-test}
+kk$ED10_pvaluesFDRcorrected <-test10$"ED10_pvaluesFDRcorrected"
+
+#For ED90:
+genopheno <- read_excel("EDbySNP_2.xlsx",sheet = 7)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df2 <-as.data.frame(genopheno)
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk90<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk90[1:861,1:2]<-NA
+kk90[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk90[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk90)[1]<-"snp:"
+colnames(kk90)[2]<-"ED90_pvalues:"
+kk$ED90_pvalues <-kk90$"ED90_pvalues"
+
+test90<-as.data.frame(NA)
+test90[1:861,1:2]<-NA
+rownames(test90)<-rownames(kk90)
+colnames(test90)<-colnames(kk90)
+colnames(test90)[2]<-"ED90_pvaluesFDRcorrected:"
+test90[,1]<-kk90[,1]
+for (i in 2){
+  test<-p.adjust(kk90[,i], method="fdr") #false discovery rate correction
+  test90[,i]<-test}
+kk$ED90_pvaluesFDRcorrected <-test90$"ED90_pvaluesFDRcorrected"
+write_xlsx(kk,"comb_kruskal.xlsx")
+
+#No-missing
+#For ED50:
+genopheno <- read_excel("EDbySNP_2.xlsx",sheet = 5)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+#good.columns <- names(genopheno)[sapply(genopheno, nlevels) > 1] #if marker has only one level it gets filtered out as kruskal doesnt like it, in fact we have already filtered for snps with no difference between our isolates so this has no effect on our data
+#filtered.df <- genopheno %>% select(good.columns) #%>% is a pipe like |, converting back to dataframe?
+filtered.df2 <-as.data.frame(genopheno)
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk[1:861,1:2]<-NA
+kk[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk)[1]<-"snp:"
+colnames(kk)[2]<-"ED50 pvalues:"
+
+test50<-as.data.frame(NA)
+test50[1:861,1:2]<-NA
+rownames(test50)<-rownames(kk)
+colnames(test50)<-colnames(kk)
+colnames(test50)[2]<-"ED50 pvaluesFDRcorrected:"
+test50[,1]<-kk[,1]
+for (i in 2){
+  test<-p.adjust(kk[,i], method="fdr") #false discovery rate correction
+  test50[,i]<-test}
+kk$ED50_pvaluesFDRcorrected <-test50$"ED50 pvaluesFDRcorrected"
+
+#For ED10:
+genopheno <- read_excel("EDbySNP_2.xlsx",sheet = 2)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df2 <-as.data.frame(genopheno)
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk10<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk10[1:861,1:2]<-NA
+kk10[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk10[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk10)[1]<-"snp:"
+colnames(kk10)[2]<-"ED10_pvalues:"
+kk$ED10_pvalues <-kk10$"ED10_pvalues"
+
+test10<-as.data.frame(NA)
+test10[1:861,1:2]<-NA
+rownames(test10)<-rownames(kk10)
+colnames(test10)<-colnames(kk10)
+colnames(test10)[2]<-"ED10_pvaluesFDRcorrected:"
+test10[,1]<-kk10[,1]
+for (i in 2){
+  test<-p.adjust(kk10[,i], method="fdr") #false discovery rate correction
+  test10[,i]<-test}
+kk$ED10_pvaluesFDRcorrected <-test10$"ED10_pvaluesFDRcorrected"
+
+#For ED90:
+genopheno <- read_excel("EDbySNP_2.xlsx",sheet = 8)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df2 <-as.data.frame(genopheno)
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk90<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk90[1:861,1:2]<-NA
+kk90[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk90[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk90)[1]<-"snp:"
+colnames(kk90)[2]<-"ED90_pvalues:"
+kk$ED90_pvalues <-kk90$"ED90_pvalues"
+
+test90<-as.data.frame(NA)
+test90[1:861,1:2]<-NA
+rownames(test90)<-rownames(kk90)
+colnames(test90)<-colnames(kk90)
+colnames(test90)[2]<-"ED90_pvaluesFDRcorrected:"
+test90[,1]<-kk90[,1]
+for (i in 2){
+  test<-p.adjust(kk90[,i], method="fdr") #false discovery rate correction
+  test90[,i]<-test}
+kk$ED90_pvaluesFDRcorrected <-test90$"ED90_pvaluesFDRcorrected"
+write_xlsx(kk,"nomissing_kruskal.xlsx")
+
+#All
+#For ED50:
+genopheno <- read_excel("EDbySNP_2.xlsx",sheet = 11)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk[1:861,1:2]<-NA
+kk[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk)[1]<-"snp:"
+colnames(kk)[2]<-"ED50 pvalues:"
+
+test50<-as.data.frame(NA)
+test50[1:861,1:2]<-NA
+rownames(test50)<-rownames(kk)
+colnames(test50)<-colnames(kk)
+colnames(test50)[2]<-"ED50 pvaluesFDRcorrected:"
+test50[,1]<-kk[,1]
+for (i in 2){
+  test<-p.adjust(kk[,i], method="fdr") #false discovery rate correction
+  test50[,i]<-test}
+kk$ED50_pvaluesFDRcorrected <-test50$"ED50 pvaluesFDRcorrected"
+
+#For ED10:
+genopheno <- read_excel("EDbySNP_2.xlsx",sheet = 10)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk10<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk10[1:861,1:2]<-NA
+kk10[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk10[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk10)[1]<-"snp:"
+colnames(kk10)[2]<-"ED10_pvalues:"
+kk$ED10_pvalues <-kk10$"ED10_pvalues"
+
+test10<-as.data.frame(NA)
+test10[1:861,1:2]<-NA
+rownames(test10)<-rownames(kk10)
+colnames(test10)<-colnames(kk10)
+colnames(test10)[2]<-"ED10_pvaluesFDRcorrected:"
+test10[,1]<-kk10[,1]
+for (i in 2){
+  test<-p.adjust(kk10[,i], method="fdr") #false discovery rate correction
+  test10[,i]<-test}
+kk$ED10_pvaluesFDRcorrected <-test10$"ED10_pvaluesFDRcorrected"
+
+#For ED90:
+genopheno <- read_excel("EDbySNP_2.xlsx",sheet = 12)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk90<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk90[1:861,1:2]<-NA
+kk90[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk90[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk90)[1]<-"snp:"
+colnames(kk90)[2]<-"ED90_pvalues:"
+kk$ED90_pvalues <-kk90$"ED90_pvalues"
+
+test90<-as.data.frame(NA)
+test90[1:861,1:2]<-NA
+rownames(test90)<-rownames(kk90)
+colnames(test90)<-colnames(kk90)
+colnames(test90)[2]<-"ED90_pvaluesFDRcorrected:"
+test90[,1]<-kk90[,1]
+for (i in 2){
+  test<-p.adjust(kk90[,i], method="fdr") #false discovery rate correction
+  test90[,i]<-test}
+kk$ED90_pvaluesFDRcorrected <-test90$"ED90_pvaluesFDRcorrected"
+write_xlsx(kk,"all_kruskal.xlsx")
 ```
-Manhattam plot:
+Manhattan plot:
 ```R
 setwd("C:/Users/heavt/OneDrive - NIAB/Documents/R/SNP calling")
 
@@ -2331,7 +3043,9 @@ man$LG <-as.numeric(man$LG)
 man$Estimated_positional_spacing <-as.numeric(man$Estimated_positional_spacing)
 man <- na.omit(man)
 
+#Unfixed, with individual colonies:
 #Uniform spacing
+par(mfrow = c(2, 2)) 
 ED10_man_plot <- manhattan(man, chr="LG", bp="No.;", snp="snp1:", p="ED10_pvaluesFDRcorrected:",genomewideline = -log10(0.05),suggestiveline = FALSE,
                     annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "ED10", ylim= c(0,2.5) )
 
@@ -2345,19 +3059,80 @@ ED90_man_plot <- manhattan(man, chr="LG", bp="No.;", snp="snp1:", p="ED90_pvalue
 ED10_man_plot <- manhattan(man, chr="LG", bp="Estimated_positional_spacing", snp="snp1:", p="ED10_pvaluesFDRcorrected:",genomewideline = -log10(0.05),suggestiveline = FALSE,
                     annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "ED10", ylim= c(0,2.5), xlab="Linkage group" )
 
-ED50_man_plot <- manhattan(man, chr="LG", bp="Estimated_positional_spacing", snp="snp1:", p="ED50_pvaluesFDRcorrected:",genomewideline = -log10(0.05),suggestiveline = FALSE,
+ED50_man_plot <- manhattan(man, chr="LG", bp="Estimated_positional_spacing", snp="snp1:", p="ED50 pvaluesFDRcorrected:",genomewideline = -log10(0.05),suggestiveline = FALSE,
                     annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "ED50", ylim= c(0,3.5), xlab="Linkage group" )
 
 ED90_man_plot <- manhattan(man, chr="LG", bp="Estimated_positional_spacing", snp="snp1:", p="ED90_pvaluesFDRcorrected:",genomewideline = -log10(0.05),suggestiveline = FALSE,
                     annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "ED90", ylim= c(0,2.5), xlab="Linkage group" )
 
 #Linkage groups 3 and 7
+par(mfrow = c(1, 1)) 
 ED10_man_plot <- manhattan(subset(man, LG==3), chr="LG", bp="Estimated_positional_spacing", snp="snp1:", p="ED10_pvaluesFDRcorrected:",genomewideline = -log10(0.05),suggestiveline = FALSE,
                            annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "Linkage group 3 ED10", xlim=c(32130008,37747052), ylim= c(0,2.5), xlab="", xaxt='n' )
 Axis(side=1, labels=FALSE)
 ED10_man_plot <- manhattan(subset(man, LG==7), chr="LG", bp="Estimated_positional_spacing", snp="snp1:", p="ED10_pvaluesFDRcorrected:",genomewideline = -log10(0.05),suggestiveline = FALSE,
                            annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "Linkage group 7 ED10", xlim=c(49203000,52550000), ylim= c(0,2.5), xlab="", xaxt='n' )
 Axis(side=1, labels=FALSE)
+
+#Slope
+#Slope plot
+man <- read_excel("kruskal_slope_pvalues.xlsx")
+#Estimated positional spacing
+par(mfrow = c(2, 1)) 
+slope_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="Slope_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "Slope", ylim= c(0,2.5), xlab="Linkage group" )
+
+slope_nomissing_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="Slope_pvaluesFDRcorrected_nomissing",genomewideline = -log10(0.05),suggestiveline = FALSE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "Slope no-missing", ylim= c(0,3.5), xlab="Linkage group" )
+
+#ED
+#Fixed slope
+man <- read_excel("kruskal_pvalues.xlsx")
+#Estimated positional spacing
+par(mfrow = c(2, 2)) 
+ED10_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED10_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "Fixed slope ED10", ylim= c(0,2.5), xlab="Linkage group" )
+
+ED50_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED50_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "Fixed Slope ED50", ylim= c(0,3.5), xlab="Linkage group" )
+
+ED90_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED90_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "Fixed slope ED90", ylim= c(0,2.5), xlab="Linkage group" )
+
+#Comb
+man <- read_excel("comb_kruskal.xlsx")
+#Estimated positional spacing
+ED10_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED10_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "Combined ED10", ylim= c(0,2.5), xlab="Linkage group" )
+
+ED50_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED50_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "Combined ED50", ylim= c(0,3.5), xlab="Linkage group" )
+
+ED90_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED90_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "Combined ED90", ylim= c(0,2.5), xlab="Linkage group" )
+
+#No-missing
+man <- read_excel("nomissing_kruskal.xlsx")
+#Estimated positional spacing
+ED10_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED10_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "No-missing unfixed ED10", ylim= c(0,2.5), xlab="Linkage group" )
+
+ED50_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED50_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "No-missing unfixed ED50", ylim= c(0,3.5), xlab="Linkage group" )
+
+ED90_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED90_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "No-missing unfixed ED90", ylim= c(0,2.5), xlab="Linkage group" )
+
+#All
+man <- read_excel("all_kruskal.xlsx")
+#Estimated positional spacing
+ED10_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED10_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "All unfixed ED10", ylim= c(0,2.5), xlab="Linkage group" )
+
+ED50_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED50_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "All unfixed ED50", ylim= c(0,3.5), xlab="Linkage group" )
+
+ED90_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED90_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "All unfixed ED90", ylim= c(0,2.5), xlab="Linkage group" )
+
 ```
 
 
