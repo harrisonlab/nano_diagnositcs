@@ -2042,36 +2042,40 @@ fSpartan<- drm(percent_response~Concentration, data=pSpartan,
                   fct=LL.4(fixed=c(NA, 0, 100, NA),
                            names = c("Slope", "Lower Limit", "Upper Limit", "ED50")))
 
-mselect(fAF28, fctList = list(W1.2(upper = 100, fixed=c(NA, NA)),W1.3(fixed=c(NA, NA, NA)),W1.4(fixed=c(NA, NA, NA, NA)),W2.2(upper = 100, fixed=c(NA, NA)), W2.3(fixed=c(NA, NA, NA)), W2.4(fixed=c(NA, NA, NA, NA)),LL.2(upper = 100, fixed=c(NA, NA)), LL.3(fixed=c(NA, NA, NA)), LL.4(fixed=c(NA, NA, NA, NA))),linreg=TRUE) 
-mselect(fSpartan, fctList = list(W1.2(upper = 100, fixed=c(NA, NA)),W1.3(fixed=c(NA, NA, NA)),W1.4(fixed=c(NA, NA, NA, NA)),W2.2(upper = 100, fixed=c(NA, NA)), W2.3(fixed=c(NA, NA, NA)), W2.4(fixed=c(NA, NA, NA, NA)),LL.2(upper = 100, fixed=c(NA, NA)), LL.3(fixed=c(NA, NA, NA)), LL.4(fixed=c(NA, NA, NA, NA))),linreg=TRUE) 
+mselect(fAF28, fctList = list(W1.2(upper = 100, fixed=c(NA, NA)),W1.3(fixed=c(NA, 100, NA)),W1.4(fixed=c(NA, 0, 100, NA)),W2.2(upper = 100, fixed=c(NA, NA)), W2.3(fixed=c(NA, 100, NA)), W2.4(fixed=c(NA, 0, 100, NA)),LL.2(upper = 100, fixed=c(NA, NA)), LL.3(fixed=c(NA, 100, NA)), LL.4(fixed=c(NA, 0, 100, NA))),linreg=TRUE) #default lower is 0 and upper is 1, therefore a 4 parameter model with lower fixed to 0 and upper to 1 is identical to a 2 parameter model.
+mselect(fSpartan, fctList = list(W1.2(upper = 100, fixed=c(NA, NA)),W1.3(fixed=c(NA, 100, NA)),W1.4(fixed=c(NA, 0, 100, NA)),W2.2(upper = 100, fixed=c(NA, NA)), W2.3(fixed=c(NA, 100, NA)), W2.4(fixed=c(NA, 0, 100, NA)),LL.2(upper = 100, fixed=c(NA, NA)), LL.3(fixed=c(NA, 100, NA)), LL.4(fixed=c(NA, 0, 100, NA))),linreg=TRUE) #mselect continues to say that weibull is the best model to use however this gives slope and ED values that are stupidly high.
+
+pRS81 <-  pdata[pdata$Isolate=="RS81", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+fRS81<- drm(percent_response~Concentration, data=pRS81, 
+                  fct=W2.4(fixed=c(NA, 0, 100, NA),
+                           names = c("Slope", "Lower Limit", "Upper Limit", "ED50")))
+plot(fRS81, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main="RS81")
 
 AF28.LL2 <-  drm(percent_response~Concentration, data=pAF28, fct=LL.2(upper = 100, fixed=c(NA, NA)))
-AF28.LL3 <-  drm(percent_response~Concentration, data=pAF28, fct=LL.3(fixed=c(NA, NA, NA), names = c("Slope", "Upper Limit",  "ED50")))
 AF28.W12 <-  drm(percent_response~Concentration, data=pAF28, fct=W1.2(upper = 100, fixed=c(NA, NA)))
-AF28.W13 <-  drm(percent_response~Concentration, data=pAF28, fct=W1.3(fixed=c(NA, NA, NA), names = c("Slope", "Upper Limit",  "ED50")))
 AF28.W22 <-  drm(percent_response~Concentration, data=pAF28, fct=W2.2(upper = 100, fixed=c(NA, NA)))
-AF28.W23 <-  drm(percent_response~Concentration, data=pAF28, fct=W2.3(fixed=c(NA, NA, NA), names = c("Slope", "Upper Limit",  "ED50")))
 
 plot(AF28.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main="AF28")
-plot(AF28.LL3, add=TRUE,col="orange",lty=1, lwd=2)
 plot(AF28.W12, add=TRUE,col="blue",lty=2, lwd=2)
-plot(AF28.W13, add=TRUE,col="forestgreen",lty=2, lwd=2)
-plot(AF28.W22, add=TRUE,col="purple",lty=2, lwd=2)
-plot(AF28.W23, add=TRUE,col="red",lty=2, lwd=2)
+plot(AF28.W22, add=TRUE,col="red",lty=2, lwd=2)
 
 Spartan.LL2 <-  drm(percent_response~Concentration, data=pSpartan, fct=LL.2(upper = 100, fixed=c(NA, NA)))
-Spartan.LL3 <-  drm(percent_response~Concentration, data=pSpartan, fct=LL.3(fixed=c(NA, NA, NA), names = c("Slope", "Upper Limit",  "ED50")))
 Spartan.W12 <-  drm(percent_response~Concentration, data=pSpartan, fct=W1.2(upper = 100, fixed=c(NA, NA)))
-Spartan.W13 <-  drm(percent_response~Concentration, data=pSpartan, fct=W1.3(fixed=c(NA, NA, NA), names = c("Slope", "Upper Limit",  "ED50")))
 Spartan.W22 <-  drm(percent_response~Concentration, data=pSpartan, fct=W2.2(upper = 100, fixed=c(NA, NA)))
-Spartan.W23 <-  drm(percent_response~Concentration, data=pSpartan, fct=W2.3(fixed=c(NA, NA, NA), names = c("Slope", "Upper Limit",  "ED50")))
 
 plot(Spartan.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main="AF28")
-plot(Spartan.LL3, add=TRUE,col="orange",lty=1, lwd=2)
 plot(Spartan.W12, add=TRUE,col="blue",lty=2, lwd=2)
-plot(Spartan.W13, add=TRUE,col="forestgreen",lty=2, lwd=2)
-plot(Spartan.W22, add=TRUE,col="purple",lty=2, lwd=2)
-plot(Spartan.W23, add=TRUE,col="red",lty=2, lwd=2)
+plot(Spartan.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main="RS81")
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
 
 maED(AF28.W23, 
      list(W1.2(upper = 100, fixed=c(NA, NA)),W1.3(fixed=c(NA, NA, NA)),W1.4(fixed=c(NA, NA, NA, NA)),W2.2(upper = 100, fixed=c(NA, NA)), W2.3(fixed=c(NA, NA, NA)), W2.4(fixed=c(NA, NA, NA, NA)),LL.2(upper = 100, fixed=c(NA, NA)), LL.3(fixed=c(NA, NA, NA)), LL.4(fixed=c(NA, NA, NA, NA))), c(50),
@@ -2080,6 +2084,143 @@ maED(Spartan.W23,
      list(W1.2(upper = 100, fixed=c(NA, NA)),W1.3(fixed=c(NA, NA, NA)),W1.4(fixed=c(NA, NA, NA, NA)),W2.2(upper = 100, fixed=c(NA, NA)), W2.3(fixed=c(NA, NA, NA)), W2.4(fixed=c(NA, NA, NA, NA)),LL.2(upper = 100, fixed=c(NA, NA)), LL.3(fixed=c(NA, NA, NA)), LL.4(fixed=c(NA, NA, NA, NA))), c(50),
      interval="kang")
 
+#Find EDs for % with LL
+outputXX <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX) <- c("EstimateED50", "StdError_50", "Lower_50", "Upper_50")
+Isolates <- unique(pdata$Isolate)
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% mutate(percent_response = Av_growtharea/(mean(df$Av_growtharea[df$Concentration==0]))*100)
+model <- drm(percent_response~Concentration, data=df, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+output <- ED(model, c(50), interval="delta")
+colnames(output) <- colnames(outputXX)
+outputXX <- rbind(output, outputXX)
+}
+outputXX$Isolate <- rownames(outputXX)
+outputXX <- outputXX[, c(5,1,2,3,4)]
+outputXX10 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX10) <- c("EstimateED10", "StdError_10", "Lower_10", "Upper_10")
+Isolates <- unique(pdata$Isolate)
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% mutate(percent_response = Av_growtharea/(mean(df$Av_growtharea[df$Concentration==0]))*100)
+model <- drm(percent_response~Concentration, data=df, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+output <- ED(model, c(10), interval="delta")
+colnames(output) <- colnames(outputXX10)
+outputXX10 <- rbind(output, outputXX10)
+}
+outputXX90 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX90) <- c("EstimateED90", "StdError_90", "Lower_90", "Upper_90")
+Isolates <- unique(pdata$Isolate)
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% mutate(percent_response = Av_growtharea/(mean(df$Av_growtharea[df$Concentration==0]))*100)
+model <- drm(percent_response~Concentration, data=df, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+output <- ED(model, c(90), interval="delta")
+colnames(output) <- colnames(outputXX90)
+outputXX90 <- rbind(output, outputXX90)
+}
+outputXX$EstimateED10 <-outputXX10$EstimateED10
+outputXX$StdError_10 <-outputXX10$StdError_10
+outputXX$Lower_10 <-outputXX10$Lower_10
+outputXX$Upper_10 <-outputXX10$Upper_10
+outputXX$EstimateED90 <-outputXX90$EstimateED90
+outputXX$StdError_90 <-outputXX90$StdError_90
+outputXX$Lower_90 <-outputXX90$Lower_90
+outputXX$Upper_90 <-outputXX90$Upper_90
+write_xlsx(outputXX,"outputLL.xlsx")
+
+#Find EDs for % with W1
+outputXX <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX) <- c("EstimateED50", "StdError_50", "Lower_50", "Upper_50")
+Isolates <- unique(pdata$Isolate)
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% mutate(percent_response = Av_growtharea/(mean(df$Av_growtharea[df$Concentration==0]))*100)
+model <- drm(percent_response~Concentration, data=df, Isolate, fct=W1.4(fixed=c(NA, 0, 100, NA)))
+output <- ED(model, c(50), interval="delta")
+colnames(output) <- colnames(outputXX)
+outputXX <- rbind(output, outputXX)
+}
+outputXX$Isolate <- rownames(outputXX)
+outputXX <- outputXX[, c(5,1,2,3,4)]
+outputXX10 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX10) <- c("EstimateED10", "StdError_10", "Lower_10", "Upper_10")
+Isolates <- unique(pdata$Isolate)
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% mutate(percent_response = Av_growtharea/(mean(df$Av_growtharea[df$Concentration==0]))*100)
+model <- drm(percent_response~Concentration, data=df, Isolate, fct=W1.4(fixed=c(NA, 0, 100, NA)))
+output <- ED(model, c(10), interval="delta")
+colnames(output) <- colnames(outputXX10)
+outputXX10 <- rbind(output, outputXX10)
+}
+outputXX90 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX90) <- c("EstimateED90", "StdError_90", "Lower_90", "Upper_90")
+Isolates <- unique(pdata$Isolate)
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% mutate(percent_response = Av_growtharea/(mean(df$Av_growtharea[df$Concentration==0]))*100)
+model <- drm(percent_response~Concentration, data=df, Isolate, fct=W1.4(fixed=c(NA, 0, 100, NA)))
+output <- ED(model, c(90), interval="delta")
+colnames(output) <- colnames(outputXX90)
+outputXX90 <- rbind(output, outputXX90)
+}
+outputXX$EstimateED10 <-outputXX10$EstimateED10
+outputXX$StdError_10 <-outputXX10$StdError_10
+outputXX$Lower_10 <-outputXX10$Lower_10
+outputXX$Upper_10 <-outputXX10$Upper_10
+outputXX$EstimateED90 <-outputXX90$EstimateED90
+outputXX$StdError_90 <-outputXX90$StdError_90
+outputXX$Lower_90 <-outputXX90$Lower_90
+outputXX$Upper_90 <-outputXX90$Upper_90
+write_xlsx(outputXX,"outputW1.xlsx")
+
+#Find EDs for % with W2
+outputXX <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX) <- c("EstimateED50", "StdError_50", "Lower_50", "Upper_50")
+Isolates <- unique(pdata$Isolate)
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% mutate(percent_response = Av_growtharea/(mean(df$Av_growtharea[df$Concentration==0]))*100)
+model <- drm(percent_response~Concentration, data=df, Isolate, fct=W2.4(fixed=c(NA, 0, 100, NA)))
+output <- ED(model, c(50), interval="delta")
+colnames(output) <- colnames(outputXX)
+outputXX <- rbind(output, outputXX)
+}
+outputXX$Isolate <- rownames(outputXX)
+outputXX <- outputXX[, c(5,1,2,3,4)]
+outputXX10 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX10) <- c("EstimateED10", "StdError_10", "Lower_10", "Upper_10")
+Isolates <- unique(pdata$Isolate)
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% mutate(percent_response = Av_growtharea/(mean(df$Av_growtharea[df$Concentration==0]))*100)
+model <- drm(percent_response~Concentration, data=df, Isolate, fct=W2.4(fixed=c(NA, 0, 100, NA)))
+output <- ED(model, c(10), interval="delta")
+colnames(output) <- colnames(outputXX10)
+outputXX10 <- rbind(output, outputXX10)
+}
+outputXX90 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX90) <- c("EstimateED90", "StdError_90", "Lower_90", "Upper_90")
+Isolates <- unique(pdata$Isolate)
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% mutate(percent_response = Av_growtharea/(mean(df$Av_growtharea[df$Concentration==0]))*100)
+model <- drm(percent_response~Concentration, data=df, Isolate, fct=W2.4(fixed=c(NA, 0, 100, NA)))
+output <- ED(model, c(90), interval="delta")
+colnames(output) <- colnames(outputXX90)
+outputXX90 <- rbind(output, outputXX90)
+}
+outputXX$EstimateED10 <-outputXX10$EstimateED10
+outputXX$StdError_10 <-outputXX10$StdError_10
+outputXX$Lower_10 <-outputXX10$Lower_10
+outputXX$Upper_10 <-outputXX10$Upper_10
+outputXX$EstimateED90 <-outputXX90$EstimateED90
+outputXX$StdError_90 <-outputXX90$StdError_90
+outputXX$Lower_90 <-outputXX90$Lower_90
+outputXX$Upper_90 <-outputXX90$Upper_90
+write_xlsx(outputXX,"outputW2.xlsx")
 
 #Find estimated slope for each Isolate
 Isolates <- unique(data$Isolate)
@@ -3024,6 +3165,329 @@ for (i in 2){
   test90[,i]<-test}
 kk$ED90_pvaluesFDRcorrected <-test90$"ED90_pvaluesFDRcorrected"
 write_xlsx(kk,"all_kruskal.xlsx")
+
+#For raw growth rate:
+genopheno <- read_excel("ZeroGrowth.xlsx",sheet = 1)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kkg<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kkg[1:861,1:2]<-NA
+kkg[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kkg[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kkg)[1]<-"snp:"
+colnames(kkg)[2]<-"Growth_rate_pvalues:"
+
+testg<-as.data.frame(NA)
+testg[1:861,1:2]<-NA
+rownames(testg)<-rownames(kkg)
+colnames(testg)<-colnames(kkg)
+colnames(testg)[2]<-"Growth_rate_pvaluesFDRcorrected:"
+testg[,1]<-kkg[,1]
+for (i in 2){
+  test<-p.adjust(kkg[,i], method="fdr") #false discovery rate correction
+  testg[,i]<-test}
+kkg$Growth_rate_pvaluesFDRcorrected <-testg$"Growth_rate_pvaluesFDRcorrected:"
+write_xlsx(kkg,"growth_kruskal.xlsx")
+
+#% with LL model
+#For ED50
+genopheno <- read_excel("EDbySNP_3.xlsx",sheet = 2)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk[1:861,1:2]<-NA
+kk[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk)[1]<-"snp:"
+colnames(kk)[2]<-"ED50 pvalues:"
+
+test50<-as.data.frame(NA)
+test50[1:861,1:2]<-NA
+rownames(test50)<-rownames(kk)
+colnames(test50)<-colnames(kk)
+colnames(test50)[2]<-"ED50 pvaluesFDRcorrected:"
+test50[,1]<-kk[,1]
+for (i in 2){
+  test<-p.adjust(kk[,i], method="fdr") #false discovery rate correction
+  test50[,i]<-test}
+kk$ED50_pvaluesFDRcorrected <-test50$"ED50 pvaluesFDRcorrected"
+
+#For ED10:
+genopheno <- read_excel("EDbySNP_3.xlsx",sheet = 1)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk10<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk10[1:861,1:2]<-NA
+kk10[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk10[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk10)[1]<-"snp:"
+colnames(kk10)[2]<-"ED10_pvalues:"
+kk$ED10_pvalues <-kk10$"ED10_pvalues"
+
+test10<-as.data.frame(NA)
+test10[1:861,1:2]<-NA
+rownames(test10)<-rownames(kk10)
+colnames(test10)<-colnames(kk10)
+colnames(test10)[2]<-"ED10_pvaluesFDRcorrected:"
+test10[,1]<-kk10[,1]
+for (i in 2){
+  test<-p.adjust(kk10[,i], method="fdr") #false discovery rate correction
+  test10[,i]<-test}
+kk$ED10_pvaluesFDRcorrected <-test10$"ED10_pvaluesFDRcorrected"
+
+#For ED90:
+genopheno <- read_excel("EDbySNP_3.xlsx",sheet = 3)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk90<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk90[1:861,1:2]<-NA
+kk90[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk90[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk90)[1]<-"snp:"
+colnames(kk90)[2]<-"ED90_pvalues:"
+kk$ED90_pvalues <-kk90$"ED90_pvalues"
+
+test90<-as.data.frame(NA)
+test90[1:861,1:2]<-NA
+rownames(test90)<-rownames(kk90)
+colnames(test90)<-colnames(kk90)
+colnames(test90)[2]<-"ED90_pvaluesFDRcorrected:"
+test90[,1]<-kk90[,1]
+for (i in 2){
+  test<-p.adjust(kk90[,i], method="fdr") #false discovery rate correction
+  test90[,i]<-test}
+kk$ED90_pvaluesFDRcorrected <-test90$"ED90_pvaluesFDRcorrected"
+write_xlsx(kk,"pcentLL_kruskal.xlsx")
+
+#% with W1 model
+#For ED50
+genopheno <- read_excel("EDbySNP_4.xlsx",sheet = 2)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk[1:861,1:2]<-NA
+kk[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk)[1]<-"snp:"
+colnames(kk)[2]<-"ED50 pvalues:"
+
+test50<-as.data.frame(NA)
+test50[1:861,1:2]<-NA
+rownames(test50)<-rownames(kk)
+colnames(test50)<-colnames(kk)
+colnames(test50)[2]<-"ED50 pvaluesFDRcorrected:"
+test50[,1]<-kk[,1]
+for (i in 2){
+  test<-p.adjust(kk[,i], method="fdr") #false discovery rate correction
+  test50[,i]<-test}
+kk$ED50_pvaluesFDRcorrected <-test50$"ED50 pvaluesFDRcorrected"
+
+#For ED10:
+genopheno <- read_excel("EDbySNP_4.xlsx",sheet = 1)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk10<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk10[1:861,1:2]<-NA
+kk10[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk10[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk10)[1]<-"snp:"
+colnames(kk10)[2]<-"ED10_pvalues:"
+kk$ED10_pvalues <-kk10$"ED10_pvalues"
+
+test10<-as.data.frame(NA)
+test10[1:861,1:2]<-NA
+rownames(test10)<-rownames(kk10)
+colnames(test10)<-colnames(kk10)
+colnames(test10)[2]<-"ED10_pvaluesFDRcorrected:"
+test10[,1]<-kk10[,1]
+for (i in 2){
+  test<-p.adjust(kk10[,i], method="fdr") #false discovery rate correction
+  test10[,i]<-test}
+kk$ED10_pvaluesFDRcorrected <-test10$"ED10_pvaluesFDRcorrected"
+
+#For ED90:
+genopheno <- read_excel("EDbySNP_4.xlsx",sheet = 3)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk90<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk90[1:861,1:2]<-NA
+kk90[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk90[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk90)[1]<-"snp:"
+colnames(kk90)[2]<-"ED90_pvalues:"
+kk$ED90_pvalues <-kk90$"ED90_pvalues"
+
+test90<-as.data.frame(NA)
+test90[1:861,1:2]<-NA
+rownames(test90)<-rownames(kk90)
+colnames(test90)<-colnames(kk90)
+colnames(test90)[2]<-"ED90_pvaluesFDRcorrected:"
+test90[,1]<-kk90[,1]
+for (i in 2){
+  test<-p.adjust(kk90[,i], method="fdr") #false discovery rate correction
+  test90[,i]<-test}
+kk$ED90_pvaluesFDRcorrected <-test90$"ED90_pvaluesFDRcorrected"
+write_xlsx(kk,"pcentW1_kruskal.xlsx")
+
+#% with W2 model
+#For ED50
+genopheno <- read_excel("EDbySNP_5.xlsx",sheet = 2)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk[1:861,1:2]<-NA
+kk[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk)[1]<-"snp:"
+colnames(kk)[2]<-"ED50 pvalues:"
+
+test50<-as.data.frame(NA)
+test50[1:861,1:2]<-NA
+rownames(test50)<-rownames(kk)
+colnames(test50)<-colnames(kk)
+colnames(test50)[2]<-"ED50 pvaluesFDRcorrected:"
+test50[,1]<-kk[,1]
+for (i in 2){
+  test<-p.adjust(kk[,i], method="fdr") #false discovery rate correction
+  test50[,i]<-test}
+kk$ED50_pvaluesFDRcorrected <-test50$"ED50 pvaluesFDRcorrected"
+
+#For ED10:
+genopheno <- read_excel("EDbySNP_5.xlsx",sheet = 1)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk10<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk10[1:861,1:2]<-NA
+kk10[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk10[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk10)[1]<-"snp:"
+colnames(kk10)[2]<-"ED10_pvalues:"
+kk$ED10_pvalues <-kk10$"ED10_pvalues"
+
+test10<-as.data.frame(NA)
+test10[1:861,1:2]<-NA
+rownames(test10)<-rownames(kk10)
+colnames(test10)<-colnames(kk10)
+colnames(test10)[2]<-"ED10_pvaluesFDRcorrected:"
+test10[,1]<-kk10[,1]
+for (i in 2){
+  test<-p.adjust(kk10[,i], method="fdr") #false discovery rate correction
+  test10[,i]<-test}
+kk$ED10_pvaluesFDRcorrected <-test10$"ED10_pvaluesFDRcorrected"
+
+#For ED90:
+genopheno <- read_excel("EDbySNP_5.xlsx",sheet = 3)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk90<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk90[1:861,1:2]<-NA
+kk90[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-kruskal.test(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- test$p.value # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk90[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk90)[1]<-"snp:"
+colnames(kk90)[2]<-"ED90_pvalues:"
+kk$ED90_pvalues <-kk90$"ED90_pvalues"
+
+test90<-as.data.frame(NA)
+test90[1:861,1:2]<-NA
+rownames(test90)<-rownames(kk90)
+colnames(test90)<-colnames(kk90)
+colnames(test90)[2]<-"ED90_pvaluesFDRcorrected:"
+test90[,1]<-kk90[,1]
+for (i in 2){
+  test<-p.adjust(kk90[,i], method="fdr") #false discovery rate correction
+  test90[,i]<-test}
+kk$ED90_pvaluesFDRcorrected <-test90$"ED90_pvaluesFDRcorrected"
+write_xlsx(kk,"pcentW2_kruskal.xlsx")
 ```
 Manhattan plot:
 ```R
@@ -3096,6 +3560,14 @@ ED50_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:"
 
 ED90_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED90_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
                     annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "Fixed slope ED90", ylim= c(0,2.5), xlab="Linkage group" )
+#Linkage groups 3 and 7
+par(mfrow = c(1, 1)) 
+ED50_man_plot <- manhattan(subset(man, LG==3), chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED50_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                           annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "Linkage group 3 ED50", xlim=c(32130008,37747052), ylim= c(0,2.5), xlab="", xaxt='n' )
+Axis(side=1, labels=FALSE)
+ED50_man_plot <- manhattan(subset(man, LG==7), chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED50_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                           annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "Linkage group 7 ED50", xlim=c(51500000,55200000), ylim= c(0,2.5), xlab="", xaxt='n' )
+Axis(side=1, labels=FALSE)
 
 #Comb
 man <- read_excel("comb_kruskal.xlsx")
@@ -3133,12 +3605,131 @@ ED50_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:"
 ED90_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED90_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
                     annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "All unfixed ED90", ylim= c(0,2.5), xlab="Linkage group" )
 
+#Growth
+par(mfrow = c(1, 1)) 
+man <- read_excel("growth_kruskal.xlsx")
+#Estimated positional spacing
+growth_man_plot <- manhattan(man, chr="LG", bp="Estimated_positional_spacing", snp="snp_1:", p="Growth_rate_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "Growth rate", ylim= c(0,2.5), xlab="Linkage group" )
+
+#% with LL model
+par(mfrow = c(2, 2)) 
+man <- read_excel("pcentLL_kruskal.xlsx")
+#Estimated positional spacing
+ED10_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED10_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "% LL ED10", ylim= c(0,2.5), xlab="Linkage group" )
+
+ED50_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED50_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "% LL ED50", ylim= c(0,3.5), xlab="Linkage group" )
+
+ED90_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED90_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "% LL ED90", ylim= c(0,2.5), xlab="Linkage group" )
+
+#% with W1 model
+par(mfrow = c(2, 2)) 
+man <- read_excel("pcentW1_kruskal.xlsx")
+#Estimated positional spacing
+ED10_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED10_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "% W1 ED10", ylim= c(0,2.5), xlab="Linkage group" )
+
+ED50_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED50_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "% W1 ED50", ylim= c(0,3.5), xlab="Linkage group" )
+
+ED90_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED90_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "% W1 ED90", ylim= c(0,2.5), xlab="Linkage group" )
+
+#% with W2 model
+par(mfrow = c(2, 2)) 
+man <- read_excel("pcentW2_kruskal.xlsx")
+#Estimated positional spacing
+ED10_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED10_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "% W2 ED10", ylim= c(0,2.5), xlab="Linkage group" )
+
+ED50_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED50_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "% W2 ED50", ylim= c(0,3.5), xlab="Linkage group" )
+
+ED90_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED90_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "% W2 ED90", ylim= c(0,2.5), xlab="Linkage group" )
+```
+For fixed slope for all there are two QTL with significance p=<0.05, one in linakge group 3 on contig 20 and one in linkage group 7 on contig 5. 
+
+In linkage group 3 only one of 861 unique SNP markers reaches p<0.05; 020.1_192284, p=0.041265161. Flanking markers are 020.1_191981 at p=0.074193447 and 020.1_206885 at p=0.116572974.
+
+LG	First SNP at p	Last SNP at p	p-value
+3	020.1_135309	020.1_137444	0.263133124
+3	020.1_137444	020.1_155761	0.0988163
+3	020.1_160360	020.1_191981	0.074193447
+3	020.1_192284	020.1_192301	0.041265161
+3	020.1_206885	020.1_238650	0.116572974
+
+
+In linkage group 7 there are 17 of 861 unique SNP markers that reach p<0.05:
+
+LG	First SNP at p	Last SNP at p	p-value
+7	005.1_465937	005.1_482758	0.327054676
+7	005.1_484574	005.1_501029	0.082974222
+7	005.1_512290	005.1_569336	0.041265161
+7	005.1_574437	005.1_604974	0.025215396
+7	005.1_605703	005.1_606613	0.025215396
+7	005.1_612736	005.1_648012	0.025215396
+7	005.1_648012	005.1_649989	0.003026067
+7	005.1_652076	005.1_740269	0.014562157
+7	005.1_740512	005.1_768227	0.000789554
+7	005.1_769412	005.1_898232	0.000789554
+7	005.1_899960	005.1_1079263	0.003026067
+7	005.1_1081353	005.1_1081452	0.024134485
+7	005.1_1083526	005.1_1088125	0.020266888
+7	005.1_1088683	005.1_1098296	0.034989945
+7	005.1_1105697	005.1_1112602	0.026529841
+7	005.1_1113330	005.1_1147000	0.026529841
+7	005.1_1172256	005.1_1211471	0.025215396
+7	005.1_1214348	005.1_1408086	0.025215396
+7	005.1_1408877	005.1_1510230	0.030266287
+7	039.1_37183	039.1_37837	0.082974222
+7	039.1_39835	039.1_109795	0.110234471
+
+According to chi squared there is association between the QTL peak markers, p=0.041967
+Effect size is 6.9 for the LG7 QTL and 0.54 for the LG3 QTl
+
+Find CYP51 gene:
+```bash
+#Searched the genome using primers designed by Lauren Limon, given in thesis, product should be ~2,200 bp
+
+touch dna_qc/venturia/inaequalis/LLimon/829F.fasta
+grep -B 1 'AGACGAGCAACACCACACTT' /home/theaven/scratch/data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.fasta >> dna_qc/venturia/inaequalis/LLimon/829F.fasta
+grep -B 1 'AAGTGTGGTGTTGCTCGTCT' /home/theaven/scratch/data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.fasta >> dna_qc/venturia/inaequalis/LLimon/829F.fasta
+
+touch touch dna_qc/venturia/inaequalis/LLimon/2625R.fasta
+grep -B 1 'CTAGCCCCGCGAGAAATCAT' /home/theaven/scratch/data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.fasta >> dna_qc/venturia/inaequalis/LLimon/2625R.fasta
+grep -B 1 'ATGATTTCTCGCGGGGCTAG' /home/theaven/scratch/data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.fasta >> dna_qc/venturia/inaequalis/LLimon/2625R.fasta
+```
+CYP51 is on contig5, at position 1,335,727:
+```bash
+grep -A 1 '>QFBF01000005.1 ' /home/theaven/scratch/data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.fasta >> contig5.fasta
+
+#ATGGGACTCCTCTCTCCTTTGCTCGCCTCGTTACCGGGCAGCGACCGCAGTTGGTTATTTTACACTCTTGCCTCCTTCGGCTTCACCGTTGCAATCGTCGCCGCCAACCTTGTCAAGCAACTCTTATTCTCAAACCCAAACGAACCTCCAGTAGTCTTCCACTGGTTTCCCTTCTTCGGCAACACGGTCGTCTACGGCATCGATCCTATCAAGTTTTTCGCCGAGTGCAAGGAAAAGGTAATGCGACAATGAGAATGCAAGTTGCGTGGAGCTAACTTGTCTCCCAGCATGGCGATATCTTTACCTTCATTCTTCTTGGCAGGAAAACAACAGTCTACATTGGTACAAAGGGAAACGAATTCATTCTCAATGGCAAACAGAGCCATGTCAACGCAGAGGAAATCTATAGCCCCCTGACGACGCCCGTCTTCGGCTCCGATGTTGTCTATGATTGCCCAAACTCGAAATTGATGGAGCAAAAGAAGGTATGCTGCCACCATTCTTTCGCAAGAGACTCCTGCTGATATCCACAAGTTCGTCAAGTACGGTCTCACCACCGAAGCTCTCAAATCCTATGTCACCCTCATCCAACAAGAAGTCGAAGACTATACCAAACGCTACCCTCAATTCAAAGGCGAAAAGGGCAGCTTCGATGTTTGCGCTTCCATGGCCGAAATCACAATCTTCACTGCTTCCCGCTCACTACAAGGCAAGGAGGTTCGCGACAAGTTTGACGCCAGCTTTGCAGACCTCTTCCACGATTTGGATATGGGCTTCTCTCCTATCAACTTCATGCTTCCCTGGGCCCCTCTTCCACACAATCGTCGCCGAGATGCCGCGAACAAAAAGATGACGGAGACATATTTGGAAATTATCCAATCGAGAAAAGCAGAGGGCGTCAAAAAGGATTCAGAGGACATGATTTGGAATTTGATGCAGTGTGTATACAAGAATGGCACTCCCATCCCGGACAAAGAAATCGCCCACATGATGATCGCGCTGCTCATGGCCGGCCAGCACTCGTCCTCTAGCACCTCGTCCTGGATTCTACTTCGACTAGCTACCAGACCTGATATCCAGGAAGAACTATACCAAGAACAAATTCGGGTTTGCGGCGCTGATCTTCCACCGTTGCAGTACGAAGATCTTGCTCGCATGCCTCTCCACAACCAGATTATCAAAGAAACTCTTCGCATGCATTCGCCAATTCACAGCATCTTGCGTGCCGTCAAACAGCCTATGCCTGTCGAAGGAACTCCTTACACCATCCCCACCTCGCATGTTCTCCTTGCTGCTCCCATCGCATCTGGAGGCTCGCCAATGTACTTTCCAGCTCCTGAGAAGTGGGAGCCTCACCGTTGGGACGAAGGATCAGGAGGAACCAACATCTCGGGCGGCGAAAACGGTGGCGAAGAGAAAGAGGATTACGGCTATGGACTCATCACAAAGGGCGCCAGCTCGCCGTACCTTCCGTTCGGCGCTGGAAGACATAGGTGTATCGGCGAACAATTTGCATATATGCAGTTGAACACGGTTCTCGCGACGCAAGTTCGCGAATTCAAGTTCAGTTTGAGGGAAGGAGAGTCGTTCCCCAAGACCGacttctcttctctattttCTGGACCTCTACGCCCCGCGTGGTTGAACTGGGAACGTAGAGAGAAGTCCTCATGA
 ```
 
+PCA
+```R
+setwd("C:/Users/heavt/OneDrive - NIAB/Documents/R/SNP calling")
+library(ggplot2)
+install.packages("ggfortify")
+library(ggfortify)
 
+data <- data[ , !(names(data) %in% "Isol1te:")]
+pca_data <- data.matrix(data[,1:ncol(data)])
+PCAlocM<-prcomp((pca_data))
+b<-autoplot(PCAlocM)
+plot(b)
 
+data <- read_excel("EDbySNP.xlsx",sheet = 6)
+pca_data <- data.matrix(data[,1:ncol(data)])
+PCAlocM<-prcomp((pca_data))
+c<-autoplot(PCAlocM)
+plot(c)
 
-
+```
 
 
 
@@ -3437,4 +4028,1202 @@ for x in $(awk '/>/{getline; print}' /home/theaven/scratch/data/assembly/genome/
 done
 
 grep -w -A1 'contig_12' /home/theaven/scratch/data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.fasta | grep -v 'contig_12' | wc 
+```
+Plot models
+```R
+par(mfrow = c(3, 5)) 
+
+x="AF28"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="Spartan 1"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS1"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS101"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS102"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS103"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS104"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS106"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS109"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS11"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS110"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS111"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS115"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS116"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS117"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS118"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS119"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS12"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS121"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS123"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS124"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS125"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS127"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS128"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS14"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS16"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS17"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS2"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS21"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS29"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS3"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS31"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS32"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS33"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS37"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS38"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS40"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS41"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS42"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS43"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS44"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS48"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS49"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS58"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS59"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS60"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS70"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS77"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS78"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS79"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS80"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS81"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS82"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS85"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/(mean(pRS81$Av_growtharea[pRS81$Concentration==0]))*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+
+```
+```R
+par(mfrow = c(3, 5)) 
+
+x="AF28"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="Spartan 1"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS1"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS101"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS102"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS103"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS104"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS106"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS109"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS11"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS110"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS111"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS115"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS116"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS117"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS118"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS119"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS12"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS121"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS123"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS124"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS125"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS127"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS128"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS14"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS16"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS17"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS2"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS21"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS29"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS3"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS31"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS32"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS33"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS37"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS38"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS40"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS41"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS42"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS43"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS44"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS48"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS49"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS58"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS59"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS60"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS70"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS77"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS78"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS79"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS80"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS81"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS82"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
+x="RS85"
+pRS81 <-  pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+pRS81 <- pRS81 %>% 
+  mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+RS81.LL2 <-  drm(percent_response~Concentration, data=pRS81, fct=LL.2(upper = 100, fixed=c(NA, NA)))
+RS81.W12 <-  drm(percent_response~Concentration, data=pRS81, fct=W1.2(upper = 100, fixed=c(NA, NA)))
+RS81.W22 <-  drm(percent_response~Concentration, data=pRS81, fct=W2.2(upper = 100, fixed=c(NA, NA)))
+plot(RS81.LL2, xlab="Concentration", ylab="Percent Response", type='all',lty=1, lwd=2, main=x, xlim=c(0,100), ylim=c(0,120))
+plot(RS81.W12, add=TRUE,col="blue",lty=2, lwd=2)
+plot(RS81.W22, add=TRUE,col="red",lty=2, lwd=2)
+
 ```
