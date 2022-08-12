@@ -216,6 +216,13 @@ Outfile=$(basename -a $RawData)_fastqc
 sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
 done
 #16884-17007,2491082-2491209
+
+for RawData in $(ls /home/theaven/projects/niab/theaven/raw_data/DNA/venturia/inaequalis/LLimon/*/*/*/*.fq.gz); do
+printf $RawData >> /home/theaven/projects/niab/theaven/raw_data/DNA/venturia/inaequalis/LLimon/counts.txt
+printf '%b\n' >> /home/theaven/projects/niab/theaven/raw_data/DNA/venturia/inaequalis/LLimon/counts.txt
+cat $Rawdata | gunzip -cf | echo $((`wc -l`/4)) >> /home/theaven/projects/niab/theaven/raw_data/DNA/venturia/inaequalis/LLimon/counts.txt
+printf '%b\n' >> /home/theaven/projects/niab/theaven/raw_data/DNA/venturia/inaequalis/LLimon/counts.txt
+done
 ```
 ```bash
 conda activate trimmomatic
@@ -902,6 +909,10 @@ for ReadDir in $(ls -d dna_qc/venturia/inaequalis/LLimon/*/THSC*); do
 done
 #752, 754-798, -2492726
 conda deactivate
+
+for log in $(ls alignment/venturia/inaequalis/LLimon/bowtie/*/passey/bowtie_log.txt); do
+grep 'overall alignment rate' $log | sed "s/overall alignment rate//g" >> alignment/venturia/inaequalis/LLimon/bowtie/countsalign.txt
+done
 
 for mapfile in $(ls alignment/venturia/inaequalis/LLimon/bowtie/*/passey/*.sam); do
 	Isolate=$(echo $mapfile | cut -d '/' -f6)
@@ -1901,6 +1912,31 @@ df3.to_csv("/home/theaven/scratch/snp_calling/venturia/inaequalis/LLimon/gatk/pa
 exit()
 ```
 Following this /home/theaven/scratch/snp_calling/venturia/inaequalis/LLimon/gatk/passey_haplotype_calls_model/ascii4.6.3.txt was downloaded and input to joinmap5. Having removed erronious snps and any snps containing missing data the number of loci was reduced from 52,670 t0 46,727. Using exclude similar loci (Exclude the 2nd locus in pairs with similarity larger than/equal to:1) reduced this to 861 unique loci that were mapped to 11 groups at LOD=3.4. Joinmap4.1 and 5 were used to map groups. As we have positional information about wich reference assembly contigs snps were called against and where in these contigs it was clear that many were placed in an incorrect order by joinmap4.1, therefore joinmap5 linkage data was used. As we do not have a joinmap5 license groups had to be mapped two at a time and the results copied to exel manually.
+```R
+setwd("C:/Users/heavt/OneDrive - NIAB/Documents/R/bioinfo")
+install.packages("LinkageMapView")
+library(LinkageMapView)
+
+data <- read.csv("Linkage mapping.csv")
+data$position<-as.numeric(data$position)
+class(data$position)
+class(data$position)
+outfile = file.path("LG1&2.pdf")
+lmv.linkage.plot(data, outfile, mapthese=c(1,2), showonly=c("028.1_206262","028.1_757147","041.1_579473","041.1_61718","055.1_203369","055.1_11241","008.1_1332761","008.1_27881","019.1_1155055","019.1_89404","010.1_1263746","010.1_26311","029.1_643123","029.1_118162","023.1_228813","023.1_819704","082.1_85203","082.1_112112","044.1_20857","044.1_558834","075.1_68143","070.1_92095","033.1_648938","066.1_183153","066.1_142901","009.1_941426","009.1_21265","054.1_417678","054.1_15037","056.1_76922","056.1_385571","034.1_312520","034.1_56162","001.1_16102","001.1_3722808","035.1_580701","035.1_151213","053.1_207758","053.1_409680","048.1_399185","048.1_42173","049.1_16592","049.1_482466","031.1_41561","031.1_299095","052.1_277852","052.1_383071","032.1_277966","032.1_408846","012.1_1377961","012.1_34734","076.1_39863","076.1_61285","074.1_179982","074.1_53379","014.1_1386399","014.1_17695","058.1_323661","058.1_34980","045.1_377838","045.1_538437","063.1_87794","063.1_115130","018.1_27234","018.1_680808","051.1_116857","051.1_223269","090.1_57346","090.1_96328","013.1_1432504","013.1_156218","022.1_757080","022.1_43586","003.1_228296","003.1_2265134","028.1_547154","041.1_377117","008.1_934033","019.1_1058008","010.1_869880","009.1_102387","056.1_368317","056.1_381308","001.1_1383432","048.1_145840","049.1_386840","012.1_416784","058.1_304802","018.1_271647","051.1_214932","013.1_762592","022.1_537940","022.1_209069","003.1_838921","003.1_1748248","003.1_2243675","009.1_402743","009.1_59957"))
+outfile = file.path("LG3&4.pdf")
+lmv.linkage.plot(data, outfile, mapthese=c(3,4), showonly=c("065.1_39281","017.1_27510","017.1_52706","017.1_124894","017.1_272875","017.1_318973","017.1_329070","017.1_364528","017.1_409558","017.1_547423","017.1_574668","017.1_585584","017.1_877525","017.1_905401","017.1_957651","017.1_1052882","017.1_1175705","017.1_1177602","083.1_154751","083.1_31318","067.1_84764","067.1_132509","067.1_150871","072.1_48894","072.1_57621","037.1_33583","037.1_521816","037.1_533255","020.1_42296","020.1_127604","020.1_135309","020.1_160360","020.1_192284","020.1_206885","020.1_265790","020.1_553162","020.1_582423","020.1_641516","007.1_20358","007.1_63475","007.1_93712","007.1_238415","007.1_355702","007.1_371796","007.1_662735","007.1_678746","007.1_731731","007.1_751455","007.1_753129","007.1_786490","007.1_814655","007.1_873422","016.1_810773","016.1_770454","016.1_757974","016.1_750503","016.1_748680","016.1_740623","016.1_715052","016.1_651299","016.1_636603","016.1_625341","016.1_618930","016.1_582364","016.1_377946","016.1_368988","016.1_291239","016.1_286428","016.1_248592","016.1_213258","016.1_185550","016.1_88417","016.1_87648","016.1_54472","046.1_486800","046.1_452301","046.1_203119","046.1_155974","046.1_133015","046.1_98372","006.1_16382","006.1_142942","006.1_158468","006.1_167344","006.1_200171","006.1_266782","006.1_293439","006.1_339656","006.1_354413","006.1_399684","006.1_402271","006.1_403134","006.1_599105","006.1_711462","006.1_826913","006.1_831855","006.1_850528","006.1_882223","006.1_933887","006.1_943795","006.1_954657","006.1_956982","006.1_1013965","006.1_1083482","006.1_1212107"))
+outfile = file.path("LG5&6.pdf")
+lmv.linkage.plot(data, outfile, mapthese=c(5,6), showonly=c("011.1_1193100","011.1_1045255","011.1_981450","011.1_969916","011.1_940523","011.1_885993","011.1_809424","011.1_788027","011.1_766943","011.1_679072","011.1_605956","011.1_602711","011.1_596960","011.1_584594","011.1_543627","011.1_193978","011.1_183507","011.1_94416","021.1_512702","021.1_540567","021.1_622143","021.1_702920","021.1_723504","021.1_740373","021.1_762889","021.1_775002","021.1_775145","021.1_786964","021.1_796875","021.1_829137","021.1_831589","091.1_24953","091.1_32879","061.1_268538","061.1_253903","038.1_13329","038.1_529603","026.1_121709","026.1_165743","026.1_416758","026.1_520777","026.1_538443","026.1_675438","024.1_134606","024.1_534301","024.1_842759","097.1_88734","097.1_76772","059.1_67314","059.1_133312","059.1_223684","062.1_178716","062.1_127091","062.1_82204","040.1_240767","040.1_63762","040.1_12717","043.1_548229","043.1_502906","043.1_417913","043.1_401995","043.1_260023","043.1_43389","043.1_16514","025.1_866097","025.1_704253","025.1_257166","025.1_126444","025.1_53180","030.1_568841","030.1_136038","030.1_30214","068.1_53140","068.1_219862","002.1_139902","002.1_796823","002.1_855952","002.1_962571","002.1_1082899","002.1_1181806","002.1_1395439","002.1_1511076","002.1_1632713","002.1_1970191","002.1_2211633"))
+outfile = file.path("LG7&8.pdf")
+lmv.linkage.plot(data, outfile, mapthese=c(7,8))
+outfile = file.path("LG9&10.pdf")
+lmv.linkage.plot(data, outfile, mapthese=c("9a","9b"))
+
+
+
+
+
+```
 
 ```R
 setwd("C:/Users/heavt/OneDrive - NIAB/Documents/R/SNP calling")
@@ -2540,6 +2576,107 @@ outputED50_3$Lower_90 <-outputED90_3$Lower
 outputED50_3$Upper_90 <-outputED90_3$Upper 
 outputED<-outputED50_3
 write_xlsx(outputED,"outputED.xlsx")
+
+#################################################################
+
+#Find EDs for % RS11, 103 and 58 anomalous values removed, maxi
+data <- read_excel("Laura scab111.xlsx")
+pdata<-na.omit(data)
+
+outputXX <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX) <- c("EstimateED50", "StdError_50", "Lower_50", "Upper_50")
+Isolates <- unique(pdata$Isolate)
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+model <- drm(percent_response~Concentration, data=df, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+output <- ED(model, c(50), interval="delta")
+colnames(output) <- colnames(outputXX)
+outputXX <- rbind(output, outputXX)
+}
+outputXX$Isolate <- rownames(outputXX)
+outputXX <- outputXX[, c(5,1,2,3,4)]
+outputXX10 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX10) <- c("EstimateED10", "StdError_10", "Lower_10", "Upper_10")
+Isolates <- unique(pdata$Isolate)
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+model <- drm(percent_response~Concentration, data=df, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+output <- ED(model, c(10), interval="delta")
+colnames(output) <- colnames(outputXX10)
+outputXX10 <- rbind(output, outputXX10)
+}
+outputXX90 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX90) <- c("EstimateED90", "StdError_90", "Lower_90", "Upper_90")
+Isolates <- unique(pdata$Isolate)
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% mutate(percent_response = Av_growtharea/max(pRS81$Av_growtharea)*100)
+model <- drm(percent_response~Concentration, data=df, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+output <- ED(model, c(90), interval="delta")
+colnames(output) <- colnames(outputXX90)
+outputXX90 <- rbind(output, outputXX90)
+}
+outputXX$EstimateED10 <-outputXX10$EstimateED10
+outputXX$StdError_10 <-outputXX10$StdError_10
+outputXX$Lower_10 <-outputXX10$Lower_10
+outputXX$Upper_10 <-outputXX10$Upper_10
+outputXX$EstimateED90 <-outputXX90$EstimateED90
+outputXX$StdError_90 <-outputXX90$StdError_90
+outputXX$Lower_90 <-outputXX90$Lower_90
+outputXX$Upper_90 <-outputXX90$Upper_90
+write_xlsx(outputXX,"outputLLf_maxi.xlsx")
+#################################################################
+
+#Find EDs for % with LL, RS1,44,59,80,109 removed, RS11 anomalous zero conc value removed
+data <- read_excel("Laura scab111.xlsx")
+pdata<-na.omit(data)
+
+outputXX <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX) <- c("EstimateED50", "StdError_50", "Lower_50", "Upper_50")
+Isolates <- unique(pdata$Isolate)
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% mutate(percent_response = Av_growtharea/(mean(df$Av_growtharea[df$Concentration==0]))*100)
+model <- drm(percent_response~Concentration, data=df, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+output <- ED(model, c(50), interval="delta")
+colnames(output) <- colnames(outputXX)
+outputXX <- rbind(output, outputXX)
+}
+outputXX$Isolate <- rownames(outputXX)
+outputXX <- outputXX[, c(5,1,2,3,4)]
+outputXX10 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX10) <- c("EstimateED10", "StdError_10", "Lower_10", "Upper_10")
+Isolates <- unique(pdata$Isolate)
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% mutate(percent_response = Av_growtharea/(mean(df$Av_growtharea[df$Concentration==0]))*100)
+model <- drm(percent_response~Concentration, data=df, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+output <- ED(model, c(10), interval="delta")
+colnames(output) <- colnames(outputXX10)
+outputXX10 <- rbind(output, outputXX10)
+}
+outputXX90 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX90) <- c("EstimateED90", "StdError_90", "Lower_90", "Upper_90")
+Isolates <- unique(pdata$Isolate)
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% mutate(percent_response = Av_growtharea/(mean(df$Av_growtharea[df$Concentration==0]))*100)
+model <- drm(percent_response~Concentration, data=df, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+output <- ED(model, c(90), interval="delta")
+colnames(output) <- colnames(outputXX90)
+outputXX90 <- rbind(output, outputXX90)
+}
+outputXX$EstimateED10 <-outputXX10$EstimateED10
+outputXX$StdError_10 <-outputXX10$StdError_10
+outputXX$Lower_10 <-outputXX10$Lower_10
+outputXX$Upper_10 <-outputXX10$Upper_10
+outputXX$EstimateED90 <-outputXX90$EstimateED90
+outputXX$StdError_90 <-outputXX90$StdError_90
+outputXX$Lower_90 <-outputXX90$Lower_90
+outputXX$Upper_90 <-outputXX90$Upper_90
+write_xlsx(outputXX,"outputLLfinal.xlsx")
 ```
 Cumulative frequency plots:
 ```R
@@ -2557,13 +2694,25 @@ library("writexl")
 #read in data:
 data <- read_excel("outputED50_3_2.xlsx")
 str(data)
-parents<-subset(data, Isolate=='e:RS24:50' | Isolate=='e:Spartan 1:50')
+parents<-subset(data, Isolate=='e:AF28:50' | Isolate=='e:Spartan 1:50')
 
 require(gridExtra)
 plot1<-ggplot(data, aes(x=EstimateED10_log, y=ED10_order))+geom_point()+labs(y="Cumulative Frequency",  x=expression(lnED[10])) + geom_point(data=parents, aes(x=EstimateED10_log, y=ED10_order), colour="red", size=3)
 plot2<-ggplot(data, aes(x=EstimateED50_log, y=ED50_order))+geom_point()+labs(y="Cumulative Frequency",  x=expression(lnED[50])) + geom_point(data=parents, aes(x=EstimateED50_log, y=ED50_order), colour="red", size=3)
 plot3<-ggplot(data, aes(x=EstimateED90_log, y=ED90_order))+geom_point()+labs(y="Cumulative Frequency",  x=expression(lnED[90])) + geom_point(data=parents, aes(x=EstimateED90_log, y=ED90_order), colour="red", size=3)
 grid.arrange(plot1, plot2, plot3, nrow=2, ncol=2)
+
+
+data <- read_excel("zz.xlsx")
+str(data)
+parents<-subset(data, Isolate=='e:AF28:50' | Isolate=='e:Spartan 1:50')
+
+require(gridExtra)
+plot1<-ggplot(data, aes(x=EstimateED10_log, y=ED10_order))+geom_point()+labs(y="Cumulative Frequency",  x=expression(lnED[10])) + geom_point(data=parents, aes(x=EstimateED10_log, y=ED10_order), colour="red", size=3) + ggtitle("ED10") + theme(plot.title = element_text(hjust = 0.5))
+plot2<-ggplot(data, aes(x=EstimateED50_log, y=ED50_order))+geom_point()+labs(y="Cumulative Frequency",  x=expression(lnED[50])) + geom_point(data=parents, aes(x=EstimateED50_log, y=ED50_order), colour="red", size=3) + ggtitle("ED50") + theme(plot.title = element_text(hjust = 0.5))
+plot3<-ggplot(data, aes(x=EstimateED90_log, y=ED90_order))+geom_point()+labs(y="Cumulative Frequency",  x=expression(lnED[90])) + geom_point(data=parents, aes(x=EstimateED90_log, y=ED90_order), colour="red", size=3) + ggtitle("ED90") + theme(plot.title = element_text(hjust = 0.5))
+grid.arrange(plot1, plot2, plot3, nrow=2, ncol=2)
+
 
 ```
 Check for normal distribution of ED50 against Isolates;
@@ -3489,6 +3638,104 @@ for (i in 2){
 kk$ED90_pvaluesFDRcorrected <-test90$"ED90_pvaluesFDRcorrected"
 write_xlsx(kk,"pcentW2_kruskal.xlsx")
 ```
+ANOVA - ED data was transformed to make it normal. https://www.statisticshowto.com/tukey-ladder-of-powers/ A square root transformation was found to be best by shapiro test. With normalised data we can use ANOVA with ordinal values rather than Kruskal-Wallis which uses rankings.
+```r
+#For ED50
+genopheno <- read_excel("EDbySNP10.xlsx",sheet = 2)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk[1:861,1:2]<-NA
+kk[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-aov(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- summary(test)[[1]][["Pr(>F)"]][[1]] # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk)[1]<-"snp:"
+colnames(kk)[2]<-"ED50 pvalues:"
+
+test50<-as.data.frame(NA)
+test50[1:861,1:2]<-NA
+rownames(test50)<-rownames(kk)
+colnames(test50)<-colnames(kk)
+colnames(test50)[2]<-"ED50 pvaluesFDRcorrected:"
+test50[,1]<-kk[,1]
+for (i in 2){
+  test<-p.adjust(kk[,i], method="fdr") #false discovery rate correction
+  test50[,i]<-test}
+kk$ED50_pvaluesFDRcorrected <-test50$"ED50 pvaluesFDRcorrected"
+
+#For ED10:
+genopheno <- read_excel("EDbySNP10.xlsx",sheet = 1)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk10<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk10[1:861,1:2]<-NA
+kk10[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-aov(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- summary(test)[[1]][["Pr(>F)"]][[1]] # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk10[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk10)[1]<-"snp:"
+colnames(kk10)[2]<-"ED10_pvalues:"
+kk$ED10_pvalues <-kk10$"ED10_pvalues"
+
+test10<-as.data.frame(NA)
+test10[1:861,1:2]<-NA
+rownames(test10)<-rownames(kk10)
+colnames(test10)<-colnames(kk10)
+colnames(test10)[2]<-"ED10_pvaluesFDRcorrected:"
+test10[,1]<-kk10[,1]
+for (i in 2){
+  test<-p.adjust(kk10[,i], method="fdr") #false discovery rate correction
+  test10[,i]<-test}
+kk$ED10_pvaluesFDRcorrected <-test10$"ED10_pvaluesFDRcorrected"
+
+#For ED90:
+genopheno <- read_excel("EDbySNP10.xlsx",sheet = 3)
+genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
+genopheno<-as.data.table(genopheno)
+filtered.df <- genopheno[,3:863]
+filtered.df2 <-as.data.frame(cbind(genopheno[,c(1:2)],filtered.df))
+filtered.df2[,c(1,2)]<-sapply(filtered.df2[,c(1,2)], as.numeric)# for kruskal testing variables have to be numeric
+p.values<-as.vector(NA) #create an empty table for the p values as vectors. if its numeric p 
+kk90<-as.data.frame(NA) # create empty data frame with four columns and as many rows as many markers
+kk90[1:861,1:2]<-NA
+kk90[,1]<-colnames(filtered.df2[,3:863])
+for (k in 1){ for (i in 3:863){
+  test<-aov(filtered.df2[,1] ~ filtered.df2[,i], data = filtered.df2)
+  Current.p.value <- summary(test)[[1]][["Pr(>F)"]][[1]] # Extract the p-value from the test
+  p.values[i-2] <- Current.p.value}
+  kk90[,2]<-p.values 
+  }# Add the p-value to the p.values vector
+colnames(kk90)[1]<-"snp:"
+colnames(kk90)[2]<-"ED90_pvalues:"
+kk$ED90_pvalues <-kk90$"ED90_pvalues"
+
+test90<-as.data.frame(NA)
+test90[1:861,1:2]<-NA
+rownames(test90)<-rownames(kk90)
+colnames(test90)<-colnames(kk90)
+colnames(test90)[2]<-"ED90_pvaluesFDRcorrected:"
+test90[,1]<-kk90[,1]
+for (i in 2){
+  test<-p.adjust(kk90[,i], method="fdr") #false discovery rate correction
+  test90[,i]<-test}
+kk$ED90_pvaluesFDRcorrected <-test90$"ED90_pvaluesFDRcorrected"
+write_xlsx(kk,"pcent_transformed_anova.xlsx")
+```
 Manhattan plot:
 ```R
 setwd("C:/Users/heavt/OneDrive - NIAB/Documents/R/SNP calling")
@@ -3650,6 +3897,33 @@ ED50_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:"
 
 ED90_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED90_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
                     annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "% W2 ED90", ylim= c(0,2.5), xlab="Linkage group" )
+
+#% with 6 removed, transformed and ANOVA
+par(mfrow = c(2, 2)) 
+man <- read_excel("pcent_transformed_anova.xlsx")
+#Estimated positional spacing
+ED10_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED10_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "% LL ED10", ylim= c(0,2.5), xlab="Linkage group" )
+
+ED50_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED50_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "% LL ED50", ylim= c(0,3.5), xlab="Linkage group" )
+
+ED90_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED90_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                    annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "% LL ED90", ylim= c(0,2.5), xlab="Linkage group" )
+
+#ANOVA -LL - RS1,44,59,80,81,109 removed, and the lower RS11
+par(mfrow = c(2, 2)) 
+man <- read_excel("zz_anova.xlsx")
+#Estimated positional spacing
+ED10_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED10_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                           annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "ED10", ylim= c(0,2.5), xlab="Linkage group" )
+
+ED50_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED50_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                           annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "ED50", ylim= c(0,3.5), xlab="Linkage group" )
+
+ED90_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED90_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
+                           annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "ED90", ylim= c(0,2.5), xlab="Linkage group" )
+
 ```
 For fixed slope for all there are two QTL with significance p=<0.05, one in linakge group 3 on contig 20 and one in linkage group 7 on contig 5. 
 
@@ -3727,6 +4001,13 @@ data <- read_excel("EDbySNP.xlsx",sheet = 6)
 pca_data <- data.matrix(data[,1:ncol(data)])
 PCAlocM<-prcomp((pca_data))
 c<-autoplot(PCAlocM)
+plot(c)
+
+
+data <- read_excel("EDbySNP_zz.xlsx",sheet = 7)
+pca_data <- data.matrix(data[,2:ncol(data)])
+PCAlocM<-prcomp((pca_data))
+c<-autoplot(PCAlocM, data = data, colour = "Isolate", size = 2.5, main = "Principle component analysis") + ggtitle("Principle component analysis") + theme(plot.title = element_text(hjust = 0.5)) 
 plot(c)
 
 ```
