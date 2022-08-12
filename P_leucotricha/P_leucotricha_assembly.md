@@ -2640,10 +2640,35 @@ cat $FinalDir/final_genes_appended_renamed.cdna.fasta | grep '>' > $FinalDir/gen
 grep -c -i '>' $FinalDir/final_genes_appended_renamed.cdna.fasta
 done
 ```
+### Swissprot
 
+SWISS-PROT is a curated protein sequence database which strives to provide a high level of annotation, a minimal level of redundancy and a high level of integration with other databases. Swissprot Uniprot databases were downloaded
+```bash
+for Proteome in $(ls gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta); do  
+    OutDir=gene_pred/P_leucotricha/THeavenp11_1/swissprot/rep_modeling/787033 
+    SwissDbDir=../dbUniprot/swissprot_2020_June
+    SwissDbName=uniprot_sprot
+    ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
+    sbatch $ProgDir/sub_swissprot.sh $Proteome $OutDir $SwissDbDir $SwissDbName 
+done
+#19803
 
-
-
+for Proteome in $(ls gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta); do  
+    OutDir=gene_pred/P_leucotricha/THeavenp11_1/swissprot/rep_modeling/787033
+    SwissDbDir=../../scratch/public_data/tch/dbUniprot/swissprot_2021_Sept
+    SwissDbName=uniprot_sprot
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/Feature_annotation
+    sbatch $ProgDir/sub_swissprot.sh $Proteome $OutDir $SwissDbDir $SwissDbName 
+done
+#19814
+wc gene_pred/P_aphanis/THeavenDRCT72020_1/swissprot/rep_modeling/787033/swissprot_vSept_2021_10_hits.tbl
+#
+```
+### Interproscan
+```bash
+mkdir gene_pred/P_leucotricha/THeavenp11_1/interproscan/NRI
+#interproscan output run by A.Armitage on NRI HPC uploaded to gene_pred/P_leucotricha/THeavenp11_1/interproscan/NRI
+```
 
 
 
@@ -3609,8 +3634,35 @@ cat $FinalDir/final_genes_appended_renamed.cdna.fasta | grep '>' > $FinalDir/gen
 grep -c -i '>' $FinalDir/final_genes_appended_renamed.cdna.fasta
 done
 ```
+### Swissprot
 
+SWISS-PROT is a curated protein sequence database which strives to provide a high level of annotation, a minimal level of redundancy and a high level of integration with other databases. Swissprot Uniprot databases were downloaded
+```bash
+for Proteome in $(ls gene_pred/P_leucotricha/THeavenpOGB2019_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta); do  
+    OutDir=gene_pred/P_leucotricha/THeavenpOGB2019_1/swissprot/rep_modeling/787033 
+    SwissDbDir=../dbUniprot/swissprot_2020_June
+    SwissDbName=uniprot_sprot
+    ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
+    sbatch $ProgDir/sub_swissprot.sh $Proteome $OutDir $SwissDbDir $SwissDbName 
+done
+#19801
 
+for Proteome in $(ls gene_pred/P_leucotricha/THeavenpOGB2019_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta); do  
+    OutDir=gene_pred/P_leucotricha/THeavenpOGB2019_1/swissprot/rep_modeling/787033
+    SwissDbDir=../../scratch/public_data/tch/dbUniprot/swissprot_2021_Sept
+    SwissDbName=uniprot_sprot
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/Feature_annotation
+    sbatch $ProgDir/sub_swissprot.sh $Proteome $OutDir $SwissDbDir $SwissDbName 
+done
+#19813
+wc gene_pred/P_aphanis/THeavenDRCT72020_1/swissprot/rep_modeling/787033/swissprot_vSept_2021_10_hits.tbl
+#
+```
+### Interproscan
+```bash
+mkdir gene_pred/P_leucotricha/THeavenpOGB2019_1/interproscan/NRI
+#interproscan output run by A.Armitage on NRI HPC uploaded to gene_pred/P_leucotricha/THeavenpOGB2019_1/interproscan/NRI
+```
 
 
 
@@ -4841,16 +4893,54 @@ cat $FinalDir/final_genes_appended_renamed.cdna.fasta | grep '>' > $FinalDir/gen
 grep -c -i '>' $FinalDir/final_genes_appended_renamed.cdna.fasta
 done
 ```
+### Swissprot
 
+SWISS-PROT is a curated protein sequence database which strives to provide a high level of annotation, a minimal level of redundancy and a high level of integration with other databases. Swissprot Uniprot databases were downloaded
+```bash
+for Proteome in $(ls gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta); do  
+    OutDir=gene_pred/P_leucotricha/THeavenpOGB2021_1/swissprot/rep_modeling/787033 
+    SwissDbDir=../dbUniprot/swissprot_2020_June
+    SwissDbName=uniprot_sprot
+    ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
+    sbatch $ProgDir/sub_swissprot.sh $Proteome $OutDir $SwissDbDir $SwissDbName 
+done
+#19799
 
+for Proteome in $(ls gene_pred/P_*/THeaven*/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta); do  
+    OutDir=$(dirname $Proteome | sed 's@codingquarry@swissprot@g')
+    SwissDbDir=../../scratch/public_data/tch/dbUniprot/swissprot_2021_Sept
+    SwissDbName=uniprot_sprot
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/Feature_annotation
+    echo $OutDir
+    sbatch $ProgDir/sub_swissprot.sh $Proteome $OutDir $SwissDbDir $SwissDbName 
+done
+#19815-20
+wc gene_pred/P_aphanis/THeavenDRCT72020_1/swissprot/rep_modeling/787033/swissprot_vSept_2021_10_hits.tbl
+#
+```
+### Interproscan
+```bash
+mkdir gene_pred/P_leucotricha/THeavenpOGB2021_1/interproscan/NRI
+#interproscan output run by A.Armitage on NRI HPC uploaded to gene_pred/P_leucotricha/THeavenpOGB2021_1/interproscan/NRI
+```
 
+I'v3haditwithth3s3snak3s!
 
+ls gene_pred/*/*/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3
 
+scp -r gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3 theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final
 
+scp -r gene_pred/P_aphanis/THeavenDRCT72021_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3 theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72021_1/codingquarry/rep_modeling/final
 
+scp -r gene_pred/P_aphanis/THeavenSCOTT2020_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3 theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/gene_pred/P_aphanis/THeavenSCOTT2020_1/codingquarry/rep_modeling/final
 
+scp -r gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3 theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final
 
+scp -r gene_pred/P_leucotricha/THeavenpOGB2019_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3 theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/gene_pred/P_leucotricha/THeavenpOGB2019_1/codingquarry/rep_modeling/final
 
+scp -r gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3 theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final
+
+scp -r ProgDir=/projects/oldhome/armita/git_repos/emr_repos/tools/gene_prediction/ORF_finder/extract_gff_for_sigP_hits.pl theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/apps/tools/.
 
 
 
