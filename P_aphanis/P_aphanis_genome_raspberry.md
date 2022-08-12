@@ -3162,3 +3162,47 @@ cat $FinalDir/final_genes_appended_renamed.cdna.fasta | grep '>' > $FinalDir/gen
 grep -c -i '>' $FinalDir/final_genes_appended_renamed.cdna.fasta
 done
 ```
+
+### Swissprot
+
+SWISS-PROT is a curated protein sequence database which strives to provide a high level of annotation, a minimal level of redundancy and a high level of integration with other databases. Swissprot Uniprot databases were downloaded
+```bash
+
+conda activate blast+
+for Proteome in $(ls gene_pred/P_aphanis/THeavenSCOTT2020_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta); do  
+    OutDir=gene_pred/P_aphanis/THeavenSCOTT2020_1/swissprot/rep_modeling/787033 
+    SwissDbDir=../dbUniprot/swissprot_2020_June
+    SwissDbName=uniprot_sprot
+    ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
+    sbatch $ProgDir/sub_swissprot.sh $Proteome $OutDir $SwissDbDir $SwissDbName 
+done
+#19807
+
+for Proteome in $(ls gene_pred/P_aphanis/THeavenSCOTT2020_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta); do  
+    OutDir=gene_pred/P_aphanis/THeavenSCOTT2020_1/swissprot/rep_modeling/787033
+    SwissDbDir=../../scratch/public_data/tch/dbUniprot/swissprot_2021_Sept
+    SwissDbName=uniprot_sprot
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/Feature_annotation
+    sbatch $ProgDir/sub_swissprot.sh $Proteome $OutDir $SwissDbDir $SwissDbName 
+done
+#
+wc gene_pred/P_aphanis/THeavenDRCT72020_1/swissprot/rep_modeling/787033/swissprot_vSept_2021_10_hits.tbl
+#
+
+screen -S annotation
+srun  -p long  --cpus-per-task=12 --mem-per-cpu=4G --pty bash
+blastp \
+  -db ../../scratch/public_data/tch/dbUniprot/swissprot_2021_Sept/uniprot_sprot \
+  -query gene_pred/P_aphanis/THeavenSCOTT2020_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta \
+  -out gene_pred/P_aphanis/THeavenSCOTT2020_1/swissprot/rep_modeling/787033/swissprot_vSept_2021_10_hits.tbl \
+  -evalue 1e-100 \
+  -outfmt 6 \
+  -num_threads 8 \
+  -num_alignments 10
+
+```
+### Interproscan
+```bash
+mkdir gene_pred/P_aphanis/THeavenSCOTT2020_1/interproscan/NRI
+#interproscan output run by A.Armitage on NRI HPC uploaded to gene_pred/P_aphanis/THeavenSCOTT2020_1/interproscan/NRI
+```
