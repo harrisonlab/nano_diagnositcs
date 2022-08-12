@@ -2982,6 +2982,10 @@ grep SFLD gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphan
 grep Hamap gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan.tsv | wc #189    3772   38321
 grep PIRSF gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan.tsv | wc #281    4496   46463
 grep PRINTS gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/787033/NRI/P.aphanis_interproscan.tsv | wc #2142   39797  389155
+
+
+mkdir gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/NRI
+#interproscan output run by A.Armitage on NRI HPC uploaded to gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/NRI
 ```
 
 ### Swissprot
@@ -4874,3 +4878,31 @@ cat $FinalDir/final_genes_appended_renamed.cdna.fasta | grep '>'
 grep -c -i '>' $FinalDir/final_genes_appended_renamed.cdna.fasta
 done
 ```
+
+```bash
+for Proteome in $(ls gene_pred/P_aphanis/THeavenDRCT72021_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta); do  
+    OutDir=gene_pred/P_aphanis/THeavenDRCT72021_1/swissprot/rep_modeling/787033 
+    SwissDbDir=../dbUniprot/swissprot_2020_June
+    SwissDbName=uniprot_sprot
+    ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
+    sbatch $ProgDir/sub_swissprot.sh $Proteome $OutDir $SwissDbDir $SwissDbName 
+done
+#19805
+
+for Proteome in $(ls gene_pred/P_aphanis/THeavenDRCT72021_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta); do  
+    OutDir=gene_pred/P_aphanis/THeavenDRCT72021_1/swissprot/rep_modeling/787033
+    SwissDbDir=../../scratch/public_data/tch/dbUniprot/swissprot_2021_Sept
+    SwissDbName=uniprot_sprot
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/Feature_annotation
+    sbatch $ProgDir/sub_swissprot.sh $Proteome $OutDir $SwissDbDir $SwissDbName 
+done
+#19811
+wc gene_pred/P_aphanis/THeavenDRCT72020_1/swissprot/rep_modeling/787033/swissprot_vSept_2021_10_hits.tbl
+#
+```
+```bash
+mkdir gene_pred/P_aphanis/THeavenDRCT72021_1/interproscan/NRI
+#interproscan output run by A.Armitage on NRI HPC uploaded to gene_pred/P_aphanis/THeavenDRCT72021_1/interproscan/NRI
+```
+
+OrthoFinder assigned 46194 genes (89.8% of total) to 11482 orthogroups. Fifty percent of all genes were in orthogroups with 3 or more genes (G50 was 3) and were contained in the largest 3951 orthogroups (O50 was 3951). There were 7504 orthogroups with all species present and 5537 of these consisted entirely of single-copy genes.
