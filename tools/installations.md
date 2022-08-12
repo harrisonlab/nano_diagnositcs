@@ -15,6 +15,12 @@ conda config --add channels bioconda
 conda config --add channels conda-forge
 conda update -n base -c defaults conda
 ```
+### dendropy
+```bash
+conda create -n dendropy
+conda activate dendropy
+conda install -c bioconda dendropy
+```
 ### blobtools2
 ```bash
 #https://blobtoolkit.genomehubs.org/install/
@@ -320,6 +326,171 @@ wget https://services.healthtech.dtu.dk/download/4ab221bd-33f6-4702-87c4-240027e
 tar -xvzf signalp-5.0b.Linux.tar.gz
 #/home/theaven/scratch/apps/signalp/signalp-5.0b/bin
 ```
+## hmmscan
+```bash
+conda create -n cazy
+conda activate cazy
+conda install -c bioconda hmmer
+```
+## trimal
+```bash
+conda create -n trimal
+conda activate trimal
+conda install -c bioconda trimal
+```
+## predector
+```bash
+#download dependancies
+cp /home/theaven/scratch/apps/predector/signalp_3.0/*tar* /home/theaven/scratch/apps/predector/predector
+cp /home/theaven/scratch/apps/predector/signalp_4.1g/*tar* /home/theaven/scratch/apps/predector/predector
+cp /home/theaven/scratch/apps/predector/signalp_5.0b/*tar* /home/theaven/scratch/apps/predector/predector
+cp /home/theaven/scratch/apps/predector/signalp_6.0g/*tar* /home/theaven/scratch/apps/predector/predector
+cp /home/theaven/scratch/apps/predector/targetp_2.0/*tar* /home/theaven/scratch/apps/predector/predector
+cp /home/theaven/scratch/apps/predector/deeploc_1.0/*tar* /home/theaven/scratch/apps/predector/predector
+cp /home/theaven/scratch/apps/predector/tmhmm_2.0c/*tar* /home/theaven/scratch/apps/predector/predector
+cp /home/theaven/scratch/apps/predector/phobius_1.01/*tar* /home/theaven/scratch/apps/predector/predector
+cd /home/theaven/scratch/apps/predector/predector
+ENVIRONMENT=conda
+curl -s "https://raw.githubusercontent.com/ccdmb/predector/1.2.6/install.sh" \
+| bash -s "${ENVIRONMENT}" \
+    -3 signalp-3.0.Linux.tar.Z \
+    -4 signalp-4.1g.Linux.tar.gz \
+    -5 signalp-5.0b.Linux.tar.gz \
+    -6 signalp-6.0g.fast.tar.gz \
+    -t targetp-2.0.Linux.tar.gz \
+    -d deeploc-1.0.All.tar.gz \
+    -m tmhmm-2.0c.Linux.tar.gz \
+    -p phobius101_linux.tar.gz
+#creates conda environment: predector
+
+conda activate predector
+conda install -c bioconda nextflow>=21
+pip install Keras
+pip install Tensorflow
+nextflow run -profile test -with-conda /mnt/shared/scratch/theaven/apps/conda/envs/predector -resume -r 1.2.6 ccdmb/predector
+conda install -c anaconda cudatoolkit
+find /mnt/shared/scratch/theaven -name 'libcudart.so.11.0'
+#/mnt/shared/scratch/theaven/apps/conda/envs/predector/lib/libcudart.so.11.0
+#/mnt/shared/scratch/theaven/apps/conda/pkgs/cudatoolkit-11.3.1-h2bc3f7f_2/lib/libcudart.so.11.0
+#existing LD_LIBRARY_PATH = /opt/slurm/latest/lib64
+cd /mnt/shared/scratch/theaven/apps/conda/envs/predector/lib
+ln -s /opt/slurm/latest/lib64/libnss_slurm.so.2 libnss_slurm.so.2
+ln -s /opt/slurm/latest/lib64/libpmi2.so libpmi2.so
+ln -s /opt/slurm/latest/lib64/libpmi2.so.0 libpmi2.so.0
+ln -s /opt/slurm/latest/lib64/libpmi2.so.0.0.0 libpmi2.so.0.0.0
+ln -s /opt/slurm/latest/lib64/libpmi.so libpmi.so
+ln -s /opt/slurm/latest/lib64/libpmi.so.0 libpmi.so.0
+ln -s /opt/slurm/latest/lib64/libpmi.so.0.0.0 libpmi.so.0.0.0
+ln -s /opt/slurm/latest/lib64/libslurm.so libslurm.so
+ln -s /opt/slurm/latest/lib64/libslurm.so.38 libslurm.so.38
+ln -s /opt/slurm/latest/lib64/libslurm.so.38.0.0 libslurm.so.38.0.0
+ln -s /opt/slurm/latest/lib64/perl5 perl5
+ln -s /opt/slurm/latest/lib64/pkgconfig pkgconfig
+ln -s /opt/slurm/latest/lib64/slurm slurm
+
+
+export PATH=/mnt/shared/scratch/theaven/apps/conda/envs/predector/lib${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/mnt/shared/scratch/theaven/apps/conda/envs/predector/lib:${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/mnt/shared/scratch/theaven/apps/conda/envs/predector/lib
+echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/mnt/shared/scratch/theaven/apps/conda/envs/predector/lib' >> ~/.bash_profile
+
+chmod a+r /usr/lib/x86_64-linux-gnu/libcuda*
+
+export PATH=/opt/slurm/latest/lib64${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/opt/slurm/latest/lib64:${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+nano ~/.bash_profile
+
+###############################################################################################
+When you run the pipeline, please supply the parameter:
+'-with-singularity "predector.sif"'
+You can test the pipeline now with:
+'nextflow run -profile test -with-singularity "predector.sif" -resume -r 1.2.6 ccdmb/predector'
+```
+## signlap
+```bash
+conda create -n predector2.7 python=2.7
+conda activate predector2.7
+mkdir /apps/predector
+#Follow readmes to install dependancies:
+
+#SignalP version 3.0
+conda install -c conda-forge gnuplot
+
+cd /home/theaven/scratch/apps/predector/signalp_3.0/signalp-3.0
+pip install PyGnuplot
+pip install ghostscript
+conda install -c conda-forge netpbm
+./signalp -t euk test/test.seq          (1) text
+./signalp -g -t euk test/test.seq       (2) text and graphics #doesnt work
+./signalp -G -t euk test/test.seq       (3) text and graphics, display #doesnt work
+./signalp -g -t euk test/test5.seq      (4) several sequences #doesnt work
+cp /home/theaven/scratch/apps/predector/signalp_3.0/*tar* /home/theaven/scratch/apps/predector/predector
+
+#SignalP version 4.1g
+cd /home/theaven/scratch/apps/predector/signalp_4.1g/signalp-4.1
+./signalp -t euk -f short test/euk10.fsa > euk10.fsa.short_out
+./signalp -t euk -f long test/euk10.fsa > euk10.fsa.long_out
+./signalp -t euk -f all test/euk10.fsa > euk10.fsa.all_out
+./signalp -t euk -f summary test/euk10.fsa > euk10.fsa.summary_out
+cp /home/theaven/scratch/apps/predector/signalp_4.1g/*tar* /home/theaven/scratch/apps/predector/predector
+
+#SignalP version 5.0b
+cd /home/theaven/scratch/apps/predector/signalp_5.0b/signalp-5.0b/bin
+./signalp -fasta ../test/euk10.fsa -org euk -format short -prefix euk_10_short
+./signalp -fasta ../test/euk10.fsa -org euk -format long -prefix euk_10_long
+cp /home/theaven/scratch/apps/predector/signalp_5.0b/*tar* /home/theaven/scratch/apps/predector/predector
+
+#SignalP version 6.0g "fast" *currently optional
+cd /home/theaven/scratch/apps/predector/signalp_6.0g/signalp6_fast
+pip3 install signalp-6-package/
+conda install -c pytorch pytorch
+SIGNALP_DIR=$(python3 -c "import signalp; import os; print(os.path.dirname(signalp.__file__))" )
+cp -r signalp-6-package/models/* $SIGNALP_DIR/model_weights/
+cp /home/theaven/scratch/apps/predector/signalp_6.0g/*tar* /home/theaven/scratch/apps/predector/predector
+conda deactivate
+```
+## taregt p
+```bash
+#TargetP version 2.0
+cd /home/theaven/scratch/apps/predector/targetp_2.0/targetp-2.0
+bin/targetp -fasta test/example.fsa -org non-pl -format short -prefix example_short
+bin/targetp -fasta test/example.fsa -org non-pl -format long -prefix example_long
+cp /home/theaven/scratch/apps/predector/targetp_2.0/*tar* /home/theaven/scratch/apps/predector/predector
+
+```
+## deeploc
+```bash
+
+#DeepLoc version 1.0
+cd /home/theaven/scratch/apps/predector/deeploc_1.0/deeploc-1.0
+pip install -r requirements.txt
+python setup.py install --user
+deeploc -f test.fasta
+cp /home/theaven/scratch/apps/predector/deeploc_1.0/*tar* /home/theaven/scratch/apps/predector/predector
+```
+## tmhmm
+```bash
+#TMHMM version 2.0c
+cd /home/theaven/scratch/apps/predector/tmhmm_2.0c/tmhmm-2.0c
+nano bin/tmhmmformat.pl
+##!/usr/bin/perl -w
+nano bin/tmhmm
+##!/usr/bin/perl
+nano ~/.bash_profile
+#PATH=$HOME/scratch/apps/predector/tmhmm_2.0c/tmhmm-2.0c/bin:${PATH}
+cp /home/theaven/scratch/apps/predector/tmhmm_2.0c/*tar* /home/theaven/scratch/apps/predector/predector
+
+```
+## phobius
+```bash
+#Phobius version 1.01
+cd /home/theaven/scratch/apps/predector/phobius_1.01/tmp/tmpCKVzkK/phobius
+nano ~/.bash_profile
+#PATH=$HOME/scratch/apps/predector/phobius_1.01/tmp/tmpCKVzkK/phobius:${PATH}
+. ~/.bash_profile
+cp /home/theaven/scratch/apps/predector/phobius_1.01/*tar* /home/theaven/scratch/apps/predector/predector
+```
 ## centrifuge
 ```bash
 nano ~/.profile
@@ -468,7 +639,20 @@ conda install conda=4.6.14
 conda create --name rnaquast2 -c bioconda rnaquast
 ```
 
+## orthofinder
+```bash
+conda create -n orthofinder
+conda activate orthofinder
+conda install -c bioconda orthofinder
+conda install -c anaconda scipy
+conda install numpy
 
+conda create -n orthofinder2.7 python=2.7
+conda activate orthofinder
+conda install -c bioconda orthofinder
+conda install -c anaconda scipy
+conda install numpy
+```
 
 
 
@@ -852,7 +1036,7 @@ conda create -n seqtk
 conda activate seqtk
 conda install -c bioconda seqtk
 ```
-### iterproscan
+### interproscan
 ```bash
 mkdir ~/git_repos/tools/prog/Interproscan
 cd ~/git_repos/tools/prog/Interproscan
@@ -866,6 +1050,65 @@ wget https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/5.52-86.0/interproscan-5.
 tar -xzf interproscan-5.52-86.0-64-bit.tar.gz 
 cd interproscan-5.52-86.0/
 python3 initial_setup.py
+
+#############################################################################
+conda create -n interproscan
+conda activate interproscan
+conda install -c bioconda interproscan
+conda install -c bioconda bioconductor-panther.db
+
+cd /mnt/shared/scratch/theaven/apps/conda/envs/interproscan/share/InterProScan
+python3 initial_setup.py
+./interproscan.sh -i test_all_appl.fasta -f tsv -dp
+./interproscan.sh -i test_all_appl.fasta -f tsv
+cd ~/scratch
+######################################
+# First time usage please README !!! #
+######################################
+
+The databases are huge and consequently not shiped within this installation.
+Please download and install the Databases manually by following the commands below:
+!!! /!\ Edit the 2 first lines to match the wished version of the DB /!\ !!!
+
+Commands:
+=========
+# See here for latest db available: https://github.com/ebi-pf-team/interproscan or http://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/
+# Set version
+version_major=5.54
+version_minor=87.0
+
+# get the md5 of the databases
+wget http://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/${version_major}-${version_minor}/interproscan-${version_major}-${version_minor}-64-bit.tar.gz.md5
+# get the databases (with core because much faster to download)
+wget http://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/${version_major}-${version_minor}/interproscan-${version_major}-${version_minor}-64-bit.tar.gz
+# checksum
+md5sum -c interproscan-${version_major}-${version_minor}-64-bit.tar.gz.md5
+# untar gz
+tar xvzf interproscan-${version_major}-${version_minor}-64-bit.tar.gz
+# remove old DB
+mv /mnt/shared/scratch/theaven/apps/conda/envs/interproscan/share/InterProScan/data /mnt/shared/scratch/theaven/apps/conda/envs/interproscan/share/InterProScan/old_data
+# copy past the new db
+cp -r interproscan-${version_major}-${version_minor}/data /mnt/shared/scratch/theaven/apps/conda/envs/interproscan/share/InterProScan/
+rm  interproscan-${version_major}-${version_minor}-64-bit.tar.gz
+rm  interproscan-${version_major}-${version_minor}-64-bit.tar.gz.md5
+rm -r interproscan-${version_major}-${version_minor}
+
+cd /mnt/shared/scratch/theaven/apps/conda/envs/interproscan/share/InterProScan
+rm test_all_appl.fasta.tsv
+rm test_all_appl.fasta_1.tsv
+python3 initial_setup.py
+./interproscan.sh -i test_all_appl.fasta -f tsv -dp
+./interproscan.sh -i test_all_appl.fasta -f tsv
+cd ~/scratch
+
+INFO:
+====
+Phobius (licensed software), SignalP, SMART (licensed components) and TMHMM use
+licensed code and data provided by third parties. If you wish to run these
+analyses it will be necessary for you to obtain a licence from the vendor and
+configure your local InterProScan installation to use them.
+(see more information in /mnt/shared/scratch/theaven/apps/conda/envs/interproscan/share/InterProScan/data/<db>)
+
 ```
 ## MIRA
 ```bash
