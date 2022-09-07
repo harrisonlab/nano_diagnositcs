@@ -464,7 +464,7 @@ echo finished
 
 
 
-for assembly in $(cat new.txt); do
+for assembly in $(ls data/assembly/genome/ascocoryne/sarcoides/*.f*); do
   echo $assembly
   ProgDir=~/scratch/apps/busco
   BuscoDB=ascomycota_odb10
@@ -472,9 +472,8 @@ for assembly in $(cat new.txt); do
   echo $OutDir
   echo $BuscoDB
   sbatch $ProgDir/sub_busco.sh $assembly $BuscoDB $OutDir
-    sleep 30
 done
-for assembly in $(cat new.txt); do
+for assembly in $(ls data/assembly/genome/pleochaeta/shiraiana/*.f*); do
   echo $assembly
   ProgDir=~/scratch/apps/busco
   BuscoDB=viridiplantae_odb10
@@ -482,9 +481,11 @@ for assembly in $(cat new.txt); do
   echo $OutDir
   echo $BuscoDB
   sbatch $ProgDir/sub_busco.sh $assembly $BuscoDB $OutDir
-    sleep 30
 done
-for assembly in $(cat new.txt); do
+#HEAVEN_strawb2021.fna
+#HEAVEN_apple2019.fna
+#HEAVEN_apple2021.fna
+for assembly in $(ls data/assembly/genome/Podosphaera/*/HEAVEN_strawb2021.fna); do
   echo $assembly
   ProgDir=~/scratch/apps/busco
   BuscoDB=leotiomycetes_odb10
@@ -492,9 +493,8 @@ for assembly in $(cat new.txt); do
   echo $OutDir
   echo $BuscoDB
   sbatch $ProgDir/sub_busco.sh $assembly $BuscoDB $OutDir
-    sleep 30
-done
-for assembly in $(cat new.txt); do
+done 
+for assembly in $(ls data/assembly/genome/marssonina/brunnea/*.f*); do
   echo $assembly
   ProgDir=~/scratch/apps/busco
   BuscoDB=fungi_odb10
@@ -502,15 +502,15 @@ for assembly in $(cat new.txt); do
   echo $OutDir
   echo $BuscoDB
   sbatch $ProgDir/sub_busco.sh $assembly $BuscoDB $OutDir
-    sleep 30
 done
 #3057167-
+
+ls gene_pred/*/*/*/BUSCO/*/*/*/full_table.tsv
 ```
 
 Short summary files from BUSCo run directories were copied to another directory in order to generate BUSCO plots:
 
 ```bash
-
 mkdir -p gene_pred/busco_summaries/plant
 mkdir -p gene_pred/busco_summaries/ascomycota
 mkdir -p gene_pred/busco_summaries/leotiomycetes
@@ -527,22 +527,64 @@ done
 Complete BUSCO genes were extracted from the output of BUsco runs:
 ```bash
 #Mildew BUSCOs:
-for file in $(ls gene_pred/Podosphaera/*/*c/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+for file in $(ls gene_pred/Podosphaera/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
 grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
 done
-for file in $(ls gene_pred/Erysiphe/*/*c/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+for file in $(ls gene_pred/Erysiphe/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
 grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
 done
-for file in $(ls gene_pred/Blumeria/*/*c/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+for file in $(ls gene_pred/Blumeria/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
 grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
 done
-for file in $(ls gene_pred/Golovinomyces/*/*c/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+for file in $(ls gene_pred/Golovinomyces/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
 grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
 done
-for file in $(ls gene_pred/Oidium/*/*c/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+for file in $(ls gene_pred/Oidium/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
 grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
 done
 for file in $(ls gene_pred/Saccharomyces/*/*4/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
+done
+for file in $(ls gene_pred/leveillula/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
+done
+for file in $(ls gene_pred/phyllactinia/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
+done
+for file in $(ls gene_pred/pleochaeta/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
+done
+for file in $(ls gene_pred/mollisia/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
+done
+for file in $(ls gene_pred/drepanopeziza/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
+done
+for file in $(ls gene_pred/amorphotheca/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
+done
+for file in $(ls gene_pred/arachnopeziza/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
+done
+for file in $(ls gene_pred/ascocoryne/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
+done
+for file in $(ls gene_pred/chlorociboria/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
+done
+for file in $(ls gene_pred/Glarea/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
+done
+for file in $(ls gene_pred/marssonina/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
+done
+for file in $(ls gene_pred/neobulgaria/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
+done
+for file in $(ls gene_pred/oidiodendron/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
+done
+for file in $(ls gene_pred/phialocephala/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
 grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/mildew_leotiomycetes_complete_busco_ids.txt;
 done
 
@@ -592,6 +634,15 @@ done
 for file in $(ls gene_pred/triticum/*/*/BUSCO/viridiplantae_odb10/*/run_viridiplantae_odb10/full_table.tsv); do
 grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/host_viridiplantae_complete_busco_ids.txt;
 done
+for file in $(ls gene_pred/Quercus/*/*/BUSCO/viridiplantae_odb10/*/run_viridiplantae_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/host_viridiplantae_complete_busco_ids.txt;
+done
+for file in $(ls gene_pred/Capsicum/*/*/BUSCO/viridiplantae_odb10/*/run_viridiplantae_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/host_viridiplantae_complete_busco_ids.txt;
+done
+for file in $(ls gene_pred/Morus/*/*/BUSCO/viridiplantae_odb10/*/run_viridiplantae_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/host_viridiplantae_complete_busco_ids.txt;
+done
 ```
 BUSCOs that were only present in less than 3 genomes were filtered out:
 
@@ -612,10 +663,16 @@ NOTE:.fna files containing nucleotide information will not be created by busco u
 ```bash
 #For pathogen; Blumeria Erysiphe Podosphaera Golovinomyces Oidium and Saccharomyces outgroup 
 
+for file in $(ls gene_pred/*/*/*c/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/full_table.tsv); do
+ID=$(echo $file|cut -f4,5 -d '/'|sed 's@.c/BUSCO@@g')
+echo $ID
+rm -r gene_pred/*/*/${ID}/BUSCO/*/*/run_*/busco_sequences/single_copy_busco_sequences
+done
+
 mkdir -p analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa
 mkdir -p analysis/phylogeny/busco/mildew_leotiomycetes_busco_nt
 
-for dir in $(ls -d gene_pred/S*/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/busco_sequences/single_copy_busco_sequences); do
+for dir in $(ls -d gene_pred/*/*/*/BUSCO/leotiomycetes_odb10/*/run_leotiomycetes_odb10/busco_sequences/single_copy_busco_sequences); do
   sppname=$(echo $dir |cut -f 2-4 -d "/" | sed 's@/@_@g');
   abbrv=$(echo $sppname | sed 's@_@@g')
   echo $sppname
@@ -642,7 +699,7 @@ done
 mkdir -p analysis/phylogeny/busco/host_viridiplantae_busco_aa
 mkdir -p analysis/phylogeny/busco/host_viridiplantae_busco_nt
 
-for dir in $(ls -d gene_pred/v*/*/*/BUSCO/viridiplantae_odb10/*/run_viridiplantae_odb10/busco_sequences/single_copy_busco_sequences); do
+for dir in $(ls -d gene_pred/*/*/*/BUSCO/viridiplantae_odb10/*/run_viridiplantae_odb10/busco_sequences/single_copy_busco_sequences); do
   sppname=$(echo $dir |cut -f 2-4 -d "/" | sed 's@/@_@g');
   abbrv=$(echo $sppname | sed 's@_@@g')
   echo $sppname
@@ -681,7 +738,7 @@ for line in $lines; do
   cat $faa >> $output
   done
 done
-#rm *.faa
+rm *.faa
 
 cd /home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa
 buscos=/home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_final_buscos_ids.txt
@@ -694,9 +751,9 @@ for line in $lines; do
   cat $faa >> $output
   done
 done
+rm *.faa
 exit
 exit
-#rm *.faa
 ```
 Submit alignment for single copy busco genes with a hit in each organism
 ```bash 
@@ -706,13 +763,13 @@ conda activate mafft
   cd $AlignDir
   ProgDir=/home/theaven/scratch/apps/phylogeny
   sbatch $ProgDir/sub_mafft_alignment.sh $AlignDir
-#2569979, 2859967
+#2569979, 2859967, 3113181
 
   AlignDir=/home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa
   cd $AlignDir
   ProgDir=/home/theaven/scratch/apps/phylogeny
   sbatch $ProgDir/sub_mafft_alignment.sh $AlignDir
-#2569980, 2859968
+#2569980, 2859968, 3113182
 conda deactivate
 
 cd ~/scratch  
@@ -721,63 +778,389 @@ create a folder for each gene
 ```bash
 for gene in $(ls /home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/*_aligned.fasta); do
   ID=$(basename $gene |sed 's@_aa_aligned.fasta@@g')
+  echo $ID
   mkdir /home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/$ID
-  for file in $(ls $gene); do
-    cp $file /home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/$ID
-  done
+  cp $gene /home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/$ID
 done
 
 for gene in $(ls /home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa/*_aligned.fasta); do
   ID=$(basename $gene |sed 's@_aa_aligned.fasta@@g')
+  echo $ID
   mkdir /home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa/$ID
-  for file in $(ls $gene); do
-    cp $file /home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa/$ID
-  done
+  cp $gene /home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa/$ID
+done
+```
+Collect pathogen and hosts only:
+```bash
+#Pathogen:
+for Alignment in $(ls /home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/*/*_aa_aligned.fasta); do
+  Output=$(echo $Alignment | sed 's@aligned.fasta@aligned_path.fasta@g')
+grep -A1 '>AMORPHOTHECARESINAE\|>ARACHNOPEZIZAARANEO\|>ASCOCORYNESARCOIDES\|>BLUMERIAGRAMINIS\|>CHLOROCIBORIAAERUGINASCENS\|>DREPANOPEZIZABRUNNEADREPANO\|>ERYSIPHE\|>GLAREALOZOYENSIS\|>GOLOVINOMYCES\|>LEVEILLULATAURICA\|>MARSSONINABRUNNEA\|>MOLLISIASCOPIFORMIS\|>NEOBULGARIAALBA\|>OIDIODENDRONMAIUS\|>OIDIUM\|>PHIALOCEPHALA\|>PHYLLACTINIAMORICOLA\|>PLEOCHAETASHIRAIANA\|>PODOSPHAERA\|>SACCHAROMYCESCEREVISIAE' $Alignment > $Output
 done
 
-rm 
+#Host:
+for Alignment in $(ls /home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa/*/*_aligned.fasta); do
+  Output=$(echo $Alignment | sed 's@aligned.fasta@aligned_host.fasta@g')
+grep -A1 '>ARABIDOPSISTHALIANA\|>CAPSICUMANNUUM\|>CUCUMISSATIVUS\|>CUCURBITAPEPO\|>FRAGARIA\|>HEVEABRASILIENS\|>HORDEUMVULGARE\|>MALUSDOMESTICA\|>MORUSALBA\|>NICOTIANATABACUM\|>PISUMSATIVUM\|>PRUNUSAVIUM\|>QUERCUSROBUR\|>RUBUS\|>SACCHAROMYCESCEREVISIAE\|>SECALECEREALE\|>SOLANUMLYCOPERSICUM\|>VITUSVINIFERA\|>TRITICUMAESTIVUM' $Alignment > $Output
+done
 ```
-NOT APPLICABLE TO PEPTIDE SEQUENCES, NUCLEOTIDE ONLY:
-```bash
-scp -r /home/gomeza/git_repos/scripts/neonectria_ditissima/Popgen_analysis/phylogenetics/calculate_nucleotide_diversity.py theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/apps/phylogeny/. 
 
-screen -S dendropy 
-srun -p long  --mem 50G --pty bash
-conda activate dendropy3
-AlignDir=/home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa
-ProgDir=/home/theaven/scratch/apps/phylogeny
-cd $AlignDir
-python $ProgDir/calculate_nucleotide_diversity.py "*aligned.fasta"
-conda deactivate
-
-screen -S dendropy2 
-srun -p long  --mem 50G --pty bash
-conda activate dendropy3
-AlignDir=/home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa
-ProgDir=/home/theaven/scratch/apps/phylogeny
-cd $AlignDir
-python $ProgDir/calculate_nucleotide_diversity.py "*aligned.fasta"
-conda deactivate
-
-```
 Trimming sequence alignments using Trim-Al
 ```bash
 Note - automated1 mode is optimised for ML tree reconstruction
 conda activate trimal
-  OutDir=analysis/popgen/busco_phylogeny/trimmed_alignments
-  mkdir -p $OutDir
-  for Alignment in $(ls /home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/*_aligned.fasta); do
+  for Alignment in $(ls /home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/*/*_aligned.fasta); do
+    OutDir=$(dirname $Alignment)
     TrimmedName=$(basename $Alignment .fasta)"_trimmed.fasta"
     echo $Alignment
+    echo $OutDir
+    echo $TrimmedName
+    trimal -in $Alignment -out $OutDir/$TrimmedName -keepheader -automated1
+  done
+
+  for Alignment in $(ls /home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa/*/*_aligned.fasta); do
+    OutDir=$(dirname $Alignment)
+    TrimmedName=$(basename $Alignment .fasta)"_trimmed.fasta"
+    echo $Alignment
+    echo $OutDir
+    echo $TrimmedName
     trimal -in $Alignment -out $OutDir/$TrimmedName -keepheader -automated1
   done
 conda deactivate
+
+99at147548
 ```
-Arabidopsis/     Erysiphe/        malus/           P_leucotricha/   secale/          vitus/
-Blumeria/        fragaria/        nicotiana/       Podosphaera/     solanum/
-busco_summaries/ Golovinomyces/   Oidium/          prunus/          Sporidiobolus/
-cucumis/         hevea/           P_aphanis/       rubus/           Sporobolomyces/
-cucurbita/       hordeum/         pisum/           Saccharomyces/   triticum/
+```bash
+#headers contain special characters, are longer than 60 characters and include contig information, in this form astral will not run and will consider each contig a different species, the headers must therefore be edited, prior to running RAxML.
+
+for Alignment in $(ls analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/*/*_trimmed.fasta); do
+New=$(dirname $Alignment)/$(basename $Alignment .fasta)_edit.fasta
+echo $New
+cat $Alignment  | cut -f1 -d '|' > $New 
+sed -i 's@|@.@g' $New 
+sed -i 's@>AMORPHOTHECARESINAEGCA003019875.1AMORE1@>A.RESINAE.GCA003019875@g' $New
+sed -i 's@>AMORPHOTHECARESINAEGCA018167515.1ASM1816751V1@>A.RESINAE.GCA018167515@g' $New
+sed -i 's@>ARACHNOPEZIZAARANEOSAARACHNOPEZIZAARANEOSAGCA003988855.1ASM398885V1@>A.ARANEOSA.GCA003988855@g' $New
+sed -i 's@>ASCOCORYNESARCOIDESGCA000328965.1ASM32896V1@>A.SARCOIDES.GCA000328965@g' $New
+sed -i 's@>BLUMERIAGRAMINISGCA000401675.1A6TRIMMEDCLCASSEMBLYFLT.FA.C@>B.GRAMINIS.GCA000401675@g' $New
+sed -i 's@>BLUMERIAGRAMINISGCA000417025.1ASM41702V1.C@>B.GRAMINIS.GCA000417025@g' $New
+sed -i 's@>BLUMERIAGRAMINISGCA000417865.1BGT942021.C@>B.GRAMINIS.GCA000417865@g' $New
+sed -i 's@>BLUMERIAGRAMINISGCA000418435.1BGT454NEWBLERASSEMBLY.C@>B.GRAMINIS.GCA000418435@g' $New
+sed -i 's@>BLUMERIAGRAMINISGCA000441875.1BGT701.C@>B.GRAMINIS.GCA000441875@g' $New
+sed -i 's@>BLUMERIAGRAMINISGCA900237765.1BGHRACE1V1.C@>B.GRAMINIS.GCA900237765@g' $New
+sed -i 's@>BLUMERIAGRAMINISGCA900239735.1BGHDH14V4.C@>B.GRAMINIS.GCA900239735@g' $New
+sed -i 's@>BLUMERIAGRAMINISGCA900519115.1BGTGENOMEV3.16.C@>B.GRAMINIS.GCA900519115@g' $New
+sed -i 's@>BLUMERIAGRAMINISGCA900638725.1BGHK1V2.C@>B.GRAMINIS.GCA900638725@g' $New
+sed -i 's@>BLUMERIAGRAMINISGCA905067625.1BGTRITICALETHUN12GENOMEV12.C@>B.GRAMINIS.GCA905067625@g' $New
+sed -i 's@>BLUMERIAGRAMINISS1201CONTIGSMIN500BP.C@>B.GRAMINIS.S1201@g' $New
+sed -i 's@>BLUMERIAGRAMINISS1203CONTIGSMIN500BP.C@>B.GRAMINIS.S1203@g' $New
+sed -i 's@>BLUMERIAGRAMINISS1391CONTIGSMIN500BP.C@>B.GRAMINIS.S1391@g' $New
+sed -i 's@>BLUMERIAGRAMINISS1400CONTIGSMIN500BP.C@>B.GRAMINIS.S1400@g' $New
+sed -i 's@>BLUMERIAGRAMINISS1459CONTIGSMIN500BP.C@>B.GRAMINIS.S1459@g' $New
+sed -i 's@>CHLOROCIBORIAAERUGINASCENSGCA002276475.2CHLOROAERUV2@>C.AERUGINASCENC.GCA002276475@g' $New
+sed -i 's@>DREPANOPEZIZABRUNNEADREPANOPEZIZABRUNNEAGCA000298775.1ASM29877V1@>D.BRUNNEA.GCA000298775@g' $New
+sed -i 's@>ERYSIPHEALPHITOIDESERYSIPHEALPHITOIDESCLCBIOASSEMBLYCDHITEST0.95MORETHAN500BP.FASTA@>E.ALPHITOIDES.CDHITEST0@g' $New
+sed -i 's@>ERYSIPHENECATORGCA000798715.1ASM79871V1.C@>E.NECATOR.GCA000798715@g' $New
+sed -i 's@>ERYSIPHENECATORGCA000798735.1ASM79873V1.C@>E.NECATOR.GCA000798735@g' $New
+sed -i 's@>ERYSIPHENECATORGCA000798755.1ASM79875V1.C@>E.NECATOR.GCA000798755@g' $New
+sed -i 's@>ERYSIPHENECATORGCA000798775.1ASM79877V1.C@>E.NECATOR.GCA000798775@g' $New
+sed -i 's@>ERYSIPHENECATORGCA000798795.1ASM79879V1.C@>E.NECATOR.GCA000798795@g' $New
+sed -i 's@>ERYSIPHENECATORGCA016906895.1ASM1690689V1.C@>E.NECATOR.GCA016906895@g' $New
+sed -i 's@>ERYSIPHEPISIGCA000208805.1ASM20880V1.C@>E.PISI.GCA000208805@g' $New
+sed -i 's@>ERYSIPHEPISIGCA000214055.1ASM21405V1.C@>E.PISI.GCA000214055@g' $New
+sed -i 's@>ERYSIPHEPULCHRAGCA002918395.1ASM291839V1.C@>E.PULCHRA.GCA002918395@g' $New
+sed -i 's@>GLAREALOZOYENSISGCA000409485.1GLAREA@>G.LOZOYENSIS.GCA000409485@g' $New
+sed -i 's@>GOLOVINOMYCESCICHORACEARUMGCA003611195.1ASM361119V1.C@>G.CICHORACEARUM.GCA003611195@g' $New
+sed -i 's@>GOLOVINOMYCESCICHORACEARUMGCA003611215.1ASM361121V1.C@>G.CICHORACEARUM.GCA003611215@g' $New
+sed -i 's@>GOLOVINOMYCESCICHORACEARUMGCA003611235.1ASM361123V1.C@>G.CICHORACEARUM.GCA003611235@g' $New
+sed -i 's@>GOLOVINOMYCESMAGNICELLULATUSGCA006912115.1ASM691211V1.C@>G.MAGNICELLULATUS.GCA006912115@g' $New
+sed -i 's@>GOLOVINOMYCESORONTIIGOLOVINOMYCESORONTIIASSEMBLYSCAFFOLDS.FASTA@>G.ORONTII.1@g' $New
+sed -i 's@>MARSSONINABRUNNEAGCA000298775.1ASM29877V1@>M.BRUNNEA.GCA000298775@g' $New
+sed -i 's@>MOLLISIASCOPIFORMISMOLLISIASCOPIFORMISGCA001500285.1PHISC1@>M.SCOPIFORMIS.GCA001500285@g' $New
+sed -i 's@>NEOBULGARIAALBAGCA003988965.1ASM398896V1@>N.ALBA.GCA003988965@g' $New
+sed -i 's@>OIDIODENDRONMAIUSGCA000827325.1OIDIODENDRONMAIUSZNV1.0@>O.MAIUS.GCA000827325@g' $New
+sed -i 's@>OIDIUMHEVEAEGCA003957845.1ASM395784V1.C@>O.HEVEAE.GCA003957845@g' $New
+sed -i 's@>OIDIUMNEOLYCOPERSICIMGCA003610855.1ASM361085V1.C@>O.NEOLYCOPERSICUM.GCA003610855@g' $New
+sed -i 's@>PHIALOCEPHALA1GCA900073065.1PACVERSION1@>P.1.GCA900073065@g' $New
+sed -i 's@>PHIALOCEPHALASCOPIFORMISGCA001500285.1PHISC1@>P.SCOPIFORMIS.GCA001500285@g' $New
+sed -i 's@>PHYLLACTINIAMORICOLAPHYLLACTINIAMORICOLAGCA019455665.1ASM1945566V1@>P.MORICOLA.GCA019455665@g' $New
+sed -i 's@>PLEOCHAETASHIRAIANAPLEOCHAETASHIRAIANAGCA019455505.1ASM1945550V1@>P.SHIRAIANA.GCA019455505@g' $New
+sed -i 's@>PODOSPHAERAAPHANISTHEAVENDRCT720201.C@>P.APHANIS.DRCT72020@g' $New
+sed -i 's@>PODOSPHAERAAPHANISTHEAVENDRCT720211.C@>P.APHANIS.DRCT72021@g' $New
+sed -i 's@>PODOSPHAERAAPHANISTHEAVENSCOTT20201.C@>P.APHANIS.SCOTT2020@g' $New
+sed -i 's@>PODOSPHAERACERASIGCA018398735.1WSUPSPOC1.0.C@>P.CERASII.GCA018398735@g' $New
+sed -i 's@>PODOSPHAERALEUCOTRICHAJAATOF01.C@>P.LEUCOTRICHA.JAATOF01@g' $New
+sed -i 's@>PODOSPHAERALEUCOTRICHATHEAVENP111.C@>P.LEUCOTRICHA.P112020@g' $New
+sed -i 's@>PODOSPHAERALEUCOTRICHATHEAVENPOGB20191.C@>P.LEUCOTRICHA.OGB2019@g' $New
+sed -i 's@>PODOSPHAERALEUCOTRICHATHEAVENPOGB20211.C@>P.LEUCOTRICHA.OGB2021@g' $New
+sed -i 's@>PODOSPHAERAXANTHIIGCA010015925.1POXANNIABASSEMBLY.C@>P.XANTHII.GCA010015925@g' $New
+sed -i 's@>PODOSPHAERAXANTHIIGCA014884795.1ASM1488479V1.C@>P.XANTHII.GCA014884795@g' $New
+sed -i 's@>SACCHAROMYCESCEREVISIAEGCF000146045.2R64@>S.CEREVISIAE.GCF000146045@g' $New
+done
+
+for Alignment in $(ls analysis/phylogeny/busco/host_viridiplantae_busco_aa/*/*_trimmed.fasta); do
+New=$(dirname $Alignment)/$(basename $Alignment .fasta)_edit.fasta
+echo $New
+cat $Alignment  | cut -f1 -d '|' > $New 
+sed -i 's@|@.@g' $New 
+sed -i 's@>ARABIDOPSISTHALIANAGCA000001735.2TAIR10.1@>A.THALIANA.GCA000001735@g' $New
+sed -i 's@>CAPSICUMANNUUMGCA002878395.3UCD10XV1.1@>C.ANNUUM.GCA002878395@g' $New
+sed -i 's@>CUCUMISSATIVUSGCA000004075.3CUCUMBER9930V3@>C.SATIVUS.GCA000004075@g' $New
+sed -i 's@>CUCURBITAPEPOGCA002806865.2ASM280686V2@>C.PEPO.GCA002806865@g' $New
+sed -i 's@>FRAGARIAVESCAGCA000184155.1FRAVESHAWAII1.0.C@>F.VESCA.HAWAII@g' $New
+sed -i 's@>FRAGARIAANANASSAFANACAMAROSA6-28-17.C@>F.ANANASSA.CAMAROSA@g' $New
+sed -i 's@>HEVEABRASILIENSISGCA001654055.1ASM165405V1@>H.BRASILIENSIS.GCA001654055@g' $New
+sed -i 's@>HORDEUMVULGAREGCA904849725.1MOREXV3PSEUDOMOLECULESASSEMBLY@>H.VULGARE.GCA904849725@g' $New
+sed -i 's@>MALUSDOMESTICAGDDH131-1FORMATTED@>M.DOMESTICA.GDDH131@g' $New
+sed -i 's@>MORUSALBAGCA012066045.3ASM1206604V3@>M.ALBA.GCA012066045@g' $New
+sed -i 's@>NICOTIANATABACUMGCA000715135.1NTAB-TN90@>N.TABACUM.GCA000715135@g' $New
+sed -i 's@>PISUMSATIVUMGCA900700895.2PISUMSATIVUMV1A@>P.SATIVUM.GCA900700895@g' $New
+sed -i 's@>PRUNUSAVIUMGCA002207925.1PAVR1.0@>P.AVIUM.GCA002207925@g' $New
+sed -i 's@>QUERCUSROBURGCA932294415.1DHQUEROBU3.1@>Q.ROBUR.GCA932294415@g' $New
+sed -i 's@>RUBUSIDAEUSANITRACURATEDEDHIC.C@>R.IDAEUS.ANITRA@g' $New
+sed -i 's@>RUBUSIDAEUSMEDIA-5.C@>R.IDAEUS.MEDIA5@g' $New
+sed -i 's@>RUBUSOCCIDENTALISRUBUSOCCV310-12-17.C@>R.OCCIDENTALIS.V3@g' $New
+sed -i 's@>SACCHAROMYCESCEREVISIAEGCF000146045.2R64@>S.CEREVISIAE.GCF000146045@g' $New
+sed -i 's@>SECALECEREALEGCA016097815.1HAUWEININGV1.0@>S.CEREALE.GCA016097815@g' $New
+sed -i 's@>SOLANUMLYCOPERSICUMGCA000188115.3SL3.0@>S.LYCOPERSICUM.GCA000188115@g' $New
+sed -i 's@>VITUSVINIFERAGCA000003745.212X@>V.VINEFERA.GCA000003745@g' $New
+done
+
+#Is there a reason to use an array rather than a loop as below? Seem to make things more commpicated to rerun.
+for Alignment in $(ls analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/*/*_trimmed_edit.fasta); do
+Jobs=$(squeue -u theaven | wc -l)
+echo x
+while [ $Jobs -gt 128 ]; do
+sleep 2s
+printf "."
+Jobs=$(squeue -u theaven | wc -l)
+done   
+printf "\n" >> raxmllog.txt
+Prefix=$(basename $Alignment | cut -f1 -d '_')
+echo $Prefix >> raxmllog.txt
+OutDir=analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/RAxML2/$Prefix
+ProgDir=/home/theaven/scratch/apps/phylogeny
+sbatch $ProgDir/sub_RAxML.sh $Alignment $Prefix $OutDir 2>&1 >> pathraxmllog.txt
+done
+#3217974
+for Alignment in $(ls analysis/phylogeny/busco/host_viridiplantae_busco_aa/*/*_trimmed_edit.fasta); do
+Jobs=$(squeue -u theaven | wc -l)
+echo x
+while [ $Jobs -gt 64 ]; do
+sleep 2s
+printf "."
+Jobs=$(squeue -u theaven | wc -l)
+done   
+printf "\n" >> raxmllog.txt
+Prefix=$(basename $Alignment | cut -f1 -d '_')
+echo $Prefix >> raxmllog.txt
+OutDir=analysis/phylogeny/busco/host_viridiplantae_busco_aa/RAxML3/$Prefix
+ProgDir=/home/theaven/scratch/apps/phylogeny
+sbatch $ProgDir/sub_RAxML.sh $Alignment $Prefix $OutDir 2>&1 >> hostraxmllog2.txt
+done
+scontrol show job 3184121
+```
+```bash
+for Alignment in $(ls analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/*/*_trimmed.fasta); do
+#Jobs=$(squeue -u theaven | wc -l)
+#echo x
+#while [ $Jobs -gt 2000000 ]; do
+#sleep 2s
+#printf "."
+#Jobs=$(squeue -u theaven | wc -l)
+#done   
+printf "\n" >> raxmllog.txt
+Prefix=$(basename $Alignment | cut -f1 -d '_')
+echo $Prefix >> raxmllog.txt
+OutDir=analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/RAxML/$Prefix
+ProgDir=/home/theaven/scratch/apps/phylogeny
+sbatch $ProgDir/sub_RAxML.sh $Alignment $Prefix $OutDir 2>&1 >> pathraxmllog.txt
+done
+for Alignment in $(ls analysis/phylogeny/busco/host_viridiplantae_busco_aa/*/*_trimmed.fasta); do
+#Jobs=$(squeue -u theaven | wc -l)
+#echo x
+#while [ $Jobs -gt 2000000 ]; do
+#sleep 2s
+#printf "."
+#Jobs=$(squeue -u theaven | wc -l)
+#done   
+printf "\n" >> raxmllog.txt
+Prefix=$(basename $Alignment | cut -f1 -d '_')
+echo $Prefix >> raxmllog.txt
+OutDir=analysis/phylogeny/busco/host_viridiplantae_busco_aa/RAxML/$Prefix
+ProgDir=/home/theaven/scratch/apps/phylogeny
+sbatch $ProgDir/sub_RAxML.sh $Alignment $Prefix $OutDir 2>&1 >> hostraxmllog.txt
+done
+```
+```bash
+conda activate astral
+OutDir=/home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/ASTRAL3
+mkdir -p $OutDir
+cat analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/RAxML2/*/RAxML_bestTree.*  | sed -r "s/CTG.\w+:/:/g" > $OutDir/leotiomycetes_Nd_phylogeny.appended.tre
+#download + reupload to NIAB HPC
+OutDir=/projects/nano_diagnostics/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/ASTRAL
+ProgDir=~/git_repos/tools/astral/Astral
+/home/heavet/git_repos/tools/nw_ed $OutDir/leotiomycetes_Nd_phylogeny.appended.tre 'i & b<=10' o > $OutDir/leotiomycetes_Nd_phylogeny.appended.trimmed.tre
+java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -i $OutDir/leotiomycetes_Nd_phylogeny.appended.tre -o $OutDir/leotiomycetes_Nd_phylogeny.consensus.tre | tee 2> $OutDir/leotiomycetes_Nd_phylogeny.consensus.log
+java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -q $OutDir/leotiomycetes_Nd_phylogeny.consensus.tre -i $OutDir/leotiomycetes_Nd_phylogeny.appended.tre -o $OutDir/leotiomycetes_Nd_phylogeny.consensus.scored.tre 2> $OutDir/leotiomycetes_Nd_phylogeny.consensus.scored.log
+
+java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -i $OutDir/leotiomycetes_Nd_phylogeny.appended.trimmed.tre -o $OutDir/leotiomycetes_Nd_phylogeny.consensus.trimmed.tre | tee 2> $OutDir/leotiomycetes_Nd_phylogeny.consensus.trimmed.log
+java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -q $OutDir/leotiomycetes_Nd_phylogeny.consensus.trimmed.tre -i $OutDir/leotiomycetes_Nd_phylogeny.appended.trimmed.tre -o $OutDir/leotiomycetes_Nd_phylogeny.consensus.scored.trimmed.tre 2> $OutDir/leotiomycetes_Nd_phylogeny.consensus.scored.trimmed.log
+
+
+
+
+OutDir=/home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa/ASTRAL3
+mkdir -p $OutDir
+cat analysis/phylogeny/busco/host_viridiplantae_busco_aa/RAxML3/*/RAxML_bestTree.*  | sed -r "s/CTG.\w+:/:/g" > $OutDir/viridiplantae_Nd_phylogeny.appended.tre
+#download + reupload to NIAB HPC
+OutDir=/projects/nano_diagnostics/analysis/phylogeny/busco/host_viridiplantae_busco_aa/ASTRAL
+ProgDir=~/git_repos/tools/astral/Astral
+/home/heavet/git_repos/tools/nw_ed $OutDir/viridiplantae_Nd_phylogeny.appended.tre 'i & b<=10' o > $OutDir/viridiplantae_Nd_phylogeny.appended.trimmed.tre
+java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -i $OutDir/viridiplantae_Nd_phylogeny.appended.tre -o $OutDir/viridiplantae_Nd_phylogeny.consensus.tre | tee 2> $OutDir/viridiplantae_Nd_phylogeny.consensus.log
+java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -q $OutDir/viridiplantae_Nd_phylogeny.consensus.tre -i $OutDir/viridiplantae_Nd_phylogeny.appended.tre -o $OutDir/viridiplantae_Nd_phylogeny.consensus.scored.tre 2> $OutDir/viridiplantae_Nd_phylogeny.consensus.scored.log
+
+java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -i $OutDir/viridiplantae_Nd_phylogeny.appended.trimmed.tre -o $OutDir/viridiplantae_Nd_phylogeny.consensus.trimmed.tre | tee 2> $OutDir/viridiplantae_Nd_phylogeny.consensus.trimmed.log
+java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -q $OutDir/viridiplantae_Nd_phylogeny.consensus.trimmed.tre -i $OutDir/viridiplantae_Nd_phylogeny.appended.trimmed.tre -o $OutDir/viridiplantae_Nd_phylogeny.consensus.scored.trimmed.tre 2> $OutDir/viridiplantae_Nd_phylogeny.consensus.scored.trimmed.log
+
+
+
+
+conda activate astral
+OutDir=analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/ASTRAL
+mkdir -p $OutDir
+cat analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/RAxML/*/RAxML_bestTree.*  | sed -r "s/CTG.\w+:/:/g" > $OutDir/leotiomycetes_Nd_phylogeny.appended.tre
+sed -i 's@/home/armita/prog@/projects/oldhome/armita/prog@g' /home/heavet/git_repos/tools/nw_ed
+/home/heavet/git_repos/tools/nw_ed $OutDir/leotiomycetes_Nd_phylogeny.appended.tre 'i & b<=10' o > $OutDir/Nd_phylogeny.appended.trimmed.tre
+# Calculate combined tree
+ProgDir=~/git_repos/tools/astral/Astral
+java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -i $OutDir/leotiomycetes_Nd_phylogeny.appended.tre -o $OutDir/leotiomycetes_Nd_phylogeny.consensus.tre | tee 2> $OutDir/leotiomycetes_Nd_phylogeny.consensus.log
+java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -q $OutDir/leotiomycetes_Nd_phylogeny.consensus.tre -i $OutDir/leotiomycetes_Nd_phylogeny.appended.tre -o $OutDir/leotiomycetes_Nd_phylogeny.consensus.scored.tre 2> $OutDir/leotiomycetes_Nd_phylogeny.consensus.scored.log
+
+java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -i $OutDir/Nd_phylogeny.appended.trimmed.tre -o $OutDir/leotiomycetes_Nd_phylogeny.consensus.trimmed.tre | tee 2> $OutDir/leotiomycetes_Nd_phylogeny.consensus.trimmed.log
+java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -q $OutDir/leotiomycetes_Nd_phylogeny.consensus.trimmed.tre -i $OutDir/Nd_phylogeny.appended.trimmed.tre -o $OutDir/leotiomycetes_Nd_phylogeny.consensus.scored.trimmed.tre 2> $OutDir/leotiomycetes_Nd_phylogeny.consensus.scored.trimmed.log
+
+OutDir=analysis/phylogeny/busco/host_viridiplantae_busco_aa/ASTRAL
+mkdir -p $OutDir
+cat analysis/phylogeny/busco/host_viridiplantae_busco_aa/RAxML/*/RAxML_bestTree.*  | sed -r "s/CTG.\w+:/:/g" > $OutDir/viridiplantae_Nd_phylogeny.appended.tre
+/home/heavet/git_repos/tools/nw_ed $OutDir/viridiplantae_Nd_phylogeny.appended.tre 'i & b<=10' o > $OutDir/viridiplantae_Nd_phylogeny.appended.trimmed.tre
+java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -i $OutDir/viridiplantae_Nd_phylogeny.appended.tre -o $OutDir/viridiplantae_Nd_phylogeny.consensus.tre | tee 2> $OutDir/viridiplantae_Nd_phylogeny.consensus.log
+java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -q $OutDir/viridiplantae_Nd_phylogeny.consensus.tre -i $OutDir/viridiplantae_Nd_phylogeny.appended.tre -o $OutDir/viridiplantae_Nd_phylogeny.consensus.scored.tre 2> $OutDir/viridiplantae_Nd_phylogeny.consensus.scored.log
+
+java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -i $OutDir/Nd_phylogeny.appended.trimmed.tre -o $OutDir/leotiomycetes_Nd_phylogeny.consensus.trimmed.tre | tee 2> $OutDir/leotiomycetes_Nd_phylogeny.consensus.trimmed.log
+java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -q $OutDir/leotiomycetes_Nd_phylogeny.consensus.trimmed.tre -i $OutDir/Nd_phylogeny.appended.trimmed.tre -o $OutDir/leotiomycetes_Nd_phylogeny.consensus.scored.trimmed.tre 2> $OutDir/leotiomycetes_Nd_phylogeny.consensus.scored.trimmed.log
+
+cp /projects/oldhome/armita/prog/newick_utilities/newick_utils/src/nw_ed /home/heavet/git_repos/tools/.
+```
+```R
+setwd("C:/Users/heavt/OneDrive - NIAB/Desktop")
+install.packages("ape")
+install.packages("ggplot2")
+install.packages("rlang")
+library(BiocManager)
+BiocManager::install("ggtree")
+install.packages("phangorn")
+install.packages("treeio")
+library(ape)
+library(ggplot2)
+library(ggtree)
+library(phangorn)
+library(treeio)
+
+tree <- read.newick("leotiomycetes_GENIE.consensus.scored.tre")
+x<-root(tree, outgroup = "'S.CEREVISIAE.GCF000146045'", edgelabel = TRUE)
+a<-ggtree(x)+geom_tiplab(size=2)
+
+y <- as_tibble(x)
+print((y),n = 119)
+print(groupClade(as_tibble(x), c(112, 116, 117, 53)),n = 119)
+p1 <- groupClade(a, c(112, 116, 117, 53), 'group') + aes(color=group, label=branch.length) +
+  theme(legend.position="right")+
+  xlim(-.1, 30)+
+  scale_color_manual(values = c("black", "red", "blue", "green", "black")
+  )
+
+tree2 <- read.newick("viridiplantae_GENIE.consensus.scored.tre")
+x2<-root(tree2, outgroup = "'S.CEREVISIAE.GCF000146045'", edgelabel = TRUE)
+a2<-ggtree(x2)+geom_tiplab(size=2)
+
+y2 <- as_tibble(x2)
+print((y2),n = 44)
+p2 <- groupClade(a2, c(1), 'group') + aes(color=group, label=branch.length) + geom_tiplab(size=2) + xlim(-.1, 20)+
+  scale_color_manual(values = c("black", "black"))
+
+d1 <- a$data
+d2 <- p2$data
+d2$x <- max(d2$x) - d2$x + max(d1$x) + 100
+
+pp <- groupClade(a, c(1,112, 116, 117, 53), 'group') + aes(color=group, label=branch.length) +
+  theme(legend.position="right")+
+  xlim(-.1, 150)+
+  scale_color_manual(values = c("black", "black", "red", "blue", "green", "black")
+  )+ geom_tree(data=d2)+ geom_tiplab(data=d2, size=2, hjust = 1)
+pp
+
+scaleClade(p, node=17, scale=.1) 
+```
+Partitionfinder
+(nucleotide sequence evolution model)
+```bash
+mkdir analysis/phylogeny/busco/host_viridiplantae_busco_aa/trimmed
+cp analysis/phylogeny/busco/host_viridiplantae_busco_aa/*/*_trimmed.fasta analysis/phylogeny/busco/host_viridiplantae_busco_aa/trimmed/.
+
+scp /projects/oldhome/sobczm/bin/PartitionFinder1.1.1/partition_finder.cfg theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/apps/tools
+scp /projects/oldhome/armita/git_repos/emr_repos/scripts/popgen/phylogenetics/fasta2phylip.pl theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/apps/tools
+scp /projects/oldhome/armita/git_repos/emr_repos/scripts/popgen/phylogenetics/Fasta2Nexus.pl theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/apps/tools
+scp /projects/oldhome/armita/git_repos/emr_repos/scripts/popgen/phylogenetics/sub_partition_finder.sh theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/apps/tools
+for file in $(ls /home/theaven/scratch/apps/tools/*.pl); do
+sed -i 's@#!/usr/bin/perl@#!/home/theaven/scratch/apps/conda/envs/braker/bin/perl@g' $file
+sed -i 's@#!/usr/bin/env perl@#!/home/theaven/scratch/apps/conda/envs/braker/bin/perl@g' $file
+done
+scp /projects/oldhome/sobczm/bin/PartitionFinder1.1.1/PartitionFinder.py theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/apps/tools
+
+config_template=/home/theaven/scratch/apps/tools/partition_finder/partition_finder.cfg 
+ct=$(basename "$config_template")
+
+mkdir analysis/phylogeny/NEXUS
+
+cd analysis/phylogeny
+conda activate predector2.7
+# prepare directory for PartitionFinder run:
+for f in $(ls busco/host_viridiplantae_busco_aa/trimmed/9849at33090_*.fasta); do
+sed -i 's/:/_/g' $f
+c="$(cat $f | awk 'NR%2==0' | awk '{print length($1)}' | head -1)"
+echo $c
+p="${f%.fasta}.phy"
+echo $p
+n="${f%.fasta}.NEXUS"
+echo $n
+dir="${f%.fasta}"
+echo $dir
+mkdir $dir
+cp $config_template $dir/.
+
+# Substitute the name of the alignment file and the sequence length in the config file to become correct for the current run.
+sed -i 's,^\(alignment = \).*,\1'"$p;"',' $dir/$ct
+sed -i 's,^\(Gene1_pos1 = \).*,\1'"1-$c\\\3;"',' $dir/$ct
+sed -i 's,^\(Gene1_pos2 = \).*,\1'"2-$c\\\3;"',' $dir/$ct
+sed -i 's,^\(Gene1_pos3 = \).*,\1'"3-$c\\\3;"',' $dir/$ct
+
+# Convert FASTA to phylip for the Partition Finder run
+ProgDir=/home/theaven/scratch/apps/tools
+$ProgDir/fasta2phylip.pl $f>$p
+mv $p $dir
+
+# Convert FASTA to NEXUS for the BEAST run
+$ProgDir/Fasta2Nexus.pl $f>$n
+mv $n $dir
+
+#Problems running PartitionFinder on the cluster. May have to be run locally on your Mac or Windows machine.
+sbatch $ProgDir/sub_partition_finder.sh $dir
+done
+
+
+
+```
 
 
 
@@ -831,6 +1214,26 @@ cucurbita/       hordeum/         pisum/           Saccharomyces/   triticum/
 
 
 # After this point pipeline is work in progress
+Duplicate gene predictions have been spotted in our gene files, these genes will need to be removed from future analysis
+```bash
+for Logfile in $(ls gene_pred/*/*/codingquarry/rep_modeling/final/final_genes_appended_renamed.log); do
+Output=$(dirname $Logfile)/$(echo $Logfile |cut -f3 -d '/')_duplicated_genes
+echo $Output
+rm $Output
+for prediction in $(cat $Logfile |cut -f1|sort|uniq -c|sort -nr | awk '$1>1' | awk '{print $2}'); do
+    printf ">\n" >> $Output
+    grep -w $prediction $Logfile | awk '{print $3}' >> $Output
+done
+sed -e '/>/,+1d' ${Output} > ${Output}.txt #removed one of each duplicate from the removal list
+done
+
+scp gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/THeavenDRCT72020_1_duplicated_genes.txt theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/THeavenDRCT72020_1_duplicated_genes.txt
+scp gene_pred/P_aphanis/THeavenDRCT72021_1/codingquarry/rep_modeling/final/THeavenDRCT72021_1_duplicated_genes.txt theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72021_1/codingquarry/rep_modeling/final/THeavenDRCT72021_1_duplicated_genes.txt
+scp gene_pred/P_aphanis/THeavenSCOTT2020_1/codingquarry/rep_modeling/final/THeavenSCOTT2020_1_duplicated_genes.txt theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/gene_pred/P_aphanis/THeavenSCOTT2020_1/codingquarry/rep_modeling/final/THeavenSCOTT2020_1_duplicated_genes.txt
+scp gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/THeavenp11_1_duplicated_genes.txt theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/THeavenp11_1_duplicated_genes.txt
+scp gene_pred/P_leucotricha/THeavenpOGB2019_1/codingquarry/rep_modeling/final/THeavenpOGB2019_1_duplicated_genes.txt theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/gene_pred/P_leucotricha/THeavenpOGB2019_1/codingquarry/rep_modeling/final/THeavenpOGB2019_1_duplicated_genes.txt
+scp gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/THeavenpOGB2021_1_duplicated_genes.txt theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/THeavenpOGB2021_1_duplicated_genes.txt
+```
 ### Predector
 ```bash
 scp /projects/nano_diagnostics/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/
@@ -840,60 +1243,10 @@ scp /projects/nano_diagnostics/gene_pred/P_leucotricha/THeavenpOGB2019_1/codingq
 scp /projects/nano_diagnostics/gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/
 scp /projects/nano_diagnostics/gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/
 
-screen -S PREDECTOR
-srun -p long  --mem 100G --cpus-per-task=16 --nodelist=n19-32-192-malekith --pty bash
-srun -p himem  --mem 100G --cpus-per-task=16 --nodelist=n19-64-3072-thanos --pty bash
-srun -p himem  --mem 100G --cpus-per-task=16 --nodelist=n17-28-1536-apollo --pty bash
-conda activate predector
-for proteome in $(ls /home/theaven/scratch/gene_pred/*/THeavenSCOTT2020_1/codingquarry/rep_modeling/final/*.fasta); do
-Dir=$(echo $proteome|cut -f1,2,3,4,5,6,7 -d '/')/predector
-mkdir $Dir
-cd $Dir
-LD_LIBRARY_PATH=/mnt/shared/scratch/theaven/apps/conda/envs/predector/lib
-nextflow run \
-  -profile c16,r64 \
-  -resume \
-  -r 1.2.6 \
-  -with-conda /mnt/shared/scratch/theaven/apps/conda/envs/predector \
-  ccdmb/predector \
-  --proteome $proteome 2>&1 | tee -a predector_report.txt
-cd ~/scratch
-LD_LIBRARY_PATH=/opt/slurm/latest/lib64
-done
-conda deactivate
-exit
-exit
-#1.2.6, 1.1.0-beta.1, 1.2.5, 1.1.0, 1.2.4, 1.1.1, 1.2.0-beta
-
-screen -S PREDECTOR2
-srun -p long  --mem 100G --nodelist=n19-32-192-malekith --cpus-per-task=16 --pty bash
-conda activate predector
-for proteome in $(ls /home/theaven/scratch/gene_pred/*/THeavenp11_1/codingquarry/rep_modeling/final/*.fasta); do
-Dir=$(echo $proteome|cut -f1,2,3,4,5,6,7 -d '/')/predectorvm
-mkdir $Dir
-cd $Dir
-nextflow run \
-  -profile c16,r64 \
-  -resume \
-  -r 1.2.6 \
-  --software-version 1.0 \
-  -with-conda /mnt/shared/scratch/theaven/apps/conda/envs/predector \
-  ccdmb/predector \
-  --proteome $proteome 2>&1 | tee -a predector_report_1.2.0-beta.txt
-cd ~/scratch
-done
-conda deactivate
-exit
-exit
-#1.2.0-beta run, then 1.2.6 in the same directory, with software version 1.0 vs 1.0.3 for other 5 only 1.2.6, gets to apoplastp however with same pepstats error - p11 - issue cannot be replicated with bash .command.run - localizer not yet run
-#doesnt work with long nodes? no p11 1.2.0-beta was with long??? no reason why not other >:(
-#cannot switch versions midway through run, going from 1.2.0-beta with deepsig complete to 1.2.6 results in processes set back to 0%
-#where 1.2.0-beta passes deepsig, fails to call pepstats however pepstats process has completed successfully, failure is with localizer????
-#deepsig failure is related to nvidia driver library, are some of the cluster nodes using different gpus therefore depends which node you are randomly assigned to? p11 1.2.0-beta that passed deepsig was on n19-32-192-malekith
-
 conda activate predector
 for proteome in $(ls /home/theaven/scratch/gene_pred/*/*/codingquarry/rep_modeling/final/*.fasta); do
 ProgDir=/home/theaven/scratch/apps/predector
+OutDir=$(echo $proteome|cut -f1,2,3,4,5,6,7 -d '/')/predector_singularity2
 sbatch $ProgDir/predector_singularity.sh $proteome 1.2.6
 sleep 30
 done
@@ -910,288 +1263,18 @@ echo ${Organism}-${Strain}
 cp $file ${OutDir}/${Organism}-${Strain}-ranked.tsv
 done
 
-#bash .command.run from localizer error gives:
-Error calling pepstats: [Errno 14] Bad address: '/mnt/shared/scratch/theaven/apps/conda/envs/predector/bin/pepstats'
-parallel: This job failed:
-run $PARALLEL_TMP
-
-
-
-
-
-Error executing process > 'localizer (1)'
-
-Caused by:
-  Process `localizer (1)` terminated with an error exit status (1)
-
-Command executed:
-
-  run () {
-      set -e
-      TMP="tmp$$"
-      LOCALIZER.py -e -i "$1" -o "${TMP}" 1>&2
-      cat "${TMP}/Results.txt"
-
-      rm -rf -- "${TMP}"
-  }
-  export -f run
-
-  CHUNKSIZE="$(decide_task_chunksize.sh in.fasta "16" 100)"
-
-  parallel         --halt now,fail=1         --joblog log.txt         -j "16"         -N "${CHUNKSIZE}"         --line-buffer          --recstart '>'         --cat          run     < in.fasta     | cat > out.txt
-
-  predutils r2js         --pipeline-version "1.2.6"         --software-version "1.0.3"         -o out.ldjson         localizer out.txt in.fasta
-
-Command exit status:
-  1
-
-Command output:
-  (empty)
-
-Command error:
-  Error calling pepstats: [Errno 14] Bad address: '/mnt/shared/scratch/theaven/apps/conda/envs/predector/bin/pepstats'
-  parallel: This job failed:
-  run $PARALLEL_TMP
-
-Work dir:
-  /mnt/shared/scratch/theaven/gene_pred/P_leucotricha/THeavenpOGB2019_1/predector/work/56/028613a1f49d89b03656d56521de3b
-
-Tip: you can replicate the issue by changing to the process work dir and entering the command `bash .command.run`
-
-
-################################################################################################
-
-Error executing process > 'apoplastp (2)'
-
-Caused by:
-  Process `apoplastp (2)` terminated with an error exit status (1)
-
-Command executed:
-
-  run () {
-      set -e
-      TMPFILE="tmp$$"
-      ApoplastP.py -s -i "$1" -o "${TMPFILE}" 1>&2
-      cat "${TMPFILE}"
-
-      rm -f "${TMPFILE}"
-  }
-  export -f run
-
-  CHUNKSIZE="$(decide_task_chunksize.sh in.fasta "16" 100)"
-
-  parallel         --halt now,fail=1         --joblog log.txt         -j "16"         -N "${CHUNKSIZE}"         --line-buffer          --recstart '>'         --cat          run     < in.fasta     | cat > out.txt
-
-  predutils r2js         --pipeline-version "1.2.6"         --software-version "1.0"         -o out.ldjson         apoplastp out.txt in.fasta
-
-Command exit status:
-  1
-
-Command output:
-  (empty)
-
-Command error:
-  -----------------
-
-  ApoplastP is running for 100 proteins given in FASTA file /tmp/theaven_2853922/pargMmug
-
-  -----------------
-  ApoplastP results were saved to output file: tmp3994337
-  -----------------
-
-  ApoplastP is running for 100 proteins given in FASTA file /tmp/theaven_2853922/parQcdBG
-
-  -----------------
-  ApoplastP results were saved to output file: tmp3994376
-  -----------------
-
-  ApoplastP is running for 100 proteins given in FASTA file /tmp/theaven_2853922/parON0ug
-
-  -----------------
-  ApoplastP results were saved to output file: tmp3994324
-  -----------------
-
-  ApoplastP is running for 100 proteins given in FASTA file /tmp/theaven_2853922/parpldTY
-
-  -----------------
-  ApoplastP results were saved to output file: tmp3994404
-  -----------------
-
-  ApoplastP is running for 100 proteins given in FASTA file /tmp/theaven_2853922/parucnbK
-
-  -----------------
-  ApoplastP results were saved to output file: tmp3994421
-  -----------------
-
-  ApoplastP is running for 100 proteins given in FASTA file /tmp/theaven_2853922/pariyCte
-
-  -----------------
-  ApoplastP results were saved to output file: tmp3994352
-  -----------------
-
-  ApoplastP is running for 100 proteins given in FASTA file /tmp/theaven_2853922/parCHBd0
-
-  -----------------
-  ApoplastP results were saved to output file: tmp3994308
-  -----------------
-
-  ApoplastP is running for 100 proteins given in FASTA file /tmp/theaven_2853922/parfqJdN
-
- -----------------
-
-  Error calling pepstats: [Errno 14] Bad address: '/mnt/shared/scratch/theaven/apps/conda/envs/predector/bin/pepstats'
-  parallel: This job failed:
-  run $PARALLEL_TMP
-
-Work dir:
-  /mnt/shared/scratch/theaven/gene_pred/P_leucotricha/THeavenp11_1/predectorvm/work/f7/f0c2d6180c5920e9b9d809745789de
-
-Tip: you can try to figure out what's wrong by changing to the process work dir and showing the script file named `.command.sh`
-
-```
-
-### Signal-P
-```bash
-#input used had problem NCBI genes removed in previous section
-conda activate Java11
-
-  for Proteome in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed3.pep.fasta); do
-  ProgDir=/home/heavet/git_repos/tools/seq_tools/Feature_annotation
-  SplitDir=$(dirname $Proteome | sed 's/final/final_edited_genes_split/g')
-  mkdir -p $SplitDir
-  $ProgDir/splitfile_500.py --inp_fasta $Proteome --out_dir $SplitDir --out_base P_aphanis_THeavenDRCT72020_1_final_preds # Splits input fasta in 500 genes files
-  done
-
-  for File in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_edited_genes_split/*_final_preds_*); do
-    OutDir=gene_pred/P_aphanis/THeavenDRCT72020_1/signalp
-    sbatch /home/heavet/git_repos/tools/seq_tools/Feature_annotation/pred_signalP.sh $File signalp-4.1 $OutDir
-  done
-  #14431-14466
-
-  for File in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_edited_genes_split/*_final_preds_*); do
-  InName=$(echo $File | rev | cut -d "/" -f1 | rev)
-  echo $InName
-  OutFile=$(echo $InName | sed s/.fa//)
-  echo $OutFile
-  /data/scratch/gomeza/prog/signalp/signalp-4.1/signalp-4.1 -t euk -f summary -c 70 $File > "$OutFile"_sp.txt
-  echo '----------------------------------------------------------------------' >> "$OutFile"_sp.txt
-  done
-
-  mv P_aphanis_THeavenDRCT72020_1_final_preds*sp.txt gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_genes_split/.
-
-
-  for OutFile in $(ls P_aphanis_THeavenDRCT72020_1_final_preds*sp.txt gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_genes_split/P_aphanis_THeavenDRCT72020_1_final_preds*sp.txt); do
-  /home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation/sigP_4.1_parser.py --inp_fasta gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed.pep.fasta --inp_sigP "$OutFile"_sp.txt --out_tab "$OutFile"_sp.tab --out_fasta "$OutFile"_sp.aa --out_neg "$OutFile"_sp_neg.aa
-  #sbatch $ProgDir/sub_signalP.sh $File $OutDir signalp-4.1 # Recommended for fungi
-  #sbatch $ProgDir/sub_signalP.sh $File $OutDir signalp-5.0
-  done
-  ```
-### Effector-P
-```bash
-#input used had problem NCBI genes removed in previous section
-mkdir -p /scratch/projects/heavet/gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P
-srun -p short -J signal-P --mem 100G --pty bash
-cd /scratch/projects/heavet
-conda activate Java11
-python /scratch/software/EffectorP-2.0/Scripts/EffectorP.py -o gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P/P_aphanis_THeavenDRCT72020_1_EffectorP.txt -E gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P/P_aphanis_THeavenDRCT72020_1_EffectorP.fa -i gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed3.pep.fasta
-```
-### pylogenetics
-```bash
-realphy https://github.com/harrisonlab/pseudomonas/blob/master/phylogenetics/Realphy_commands
-
-
-
-```
-### Signal-P
-```bash
-conda activate Java11
-
-  for Proteome in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed.pep.fasta); do
-  ProgDir=/home/heavet/git_repos/tools/seq_tools/Feature_annotation
-  SplitDir=$(dirname $Proteome | sed 's/final/final_genes_split/g')
-  mkdir -p $SplitDir
-  $ProgDir/splitfile_500.py --inp_fasta $Proteome --out_dir $SplitDir --out_base P_aphanis_THeavenDRCT72020_1_final_preds # Splits input fasta in 500 genes files
-  done
-  for File in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_genes_split/*_final_preds_*); do
-  InName=$(echo $File | rev | cut -d "/" -f1 | rev)
-  echo $InName
-  OutFile=$(echo $InName | sed s/.fa//)
-  echo $OutFile
-  signalp-4.1 -t euk -f summary -c 70 $File > "$OutFile"_sp.txt
-  echo '----------------------------------------------------------------------' >> "$OutFile"_sp.txt
-  done
-  mv P_aphanis_THeavenDRCT72020_1_final_preds*sp.txt gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_genes_split/.
-
-
-  for OutFile in $(ls P_aphanis_THeavenDRCT72020_1_final_preds*sp.txt gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final_genes_split/P_aphanis_THeavenDRCT72020_1_final_preds*sp.txt); do
-  /home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation/sigP_4.1_parser.py --inp_fasta gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed.pep.fasta --inp_sigP "$OutFile"_sp.txt --out_tab "$OutFile"_sp.tab --out_fasta "$OutFile"_sp.aa --out_neg "$OutFile"_sp_neg.aa
-  #sbatch $ProgDir/sub_signalP.sh $File $OutDir signalp-4.1 # Recommended for fungi
-  #sbatch $ProgDir/sub_signalP.sh $File $OutDir signalp-5.0
-  done
-#788728-788763
-
-OutDir=$(dirname $Proteome | sed 's/codingquarry/signalp/g'| sed 's/final/split/g')
-
-Change output directory name to "final_genes_signalp-4.1" mv gene_pred/F.oxysporum_fsp_fragariae_signalp-4.1 gene_pred/final_genes_signalp-4.1
-
-Need to combine the output of the first signal-P run
-
-for Strain in DSA14_003; do for SplitDir in $(ls -d gene_pred/final_genes_split/F.oxysporum_fsp_fragariae/$Strain/flye); do Strain=$(echo $SplitDir | rev |cut -d '/' -f2 | rev) Organism=$(echo $SplitDir | rev |cut -d '/' -f3 | rev) InStringAA='' InStringNeg='' InStringTab='' InStringTxt='' SigpDir=final_genes_signalp-4.1 for GRP in $(ls -l $SplitDir/final_preds.fa | rev | cut -d '' -f1 | rev | sort -n); do InStringAA="$InStringAA gene_pred/$SigpDir/$Organism/$Strain/"$Organism""$Strain"final_preds$GRP""sp.aa"; InStringNeg="$InStringNeg gene_pred/$SigpDir/$Organism/$Strain/"$Organism""$Strain"final_preds$GRP""sp_neg.aa"; InStringTab="$InStringTab gene_pred/$SigpDir/$Organism/$Strain/"$Organism""$Strain"final_preds$GRP""sp.tab"; InStringTxt="$InStringTxt gene_pred/$SigpDir/$Organism/$Strain/"$Organism""$Strain"final_preds$GRP""_sp.txt"; done cat $InStringAA > gene_pred/$SigpDir/$Organism/$Strain/"$Strain"_final_sp.aa cat $InStringNeg > gene_pred/$SigpDir/$Organism/$Strain/"$Strain"_final_neg_sp.aa tail -n +2 -q $InStringTab > gene_pred/$SigpDir/$Organism/$Strain/"$Strain"_final_sp.tab cat $InStringTxt > gene_pred/$SigpDir/$Organism/$Strain/"$Strain"_final_sp.txt done done
-
-Having flye in directory path caused small issues therefore I stopped including it from here Things may be in the wrong directory - use "mv" command to change directory names
-
-
-  signalp-4.1 -t euk -f summary -c 70 $File > "$OutFile"_sp.txt
-  echo '----------------------------------------------------------------------' >> "$OutFile"_sp.txt
-  PathToAnnotateSigP=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
-  $PathToAnnotateSigP/sigP_4.1_parser.py --inp_sigP "$OutFile"_sp.txt --out_tab "$OutFile"_sp.tab --out_fasta "$OutFile"_sp.aa --out_neg "$OutFile"_sp_neg.aa -$
-
-```
-
-### TMHMM
-Identify transmembrane proteins
-```bash
-for Proteome in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed.pep.fasta); do 
-  ProgDir=/home/heavet/git_repos/tools/seq_tools/Feature_annotation
-  OutDir=$(dirname $Proteome | sed 's/codingquarry/TMHMM/g')
-  sbatch $ProgDir/TMHMM.sh $Proteome $OutDir
-done 
-#788768
-
-Proteins with transmembrane domains were removed from lists of Signal peptide containing proteins
-
-for File in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/TMHMM/rep_modeling/787033/final/TM_genes_neg.txt); do
-TmHeaders=$(echo "$File" | sed 's/neg.txt/neg_headers.txt/g')
-cat $File | cut -f1 > $TmHeaders
-SigP=$(ls gene_pred/final_genes_signalp-4.1/$Organism/$Strain/*_final_sp.aa)
-OutDir=$(dirname $SigP)
-ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
-$ProgDir/extract_from_fasta.py --fasta $SigP --headers $TmHeaders > $OutDir/"$Strain"_final_sp_no_trans_mem.aa
-cat $OutDir/"$Strain"_final_sp_no_trans_mem.aa | grep '>' | wc -l
+#Remove discovered duplicates:
+for file in $(ls /home/theaven/scratch/gene_pred/*/*/codingquarry/rep_modeling/final/*_duplicated_genes.txt); do
+  Organism=$(echo $file|cut -f6 -d '/')
+  Strain=$(echo $file|cut -f7 -d '/')
+  tsv=$(echo $file | cut -f1,2,3,4,5,6,7 -d '/')/predector_singularity2/results/final_genes_appended_renamed.pep/${Organism}-${Strain}-ranked.tsv
+  echo $tsv
+  for var1 in $(cat $file); do
+  sed -i "/$var1/d" "$tsv"
+done
 done
 ```
-### Effector-P
-```bash
-mkdir -p gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P
-srun -p short  --mem 100G --pty bash
-EffectorP.py -o gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P/P_aphanis_THeavenDRCT72020_1_EffectorP.txt -E gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P/P_aphanis_THeavenDRCT72020_1_EffectorP.fa -i gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/787033/final/final_genes_appended_renamed.pep.fasta
 
-for File in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/Effector-P/P_aphanis_THeavenDRCT72020_1_EffectorP.txt); do
-  Headers=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_headers.txt/g')
-  cat $File | grep 'Effector' | cut -f1 > $Headers
-  Secretome=$(ls gene_pred/final_genes_signalp-4.1/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_final_sp_no_trans_mem.aa)
-  OutFile=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted.aa/g')
-  ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
-  $ProgDir/extract_from_fasta.py --fasta $Secretome --headers $Headers > $OutFile
-  OutFileHeaders=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted_headers.txt/g')
-  cat $OutFile | grep '>' | tr -d '>' > $OutFileHeaders
-  cat $OutFileHeaders | wc -l
-  Gff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3)
-  EffectorP_Gff=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted.gff/g')
-  $ProgDir/extract_gff_for_sigP_hits.pl $OutFileHeaders $Gff effectorP ID > $EffectorP_Gff
-  cat $EffectorP_Gff | grep -w 'gene' | wc -l
-done > tmp.txt
-```
 ### Looking for transcription factors
 ```bash
 conda activate predector2.7
@@ -1203,6 +1286,9 @@ conda activate predector2.7
     mkdir -p $OutDir
     ProgDir=/home/theaven/scratch/apps/tools
     python2.7 $ProgDir/interpro2TFs.py --InterPro $Interpro > $OutDir/"$Strain"_TF_domains.tsv
+        for var1 in $(cat /home/theaven/scratch/gene_pred/${Organism}/${Strain}/codingquarry/rep_modeling/final/${Strain}_duplicated_genes.txt); do
+        sed -i "/$var1/d" "$OutDir/"$Strain"_TF_domains.tsv"
+        done #remove discovered duplicates
     echo "$Organism - $Strain " >> TFreport.txt
     printf "total number of transcription factors: \t" >> TFreport.txt
     cat $OutDir/"$Strain"_TF_domains.tsv | cut -f1 | sort | uniq > $OutDir/"$Strain"_TF_gene_headers.txt
@@ -1211,6 +1297,7 @@ conda activate predector2.7
     cat $OutDir/"$Strain"_TF_gene_headers.txt | sed -e "s/.t.*//g" > $OutDir/"$Strain"_TF_geneid_headers.txt
   done
 conda deactivate
+mv *report.txt reports/.
 ```
 P_aphanis - THeavenDRCT72020_1
 total number of transcription factors:  1162
@@ -1219,11 +1306,11 @@ total number of transcription factors:  1034
 P_aphanis - THeavenSCOTT2020_1
 total number of transcription factors:  1035
 P_leucotricha - THeavenp11_1
-total number of transcription factors:  996
-P_leucotricha - THeavenpOGB2019_1
-total number of transcription factors:  1018
-P_leucotricha - THeavenpOGB2021_1
 total number of transcription factors:  994
+P_leucotricha - THeavenpOGB2019_1
+total number of transcription factors:  1015
+P_leucotricha - THeavenpOGB2021_1
+total number of transcription factors:  991
 
 ### Sectretome
 Proteins with a predicted signal peptide and no predicted transmembrane domains were extracted.
@@ -1252,7 +1339,7 @@ Small cysteine rich proteins were identified within proteomes. These proteins ma
 
 ```bash
 conda activate predector2.7
-for Proteome in $(ls /home/theaven/scratch/gene_pred/*/*/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta); do
+for Proteome in $(ls /home/theaven/scratch/gene_pred/*/*/predector_singularity2/results/final_genes_appended_renamed.pep/*_secretome.pep.fasta); do
 Organism=$(echo $Proteome|cut -f6 -d '/')
 Strain=$(echo $Proteome|cut -f7 -d '/')
 echo "$Organism - $Strain"
@@ -1266,19 +1353,20 @@ printf "number of SSC-rich genes:\t" >> sscpreport.txt
 cat $OutDir/"$Strain"_sscp.fa | grep '>' | tr -d '>' | cut -f1 -d '.' | sort | uniq | wc -l >> sscpreport.txt
 done
 conda deactivate
+mv *report.txt reports/.
 ```
 P_aphanis - THeavenDRCT72020_1
-number of SSC-rich genes:       739
+number of SSC-rich genes:       52
 P_aphanis - THeavenDRCT72021_1
-number of SSC-rich genes:       695
+number of SSC-rich genes:       59
 P_aphanis - THeavenSCOTT2020_1
-number of SSC-rich genes:       596
+number of SSC-rich genes:       44
 P_leucotricha - THeavenp11_1
-number of SSC-rich genes:       1173
+number of SSC-rich genes:       85
 P_leucotricha - THeavenpOGB2019_1
-number of SSC-rich genes:       1247
+number of SSC-rich genes:       89
 P_leucotricha - THeavenpOGB2021_1
-number of SSC-rich genes:       1109
+number of SSC-rich genes:       90
 
 ### CAZY proteins
 Carbohydrte active enzymes were idnetified using CAZYfollowing recomendations at http://csbl.bmb.uga.edu/dbCAN/download/readme.txt :
@@ -1297,6 +1385,9 @@ sbatch $ProgDir/hmm_scan.sh $CazyHmm $Proteome $Prefix $OutDir
 done
 #3054426-31
 conda deactivate
+mv *report.txt reports/.
+
+
 ```
 The Hmm parser was used to filter hits by an E-value of E1x10-5 or E1x10-e3 if they had a hit over a length of X %.
 
@@ -1306,6 +1397,9 @@ for File in $(ls gene_pred/*/*/cazy/*CAZY.out.dm); do
 Organism=$(echo $File|cut -f2 -d '/')
 Strain=$(echo $File|cut -f3 -d '/')
 echo "$Organism - $Strain"
+    for var1 in $(cat /home/theaven/scratch/gene_pred/${Organism}/${Strain}/codingquarry/rep_modeling/final/${Strain}_duplicated_genes.txt); do
+    sed -i "/$var1/d" "gene_pred/"${Organism}"/"${Strain}"/cazy/"$Strain"_CAZY.out.dm"  
+    done #remove discovered duplicates
 OutDir=$(dirname $File)
 ProgDir=/home/theaven/scratch/apps/tools/dbCAN/dbCAN
 $ProgDir/hmmscan-parser.sh $OutDir/"$Strain"_CAZY.out.dm > $OutDir/"$Strain"_CAZY.out.dm.ps
@@ -1628,6 +1722,69 @@ python $ProgDir/orthoMCLgroups2fasta.py --orthogroups $OrthogroupsTxt --fasta $G
 done
 conda deactivate
 ```
+```bash
+#Discovered duplicate gene should not affect the number of orthogroups? As there is still one legitimate gene of each. However will affect the number of genes in a given orthogroup if not removed:
+
+WorkDir=analysis/orthology/orthofinder/All6_isolates
+
+for Proteome in $(ls /home/theaven/scratch/gene_pred/*/*/predector_singularity2/results/final_genes_appended_renamed.pep/*_secretome.pep.fasta); do
+Organism=$(echo $Proteome|cut -f6 -d '/')
+Strain=$(echo $Proteome|cut -f7 -d '/')
+echo $Orangism - $Strain
+    for var1 in $(cat /home/theaven/scratch/gene_pred/${Organism}/${Strain}/codingquarry/rep_modeling/final/${Strain}_duplicated_genes.txt); do
+    sed -i "s/ AP19|${var1}.t1//g" analysis/orthology/orthofinder/All6_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt
+    sed -i "s/ AP20|${var1}.t1//g" analysis/orthology/orthofinder/All6_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt
+    sed -i "s/ AP21|${var1}.t1//g" analysis/orthology/orthofinder/All6_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt
+    sed -i "s/ ST20|${var1}.t1//g" analysis/orthology/orthofinder/All6_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt
+    sed -i "s/ ST21|${var1}.t1//g" analysis/orthology/orthofinder/All6_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt
+    sed -i "s/ RA20|${var1}.t1//g" analysis/orthology/orthofinder/All6_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt  
+    done #remove discovered duplicates
+done
+#From this ^ discovered that genes can be in multiple orthogroups?
+
+awk '/^>/ {printf("%s%s\t",(N>0?"\n":""),$0);N++;next;} {printf("%s",$0);} END {printf("\n");}' < $WorkDir/goodProteins/goodProteins.fasta > linearized.fasta
+for Proteome in $(ls /home/theaven/scratch/gene_pred/*/*/predector_singularity2/results/final_genes_appended_renamed.pep/*_secretome.pep.fasta); do
+Organism=$(echo $Proteome|cut -f6 -d '/')
+Strain=$(echo $Proteome|cut -f7 -d '/')
+echo $Orangism - $Strain
+    for var1 in $(cat /home/theaven/scratch/gene_pred/${Organism}/THeavenSCOTT2020_1/codingquarry/rep_modeling/final/${Strain}_duplicated_genes.txt); do
+    sed -i "/>RA20|${var1}.t1/d" linearized.fasta
+    done #remove discovered duplicates
+        for var1 in $(cat /home/theaven/scratch/gene_pred/${Organism}/THeavenDRCT72020_1/codingquarry/rep_modeling/final/${Strain}_duplicated_genes.txt); do
+    sed -i "/>ST20|${var1}.t1/d" linearized.fasta
+    done #remove discovered duplicates
+        for var1 in $(cat /home/theaven/scratch/gene_pred/${Organism}/THeavenDRCT72021_1/codingquarry/rep_modeling/final/${Strain}_duplicated_genes.txt); do
+    sed -i "/>ST21|${var1}.t1/d" linearized.fasta
+    done #remove discovered duplicates
+        for var1 in $(cat /home/theaven/scratch/gene_pred/${Organism}/THeavenp11_1/codingquarry/rep_modeling/final/${Strain}_duplicated_genes.txt); do
+    sed -i "/>AP20|${var1}.t1/d" linearized.fasta
+    done #remove discovered duplicates
+        for var1 in $(cat /home/theaven/scratch/gene_pred/${Organism}/THeavenpOGB2019_1/codingquarry/rep_modeling/final/${Strain}_duplicated_genes.txt); do
+    sed -i "/>AP19|${var1}.t1/d" linearized.fasta
+    done #remove discovered duplicates
+        for var1 in $(cat /home/theaven/scratch/gene_pred/${Organism}/THeavenpOGB2021_1/codingquarry/rep_modeling/final/${Strain}_duplicated_genes.txt); do
+    sed -i "/>AP21|${var1}.t1/d" linearized.fasta
+    done #remove discovered duplicates
+done
+tr "\t" "\n" < linearized.fasta | fold -w 60 > goodProteins.fasta 
+cp goodProteins.fasta $WorkDir/goodProteins/goodProteins.fasta
+
+WorkDir=analysis/orthology/orthofinder/Aphanis_isolates
+
+for Proteome in $(ls /home/theaven/scratch/gene_pred/*/*/predector_singularity2/results/final_genes_appended_renamed.pep/*_secretome.pep.fasta); do
+Organism=$(echo $Proteome|cut -f6 -d '/')
+Strain=$(echo $Proteome|cut -f7 -d '/')
+echo $Orangism - $Strain
+    for var1 in $(cat /home/theaven/scratch/gene_pred/${Organism}/${Strain}/codingquarry/rep_modeling/final/${Strain}_duplicated_genes.txt); do
+    sed -i "s/ AP19|${var1}.t1//g" analysis/orthology/orthofinder/Aphanis_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt
+    sed -i "s/ AP20|${var1}.t1//g" analysis/orthology/orthofinder/Aphanis_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt
+    sed -i "s/ AP21|${var1}.t1//g" analysis/orthology/orthofinder/Aphanis_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt
+    sed -i "s/ ST20|${var1}.t1//g" analysis/orthology/orthofinder/Aphanis_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt
+    sed -i "s/ ST21|${var1}.t1//g" analysis/orthology/orthofinder/Aphanis_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt
+    sed -i "s/ RA20|${var1}.t1//g" analysis/orthology/orthofinder/Aphanis_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt  
+    done #remove discovered duplicates
+done
+```
 #### Orthogroups only containing P. leucotricha genes were extracted:
 ```bash
 WorkDir=analysis/orthology/orthofinder/All6_isolates
@@ -1650,13 +1807,13 @@ cat $Uniq_leucotricha_groups | grep -o -e 'AP21' | wc -l
 done
 ```
 The number of orthogroups unique to podosphaera leucotricha are:
-4478
+4405
 The following number genes from apple 2019 are contained in these orthogorups:
-5152
+5046
 The following number genes from apple 2020 2020 are contained in these orthogorups:
-5175
+5066
 The following number genes from apple 2021 2021 are contained in these orthogorups:
-5169
+5056
 
 #### Orthogroups only containing P. aphanis genes were extracted:
 ```bash
@@ -1680,13 +1837,13 @@ cat $Uniq_aphanis_groups | grep -o -e 'ST21' | wc -l
 done
 ```
 The number of orthogroups unique to podosphaera aphanis are:
-1361
+1332
 The following number genes from raspberry are contained in these orthogorups:
-2067
+2028
 The following number genes from Strawberry 2020 are contained in these orthogorups:
-2058
+2018
 The following number genes from strawberry 2021 are contained in these orthogorups:
-1860
+1819
 
 #### Orthogroups only containing P. aphanis strawberry genes were extracted:
 ```bash
@@ -1708,11 +1865,11 @@ cat $Uniq_strawberryaphanis_groups | grep -o -e 'ST21' | wc -l
 done
 ```
 The number of orthogroups unique to strawberry podosphaera aphanis are:
-1399
+1390
 The following number genes from Strawberry 2020 are contained in these orthogorups:
-1582
+1569
 The following number genes from strawberry 2021 are contained in these orthogorups:
-1573
+1561
 
 #### Orthogroups only containing P. aphanis raspberry genes were extracted:
 ```bash
@@ -1732,33 +1889,541 @@ cat $Uniq_raspberryaphanis_groups | grep -o -e 'RA20' | wc -l
 done
 ```
 The number of orthogroups unique to raspberry podosphaera aphanis are:
-899
+894
 The following number genes from raspberry are contained in these orthogorups:
-995
+991
 
-
-
-
-
+#### Venn diagrams
 ```bash
-#Phyllactinia moricola (powdery mildews)
-https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/019/455/665/GCA_019455665.1_ASM1945566v1/GCA_019455665.1_ASM1945566v1_genomic.fna.gz 
-#Pleochaeta shiraiana (powdery mildews) 
- https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/019/455/505/GCA_019455505.1_ASM1945550v1/GCA_019455505.1_ASM1945550v1_genomic.fna.gz 
-#Leveillula taurica 
- ftp://ftp.ebi.ac.uk/pub/databases/ena/wgs/public/cad/CADEPA01.dat.gz
- https://www.ebi.ac.uk/ena/browser/view/CADEPA010000000
-#Parauncinula polyspora
+conda activate orthofinder2.7
+#ProgDir=/home/heavet/git_repos/tools/gene_prediction
+ProgDir=/home/theaven/scratch/apps/tools
 
-https://www.ebi.ac.uk/ena/browser/view/PRJEB29715?show=reads
+WorkDir=analysis/orthology/orthofinder/All6_isolates
+GoodProts=$WorkDir/goodProteins/goodProteins.fasta
+$ProgDir/orthoMCLgroups2tab.py $GoodProts $WorkDir/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt > $WorkDir/formatted/All6_isolates_orthogroups.tab
 
+IsolateAbrv=Aphanis_isolates
+WorkDir=analysis/orthology/orthofinder/$IsolateAbrv
+GoodProts=$WorkDir/goodProteins/goodProteins.fasta
+$ProgDir/orthoMCLgroups2tab.py $GoodProts $WorkDir/formatted/OrthoFinder/Results_Jul20/Orthogroups/Orthogroups.txt > $WorkDir/formatted/${IsolateAbrv}_orthogroups.tab
+```
+```R
+setwd("C:/Users/tchea/Desktop")
+install.packages("optparse")
+install.packages("colorspace")
+install.packages("VennDiagram")
+install.packages("grid")
+install.packages("ggVennDiagram")
+install.packages("ggvenn")
+install.packages("devtools")
+library("devtools")
+devtools::install_github("yanlinlin82/ggvenn")
+library("ggvenn")
+library("ggVennDiagram")
+library(optparse)
+library(colorspace)
+library(VennDiagram)
+require(dendextend)
+require(installr)
+require(colorspace)
 
+orthotabs <- read.table("Leucotricha_isolates_orthogroups.tab")
+df1 <- t(orthotabs)
+df <- data.frame(df1)
+ap19<-which(df$AP19 == 1)
+ap20<-which(df$AP20 == 1)
+ap21<-which(df$AP21 == 1)
+x <- list(ap19,ap20,ap21)
+ggVennDiagram(x)
+names(x) <- c("Apple 2019","Apple 2020","Apple 2021")
+plot1 <- ggvenn(
+  x, 
+  fill_color = c("#0073C2FF", "#EFC000FF", "#868686FF"),
+  stroke_size = 0.5, text_size = 6, set_name_size = 5
+)
 
+orthotabs <- read.table("Aphanis_isolates_orthogroups.tab")
+df1 <- t(orthotabs)
+df2 <- data.frame(df1)
+ra20<-which(df2$RA20 == 1)
+st20<-which(df2$ST20 == 1)
+st21<-which(df2$ST21 == 1)
+y <- list(ra20,st20,st21)
+ggVennDiagram(y)
+names(y) <- c("Raspberry 2020","Strawberry 2020","Strawberry 2021")
+plot2 <- ggvenn(
+  y, 
+  fill_color = c("#0073C2FF", "#EFC000FF", "#868686FF"),
+  stroke_size = 0.5, text_size = 6, set_name_size = 5 
+)
 
+orthotabs <- read.table("All6_isolates_orthogroups.tab")
+df1 <- t(orthotabs)
+df3 <- data.frame(df1)
+APH<-which(df3$RA20 == 1 & df3$ST20 == 1 & df3$ST21 == 1)
+LEU<-which(df3$AP20 == 1 & df3$AP21 == 1 & df3$AP19 == 1)
+z <- list(APH, LEU)
+length(APH)
+length(LEU)
+ggVennDiagram(z)
+names(z) <- c("P. aphanis","P. leucotricha")
+plot3 <- ggvenn(
+  z, 
+  fill_color = c("#0073C2FF", "#EFC000FF"),
+  stroke_size = 0.5, text_size = 4, set_name_size = 5, auto_scale = TRUE
+)
+
+STR<-which(df3$ST20 == 1 & df3$ST21 == 1)
+RAS<-which(df3$RA20 == 1)
+a <- list(STR, RAS)
+ggVennDiagram(a)
+names(a) <- c("Stawberry","Raspberry")
+plot4 <- ggvenn(
+  a, 
+  fill_color = c("#0073C2FF", "#EFC000FF"),
+  stroke_size = 0.5, set_name_size = 5, auto_scale = TRUE
+)
+
+STR20<-which(df3$ST20 == 1)
+STR21<-which(df3$ST21 == 1)
+b <- list(STR20, STR21)
+ggVennDiagram(b)
+names(b) <- c("Strawberry 2020","Strawberry 2021")
+plot5 <- ggvenn(
+  b, 
+  fill_color = c("#0073C2FF", "#EFC000FF"),
+  stroke_size = 0.5, set_name_size = 5, auto_scale = TRUE
+)
+
+APP19<-which(df3$AP19 == 1)
+APP20<-which(df3$AP20 == 1)
+APP21<-which(df3$AP21 == 1)
+c <- list(APP20, APP21)
+ggVennDiagram(c)
+names(c) <- c("Apple 2020","Apple 2021")
+plot6 <- ggvenn(
+  c, 
+  fill_color = c("#0073C2FF", "#EFC000FF"),
+  stroke_size = 0.5, set_name_size = 5, auto_scale = TRUE
+)
+
+d <- list(APP19, APP20)
+ggVennDiagram(c)
+names(d) <- c("Apple 2019","Apple 2020")
+plot7 <- ggvenn(
+  d, 
+  fill_color = c("#0073C2FF", "#EFC000FF"),
+  stroke_size = 0.5, set_name_size = 5, auto_scale = TRUE
+)
+
+e <- list(APP19, APP21)
+ggVennDiagram(e)
+names(e) <- c("Apple 2019","Apple 2021")
+plot8 <- ggvenn(
+  e, 
+  fill_color = c("#0073C2FF", "#EFC000FF"),
+  stroke_size = 0.5, text_size = 4, set_name_size = 5, auto_scale = TRUE
+)
+
+jpeg(file="venn1.jpeg", width=700, height=700)
+plot(plot1)
+dev.off()
+jpeg(file="venn2.jpeg", width=700, height=700)
+plot(plot2)
+dev.off()
+jpeg(file="venn3.jpeg", width=500, height=500)
+plot(plot3)
+dev.off()
+jpeg(file="venn4.jpeg", width=500, height=500)
+plot(plot4)
+dev.off()
+jpeg(file="venn5.jpeg", width=500, height=500)
+plot(plot5)
+dev.off()
+jpeg(file="venn6.jpeg", width=500, height=500)
+plot(plot6)
+dev.off()
+jpeg(file="venn7.jpeg", width=500, height=500)
+plot(plot7)
+dev.off()
+jpeg(file="venn8.jpeg", width=500, height=500)
+plot(plot8)
+dev.off()
+```
+### Compare best examples of leucotricha and aphanis:
+Extract P. lecuotricha and P. aphanis only gene names for the apple 2020 and strawberry 2020 samples.
+```bash
+WorkDir=analysis/orthology/orthofinder/All6_isolates
+Orthogroups=$(ls $WorkDir/formatted/OrthoFinder/*/Orthogroups/Orthogroups.txt)
+GoodProts=$WorkDir/goodProteins/goodProteins.fasta
+
+for num in 1; do
+UniqDir=$WorkDir/speciescomp
+mkdir -p $UniqDir
+cat $Orthogroups | grep -e 'ST20' | grep -e 'ST21' | grep -e 'RA20' |  grep -e 'AP20' |  grep -e 'AP21' |  grep -e 'AP19' > $UniqDir/both.txt
+cat $UniqDir/both.txt | wc -l #7,207
+cat $Orthogroups | grep -v -e 'ST20' | grep -v -e 'ST21' | grep -v -e 'RA20' |  grep -e 'AP20' |  grep -e 'AP21' |  grep -e 'AP19' > $UniqDir/leucotricha.txt
+cat $UniqDir/leucotricha.txt | wc -l #4,478
+cat $Orthogroups |  grep -v -e 'AP20' |  grep -v -e 'AP21' |  grep -v -e 'AP19' | grep -e 'ST20' | grep -e 'ST21' | grep -e 'RA20' > $UniqDir/aphanis.txt
+cat $UniqDir/aphanis.txt | wc -l #1,361
+
+for gene in $(cat $UniqDir/both.txt | grep -o -P '(?<=ST20).*?(?=.t1)'| sed -e "s@|@@g"); do
+echo ${gene}.t1 >>$UniqDir/both_ST20_genes.txt
+done
+for gene in $(cat $UniqDir/both.txt | grep -o -P '(?<=AP20).*?(?=.t1)'| sed -e "s@|@@g"); do
+echo ${gene}.t1 >>$UniqDir/both_AP20_genes.txt
+done
+for gene in $(cat $UniqDir/aphanis.txt | grep -o -P '(?<=ST20).*?(?=.t1)'| sed -e "s@|@@g"); do
+echo ${gene}.t1 >>$UniqDir/aphanis_ST20_genes.txt
+done
+for gene in $(cat $UniqDir/leucotricha.txt | grep -o -P '(?<=AP20).*?(?=.t1)'| sed -e "s@|@@g"); do
+echo ${gene}.t1 >>$UniqDir/leucotricha_AP20_genes.txt
+done
+done
 ```
 ```bash
+#Effectors:
+#P. aphanis strawberry 2020
+for file in $(ls /home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenDRCT72020_1-ranked.tsv); do
+  head -n 1 /home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenDRCT72020_1-ranked.tsv > /home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenDRCT72020_1-common-ranked.tsv
+  head -n 1 /home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenDRCT72020_1-ranked.tsv > /home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenDRCT72020_1-aphanis-ranked.tsv
+  grep -w -f analysis/orthology/orthofinder/All6_isolates/speciescomp/both_ST20_genes.txt $file >> /home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenDRCT72020_1-common-ranked.tsv
+  grep -w -f analysis/orthology/orthofinder/All6_isolates/speciescomp/aphanis_ST20_genes.txt $file >> /home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenDRCT72020_1-aphanis-ranked.tsv
+done
+
+#P. leucotricha apple 2020
+for file in $(ls /home/theaven/scratch/gene_pred/P_leucotricha/THeavenp11_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_leucotricha-THeavenp11_1-ranked.tsv); do
+  head -n 1 /home/theaven/scratch/gene_pred/P_leucotricha/THeavenp11_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_leucotricha-THeavenp11_1-ranked.tsv > /home/theaven/scratch/gene_pred/P_leucotricha/THeavenp11_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_leucotricha-THeavenp11_1-common-ranked.tsv
+  head -n 1 /home/theaven/scratch/gene_pred/P_leucotricha/THeavenp11_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_leucotricha-THeavenp11_1-ranked.tsv > /home/theaven/scratch/gene_pred/P_leucotricha/THeavenp11_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_leucotricha-THeavenp11_1-leucotricha-ranked.tsv
+  grep -w -f analysis/orthology/orthofinder/All6_isolates/speciescomp/both_AP20_genes.txt $file >> /home/theaven/scratch/gene_pred/P_leucotricha/THeavenp11_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_leucotricha-THeavenp11_1-common-ranked.tsv
+  grep -w -f analysis/orthology/orthofinder/All6_isolates/speciescomp/leucotricha_AP20_genes.txt $file >> /home/theaven/scratch/gene_pred/P_leucotricha/THeavenp11_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_leucotricha-THeavenp11_1-leucotricha-ranked.tsv
+done
+
+#Transcription factors:
+#P.aphanis
+for file in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/transcription_factors/THeavenDRCT72020_1_TF_gene_headers.txt); do
+  aphanis_ST20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/speciescomp/aphanis_ST20_genes.txt)
+  both_ST20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/speciescomp/both_ST20_genes.txt)
+  aphanis_ST20_genes_out=$(dirname $file)/$(basename $file .txt)_common.txt
+  both_ST20_genes_out=$(dirname $file)/$(basename $file .txt)_aphanis.txt
+  echo $aphanis_ST20_genes_out
+  echo $both_ST20_genes_out
+  grep -w -f $aphanis_ST20_genes $file > $aphanis_ST20_genes_out
+  grep -w -f $both_ST20_genes $file > $both_ST20_genes_out
+done
+echo number of transcription factors in THeavenDRCT72020_1 >> TForthologyreport.txt 
+echo unique to P.aphanis: >> TForthologyreport.txt  >> TForthologyreport.txt 
+cat $aphanis_ST20_genes_out| wc -l >> TForthologyreport.txt 
+echo shared with P.leucotricha: >> TForthologyreport.txt 
+cat $both_ST20_genes_out| wc -l >> TForthologyreport.txt 
+printf '\n'  >> TForthologyreport.txt
+#P.leucotricha
+for file in $(ls gene_pred/P_leucotricha/THeavenp11_1/transcription_factors/THeavenp11_1_TF_gene_headers.txt); do
+  leucotricha_AP20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/speciescomp/leucotricha_AP20_genes.txt)
+  both_AP20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/speciescomp/both_AP20_genes.txt)
+  leucotricha_AP20_genes_out=$(dirname $file)/$(basename $file .txt)_common.txt
+  both_AP20_genes_out=$(dirname $file)/$(basename $file .txt)_leucotricha.txt
+  echo $leucotricha_AP20_genes_out
+  echo $both_AP20_genes_out
+  grep -w -f $leucotricha_AP20_genes $file > $leucotricha_AP20_genes_out
+  grep -w -f $both_AP20_genes $file > $both_AP20_genes_out
+done
+echo number of transcription factors THeavenp11_1 >> TForthologyreport.txt 
+echo unique to P.leucotricha: >> TForthologyreport.txt 
+cat $leucotricha_AP20_genes_out| wc -l >> TForthologyreport.txt 
+echo shared with P.aphanis: >> TForthologyreport.txt 
+cat $both_AP20_genes_out| wc -l >> TForthologyreport.txt 
+printf '\n'  >> TForthologyreport.txt
+
+#SSCPs
+#P.aphanis
+for file in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/sscp/THeavenDRCT72020_1_sscp.fa); do
+  aphanis_ST20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/speciescomp/aphanis_ST20_genes.txt)
+  both_ST20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/speciescomp/both_ST20_genes.txt)
+  aphanis_ST20_genes_out=$(dirname $file)/$(basename $file .txt)_common.txt
+  both_ST20_genes_out=$(dirname $file)/$(basename $file .txt)_aphanis.txt
+  echo $aphanis_ST20_genes_out
+  echo $both_ST20_genes_out
+  grep -w -f $aphanis_ST20_genes $file > $aphanis_ST20_genes_out
+  grep -w -f $both_ST20_genes $file > $both_ST20_genes_out
+done
+echo number of SSCPs in THeavenDRCT72020_1 >> SSCPorthologyreport.txt 
+echo unique to P.aphanis: >> TForthologyreport.txt  >> SSCPorthologyreport.txt 
+cat $aphanis_ST20_genes_out| wc -l >> SSCPorthologyreport.txt 
+echo shared with P.leucotricha: >> SSCPorthologyreport.txt 
+cat $both_ST20_genes_out| wc -l >> SSCPorthologyreport.txt 
+printf '\n'  >> SSCPorthologyreport.txt
+#P.leucotricha
+for file in $(ls gene_pred/P_leucotricha/THeavenp11_1/sscp/THeavenp11_1_sscp.fa); do
+  leucotricha_AP20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/speciescomp/leucotricha_AP20_genes.txt)
+  both_AP20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/speciescomp/both_AP20_genes.txt)
+  leucotricha_AP20_genes_out=$(dirname $file)/$(basename $file .txt)_common.txt
+  both_AP20_genes_out=$(dirname $file)/$(basename $file .txt)_leucotricha.txt
+  echo $leucotricha_AP20_genes_out
+  echo $both_AP20_genes_out
+  grep -w -f $leucotricha_AP20_genes $file > $leucotricha_AP20_genes_out
+  grep -w -f $both_AP20_genes $file > $both_AP20_genes_out
+done
+echo number of SSCPs THeavenp11_1 >> SSCPorthologyreport.txt 
+echo unique to P.leucotricha: >> SSCPorthologyreport.txt 
+cat $leucotricha_AP20_genes_out| wc -l >> SSCPorthologyreport.txt 
+echo shared with P.aphanis: >> SSCPorthologyreport.txt 
+cat $both_AP20_genes_out| wc -l >> SSCPorthologyreport.txt 
+printf '\n'  >> SSCPorthologyreport.txt
+
+#CAZYs
+#P.aphanis
+for file in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/cazy/THeavenDRCT72020_1_CAZY_secreted_headers.txt); do
+  aphanis_ST20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/speciescomp/aphanis_ST20_genes.txt)
+  both_ST20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/speciescomp/both_ST20_genes.txt)
+  aphanis_ST20_genes_out=$(dirname $file)/$(basename $file .txt)_common.txt
+  both_ST20_genes_out=$(dirname $file)/$(basename $file .txt)_aphanis.txt
+  echo $aphanis_ST20_genes_out
+  echo $both_ST20_genes_out
+  grep -w -f $aphanis_ST20_genes $file > $aphanis_ST20_genes_out
+  grep -w -f $both_ST20_genes $file > $both_ST20_genes_out
+done
+echo number of secreted CAZYs in THeavenDRCT72020_1 >> CAZYorthologyreport.txt 
+echo unique to P.aphanis: >> TForthologyreport.txt  >> CAZYorthologyreport.txt 
+cat $aphanis_ST20_genes_out| wc -l >> CAZYorthologyreport.txt 
+echo shared with P.leucotricha: >> CAZYorthologyreport.txt 
+cat $both_ST20_genes_out| wc -l >> CAZYorthologyreport.txt 
+printf '\n'  >> CAZYorthologyreport.txt
+#P.leucotricha
+for file in $(ls gene_pred/P_leucotricha/THeavenp11_1/cazy/THeavenp11_1_CAZY_secreted_headers.txt); do
+  leucotricha_AP20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/speciescomp/leucotricha_AP20_genes.txt)
+  both_AP20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/speciescomp/both_AP20_genes.txt)
+  leucotricha_AP20_genes_out=$(dirname $file)/$(basename $file .txt)_common.txt
+  both_AP20_genes_out=$(dirname $file)/$(basename $file .txt)_leucotricha.txt
+  echo $leucotricha_AP20_genes_out
+  echo $both_AP20_genes_out
+  grep -w -f $leucotricha_AP20_genes $file > $leucotricha_AP20_genes_out
+  grep -w -f $both_AP20_genes $file > $both_AP20_genes_out
+done
+echo number of secreted CAZYs in THeavenp11_1 >> CAZYorthologyreport.txt 
+echo unique to P.leucotricha: >> CAZYorthologyreport.txt 
+cat $leucotricha_AP20_genes_out| wc -l >> CAZYorthologyreport.txt 
+echo shared with P.aphanis: >> CAZYorthologyreport.txt 
+cat $both_AP20_genes_out| wc -l >> CAZYorthologyreport.txt 
+printf '\n'  >> CAZYorthologyreport.txt
+
+#Interpro
+#P.aphanis
+for file in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/NRI/P.aphanis_strawberry2020_interproscan.tsv); do
+  aphanis_ST20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/speciescomp/aphanis_ST20_genes.txt)
+  both_ST20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/speciescomp/both_ST20_genes.txt)
+  aphanis_ST20_genes_out=$(dirname $file)/$(basename $file .tsv)_common.tsv
+  both_ST20_genes_out=$(dirname $file)/$(basename $file .tsv)_aphanis.tsv
+  echo $aphanis_ST20_genes_out
+  echo $both_ST20_genes_out
+  grep -w -f $aphanis_ST20_genes $file > $aphanis_ST20_genes_out
+  grep -w -f $both_ST20_genes $file > $both_ST20_genes_out
+done
+
+#P.leucotricha
+for file in $(ls gene_pred/P_leucotricha/THeavenp11_1/interproscan/NRI/P.leucotricha_apple2020_interproscan.tsv); do
+  leucotricha_AP20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/speciescomp/leucotricha_AP20_genes.txt)
+  both_AP20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/speciescomp/both_AP20_genes.txt)
+  leucotricha_AP20_genes_out=$(dirname $file)/$(basename $file .tsv)_common.tsv
+  both_AP20_genes_out=$(dirname $file)/$(basename $file .tsv)_leucotricha.tsv
+  echo $leucotricha_AP20_genes_out
+  echo $both_AP20_genes_out
+  grep -w -f $leucotricha_AP20_genes $file > $leucotricha_AP20_genes_out
+  grep -w -f $both_AP20_genes $file > $both_AP20_genes_out
+done
+
+#Effector interproscan results:
+#P.aphanis
+for file in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/NRI/P.aphanis_strawberry2020_interproscan.tsv); do
+  echo $file
+  cat /home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenDRCT72020_1-aphanis-ranked.tsv | cut -f1 > x.txt
+grep -w -f x.txt $file > $(dirname $file)/$(basename $file .tsv)_aphanis_effectors.tsv
+done
+
+#P.leucotricha
+for file in $(ls gene_pred/P_leucotricha/THeavenp11_1/interproscan/NRI/P.leucotricha_apple2020_interproscan.tsv); do
+  echo $file
+  cat /home/theaven/scratch/gene_pred/P_leucotricha/THeavenp11_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_leucotricha-THeavenp11_1-leucotricha-ranked.tsv | cut -f1 > x.txt
+grep -w -f x.txt $file > $(dirname $file)/$(basename $file .tsv)_leucotricha_effectors.tsv
+done
+```
+```
+gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/NRI/P.aphanis_strawberry2020_interproscan.tsv
+gene_pred/P_aphanis/THeavenDRCT72021_1/interproscan/NRI/P.aphanis_strawberry2021_interproscan.tsv
+gene_pred/P_aphanis/THeavenSCOTT2020_1/interproscan/NRI/P.aphanis_raspberry2020_interproscan.tsv
+gene_pred/P_leucotricha/THeavenp11_1/interproscan/NRI/P.leucotricha_apple2020_interproscan.tsv
+gene_pred/P_leucotricha/THeavenpOGB2019_1/interproscan/NRI/P.leucotricha_apple2019_interproscan.tsv
+gene_pred/P_leucotricha/THeavenpOGB2021_1/interproscan/NRI/P.leucotricha_apple2021_interproscan.tsv
+```
+### Compare best examples of raspberry and strawberry:
+Extract Strawberry and Raspberry only gene names for the 2020 samples.
+```bash
+WorkDir=analysis/orthology/orthofinder/All6_isolates
+Orthogroups=$(ls $WorkDir/formatted/OrthoFinder/*/Orthogroups/Orthogroups.txt)
+GoodProts=$WorkDir/goodProteins/goodProteins.fasta
+
+for num in 1; do
+UniqDir=$WorkDir/aphanishostcomp
+mkdir -p $UniqDir
+cat $Orthogroups | grep -e 'ST20' | grep -e 'ST21' |  grep -e 'RA20' |  grep -v -e 'AP20' |  grep -v -e 'AP21' |  grep -v -e 'AP19' > $UniqDir/both.txt
+cat $UniqDir/both.txt | wc -l #
+cat $Orthogroups | grep -v -e 'ST20' | grep -v -e 'ST21' | grep -e 'RA20' |  grep -v -e 'AP20' |  grep -v -e 'AP21' |  grep -v -e 'AP19' > $UniqDir/rasp.txt
+cat $UniqDir/rasp.txt | wc -l #
+cat $Orthogroups |  grep -v -e 'RA20' |  grep -e 'ST20' |  grep -e 'ST21' |  grep -v -e 'AP20' |  grep -v -e 'AP21' |  grep -v -e 'AP19' > $UniqDir/strawb.txt
+cat $UniqDir/strawb.txt | wc -l #
+
+for gene in $(cat $UniqDir/both.txt | grep -o -P '(?<=ST20).*?(?=.t1)'| sed -e "s@|@@g"); do
+echo ${gene}.t1 >>$UniqDir/both_ST20_genes.txt
+done
+for gene in $(cat $UniqDir/both.txt | grep -o -P '(?<=RA20).*?(?=.t1)'| sed -e "s@|@@g"); do
+echo ${gene}.t1 >>$UniqDir/both_RA20_genes.txt
+done
+for gene in $(cat $UniqDir/strawb.txt | grep -o -P '(?<=ST20).*?(?=.t1)'| sed -e "s@|@@g"); do
+echo ${gene}.t1 >>$UniqDir/strawb_ST20_genes.txt
+done
+for gene in $(cat $UniqDir/rasp.txt | grep -o -P '(?<=RA20).*?(?=.t1)'| sed -e "s@|@@g"); do
+echo ${gene}.t1 >>$UniqDir/rasp_RA20_genes.txt
+done
+done
+```
+```bash
+#Effectors:
+#P. aphanis strawberry 2020
+for file in $(ls /home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenDRCT72020_1-ranked.tsv); do
+  head -n 1 /home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenDRCT72020_1-ranked.tsv > /home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenDRCT72020_1-aphaniscommon-ranked.tsv
+  head -n 1 /home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenDRCT72020_1-ranked.tsv > /home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenDRCT72020_1-strawberryaphanis-ranked.tsv
+  grep -w -f analysis/orthology/orthofinder/All6_isolates/aphanishostcomp/both_ST20_genes.txt $file >> /home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenDRCT72020_1-aphaniscommon-ranked.tsv
+  grep -w -f analysis/orthology/orthofinder/All6_isolates/aphanishostcomp/strawb_ST20_genes.txt $file >> /home/theaven/scratch/gene_pred/P_aphanis/THeavenDRCT72020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenDRCT72020_1-strawberryaphanis-ranked.tsv
+done
+
+#P. aphanis raspberry 2020
+for file in $(ls /home/theaven/scratch/gene_pred/P_aphanis/THeavenSCOTT2020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenSCOTT2020_1-ranked.tsv); do
+  head -n 1 /home/theaven/scratch/gene_pred/P_aphanis/THeavenSCOTT2020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenSCOTT2020_1-ranked.tsv > /home/theaven/scratch/gene_pred/P_aphanis/THeavenSCOTT2020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenSCOTT2020_1-aphaniscommon-ranked.tsv
+  head -n 1 /home/theaven/scratch/gene_pred/P_aphanis/THeavenSCOTT2020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenSCOTT2020_1-ranked.tsv > /home/theaven/scratch/gene_pred/P_aphanis/THeavenSCOTT2020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenSCOTT2020_1-raspberryaphanis-ranked.tsv
+  grep -w -f analysis/orthology/orthofinder/All6_isolates/aphanishostcomp/both_RA20_genes.txt $file >> /home/theaven/scratch/gene_pred/P_aphanis/THeavenSCOTT2020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenSCOTT2020_1-aphaniscommon-ranked.tsv
+  grep -w -f analysis/orthology/orthofinder/All6_isolates/aphanishostcomp/rasp_RA20_genes.txt $file >> /home/theaven/scratch/gene_pred/P_aphanis/THeavenSCOTT2020_1/predector_singularity2/results/final_genes_appended_renamed.pep/P_aphanis-THeavenSCOTT2020_1-raspberryaphanis-ranked.tsv
+done
+
+#Transcription factors:
+#Strawberry
+for file in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/transcription_factors/THeavenDRCT72020_1_TF_gene_headers.txt); do
+  strawb_ST20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/aphanishostcomp/strawb_ST20_genes.txt)
+  both_ST20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/aphanishostcomp/both_ST20_genes.txt)
+  strawb_ST20_genes_out=$(dirname $file)/$(basename $file .txt)_common.txt
+  both_ST20_genes_out=$(dirname $file)/$(basename $file .txt)_aphanis.txt
+  echo $strawb_ST20_genes_out
+  echo $both_ST20_genes_out
+  grep -w -f $strawb_ST20_genes $file > $strawb_ST20_genes_out
+  grep -w -f $both_ST20_genes $file > $both_ST20_genes_out
+done
+echo number of transcription factors in THeavenDRCT72020_1 >> TForthologyreport.txt 
+echo unique to strawberry: >> TForthologyreport.txt 
+cat $aphanis_ST20_genes_out| wc -l >> TForthologyreport.txt 
+echo shared with raspberry: >> TForthologyreport.txt 
+cat $both_ST20_genes_out| wc -l >> TForthologyreport.txt
+printf '\n'  >> TForthologyreport.txt
+#Raspberry
+for file in $(ls gene_pred/P_aphanis/THeavenSCOTT2020_1/transcription_factors/THeavenSCOTT2020_1_TF_gene_headers.txt); do
+  rasp_RA20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/aphanishostcomp/rasp_RA20_genes.txt)
+  both_RA20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/aphanishostcomp/both_RA20_genes.txt)
+  rasp_RA20_genes_out=$(dirname $file)/$(basename $file .txt)_common.txt
+  both_RA20_genes_out=$(dirname $file)/$(basename $file .txt)_aphanis.txt
+  echo $rasp_RA20_genes_out
+  echo $both_RA20_genes_out
+  grep -w -f $rasp_RA20_genes $file > $rasp_RA20_genes_out
+  grep -w -f $both_RA20_genes $file > $both_RA20_genes_out
+done
+echo number of transcription factors in THeavenSCOTT2020_1 >> TForthologyreport.txt 
+echo unique to raspberry: >> TForthologyreport.txt 
+cat $rasp_RA20_genes_out| wc -l >> TForthologyreport.txt 
+echo shared with strawberry: >> TForthologyreport.txt 
+cat $both_RA20_genes_out| wc -l >> TForthologyreport.txt
+printf '\n'  >> TForthologyreport.txt
+
+#SSCPs:
+#Strawberry
+for file in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/sscp/THeavenDRCT72020_1_sscp.fa); do
+  strawb_ST20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/aphanishostcomp/strawb_ST20_genes.txt)
+  both_ST20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/aphanishostcomp/both_ST20_genes.txt)
+  strawb_ST20_genes_out=$(dirname $file)/$(basename $file .txt)_common.txt
+  both_ST20_genes_out=$(dirname $file)/$(basename $file .txt)_aphanis.txt
+  echo $strawb_ST20_genes_out
+  echo $both_ST20_genes_out
+  grep -w -f $strawb_ST20_genes $file > $strawb_ST20_genes_out
+  grep -w -f $both_ST20_genes $file > $both_ST20_genes_out
+done
+echo number of SSCPs in THeavenDRCT72020_1 >> SSCPorthologyreport.txt 
+echo unique to strawberry: >> TForthologyreport.txt  >> SSCPorthologyreport.txt 
+cat $aphanis_ST20_genes_out| wc -l >> SSCPorthologyreport.txt 
+echo shared with raspberry: >> SSCPorthologyreport.txt 
+cat $both_ST20_genes_out| wc -l >> SSCPorthologyreport.txt
+printf '\n'  >> SSCPorthologyreport.txt
+#Raspberry
+for file in $(ls gene_pred/P_aphanis/THeavenSCOTT2020_1/sscp/THeavenSCOTT2020_1_sscp.fa); do
+  rasp_RA20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/aphanishostcomp/rasp_RA20_genes.txt)
+  both_RA20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/aphanishostcomp/both_RA20_genes.txt)
+  rasp_RA20_genes_out=$(dirname $file)/$(basename $file .txt)_common.txt
+  both_RA20_genes_out=$(dirname $file)/$(basename $file .txt)_aphanis.txt
+  echo $rasp_RA20_genes_out
+  echo $both_RA20_genes_out
+  grep -w -f $rasp_RA20_genes $file > $rasp_RA20_genes_out
+  grep -w -f $both_RA20_genes $file > $both_RA20_genes_out
+done
+echo number of SSCPs in THeavenSCOTT2020_1 >> SSCPorthologyreport.txt 
+echo unique to raspberry: >> SSCPorthologyreport.txt 
+cat $rasp_RA20_genes_out| wc -l >> SSCPorthologyreport.txt 
+echo shared with strawberry: >> SSCPorthologyreport.txt 
+cat $both_RA20_genes_out| wc -l >> SSCPorthologyreport.txt
+printf '\n'  >> SSCPorthologyreport.txt
+
+#CAZYs:
+#Strawberry
+for file in $(ls gene_pred/P_aphanis/THeavenDRCT72020_1/cazy/THeavenDRCT72020_1_CAZY_secreted_headers.txt); do
+  strawb_ST20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/aphanishostcomp/strawb_ST20_genes.txt)
+  both_ST20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/aphanishostcomp/both_ST20_genes.txt)
+  strawb_ST20_genes_out=$(dirname $file)/$(basename $file .txt)_common.txt
+  both_ST20_genes_out=$(dirname $file)/$(basename $file .txt)_aphanis.txt
+  echo $strawb_ST20_genes_out
+  echo $both_ST20_genes_out
+  grep -w -f $strawb_ST20_genes $file > $strawb_ST20_genes_out
+  grep -w -f $both_ST20_genes $file > $both_ST20_genes_out
+done
+echo number of secreted CAZYs in THeavenDRCT72020_1 >> CAZYorthologyreport.txt 
+echo unique to strawberry: >> TForthologyreport.txt  >> CAZYorthologyreport.txt 
+cat $aphanis_ST20_genes_out| wc -l >> CAZYorthologyreport.txt 
+echo shared with raspberry: >> CAZYorthologyreport.txt 
+cat $both_ST20_genes_out| wc -l >> CAZYorthologyreport.txt
+printf '\n'  >> CAZYorthologyreport.txt
+#Raspberry
+for file in $(ls gene_pred/P_aphanis/THeavenSCOTT2020_1/cazy/THeavenSCOTT2020_1_CAZY_secreted_headers.txt); do
+  rasp_RA20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/aphanishostcomp/rasp_RA20_genes.txt)
+  both_RA20_genes=$(echo analysis/orthology/orthofinder/All6_isolates/aphanishostcomp/both_RA20_genes.txt)
+  rasp_RA20_genes_out=$(dirname $file)/$(basename $file .txt)_common.txt
+  both_RA20_genes_out=$(dirname $file)/$(basename $file .txt)_aphanis.txt
+  echo $rasp_RA20_genes_out
+  echo $both_RA20_genes_out
+  grep -w -f $rasp_RA20_genes $file > $rasp_RA20_genes_out
+  grep -w -f $both_RA20_genes $file > $both_RA20_genes_out
+done
+echo number of secreted CAZYs in THeavenSCOTT2020_1 >> CAZYorthologyreport.txt 
+echo unique to raspberry: >> CAZYorthologyreport.txt 
+cat $rasp_RA20_genes_out| wc -l >> CAZYorthologyreport.txt 
+echo shared with strawberry: >> CAZYorthologyreport.txt 
+cat $both_RA20_genes_out| wc -l >> CAZYorthologyreport.txt
+printf '\n'  >> CAZYorthologyreport.txt
+```
+
+
+
+## Comparing to wider mildew clade:
+```bash
+sed -i 's@_paired_trimmed@@g' mildews/Erysiphealphitoides_CLCBIO_assembly_cdhitest_0.95_morethan500bp.fasta
+-genomeSampleSizeMax 27000000
+-genomeSampleSizeMax 81000000
+
 conda activate repeatmasking
-for Assembly in $(ls mildews/*f*); do
+for Assembly in $(ls mildews/Erysiphealphitoides_CLCBIO_assembly_cdhitest_0.95_morethan500bp.fasta); do
     ID=$(basename $Assembly|cut -f1 -d '.')
     echo $ID
     #ProgDir=~/scratch/apps/repeat_masking
@@ -1767,10 +2432,57 @@ for Assembly in $(ls mildews/*f*); do
     mkdir -p $OutDir
     sbatch $ProgDir/rep_modeling.sh $Assembly $OutDir $ID
 done
-#19926-77
+#19926-77, 20149,20150,51,52, 20229
+for Assembly in $(ls mildews/Blumeriagraminis_GCA_000418435.1_Bgt_454_newbler_assembly_genomic.c.fna); do
+    ID=$(basename $Assembly|cut -f1 -d '.')
+    echo $ID
+    #ProgDir=~/scratch/apps/repeat_masking
+    ProgDir=~/git_repos/tools/seq_tools/repeat_masking
+    OutDir=mildews/$ID/repeatmasking/rep_modeling
+    mkdir -p $OutDir
+    sbatch $ProgDir/rep_modeling_5roundsonly.sh $Assembly $OutDir $ID
+done
+#20230
+conda deactivate
+conda activate repeatmasking
+for Assembly in $(ls mildews/*.f*a); do
+    ID=$(basename $Assembly|cut -f1 -d '.')
+    echo $ID
+    #ProgDir=~/scratch/apps/repeat_masking
+    ProgDir=~/git_repos/tools/seq_tools/repeat_masking
+    Library=$(ls mildews/$ID/repeatmasking/rep_modeling/*-families.fa)
+    OutDir=mildews/$ID/repeatmasking/rep_masker
+    echo $Library
+    mkdir -p $OutDir
+    sbatch $ProgDir/rep_masker.sh $Assembly $Library $OutDir $ID
+done #20308-61
+conda deactivate
+conda activate repeatmodeler1
+for Assembly in $(ls mildews/GANAN*.f*); do
+    ID=$(basename $Assembly|cut -f1 -d '.')
+    echo $ID
+    #ProgDir=~/scratch/apps/repeat_masking
+    ProgDir=~/git_repos/tools/seq_tools/repeat_masking
+    OutDir=mildews/$ID/repeatmasking/rep_modeling1
+    mkdir -p $OutDir
+    sbatch $ProgDir/rep_modeler1.sh $Assembly $OutDir $ID
+done #20363,5,6
+conda deactivate
+conda activate repeatmasking
+for Assembly in $(ls mildews/GANAN*.f*a); do
+    ID=$(basename $Assembly|cut -f1 -d '.')
+    echo $ID
+    #ProgDir=~/scratch/apps/repeat_masking
+    ProgDir=~/git_repos/tools/seq_tools/repeat_masking
+    Library=$(ls mildews/$ID/repeatmasking/rep_modeling1/*-families.fa)
+    OutDir=mildews/$ID/repeatmasking/rep_masker2
+    echo $Library
+    mkdir -p $OutDir
+    sbatch $ProgDir/rep_masker.sh $Assembly $Library $OutDir $ID
+done #
 conda deactivate
 conda activate transposonpsi
-for Assembly in $(ls mildews/Podosphaeracerasii*.f*); do
+for Assembly in $(ls mildews/*_min_1000bp.f*); do
     ID=$(basename $Assembly|cut -f1 -d '.')
     echo $ID
     #ProgDir=~/scratch/apps/repeat_masking
@@ -1779,10 +2491,11 @@ for Assembly in $(ls mildews/Podosphaeracerasii*.f*); do
     mkdir -p $OutDir
     sbatch $ProgDir/gomez_transposonPSI.sh $Assembly $OutDir $ID
 done
-#19977-20033, 20042-20094,20114
+#19977-20033, 20042-20094,20114,20153-4
 conda deactivate
 
-for Assembly in $(ls mildews/Podosphaeracerasii*.f*); do
+#Count the masked bases:
+for Assembly in $(ls mildews/*.f*); do
     ID=$(basename $Assembly|cut -f1 -d '.')
 RepMaskGff=mildews/$ID/repeatmasking/rep_modeling/*_contigs_hardmasked.gff
 TransPSIGff=mildews/$ID/repeatmasking/transposonPSI/*_contigs_unmasked.fa.TPSI.allHits.chains.gff3
@@ -1795,44 +2508,259 @@ printf "The total number of masked bases are:\t" >> mildews/repeatreport.txt
 cat $RepMaskGff $TransPSIGff | sortBed | bedtools merge | awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}' >> mildews/repeatreport.txt
 done
 
+#Merge the masking:
+for Assembly in $(ls mildews/E*.f*); do
+    ID=$(basename $Assembly|cut -f1 -d '.')
+File=$(ls mildews/${ID}/repeatmasking/rep_modeling/${ID}_contigs_softmasked.fa)
+OutDir=mildews/${ID}/repeatmasking/combined
+mkdir $OutDir
+TPSI=$(ls mildews/${ID}/repeatmasking/transposonPSI/${ID}_contigs_unmasked.fa.TPSI.allHits.chains.gff3)
+OutFile=${OutDir}/$(basename $File | sed 's/_contigs_softmasked.fa/_contigs_softmasked_repeatmasker_TPSI_appended.fa/g')
+echo "$OutFile"
+bedtools maskfasta -soft -fi $File -bed $TPSI -fo ${OutFile}
+echo $ID >> mildews/combinedrepeatreport.txt
+echo "Number of bases:" >> mildews/combinedrepeatreport.txt
+No=$(cat $OutFile | grep -v '>' | tr -d '\n' | wc -c)
+echo $No >> mildews/combinedrepeatreport.txt
+echo "Number of masked bases:" >> mildews/combinedrepeatreport.txt
+No2=$(cat $OutFile | grep -v '>' | tr -d '\n' | awk '{print $0, gsub("[a-z]", ".")}' | cut -f2 -d ' ')
+echo $No2 >> mildews/combinedrepeatreport.txt
+echo "% of masked bases:" >> mildews/combinedrepeatreport.txt
+echo "100/$No*$No2" | bc -l >> mildews/combinedrepeatreport.txt
+printf "\n" >> mildews/combinedrepeatreport.txt
+done
+
+scp -r mildews/*/repeatmasking/combined/*_contigs_softmasked_repeatmasker_TPSI_appended.fa theaven@gruffalo.cropdiversity.ac.uk:/home/theaven/scratch/mildews/.
+
+for Assembly in $(ls mildews/*_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+    ID=$(basename $Assembly|cut -f1 -d '.'| sed 's@_contigs_softmasked_repeatmasker_TPSI_appended@@g')
+mkdir -p mildews/${ID}/repeatmasking/combined
+echo $ID
+mv ${Assembly} mildews/${ID}/repeatmasking/combined/.
+done
+
+conda activate braker
+for Assembly in $(ls mildews/E*/repeatmasking/combined/*_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+  ID=$(basename $Assembly|cut -f1 -d '.'| sed 's@_contigs_softmasked_repeatmasker_TPSI_appended@@g')
+  echo $ID
+  OutDir=mildews/${ID}/gene_pred/prothint
+  ProgDir=/home/theaven/scratch/apps/braker
+  sbatch $ProgDir/prothint_fungi.sh $Assembly $OutDir
+done
+#3071721-51, 3086794-803, 3113135-45, 3160184-3160204
+conda deactivate
+
+#Braker was run in --epmode, with --hints provided from prothint run previously, --AUGUSTUS_ab_initio predictions were also generated. 
+conda activate braker
+for Assembly in $(ls mildews/*/repeatmasking/combined/*_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+  ID=$(basename $Assembly|cut -f1 -d '.'| sed 's@_contigs_softmasked_repeatmasker_TPSI_appended@@g')
+  echo $ID
+  OutDir=mildews/${ID}/gene_pred/braker
+  GeneModelName=${ID}_genemodels
+  Hintfile=mildews/${ID}/gene_pred/prothint/prothint_augustus.gff
+  ProgDir=/home/theaven/scratch/apps/braker
+  echo $OutDir
+  echo $GeneModelName
+  echo $Hintfile
+  sbatch $ProgDir/braker_fungi_noRNA.sh $Assembly $OutDir $GeneModelName $Hintfile
+done
+#3149112-163, 3163883(introns to hints), 3174005-7, 3174340-
+#outside conda env: 3160210, with augustus paths set: 3160697, with augustus paths set to jconnell directory: 3163222,3163272, within conda env augustus: 3163542
+conda deactivate
+
+ERROR in file /home/theaven/scratch/apps/braker/augustus/augustus-3.4.0/config/braker.pl at line 7009
+/mnt/shared/scratch/theaven/braker/theaven_3149112/braker/errors/ensure_min_n_training_genes.stderr
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/shared/scratch/theaven/braker/theaven_3149112/braker/GeneMark-EP/genemark.f.good.gtf'
+
+/mnt/shared/scratch/theaven/apps/conda/envs/braker/bin/filterGenemark.pl
 
 
-screen -S transposonpsi
-srun -p long  --mem-per-cpu=10G --cpus-per-task=4 --pty bash
-conda activate transposonpsi
-cd /projects/nano_diagnostics/mildews/Podosphaeracerasii_GCA_018398735/repeatmasking/transposonPSI
+apps/braker/augustus/augustus-3.4.0/config/braker.pl
 
-InFile=/projects/nano_diagnostics/mildews/Podosphaeracerasii_GCA_018398735.1_WSU_PS_Poc_1.0_genomic.1c.fna
-Strain=Podosphaera_cerasii_GCA_018398735
-echo ${Strain}
+ERROR: in file /home/theaven/scratch/apps/braker/augustus/augustus-3.4.0/config/braker.pl at line 1948
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/shared/scratch/theaven/braker/theaven_3149163/braker/GeneMark-EP/genemark.f.good.gtf'
+--AUGUSTUS_SCRIPTS_PATH=/home/theaven/scratch/apps/braker/augustus/augustus-3.4.0/scripts
+augustus/augustus-3.4.0/scripts
 
-cp $InFile ${Strain}_contigs_unmasked.fa
+--AUGUSTUS_CONFIG_PATH=/home/theaven/scratch/apps/braker/augustus/augustus-3.4.0/config
 
-# The full path is needed
-/home/gomeza/miniconda3/envs/general_tools/share/transposonPSI/transposonPSI.pl ${Strain}_contigs_unmasked.fa nuc
+--AUGUSTUS_SCRIPTS_PATH=/mnt/shared/scratch/jconnell/apps/Augustus/scripts
+--AUGUSTUS_CONFIG_PATH=/mnt/shared/scratch/jconnell/apps/Augustus/config
 
-./transposonPSI.pl ${Strain}_contigs_unmasked.fa nuc
+--AUGUSTUS_CONFIG_PATH=/home/theaven/scratch/apps/conda/envs/augustus/config
+--AUGUSTUS_SCRIPTS_PATH=/home/theaven/scratch/apps/conda/envs/augustus/bin
 
-mkdir -p $OutDir
-cp -r $WorkDir/* $OutDir/.
+conda activate braker
+for Assembly in $(ls assembly/metagenome/P_leucotricha/THeavenpOGB2021_1/SPAdes/17258/ncbi_edits/filteredmasked/rep_modeling/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+OutDir=brakertest
+AcceptedHits=$(ls alignment/P_leucotricha/THeavenpOGB2021_1/star/RNA/17258/star_aligmentAligned.sortedByCoord.out.bam)
+GeneModelName=blarg
+ProgDir=/home/theaven/scratch/apps/braker
+sbatch $ProgDir/braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+done
+#3163568
+conda deactivate
 
-rm -r $WorkDir
+sed -i 's@introns.gff@hints.gff@g' /home/theaven/scratch/apps/braker/augustus/augustus-3.4.0/config/braker.pl
+```
+```bash
+#scripts use _ as delimiter, cannot have . in contig title, QYAM01002187.1 predictions do not sort correctly for some reasion for neobulgaria alba prothint prediction
+sed -i 's@_NoIndex_L002_R1_R2_contig@@g' mildews/Erysiphealphitoides_CLCBIO_assembly_cdhitest_0/repeatmasking/combined/Erysiphealphitoides_CLCBIO_assembly_cdhitest_0_contigs_softmasked_repeatmasker_TPSI_appended.fa
+sed -i 's@_NoIndex_L002_R1_R2_contig@@g' mildews/Erysiphealphitoides_CLCBIO_assembly_cdhitest_0/gene_pred/braker/braker.gff3
+sed -i 's@_NoIndex_L002_R1_R2_contig@@g' mildews/Erysiphealphitoides_CLCBIO_assembly_cdhitest_0/gene_pred/braker/augustus.ab_initio.gff3
+sed -i "/QYAM01002187.1/d" mildews/neobulgariaablba_GCA_003988965/gene_pred/braker/braker.gff3 
+sed -i "/QYAM01002187.1/d" mildews/neobulgariaablba_GCA_003988965/gene_pred/braker/augustus.ab_initio.gff3
 
+conda activate predector2.7
+for Assembly in $(ls mildews/neobulgariaablba_GCA_003988965/repeatmasking/combined/*_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+  #remove dupllicates and rename:
+  ID=$(basename $Assembly|cut -f1 -d '.'| sed 's@_contigs_softmasked_repeatmasker_TPSI_appended@@g')
+  echo $ID
+  Gff=$(ls mildews/${ID}/gene_pred/braker/braker.gff3)
+  ab_gff=$(ls mildews/${ID}/gene_pred/braker/augustus.ab_initio.gff3)
+  FinalDir=mildews/${ID}/gene_pred/braker/final
+  mkdir $FinalDir
+  GffFiltered=$FinalDir/filtered_duplicates.gff
+  ab_GffFiltered=$FinalDir/ab_initio_filtered_duplicates.gff
+  ProgDir=/home/theaven/scratch/apps/tools
+  #ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Gene_prediction 
+  $ProgDir/remove_dup_features.py --inp_gff $Gff --out_gff $GffFiltered
+  $ProgDir/remove_dup_features.py --inp_gff $ab_gff --out_gff $ab_GffFiltered
+  awk '{ gsub("\\.","_",$1); print}' $GffFiltered > ${GffFiltered}.2
+  awk '{ gsub("\\.","_",$1); print}' $ab_GffFiltered > ${ab_GffFiltered}.2
+  GffRenamed=$FinalDir/final_genes_renamed.gff3 
+  LogFile=$FinalDir/final_genes_renamed.log 
+  ab_GffRenamed=$FinalDir/ab_initio_final_genes_renamed.gff3 
+  ab_LogFile=$FinalDir/ab_initio_final_genes_renamed.log
+  $ProgDir/gff_rename_genes.py --inp_gff ${GffFiltered}.2 --conversion_log $LogFile > $GffRenamed 
+  $ProgDir/gff_rename_genes.py --inp_gff ${ab_GffFiltered}.2 --conversion_log $ab_LogFile > $ab_GffRenamed  
+  awk '{ gsub("\\.","_"); print}' $Assembly > ${Assembly}.2
+  $ProgDir/gff2fasta.pl ${Assembly}.2 $GffRenamed $FinalDir/final_genes_renamed
+  $ProgDir/gff2fasta.pl ${Assembly}.2 $ab_GffRenamed $FinalDir/ab_initio_final_genes_renamed
+  sed -i 's/*/X/g' $FinalDir/final_genes_renamed.pep.fasta
+  sed -i 's/*/X/g' $FinalDir/ab_initio_final_genes_renamed.pep.fasta
+  #remove any discovered duplicates
+  Output=$(dirname $LogFile)/$(echo $LogFile |cut -f2 -d '/')_duplicated_genes
+  ab_Output=$(dirname $ab_LogFile)/$(echo $ab_LogFile |cut -f2 -d '/')ab_initio_duplicated_genes
+  for prediction in $(cat $LogFile |cut -f1|sort|uniq -c|sort -nr | awk '$1>1' | awk '{print $2}'); do
+    printf ">\n" >> $Output
+    grep -w $prediction $LogFile | awk '{print $3}' >> $Output
+  done
+  sed -e '/>/,+1d' ${Output} > ${Output}.txt #removed one of each duplicate from the removal list
+  awk '/^>/ {printf("%s%s\t",(N>0?"\n":""),$0);N++;next;} {printf("%s",$0);} END {printf("\n");}' < $FinalDir/final_genes_renamed.cdna.fasta > linearized.fasta
+  for var1 in $(cat ${Output}.txt); do
+    sed -i "/>${var1}.t1/d" linearized.fasta
+  done
+  tr "\t" "\n" < linearized.fasta | fold -w 60 > $FinalDir/final_genes_renamed.cdna.fasta
+  awk '/^>/ {printf("%s%s\t",(N>0?"\n":""),$0);N++;next;} {printf("%s",$0);} END {printf("\n");}' < $FinalDir/final_genes_renamed.pep.fasta > linearized.fasta
+  for var1 in $(cat ${Output}.txt); do
+    sed -i "/>${var1}.t1/d" linearized.fasta
+  done
+  tr "\t" "\n" < linearized.fasta | fold -w 60 > $FinalDir/final_genes_renamed.pep.fasta
+  for prediction in $(cat $ab_LogFile |cut -f1|sort|uniq -c|sort -nr | awk '$1>1' | awk '{print $2}'); do
+    printf ">\n" >> $ab_Output
+    grep -w $prediction $ab_LogFile | awk '{print $3}' >> $ab_Output
+  done
+  sed -e '/>/,+1d' ${ab_Output} > ${ab_Output}.txt #removed one of each duplicate from the removal list
+  awk '/^>/ {printf("%s%s\t",(N>0?"\n":""),$0);N++;next;} {printf("%s",$0);} END {printf("\n");}' < $FinalDir/ab_initio_final_genes_renamed.cdna.fasta > linearized.fasta
+  for var1 in $(cat ${ab_Output}.txt); do
+    sed -i "/>${var1}.t1/d" linearized.fasta
+  done
+  tr "\t" "\n" < linearized.fasta | fold -w 60 > $FinalDir/ab_initio_final_genes_renamed.cdna.fasta
+  awk '/^>/ {printf("%s%s\t",(N>0?"\n":""),$0);N++;next;} {printf("%s",$0);} END {printf("\n");}' < $FinalDir/ab_initio_final_genes_renamed.pep.fasta > linearized.fasta
+  for var1 in $(cat ${ab_Output}.txt); do
+    sed -i "/>${var1}.t1/d" linearized.fasta
+  done
+  tr "\t" "\n" < linearized.fasta | fold -w 60 > $FinalDir/ab_initio_final_genes_renamed.pep.fasta
+  rm $Output
+  rm $ab_Output
+  #count predicated genes
+  cat $FinalDir/final_genes_renamed.cdna.fasta | grep '>' > $FinalDir/genenames.txt
+  echo ""  >> mildews/brakerreport.txt
+  echo $ID >> mildews/brakerreport.txt
+  echo No. of prothint guided genes: >> mildews/brakerreport.txt
+  grep -c -i '>' $FinalDir/final_genes_renamed.cdna.fasta >> mildews/brakerreport.txt
+  cat $FinalDir/ab_initio_final_genes_renamed.cdna.fasta | grep '>' > $FinalDir/ab_initio_genenames.txt
+  echo No. of ab initio predicted genes: >> mildews/brakerreport.txt
+  grep -c -i '>' $FinalDir/ab_initio_final_genes_renamed.cdna.fasta >> mildews/brakerreport.txt
+  rm ${Assembly}.2
+  rm ${GffFiltered}.2
+  rm ${ab_GffFiltered}.2
+done
+```
+### Interproscan
+```bash
+for Genes in $(ls mildews/*/gene_pred/braker/final/final_genes_renamed.pep.fasta); do
+    Jobs=$(squeue -u theaven | wc -l)
+    echo x
+    while [ $Jobs -gt 25 ]; do
+      sleep 2s
+      printf "."
+      Jobs=$(squeue -u theaven | wc -l)
+    done 
+    ProgDir=/home/theaven/scratch/apps/tools/Feature_annotation
+    ID=$(echo $Genes|cut -f2 -d '/' | sed 's@HEAVEN_apple@Podosphaeraleucotricha_HEAVEN_apple@g'| sed 's@HEAVEN_strawberry@Podosphaeraaphanis_HEAVEN_strawberry@g'| sed 's@HEAVEN_raspberry@Podosphaeraaphanis_HEAVEN_raspberry@g'| sed 's@GANAN_apple@Podosphaeraleucotricha_HEAVEN_apple@g'|sed 's@Erysiphealphitoides_CLCBIO_assembly_cdhitest_0@Erysiphealphitoides_CLCBIO_assembly@g'|sed 's@Oidiodendron_maius@Oidiodendronmaius@g'|sed 's@phialocephalasubalpina-GCA_900073065@phialocephalasubalpina_GCA_900073065@g')
+    Organism=$(echo $ID|cut -f1 -d '_')
+    Strain=$(echo $ID|cut -f2,3 -d '_')
+    OutDir=mildews/${ID}/gene_pred/interproscan/prothint
+    mkdir -p $OutDir
+    echo $Genes
+    echo $Strain
+    echo $Organism
+    $ProgDir/interproscan.sh $Genes $Organism $Strain $OutDir
+done 2>&1 | tee -a interproscan_submisison_.log
+# Following interproscan annotation split files were combined using the following commands:
 
-#!/usr/bin/env perl
-use strict;
-use FindBin;
-use lib ("$FindBin::Bin/PerlLib");
-use Fasta_reader;
-use File::Basename;
-use Cwd;
+  for Proteins in $(ls gene_pred/codingquary/v.*/*/*/final_genes_combined.pep.fasta); do
+    Strain=$(echo $Proteins | rev | cut -d '/' -f3 | rev)
+    Organism=$(echo $Proteins | rev | cut -d '/' -f4 | rev)
+    echo "$Organism - $Strain"
+    echo $Strain
+    InterProRaw=gene_pred/interproscan/$Organism/$Strain/raw
+    $ProgDir/append_interpro.sh $Proteins $InterProRaw $Organism $Strain $OutDir
+  done
 
-my $tempDir = "transposonPSI.$$.$hostname.tmp";
-mkdir ($tempDir) or die "Error, cannot mkdir $tempDir"
-
-scp -r Podosphaera_cerasii_GCA_018398735_contigs_unmasked.fa theaven@gruffalo.cropdiversity.ac.uk:projects/niab/theaven/scratch
-
-/home/theaven/scratch/apps/tools/transposonPSI.pl ${Strain}_contigs_unmasked.fa nuc
-
-find -name 'Fasta_Reader.pm' -print 2>/dev/null
+for Genes in $(ls mildews/*/gene_pred/braker/final/ab_initio_final_genes_renamed.pep.fasta); do
+    Jobs=$(squeue -u theaven | wc -l)
+    echo x
+    while [ $Jobs -gt 25 ]; do
+      sleep 2s
+      printf "."
+      Jobs=$(squeue -u theaven | wc -l)
+    done
+    ProgDir=/home/theaven/scratch/apps/tools/Feature_annotation
+    ID=$(echo $Genes|cut -f2 -d '/' | sed 's@HEAVEN_apple@Podosphaeraleucotricha_HEAVEN_apple@g'| sed 's@HEAVEN_strawberry@Podosphaeraaphanis_HEAVEN_strawberry@g'| sed 's@HEAVEN_raspberry@Podosphaeraaphanis_HEAVEN_raspberry@g'| sed 's@GANAN_apple@Podosphaeraleucotricha_HEAVEN_apple@g'|sed 's@Erysiphealphitoides_CLCBIO_assembly_cdhitest_0@Erysiphealphitoides_CLCBIO_assembly@g'|sed 's@Oidiodendron_maius@Oidiodendronmaius@g'|sed 's@phialocephalasubalpina-GCA_900073065@phialocephalasubalpina_GCA_900073065@g')
+    Organism=$(echo $ID|cut -f1 -d '_')
+    Strain=$(echo $ID|cut -f2,3 -d '_')
+    OutDir=mildews/${ID}/gene_pred/interproscan/abinitio
+    mkdir -p $OutDir
+    echo $Genes
+    echo $Strain
+    echo $Organism
+    $ProgDir/interproscan.sh $Genes $Organism $Strain $OutDir
+done 2>&1 | tee -a interproscan_submisison_2.log
+```
+### Predector
+```bash
+screen -S predector
+conda activate predector
+for proteome in $(ls mildews/*/gene_pred/braker/final/final_genes_renamed.pep.fasta | grep -v 'Erysiphealphitoides' ); do
+  Jobs=$(squeue -u theaven | grep 'predecto' | wc -l)
+    while [ $Jobs -gt 5 ]; do
+      sleep 2s
+      printf "."
+      Jobs=$(squeue -u theaven | grep 'predecto' | wc -l)
+    done
+    ID=$(echo $proteome|cut -f2 -d '/' | sed 's@HEAVEN_apple@Podosphaeraleucotricha_HEAVEN_apple@g'| sed 's@HEAVEN_strawberry@Podosphaeraaphanis_HEAVEN_strawberry@g'| sed 's@HEAVEN_raspberry@Podosphaeraaphanis_HEAVEN_raspberry@g'| sed 's@GANAN_apple@Podosphaeraleucotricha_HEAVEN_apple@g'|sed 's@Erysiphealphitoides_CLCBIO_assembly_cdhitest_0@Erysiphealphitoides_CLCBIO_assembly@g'|sed 's@Oidiodendron_maius@Oidiodendronmaius@g'|sed 's@phialocephalasubalpina-GCA_900073065@phialocephalasubalpina_GCA_900073065@g')
+    Organism=$(echo $ID|cut -f1 -d '_')
+    Strain=$(echo $ID|cut -f2,3 -d '_')
+    OutDir=mildews/${ID}/gene_pred/predector/prothint
+    ProgDir=/home/theaven/scratch/apps/predector
+    echo $ID
+    echo $ID >> predectorpathlog.txt
+sbatch $ProgDir/predector_singularity.sh $proteome 1.2.6 $OutDir  2>&1 >> predectorpathlog.txt
+sleep 30
+done #3232622, 3237571,3238262
+conda deactivate
+rm -r mildews/*/gene_pred/predector/prothint/work
 ```
