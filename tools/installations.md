@@ -400,7 +400,7 @@ chmod a+r /usr/lib/x86_64-linux-gnu/libcuda*
 export PATH=/opt/slurm/latest/lib64${PATH:+:${PATH}}
 export LD_LIBRARY_PATH=/opt/slurm/latest/lib64:${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 nano ~/.bash_profile
-
+/mnt/shared/scratch/theaven/apps/conda/envs/braker/bin
 ###############################################################################################
 When you run the pipeline, please supply the parameter:
 '-with-singularity "predector.sif"'
@@ -521,6 +521,13 @@ cd Augustus
 singularity build augustus.sif Singularity.def
 
 #gmes.cfg min_contig set from 50000 to 500 for genemark
+
+cd /mnt/shared/scratch/theaven/apps/genemarkES/gmes_linux_64_4/
+for file in $(ls *.pl); do
+sed -i 's@#!/usr/bin/perl@#!/home/theaven/scratch/apps/conda/envs/braker/bin/perl@g' $file
+sed -i 's@#!/usr/bin/env perl@#!/home/theaven/scratch/apps/conda/envs/braker/bin/perl@g' $file
+done
+cd ~/scratch
 ```
 ## FastQC
 ```bash
@@ -1108,6 +1115,10 @@ licensed code and data provided by third parties. If you wish to run these
 analyses it will be necessary for you to obtain a licence from the vendor and
 configure your local InterProScan installation to use them.
 (see more information in /mnt/shared/scratch/theaven/apps/conda/envs/interproscan/share/InterProScan/data/<db>)
+
+/mnt/shared/scratch/jconnell/apps/miniconda3/envs/interproscan_env/share/InterProScan/interproscan.sh -i /mnt/shared/scratch/jconnell/apps/miniconda3/envs/interproscan_env/share/InterProScan/test_all_appl.fasta -f tsv -dp
+/mnt/shared/scratch/jconnell/apps/miniconda3/envs/interproscan_env/bin/interproscan.sh -i /mnt/shared/scratch/jconnell/apps/miniconda3/envs/interproscan_env/share/InterProScan/test_all_appl.fasta -f tsv -dp
+
 
 ```
 ## MIRA
