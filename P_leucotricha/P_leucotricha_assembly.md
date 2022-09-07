@@ -4866,9 +4866,11 @@ done
 ```
 ```bash
 for Assembly in $(ls /projects/nano_diagnostics/assembly/metagenome/*cha/*/SPAdes/*/ncbi_edits/filteredmasked/rep_modeling/2/Assembled_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
-ID=$(echo $Assembly | rev |cut -f8,9 -d '/'| rev | sed 's@THeaven@THeavenp@g' )
+ID=P_leucotricha/THeavenpOGB2021_1
+#ID=$(echo $Assembly | rev |cut -f8,9 -d '/'| rev | sed 's@THeaven@THeaven@g' )
 GffAppended=gene_pred/$ID/codingquarry/rep_modeling/final/final_genes_appended.gff3
-FinalDir=gene_pred/$ID/codingquarry/rep_modeling/final
+#FinalDir=gene_pred/$ID/codingquarry/rep_modeling/final
+FinalDir=gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/
 echo $ID
 
 #Remove duplicated genes 
@@ -4880,10 +4882,12 @@ $ProgDir/remove_dup_features.py --inp_gff $GffAppended --out_gff $GffFiltered
 GffRenamed=$FinalDir/final_genes_appended_renamed.gff3 
 LogFile=$FinalDir/final_genes_appended_renamed.log 
 $ProgDir/gff_rename_genes.py --inp_gff $GffFiltered --conversion_log $LogFile > $GffRenamed 
+#The number of genes increases after this? following command shows duplicated genes:
+cat $Logfile |cut -f1 -d '/'|sort|uniq -c|sort -nr | awk '$1>1' | awk '{print $2}'
 rm $GffFiltered
 
 #Create renamed fasta files from each gene feature 
-$ProgDir/gff2fasta.pl $Assembly $GffRenamed $FinalDir/final_genes_appended_renamed 
+$ProgDir/gff2fasta.pl $Assembly $GffRenamed $FinalDir/final_genes_appended_renamed2 
 
 #The proteins fasta file contains * instead of Xs for stop codons, these should be changed 
 sed -i 's/*/X/g' $FinalDir/final_genes_appended_renamed.pep.fasta
@@ -4892,6 +4896,21 @@ sed -i 's/*/X/g' $FinalDir/final_genes_appended_renamed.pep.fasta
 cat $FinalDir/final_genes_appended_renamed.cdna.fasta | grep '>' > $FinalDir/genenames.txt
 grep -c -i '>' $FinalDir/final_genes_appended_renamed.cdna.fasta
 done
+
+grep -w 'gene' $FinalDir/final_genes_appended.gff3 > 123.txt #18027 
+grep -w 'mRNA' $FinalDir/final_genes_appended.gff3 > 321.txt #18324
+grep -w 'gene' gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3 > 456.txt #18073
+grep -w 'mRNA' gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3 > 654.txt #18370
+grep -w 'gene' $GffFiltered | wc -l #18027
+grep -w 'mRNA' $GffFiltered | wc -l #18324
+grep -w 'gene' $GffRenamed | wc -l
+grep -w 'mRNA' $GffRenamed | wc -l
+
+STRG_3660_8_10  -       g2922
+STRG_3660_8_10  -       g2926
+STRG_3660_8_10  -       g2930
+STRG_3660_8_10  -       g2934
+
 ```
 ### Swissprot
 
@@ -4922,9 +4941,32 @@ wc gene_pred/P_aphanis/THeavenDRCT72020_1/swissprot/rep_modeling/787033/swisspro
 ```bash
 mkdir gene_pred/P_leucotricha/THeavenpOGB2021_1/interproscan/NRI
 #interproscan output run by A.Armitage on NRI HPC uploaded to gene_pred/P_leucotricha/THeavenpOGB2021_1/interproscan/NRI
+
+# DO NOT RUN IN CONDA ENV
+# This command will split your gene fasta file and run multiple interproscan jobs.
+#PATH=/data/scratch/gomeza/prog/java/jdk-11.0.4/bin:${PATH}
+for Genes in $(ls gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta); do
+    ProgDir=/home/heavet/git_repos/tools/seq_tools/Feature_annotation
+    Organism=$(echo $Genes|cut -f2 -d '/')
+    Strain=$(echo $Genes|cut -f3 -d '/')
+    echo $Genes
+$ProgDir/interproscan.sh $Genes $Organism $Strain
+done 2>&1 | tee -a interproscan_submisison_.log
+#20192-228
+
+for Genes in $(ls gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta); do
+    ProgDir=/home/theaven/scratch/apps/tools/Feature_annotation
+    Organism=$(echo $Genes|cut -f2 -d '/')
+    Strain=$(echo $Genes|cut -f3 -d '/')
+    OutDir=gene_pred/P_leucotricha/THeavenpOGB2021_1/interproscan2
+    echo $Genes
+$ProgDir/interproscan.sh $Genes $Organism $Strain $OutDir
+done 2>&1 | tee -a interproscan_submisison_.log
+#3072460-96
+#3074816-52
+#3086755-91
 ```
 
-I'v3haditwithth3s3snak3s!
 
 ls gene_pred/*/*/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3
 
