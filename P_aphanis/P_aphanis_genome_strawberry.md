@@ -4664,6 +4664,7 @@ rm $its4
 #2814 - blasts to blumeria graminis, various podosphaera as well as other species, no P.aphanis blast hits
 exit
 exit
+
 ```
 ### Repeat Masking
 Soft masking means transforming every nucleotide identified as a repeat to a lower case a, t, g or c to be included in later gene prediction stages. Hard masking means transforming every nucleotide identified as a repeat to an 'N' or 'X'.
