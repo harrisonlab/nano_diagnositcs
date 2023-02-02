@@ -279,6 +279,68 @@ Outfile=$(basename $RawData)_fastqc
 sbatch $ProgDir/srun_fastqc.sh $RawData $OutDir $Outfile
 done
 #18877
+
+screen -S size
+srun -J jellyfish -p long --mem-per-cpu 8G --cpus-per-task 8 --pty bash
+conda activate jellyfish
+cd /projects/nano_diagnostics
+jellyfish count -t 8 -C -m 19 -s 10G -o aphanis_19mer_out2 --min-qual-char=? <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_R_trim.fq.gz) 
+
+jellyfish count -t 8 -C -m 21 -s 10G -o aphanis_21mer_out --min-qual-char=? <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_R_trim.fq.gz) 
+
+jellyfish count -t 8 -C -m 25 -s 10G -o aphanis_25mer_out --min-qual-char=? <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_R_trim.fq.gz) 
+
+jellyfish count -t 8 -C -m 31 -s 10G -o aphanis_31mer_out --min-qual-char=? <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_R_trim.fq.gz) 
+
+jellyfish histo -h 10000000 -o aphanis_21mer_out.histo aphanis_21mer_out2
+
+screen -S size2
+srun -J jellyfish -p long --mem-per-cpu 8G --cpus-per-task 8 --pty bash
+conda activate jellyfish
+cd /projects/nano_diagnostics
+jellyfish count -t 8 -C -m 31 -s 10G -o leucotricha_31mer_out --min-qual-char=?  <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim.fq.gz) 
+
+jellyfish count -t 4 -C -m 25 -s 10G -o leucotricha_25mer_out --min-qual-char=?  <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim.fq.gz) 
+
+jellyfish count -t 8 -C -m 21 -s 10G -o leucotricha_21mer_out --min-qual-char=?  <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim.fq.gz) 
+
+jellyfish count -t 8 -C -m 19 -s 10G -o leucotricha_19mer_out --min-qual-char=?  <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim.fq.gz)
+
+jellyfish histo -h 1000000 -o leucotricha_21mer_out.histo leucotricha_21mer_out
+
+```
+```R
+setwd("C:/Users/heavt/OneDrive - NIAB/Desktop")
+dataframe21 <- read.table("leucotricha_21mer_out.histo2") #load the data into dataframe21
+plot(dataframe21[1:200,], type="l") #plots the data points 1 through 200 in the dataframe21 using a line
+plot(dataframe21[16:200,], type="l")
+points(dataframe21[16:200,])
+#single copy region between 16 and 120
+sum(as.numeric(dataframe21[16:26116,1]*dataframe21[16:26116,2]))
+#5932270608
+#Peak position is: 37    790391
+sum(as.numeric(dataframe21[16:26116,1]*dataframe21[16:26116,2]))/37
+#160,331,638 = estimated 160.3 Mbp genome size
+sum(as.numeric(dataframe21[16:120,1]*dataframe21[16:120,2]))/37
+#52756107 = estimated 52.7 Mbp of single copy region
+
+
+
+dataframe21 <- read.table("aphanis_21mer_out.histo") 
+plot(dataframe21[1:200,], type="l") 
+plot(dataframe21[81:500,], type="l")
+points(dataframe21[81:500,])
+dataframe21
+#single copy region between 81 and 400
+sum(as.numeric(dataframe21[81:68385,1]*dataframe21[81:68385,2]))
+#25996457725
+#Peak position is: 162     298260
+sum(as.numeric(dataframe21[81:68385,1]*dataframe21[81:68385,2]))/162
+#160,471,961 = estimated 160.3 Mbp genome size
+sum(as.numeric(dataframe21[81:400,1]*dataframe21[81:400,2]))/162
+#48839949 = estimated 48.8 Mbp of single copy region
+
+#Repeat for other kmer lengths
 ```
 ## Alignment
 
