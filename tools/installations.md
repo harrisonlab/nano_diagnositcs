@@ -307,6 +307,27 @@ nano ~/.profile
 #PATH=${PATH}:/data/scratch/gomeza/prog/tmhmm-2.0c/bin:${PATH}
 . ~/.profile
 ```
+## secretomep
+SecretomeP was obtained from https://services.healthtech.dtu.dk/cgi-bin/sw_request
+```bash
+conda activate jellyfish
+conda install -c conda-forge netpbmfile
+conda install -c bioconda gnuplot
+conda install -c conda-forge netpbm
+
+#Prerequisite programs downloaded according to secretomep README, paths changed as appropriate:
+#    /mnt/shared/scratch/theaven/apps/conda/envs/jellyfish/bin/tcsh
+#   setenv AWK /home/theaven/scratch/apps/conda/envs/predector/bin/awk
+#   setenv ECHO /home/theaven/scratch/apps/conda/envs/predector/bin/echo
+#   setenv GNUPLOT /mnt/shared/scratch/theaven/apps/conda/envs/jellyfish/bin/gnuplot            
+#   setenv PPM2GIF /mnt/shared/scratch/theaven/apps/conda/envs/jellyfish/bin/ppmtogif
+#   setenv SIGNALP /home/theaven/scratch/apps/conda/envs/predector/bin/signalp3
+#   setenv PERL  /home/theaven/scratch/apps/conda/envs/predector/bin/perl
+#    set prop     = /home/theaven/scratch/apps/secretomep/prop1/prop-1.0c/prop
+#   set psort    = /home/theaven/scratch/apps/secretomep/psort/psort
+#   set seg      = /home/theaven/scratch/apps/secretomep/seg
+#   set tmhmm    = /home/theaven/scratch/apps/conda/envs/predector/bin/tmhmm
+```
 ## signalp
 ```bash
 #download links expire after 4 hours
