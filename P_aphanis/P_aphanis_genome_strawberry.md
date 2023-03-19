@@ -284,30 +284,33 @@ screen -S size
 srun -J jellyfish -p long --mem-per-cpu 8G --cpus-per-task 8 --pty bash
 conda activate jellyfish
 cd /projects/nano_diagnostics
-jellyfish count -t 8 -C -m 19 -s 10G -o aphanis_19mer_out2 --min-qual-char=? <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_R_trim.fq.gz) 
+jellyfish count -t 8 -C -m 19 -s 10G -o aphanis_19mer_out2 --min-qual-char=? <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_R_trim.fq.gz) #finished
 
-jellyfish count -t 8 -C -m 21 -s 10G -o aphanis_21mer_out --min-qual-char=? <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_R_trim.fq.gz) 
+jellyfish count -t 8 -C -m 21 -s 10G -o aphanis_21mer_out --min-qual-char=? <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_R_trim.fq.gz) #finished
 
 jellyfish count -t 8 -C -m 25 -s 10G -o aphanis_25mer_out --min-qual-char=? <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_R_trim.fq.gz) 
 
 jellyfish count -t 8 -C -m 31 -s 10G -o aphanis_31mer_out --min-qual-char=? <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/F/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_aphanis/MiSeq/THeavenDRCT72020_1/paired/all/R/P_aphanis-MiSeq-THeavenDRCT72020_1-paired-all_R_trim.fq.gz) 
 
+jellyfish histo -h 10000000 -o aphanis_19mer_out.histo aphanis_19mer_out2
 jellyfish histo -h 10000000 -o aphanis_21mer_out.histo aphanis_21mer_out2
 
 screen -S size2
 srun -J jellyfish -p long --mem-per-cpu 8G --cpus-per-task 8 --pty bash
 conda activate jellyfish
 cd /projects/nano_diagnostics
-jellyfish count -t 8 -C -m 31 -s 10G -o leucotricha_31mer_out --min-qual-char=?  <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim.fq.gz) 
+jellyfish count -t 8 -C -m 31 -s 10G -o leucotricha_31mer_out --min-qual-char=?  <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim.fq.gz) #finished
 
-jellyfish count -t 4 -C -m 25 -s 10G -o leucotricha_25mer_out --min-qual-char=?  <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim.fq.gz) 
+jellyfish count -t 4 -C -m 25 -s 10G -o leucotricha_25mer_out --min-qual-char=?  <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim.fq.gz) #finished
 
-jellyfish count -t 8 -C -m 21 -s 10G -o leucotricha_21mer_out --min-qual-char=?  <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim.fq.gz) 
+jellyfish count -t 8 -C -m 21 -s 10G -o leucotricha_21mer_out --min-qual-char=?  <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim.fq.gz) #finished
 
-jellyfish count -t 8 -C -m 19 -s 10G -o leucotricha_19mer_out --min-qual-char=?  <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim.fq.gz)
+jellyfish count -t 8 -C -m 19 -s 10G -o leucotricha_19mer_out --min-qual-char=?  <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/F/P_leucotricha-MiSeq-THeavenp11_1-paired-all_F_trim.fq.gz) <(zcat dna_qc/P_leucotricha/MiSeq/THeavenp11_1/paired/all/R/P_leucotricha-MiSeq-THeavenp11_1-paired-all_R_trim.fq.gz) #finished with unexpected end of file
 
-jellyfish histo -h 1000000 -o leucotricha_21mer_out.histo leucotricha_21mer_out
-
+jellyfish histo -h 1000000 -o leucotricha_19mer_out.histo leucotricha_19mer_out #finished
+jellyfish histo -h 1000000 -o leucotricha_21mer_out.histo leucotricha_21mer_out #finished
+jellyfish histo -h 1000000 -o leucotricha_25mer_out.histo leucotricha_25mer_out #finished
+jellyfish histo -h 1000000 -o leucotricha_31mer_out.histo leucotricha_31mer_out #finished
 ```
 ```R
 setwd("C:/Users/heavt/OneDrive - NIAB/Desktop")
