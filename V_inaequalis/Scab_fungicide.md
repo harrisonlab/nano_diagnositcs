@@ -3963,6 +3963,8 @@ LG	First SNP at p	Last SNP at p	p-value
 7	039.1_39835	039.1_109795	0.110234471
 
 According to chi squared there is association between the QTL peak markers, p=0.041967
+
+Effect size was calculated as (mean effective dose in isolates carrying the resistant genotype - mean effective dose in isolates carrying the susceptible genotype)/standard deviation of effective dose in isolates carrying the susceptible genotype
 Effect size is 6.9 for the LG7 QTL and 0.54 for the LG3 QTl
 
 Find CYP51 gene:
@@ -3982,6 +3984,22 @@ CYP51 is on contig5, at position 1,335,727:
 grep -A 1 '>QFBF01000005.1 ' /home/theaven/scratch/data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.fasta >> contig5.fasta
 
 #ATGGGACTCCTCTCTCCTTTGCTCGCCTCGTTACCGGGCAGCGACCGCAGTTGGTTATTTTACACTCTTGCCTCCTTCGGCTTCACCGTTGCAATCGTCGCCGCCAACCTTGTCAAGCAACTCTTATTCTCAAACCCAAACGAACCTCCAGTAGTCTTCCACTGGTTTCCCTTCTTCGGCAACACGGTCGTCTACGGCATCGATCCTATCAAGTTTTTCGCCGAGTGCAAGGAAAAGGTAATGCGACAATGAGAATGCAAGTTGCGTGGAGCTAACTTGTCTCCCAGCATGGCGATATCTTTACCTTCATTCTTCTTGGCAGGAAAACAACAGTCTACATTGGTACAAAGGGAAACGAATTCATTCTCAATGGCAAACAGAGCCATGTCAACGCAGAGGAAATCTATAGCCCCCTGACGACGCCCGTCTTCGGCTCCGATGTTGTCTATGATTGCCCAAACTCGAAATTGATGGAGCAAAAGAAGGTATGCTGCCACCATTCTTTCGCAAGAGACTCCTGCTGATATCCACAAGTTCGTCAAGTACGGTCTCACCACCGAAGCTCTCAAATCCTATGTCACCCTCATCCAACAAGAAGTCGAAGACTATACCAAACGCTACCCTCAATTCAAAGGCGAAAAGGGCAGCTTCGATGTTTGCGCTTCCATGGCCGAAATCACAATCTTCACTGCTTCCCGCTCACTACAAGGCAAGGAGGTTCGCGACAAGTTTGACGCCAGCTTTGCAGACCTCTTCCACGATTTGGATATGGGCTTCTCTCCTATCAACTTCATGCTTCCCTGGGCCCCTCTTCCACACAATCGTCGCCGAGATGCCGCGAACAAAAAGATGACGGAGACATATTTGGAAATTATCCAATCGAGAAAAGCAGAGGGCGTCAAAAAGGATTCAGAGGACATGATTTGGAATTTGATGCAGTGTGTATACAAGAATGGCACTCCCATCCCGGACAAAGAAATCGCCCACATGATGATCGCGCTGCTCATGGCCGGCCAGCACTCGTCCTCTAGCACCTCGTCCTGGATTCTACTTCGACTAGCTACCAGACCTGATATCCAGGAAGAACTATACCAAGAACAAATTCGGGTTTGCGGCGCTGATCTTCCACCGTTGCAGTACGAAGATCTTGCTCGCATGCCTCTCCACAACCAGATTATCAAAGAAACTCTTCGCATGCATTCGCCAATTCACAGCATCTTGCGTGCCGTCAAACAGCCTATGCCTGTCGAAGGAACTCCTTACACCATCCCCACCTCGCATGTTCTCCTTGCTGCTCCCATCGCATCTGGAGGCTCGCCAATGTACTTTCCAGCTCCTGAGAAGTGGGAGCCTCACCGTTGGGACGAAGGATCAGGAGGAACCAACATCTCGGGCGGCGAAAACGGTGGCGAAGAGAAAGAGGATTACGGCTATGGACTCATCACAAAGGGCGCCAGCTCGCCGTACCTTCCGTTCGGCGCTGGAAGACATAGGTGTATCGGCGAACAATTTGCATATATGCAGTTGAACACGGTTCTCGCGACGCAAGTTCGCGAATTCAAGTTCAGTTTGAGGGAAGGAGAGTCGTTCCCCAAGACCGacttctcttctctattttCTGGACCTCTACGCCCCGCGTGGTTGAACTGGGAACGTAGAGAGAAGTCCTCATGA
+
+grep -A 1 '>QFBF01000020.1 ' /home/theaven/scratch/data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.fasta >> contig20.fasta
+```
+Look at all other genes
+```bash
+cat data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000020.1 | uniq | wc -l #2676
+cat data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000005.1 | uniq | wc -l #3340
+cat data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000020.1 >> contig20.gtf # genes7305-7590, in the p<0.05 marker area genes7333-7358
+cat data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000005.1 >> contig5.gtf # genes 2613-2981, in the p<0.05 marker area genes2678-2981
+awk '{print $10}' contig20.gtf | sed 's@"@@g' | sed 's@;@@g' | uniq > contig20genes.txt
+awk '{print $10}' contig5.gtf | sed 's@"@@g' | sed 's@;@@g' | uniq > contig5genes.txt
+grep -A 1 -f contig20genes.txt data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_protein.faa > contig20.faa #242 proteins
+grep -A 1 -f contig5genes.txt data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_protein.faa > contig5.faa #325 proteins 
+#remove non-significant from contig .txt files
+grep -A 1 -f contig20genes.txt data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_protein.faa > sigcontig20.faa #22 proteins
+grep -A 1 -f contig5genes.txt data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_protein.faa > sigcontig5.faa #262 proteins 
 ```
 
 PCA
@@ -4011,7 +4029,443 @@ c<-autoplot(PCAlocM, data = data, colour = "Isolate", size = 2.5, main = "Princi
 plot(c)
 
 ```
+Effect size
+```R
+setwd("C:/Users/tchea/Desktop")
+# Load the data from the Excel file
+install.packages("readxl")
+library(readxl)
+library(dplyr)
+mydata <- read_excel("EDbySNP_zz.xlsx", sheet = 2, col_names = TRUE)
 
+mydata <- mydata %>%
+  rename_with(~ paste0("marker_", .), -root_EstimateED50, -isolate_name)
+
+# Convert SNP marker columns to numeric
+mydata[, 3:ncol(mydata)] <- lapply(mydata[, 3:ncol(mydata)], as.numeric)
+
+# Fit a linear model with each SNP marker as a predictor of the phenotype
+model_list <- list()
+for (i in 3:ncol(mydata)) {
+  formula_string <- paste("root_EstimateED50 ~", colnames(mydata)[i])
+  model <- lm(formula_string, data = mydata)
+  model_list[[i-2]] <- model
+}
+length(model_list)
+for (i in 1:length(model_list)) {
+  print(model_list[[i]])
+}
+
+# Calculate the percentage of phenotypic variance explained by each SNP marker
+var_explained <- numeric(length(model_list))
+for (i in 1:length(model_list)) {
+  full_model <- anova(model_list[[i]])
+  reduced_model <- anova(lm(mydata$root_EstimateED50 ~ 1, data = mydata))
+  var_explained[i] <- (full_model$`Sum Sq`[1] - reduced_model$`Sum Sq`[1]) / full_model$`Sum Sq`[1] * 100
+}
+length(var_explained)
+for (i in 1:length(var_explained)) {
+  print(var_explained[[i]])
+}
+
+# Create a data frame with the SNP markers and their corresponding effect sizes
+results_matrix <- data.frame(SNP_Marker = character(length(model_list)), Effect_Size = numeric(length(model_list)))
+results_matrix$SNP_Marker <- names(model_list)
+results_matrix$Effect_Size <- var_explained
+results <- as.data.frame(results_matrix, stringsAsFactors = FALSE)
+
+# Create an empty list to store the SNP marker names
+SNP_Marker <- list()
+
+# Loop through the column names and store the SNP marker names
+for (i in 3:ncol(mydata)) {
+  SNP_Marker[[i-2]] <- colnames(mydata)[i]
+}
+
+# Combine the SNP marker names and effect sizes into a dataframe
+results <- data.frame(SNP_Marker = unlist(SNP_Marker), Effect_Size = var_explained)
+
+# Print the results
+print(results)
+
+#EFFECT SIZES are enourmous for every SNP >:(
+```
+
+```R
+setwd("C:/Users/tchea/Desktop")
+# Load the data from the Excel file
+install.packages("readxl")
+install.packages("qtl")
+library(readxl)
+library(dplyr)
+library(qtl)
+
+# Read in data from Excel file
+data <- read_excel("EDbySNP_zz.xlsx", sheet = 2, col_names = TRUE)
+
+# Define phenotype and genotype data
+pheno <- data$root_EstimateED50
+geno <- as.matrix(data[, 3:ncol(data)])
+
+# Create cross object
+n_ind <- nrow(geno)
+cross <- make_cross(c(rep("28000", n_ind), rep("1000", n_ind)))
+
+# Run QTL analysis using Haley-Knott regression
+fit <- fitqtl(pheno, geno, cross = cross, method = "hk")
+
+# Calculate percentage of variance explained by each marker
+varExplained <- fit$var.explained / sum(fit$var.explained) * 100
+
+# Create a data frame with marker names and percentage of variance explained
+markers <- colnames(geno)
+varExplainedDF <- data.frame(marker = markers, varExplained = varExplained)
+
+# Print data frame
+print(varExplainedDF)
+
+
+```
+```R
+#There are multiple ways to calculate effect size:
+​
+# linear model to calculate effect size 
+qtl_model <- lm(score ~ Marker1 + Marker2,data=dataname)
+summary(step_model)
+# then take the "Estimate" as a proportion of the intercept
+​
+## OR Percent Deviation from Mean
+# diff from the mean / mean of all individ *100
+# where diff from the mean = mean of individuals containing marker - mean of all individ
+# so
+# (mean of individuals containing marker - mean of all individ) / mean of all individ *100
+# provide in %
+​
+## OR the same as above but you use the maximum value so "Percent Deviation from Max"
+​
+# or working out the PRE (proportion reduction in error) for each allele
+​
+qtl_model= lm(Phenotype~ X1B + X4C)
+qtl_model1= lm(Phenotype~X4C)
+qtl_model2= lm(Phenotype~X1B)
+​
+rss <- sum(residuals(qtl_model)^2)
+rss1 <- sum(residuals(qtl_model1)^2)
+rss2 <- sum(residuals(qtl_model2)^2)
+​
+X1B <- (rss1-rss)/rss1
+X4C <- (rss2-rss)/rss2
+​
+# or you can do the same with a mixed model to calc effect size
+lmfit =lmer(phenoA$audpc ~ (1|phenoA$Genotypes) + phenoA$Block)
+summary(lmfit)
+
+# PVE = (TSS - RSS) / TSS, where TSS is the total sum of squares and RSS is the residual sum of squares.
+```
+PVE (percentage of variance explained)
+```R
+setwd("C:/Users/tchea/Desktop")
+# Load the data from the Excel file
+install.packages("readxl")
+install.packages("magrittr")
+install.packages("dplr")
+library(dplr)
+library(magrittr)
+library(readxl)
+
+mydata <- read_excel("EDbySNP_zz.xlsx", sheet = 1, col_names = TRUE)
+mydata <- mydata %>%
+  rename_with(~ paste0("marker_", .), -root_EstimateED10, -isolate_name)
+model <- lm(root_EstimateED10 ~ marker_009.1_102387, data = mydata)
+anova_table <- anova(model)
+TSS <- sum(model$residuals^2)
+SS <- anova_table[grepl("marker_009.1_102387", rownames(anova_table)), "Sum Sq"]
+PVE <- SS / TSS
+PVE
+#0.3405665
+
+model <- lm(root_EstimateED10 ~ marker_005.1_648012, data = mydata)
+anova_table <- anova(model)
+TSS <- sum(model$residuals^2)
+SS <- anova_table[grepl("marker_005.1_648012", rownames(anova_table)), "Sum Sq"]
+PVE <- SS / TSS
+PVE
+#0.3577083
+
+mydata <- read_excel("EDbySNP_zz.xlsx", sheet = 2, col_names = TRUE)
+mydata <- mydata %>%
+  rename_with(~ paste0("marker_", .), -root_EstimateED50, -isolate_name)
+model <- lm(root_EstimateED50 ~ marker_009.1_102387, data = mydata)
+anova_table <- anova(model)
+TSS <- sum(model$residuals^2)
+SS <- anova_table[grepl("marker_009.1_102387", rownames(anova_table)), "Sum Sq"]
+PVE <- SS / TSS
+PVE
+#0.1272952
+
+model <- lm(root_EstimateED50 ~ marker_005.1_648012, data = mydata)
+anova_table <- anova(model)
+TSS <- sum(model$residuals^2)
+SS <- anova_table[grepl("marker_005.1_648012", rownames(anova_table)), "Sum Sq"]
+PVE <- SS / TSS
+PVE
+#0.6520966
+
+model <- lm(root_EstimateED50 ~ marker_016.1_750503, data = mydata)
+anova_table <- anova(model)
+TSS <- sum(model$residuals^2)
+SS <- anova_table[grepl("marker_016.1_750503", rownames(anova_table)), "Sum Sq"]
+PVE <- SS / TSS
+PVE
+#0.2669866
+
+# Compute correlation matrix for predictor variables
+cor_matrix <- cor(mydata[, -1])
+
+# Plot correlation matrix
+library(ggplot2)
+ggplot(reshape2::melt(cor_matrix)) +
+  geom_tile(aes(Var2, Var1, fill = value)) +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+                       midpoint = 0, limit = c(-1,1), space = "Lab",
+                       name="Pearson\nCorrelation") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, 
+                                    size = 8, hjust = 1)) +
+  coord_fixed()
+
+model <- lm(root_EstimateED10 ~ marker_009.1_102387, data = mydata)
+TSS <- sum((mydata$root_EstimateED10 - mean(mydata$root_EstimateED10))^2)
+RSS <- sum(model$residuals^2)
+PVE <- (TSS - RSS) / TSS
+#0.2540467
+
+model <- lm(root_EstimateED10 ~ marker_005.1_648012, data = mydata)
+TSS <- sum((mydata$root_EstimateED10 - mean(mydata$root_EstimateED10))^2)
+RSS <- sum(model$residuals^2)
+PVE <- (TSS - RSS) / TSS
+#0.2634648
+
+mydata <- read_excel("EDbySNP_zz.xlsx", sheet = 2, col_names = TRUE)
+mydata <- mydata %>%
+  rename_with(~ paste0("marker_", .), -root_EstimateED50, -isolate_name)
+model <- lm(root_EstimateED50 ~ marker_009.1_102387, data = mydata)
+TSS <- sum((mydata$root_EstimateED50 - mean(mydata$root_EstimateED50))^2)
+RSS <- sum(model$residuals^2)
+PVE <- (TSS - RSS) / TSS
+#0.1129209
+
+model <- lm(root_EstimateED50 ~ marker_005.1_648012, data = mydata)
+TSS <- sum((mydata$root_EstimateED50 - mean(mydata$root_EstimateED50))^2)
+RSS <- sum(model$residuals^2)
+PVE <- (TSS - RSS) / TSS
+#0.3947085
+```
+PRE
+```R
+setwd("C:/Users/tchea/Desktop")
+# Load the data from the Excel file
+install.packages("readxl")
+install.packages("caret")
+install.packages("rlang")
+install.packages("ggplot2")
+library(readxl)
+library(dplyr)
+library(caret)
+mydata <- read_excel("EDbySNP_zz.xlsx", sheet = 1, col_names = TRUE)
+
+mydata <- mydata %>%
+  rename_with(~ paste0("marker_", .), -root_EstimateED50, -isolate_name)
+
+# Convert SNP marker columns to numeric
+mydata[, 3:ncol(mydata)] <- lapply(mydata[, 3:ncol(mydata)], as.numeric)
+for (i in 3:ncol(mydata)) {
+  marker_name <- paste0(colnames(mydata)[i])
+  marker_names <- paste0(colnames(mydata)[3:863])
+  formula_string <- paste("root_EstimateED10 ~", paste(marker_names, collapse = " + "))
+  qtl_model <- lm(formula_string, data = mydata)
+  formula_string <- paste("root_EstimateED10 ~", colnames(mydata)[i])
+  qtl_model1 <- lm(formula_string, data = mydata)
+  rss <- sum(residuals(qtl_model)^2)
+  rss1 <- sum(residuals(qtl_model1)^2)
+  PRE <- (rss1-rss)/rss1
+}
+
+marker_names <- paste0(colnames(mydata)[3:ncol(mydata)])
+result_df <- data.frame(marker_name = character(), PRE = numeric(), stringsAsFactors = FALSE)
+
+for (i in 1:length(marker_names)) {
+  marker_name <- marker_names[i]
+  formula_string <- paste("root_EstimateED10 ~", paste(marker_names, collapse = " + "))
+  qtl_model <- lm(formula_string, data = mydata)
+  formula_string <- paste("root_EstimateED10 ~", marker_name)
+  qtl_model1 <- lm(formula_string, data = mydata)
+  rss <- sum(residuals(qtl_model)^2)
+  rss1 <- sum(residuals(qtl_model1)^2)
+  PRE <- (rss1 - rss) / rss1
+  
+  result_df <- rbind(result_df, data.frame(marker_name = marker_name, PRE = PRE))
+}
+#Results are 1 for all markers, colinearity is high amongst the markers:
+
+# Calculate correlation matrix
+cor_mat <- cor(mydata[, 3:ncol(mydata)])
+
+# Check for high correlations
+high_cor <- which(abs(cor_mat) > 0.9 & cor_mat != 1, arr.ind = TRUE)
+
+if (nrow(high_cor) > 0) {
+  message("The following markers are highly correlated:")
+  for (i in 1:nrow(high_cor)) {
+    marker1 <- colnames(mydata)[high_cor[i, 1] + 2]
+    marker2 <- colnames(mydata)[high_cor[i, 2] + 2]
+    message(paste(marker1, "and", marker2))
+  }
+}
+
+cor_threshold <- 0.8
+highly_correlated <- findCorrelation(cor_mat, cutoff = cor_threshold)
+# Select subset of uncorrelated or low correlated markers
+selected_markers <- mydata[, -c(1:2, highly_correlated)]
+
+marker_names <- paste0(colnames(selected_markers)[3:ncol(selected_markers)])
+result_df <- data.frame(marker_name = character(), PRE = numeric(), stringsAsFactors = FALSE)
+
+for (i in 1:length(marker_names)) {
+  marker_name <- marker_names[i]
+  formula_string <- paste("root_EstimateED10 ~", paste(marker_names, collapse = " + "))
+  qtl_model <- lm(formula_string, data = selected_markers)
+  formula_string <- paste("root_EstimateED10 ~", marker_name)
+  qtl_model1 <- lm(formula_string, data = selected_markers)
+  rss <- sum(residuals(qtl_model)^2)
+  rss1 <- sum(residuals(qtl_model1)^2)
+  PRE <- (rss1 - rss) / rss1
+  
+  result_df <- rbind(result_df, data.frame(marker_name = marker_name, PRE = PRE))
+}
+```
+Heritability
+
+To calculate heritability in a QTL mapping study, you can use a statistical method called "variance components analysis." This method involves estimating the contribution of genetic and environmental factors to the variation in the phenotype.
+```R
+mydata <- read_excel("EDbySNP_zz.xlsx", sheet = 2, col_names = TRUE)
+mydata <- mydata %>%
+  rename_with(~ paste0("marker_", .), -root_EstimateED50, -isolate_name)
+model <- lm(root_EstimateED50 ~ marker_009.1_102387, data = mydata)
+anova_table <- anova(model)
+TSS <- sum(model$residuals^2)
+SS <- anova_table[grepl("marker_009.1_102387", rownames(anova_table)), "Sum Sq"]
+PVE <- SS / TSS
+PVE
+
+# Load the necessary libraries
+library(readxl)
+library(qtl)
+library(readr)
+
+
+# Load the data from an Excel file
+df <- read_excel("EDbySNP_zz.xlsx", sheet = 2, col_names = TRUE)
+df <- df %>%
+  rename_with(~ paste0("marker_", .), -root_EstimateED50, -isolate_name)
+df2 <- df[3:863]
+geno <- as.matrix(df2)
+trait <- df$root_EstimateED50
+pheno <- unlist(trait)
+VP <- var(trait)
+print(VP)
+
+model <- lm(pheno ~ geno)
+VE <- sum(model$residuals^2) / (length(pheno) - ncol(geno))
+
+marker_names <- paste0(colnames(df)[3:863])
+formula_string <- paste("root_EstimateED50 ~", paste(marker_names, collapse = " + "))
+qtl_model <- lm(formula_string, data = mydata)
+
+#High colinearity is a problem again
+# Run stepwise regression to select a subset of SNPs
+model <- lm(pheno ~ geno)
+stepwise_model <- step(model, direction="both", trace=0) #ERROR - initial model is over-fit
+
+# Extract the selected SNPs from the model
+selected_snps <- names(coef(stepwise_model)[-1])
+
+# Remove the non-selected SNPs from the genotype data
+geno_selected <- geno[, selected_snps]
+
+# Fit a new linear regression model using the selected SNPs
+model_selected <- lm(pheno ~ geno_selected)
+
+
+# Perform PCA on the genotype data
+pca <- prcomp(geno)
+
+# Extract the first n principal components that explain the most variance
+n <- 10
+pc_scores <- pca$x[, 1:n]
+
+# Fit a linear regression model using the principal components as predictors
+model <- lm(pheno ~ pc_scores)
+stepwise_model <- step(model, direction="both", trace=2) #no variables were selected
+
+# Extract the selected principal components from the model
+selected_pcs <- names(coef(stepwise_model)[-1])
+
+# Remove the non-selected principal components from the PC scores
+pc_scores_selected <- pc_scores[, selected_pcs]
+
+# Fit a new linear regression model using the selected principal components
+model_selected <- lm(pheno ~ pc_scores_selected)
+
+#The stepwise procedure did not select any variables for inclusion in the model. This could be due to several reasons:
+
+#The predictors (i.e., principal components) may not be significantly associated with the response variable (i.e., phenotype). This could be due to a weak or non-existent relationship between the genetic variation captured by the principal components and the phenotype of interest.
+
+#The sample size may be too small to reliably detect significant associations between the predictors and the response variable. In such cases, it may be difficult to identify which predictors are truly important for the model.
+
+#The stepwise regression algorithm may have failed to identify the most important predictors due to the order in which the predictors were evaluated. The stepwise algorithm evaluates predictors one-by-one, and may stop searching for additional predictors if the current set of predictors does not improve the model fit enough to meet the specified stopping criteria.
+
+#It is important to note that stepwise regression can be problematic and may not always result in the best model. It is often better to consider all relevant predictors based on prior knowledge or biological plausibility, and then use methods such as regularization (e.g., ridge regression or lasso) to identify the most important predictors while controlling for overfitting.
+
+write.csv(df, file = "data.csv", row.names = FALSE)
+# Define the QTL model
+qtl_model <- read.cross(data = df, format = "csv", genotypingError = 0.01, pheno.col = "root_EstimateED50")
+
+
+# Calculate the phenotypic variance (VP) and the QTL variance (VG)
+VP <- var(qtl_model$pheno)
+VG <- sum(qtl_model[var.explained, 1])
+
+# Calculate the residual variance (VE)
+VE <- VP - VG
+
+# Calculate the heritability (h2)
+h2 <- VG / VP
+
+# Print the results
+cat("Phenotypic variance (VP):", VP, "\n")
+cat("QTL variance (VG):", VG, "\n")
+cat("Residual variance (VE):", VE, "\n")
+cat("Heritability (h2):", h2, "\n")
+
+################################################################################
+library(lme4)
+
+# Load data from Excel file
+data <- read.csv("data.csv")
+
+# Fit linear mixed-effects model
+model <- lmer(phenotype ~ snp1 + snp2 + ... + snpN + (1|isolate), data=data)
+
+# Estimate variance components
+variances <- VarCorr(model)
+genetic_var <- variances[[1]]$vcov[1,1]
+residual_var <- variances[[1]]$scVar
+
+# Calculate heritability
+heritability <- genetic_var / (genetic_var + residual_var)
+
+```
 
 
 
