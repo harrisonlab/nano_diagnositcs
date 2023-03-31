@@ -1,6 +1,6 @@
 # Powdery mildew comparative genomics pipeline
 
-Documentation of analysis and commands used for comparative genomics work as part of Nano Diagnostics PhD.
+Documentation of analysis and commands used for comparative genomics work as part of Nano Diagnostics PhD. - This file documents effector prediciton and comparisons across the powdery mildew clade.
 
 Genomes assembled and annotated in nano_diagnostics/P_aphanis, nano_diagnostics/P_leucotricha and nano_diagnostics/B_graminis were used alongside genomes downloaded from NCBI for the following analysis.
 
