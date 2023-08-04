@@ -3962,7 +3962,7 @@ awk '{print $10}' contig5.gtf | sed 's@"@@g' | sed 's@;@@g' | uniq > contig5gene
 nano contig9genes.txt 
 nano contig5genes.txt
 grep -A 1 -f contig9genes.txt data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_protein.faa > contig9.faa #44 proteins
-grep -A 1 -f contig5genes.txt data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_protein.faa > contig5.faa #238 proteins 
+grep -A 1 -f contig5genes.txt data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_protein.faa > contig5.faa #269 proteins 
 ```
 
 PCA
