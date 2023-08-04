@@ -3952,17 +3952,17 @@ grep -A 1 '>QFBF01000020.1 ' /home/theaven/scratch/data/assembly/genome/venturia
 ```
 Look at all other genes
 ```bash
-cat data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000020.1 | uniq | wc -l #2676
+cat data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000009.1 | uniq | wc -l #2676
 cat data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000005.1 | uniq | wc -l #3340
-cat data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000020.1 >> contig20.gtf # genes7305-7590, in the p<0.05 marker area genes7333-7358
-cat data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000005.1 >> contig5.gtf # genes 2613-2981, in the p<0.05 marker area genes2678-2981
-awk '{print $10}' contig20.gtf | sed 's@"@@g' | sed 's@;@@g' | uniq > contig20genes.txt
+cat data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000009.1 >> contig9.gtf # in the p<0.05 marker area genes3975-4019
+cat data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000005.1 >> contig5.gtf # in the p<0.05 marker area genes2712-2981
+awk '{print $10}' contig9.gtf | sed 's@"@@g' | sed 's@;@@g' | uniq > contig9genes.txt
 awk '{print $10}' contig5.gtf | sed 's@"@@g' | sed 's@;@@g' | uniq > contig5genes.txt
-grep -A 1 -f contig20genes.txt data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_protein.faa > contig20.faa #242 proteins
-grep -A 1 -f contig5genes.txt data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_protein.faa > contig5.faa #325 proteins 
-#remove non-significant from contig .txt files
-grep -A 1 -f contig20genes.txt data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_protein.faa > sigcontig20.faa #22 proteins
-grep -A 1 -f contig5genes.txt data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_protein.faa > sigcontig5.faa #262 proteins 
+#Remove non-significant gene names
+nano contig9genes.txt 
+nano contig5genes.txt
+grep -A 1 -f contig9genes.txt data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_protein.faa > contig9.faa #44 proteins
+grep -A 1 -f contig5genes.txt data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_protein.faa > contig5.faa #238 proteins 
 ```
 
 PCA
