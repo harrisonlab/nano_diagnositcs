@@ -3925,47 +3925,10 @@ ED90_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:"
                            annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "ED90", ylim= c(0,2.5), xlab="Linkage group" )
 
 ```
-For fixed slope for all there are two QTL with significance p=<0.05, one in linakge group 3 on contig 20 and one in linkage group 7 on contig 5. 
+For ANOVA -LL - RS1,44,59,80,81,109 removed, and the lower RS11 there are two QTL with significance p=<0.05, one in linakge group 1 on contig 9 and one in linkage group 7 on contig 5. 
 
-In linkage group 3 only one of 861 unique SNP markers reaches p<0.05; 020.1_192284, p=0.041265161. Flanking markers are 020.1_191981 at p=0.074193447 and 020.1_206885 at p=0.116572974.
+![image](https://github.com/harrisonlab/nano_diagnositcs/assets/46782239/348ebf8e-639c-42c6-b166-eaeb984afd4e)
 
-LG	First SNP at p	Last SNP at p	p-value
-3	020.1_135309	020.1_137444	0.263133124
-3	020.1_137444	020.1_155761	0.0988163
-3	020.1_160360	020.1_191981	0.074193447
-3	020.1_192284	020.1_192301	0.041265161
-3	020.1_206885	020.1_238650	0.116572974
-
-
-In linkage group 7 there are 17 of 861 unique SNP markers that reach p<0.05:
-
-LG	First SNP at p	Last SNP at p	p-value
-7	005.1_465937	005.1_482758	0.327054676
-7	005.1_484574	005.1_501029	0.082974222
-7	005.1_512290	005.1_569336	0.041265161
-7	005.1_574437	005.1_604974	0.025215396
-7	005.1_605703	005.1_606613	0.025215396
-7	005.1_612736	005.1_642152	0.025215396
-7	005.1_648012	005.1_649989	0.003026067
-7	005.1_652076	005.1_740269	0.014562157
-7	005.1_740512	005.1_768227	0.000789554
-7	005.1_769412	005.1_898232	0.000789554
-7	005.1_899960	005.1_1079263	0.003026067
-7	005.1_1081353	005.1_1081452	0.024134485
-7	005.1_1083526	005.1_1088125	0.020266888
-7	005.1_1088683	005.1_1098296	0.034989945
-7	005.1_1105697	005.1_1112602	0.026529841
-7	005.1_1113330	005.1_1147000	0.026529841
-7	005.1_1172256	005.1_1211471	0.025215396
-7	005.1_1214348	005.1_1408086	0.025215396
-7	005.1_1408877	005.1_1510230	0.030266287
-7	039.1_37183	039.1_37837	0.082974222
-7	039.1_39835	039.1_109795	0.110234471
-
-According to chi squared there is association between the QTL peak markers, p=0.041967
-
-Effect size was calculated as (mean effective dose in isolates carrying the resistant genotype - mean effective dose in isolates carrying the susceptible genotype)/standard deviation of effective dose in isolates carrying the susceptible genotype
-Effect size is 6.9 for the LG7 QTL and 0.54 for the LG3 QTl
 
 Find CYP51 gene:
 ```bash
