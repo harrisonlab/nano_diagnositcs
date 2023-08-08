@@ -3952,17 +3952,204 @@ grep -A 1 '>QFBF01000020.1 ' /home/theaven/scratch/data/assembly/genome/venturia
 ```
 Look at all other genes
 ```bash
-cat data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000009.1 | uniq | wc -l #2676
-cat data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000005.1 | uniq | wc -l #3340
-cat data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000009.1 >> contig9.gtf # in the p<0.05 marker area genes3975-4019
-cat data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000005.1 >> contig5.gtf # in the p<0.05 marker area genes2712-2981
+cd data/assembly/genome/venturia/inaequalis/
+cat GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000009.1 | uniq | wc -l #2746
+cat GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000005.1 | uniq | wc -l #3340
+cat GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000009.1 >> contig9.gtf # in the p<0.05 marker area genes3975-4018
+cat GCA_003351075.1_ASM335107v1_genomic.gtf | grep QFBF01000005.1 >> contig5.gtf # in the p<0.05 marker area genes2712-2981, in the QTL area 2743-2824
 awk '{print $10}' contig9.gtf | sed 's@"@@g' | sed 's@;@@g' | uniq > contig9genes.txt
 awk '{print $10}' contig5.gtf | sed 's@"@@g' | sed 's@;@@g' | uniq > contig5genes.txt
 #Remove non-significant gene names
 nano contig9genes.txt 
 nano contig5genes.txt
-grep -A 1 -f contig9genes.txt data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_protein.faa > contig9.faa #44 proteins
-grep -A 1 -f contig5genes.txt data/assembly/genome/venturia/inaequalis/GCA_003351075.1_ASM335107v1_protein.faa > contig5.faa #269 proteins 
+#Convert nucleotide fasta to single line format:
+awk ' {if (NR==1) {print $0} else {if ($0 ~ /^>/) {print "\n"$0} else {printf $0}}}' GCA_003351075.1_ASM335107v1_protein.faa > GCA_003351075.1_ASM335107v1_protein.linear.faa
+grep -A 1 -f contig9genes.txt GCA_003351075.1_ASM335107v1_protein.linear.faa > contig9.faa #39 proteins
+grep -A 1 -f contig5genes.txt GCA_003351075.1_ASM335107v1_protein.linear.faa > contig5.faa #70 proteins 
+```
+transporters:
+```bash
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics
+
+grep 'Vi05172_g2812\|Vi05172_g2818\|Vi05172_g2787\|Vi05172_g2785\|Vi05172_g2769\|Vi05172_g3976\|Vi05172_g3984\|Vi05172_g3998\|Vi05172_g2755\|Vi05172_g4005' GCA_003351075.1_ASM335107v1_genomic.gff > putative_transporter_genes.gff
+
+#Create a vcf file for each gene:
+for vcf in $(ls LLimon_SNPs_vcftools_gatk_filtered_snps_passed.vcf); do
+    InFile=$vcf
+    OutDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/snps_per_gene
+    OutFile=NA
+    GffFile=putative_transporter_genes.gff
+    ProgDir=/hpc-home/did23faz/git_repos/Wrappers/NBI
+    mkdir $OutDir
+    sbatch $ProgDir/run_extract_gene_snps.sh $InFile $OutDir $OutFile $GffFile
+done #56194453
+
+source package 01ef5a53-c149-4c9e-b07d-0b9a46176cc0
+for file in $(ls snps_per_gene/*.gz); do
+name=$(basename $file | sed 's@.gz@@g')
+bgzip -cd $file > $name
+done
+
+
+#Create a vcf file for each gene - CDS:
+for vcf in $(ls LLimon_SNPs_vcftools_gatk_filtered_snps_passed.vcf); do
+    InFile=$vcf
+    OutDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/snps_per_CDS
+    OutFile=NA
+    GffFile=putative_transporter_genes.gff
+    ProgDir=/hpc-home/did23faz/git_repos/Wrappers/NBI
+    mkdir $OutDir
+    sbatch $ProgDir/run_extract_CDS_snps.sh $InFile $OutDir $OutFile $GffFile
+done
+
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/python3.sif python3
+```
+```python
+import re
+
+gff_file_path = '/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/putative_transporter_genes.gff'
+output_file_path = '/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/gene_info.txt'
+
+def extract_gene_info_from_gff(gff_file, output_file):
+    gene_info = []
+    with open(gff_file, 'r') as file:
+        for line in file:
+            if not line.startswith('#'):  # Ignore comment lines
+                fields = line.split('\t')
+                feature_type = fields[2]
+                if feature_type == 'gene':  # Process only gene features
+                    chromosome = fields[0]
+                    attributes = fields[8]
+                    gene_name = re.search(r'Name=(.*?)(;|$)', attributes).group(1)
+                    start_pos = int(fields[3])
+                    stop_pos = int(fields[4])
+                    gene_info.append((chromosome, gene_name, start_pos, stop_pos))
+    # Write gene information to output file
+    with open(output_file, 'w') as output:
+        for chromosome, gene_name, start_pos, stop_pos in gene_info:
+            output.write(f"Chromosome: {chromosome}\tGene Name: {gene_name}\tStart Position: {start_pos}\tStop Position: {stop_pos}\n")
+    print("Extraction complete. Gene information written to", output_file)
+
+extract_gene_info_from_gff(gff_file_path, output_file_path)
+```
+Extract information for genes with SNPs in them:
+```bash
+for vcf in $(find /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/snps_per_gene/ -name "*_snps.vcf" -exec readlink -f {} \;); do
+GeneName=$(echo $vcf | rev| cut -d '/' -f1 | rev | cut -d '_' -f1,2 | cut -d '-' -f2)
+echo $GeneName
+grep $GeneName /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/gene_info.txt >> /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/snp_gene_info.txt
+done
+
+#Convert fasta to single line format:
+awk ' {if (NR==1) {print $0} else {if ($0 ~ /^>/) {print "\n"$0} else {printf $0}}}' GCA_003351075.1_ASM335107v1_genomic.fna > GCA_003351075.1_ASM335107v1_genomic.linear.fna
+awk ' {if (NR==1) {print $0} else {if ($0 ~ /^>/) {print "\n"$0} else {printf $0}}}' GCA_003351075.1_ASM335107v1_cds_from_genomic.fna > GCA_003351075.1_ASM335107v1_cds_from_genomic.linear.fna
+
+#Separate different scaffolds:
+for scaffold in $(grep '>QFBF01000005.1\|>QFBF01000009.1' GCA_003351075.1_ASM335107v1_genomic.linear.fna); do
+name=$(echo $scaffold | cut -d ' ' -f1 | sed 's@>@@g')
+echo $name
+grep -w -A 1 "$scaffold" GCA_003351075.1_ASM335107v1_genomic.linear.fna > GCA_003351075.1_ASM335107v1_genomic.linear.${name}.fa
+grep -w "##gff-version 3\|$name" putative_transporter_genes.gff > putative_transporter_genes_${name}.gff
+done 
+
+grep -w "##gff-version 3\|QFBF01000009.1" putative_transporter_genes.gff > putative_transporter_genes_QFBF01000009.1.gff
+grep -w "##gff-version 3\|QFBF01000005.1" putative_transporter_genes.gff > putative_transporter_genes_QFBF01000005.1.gff
+
+#Generate gene sequences from scaffolds
+source package /tgac/software/testing/bin/bedops-2.2.0
+source package 4028d6e4-21a8-45ec-8545-90e4ed7e1a64
+source package 638df626-d658-40aa-80e5-14a275b7464b
+gff2bed < putative_transporter_genes_QFBF01000005.1.gff > putative_transporter_genes_QFBF01000005.1.bed
+gff2bed < putative_transporter_genes_QFBF01000009.1.gff > putative_transporter_genes_QFBF01000009.1.bed
+grep "gene" putative_transporter_genes_QFBF01000005.1.bed > putative_transporter_genes_QFBF01000005.1_2.bed
+grep "gene" putative_transporter_genes_QFBF01000009.1.bed > putative_transporter_genes_QFBF01000009.1_2.bed
+samtools faidx GCA_003351075.1_ASM335107v1_genomic.linear.QFBF01000005.1.fa
+samtools faidx GCA_003351075.1_ASM335107v1_genomic.linear.QFBF01000009.1.fa
+bedtools getfasta -fi GCA_003351075.1_ASM335107v1_genomic.linear.QFBF01000005.1.fa -bed putative_transporter_genes_QFBF01000005.1_2.bed -fo putative_transporter_genes_QFBF01000005.1.gff3.nt2 -name+
+bedtools getfasta -fi GCA_003351075.1_ASM335107v1_genomic.linear.QFBF01000009.1.fa -bed putative_transporter_genes_QFBF01000009.1_2.bed -fo putative_transporter_genes_QFBF01000009.1.gff3.nt2 -name+
+grep -A 1 'gene' putative_transporter_genes_QFBF01000005.1.gff3.nt2 > putative_transporter_genes_QFBF0100000x.1.gff3.nt
+grep -A 1 'gene' putative_transporter_genes_QFBF01000009.1.gff3.nt2 >> putative_transporter_genes_QFBF0100000x.1.gff3.nt
+
+
+>MYZPE13164_O_EIv2.1_0121900::scaffold_100:5461-6997
+>gene-Vi05172_g2769::QFBF01000005.1:738906-740757
+
+for vcf in $(find snps_per_gene/ -name "*_snps.vcf" -exec readlink -f {} \;); do
+gene_info_file=gene_info.txt
+reference_fasta=putative_transporter_genes_QFBF0100000x.1.gff3.nt
+OutDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/gene_fastas
+ProgDir=/hpc-home/did23faz/git_repos/Wrappers/NBI
+GeneName=$(echo $vcf |rev| cut -d '/' -f1 |rev| cut -d '_' -f1,2 | cut -d '-' -f2)
+vcf_file=$vcf
+OutFile=${GeneName}.fa
+if [ ! -e ${OutDir}/${OutFile} ]; then
+echo $GeneName
+sbatch $ProgDir/run_create_sample_sequence_files_haploid.sh $vcf_file $OutDir $OutFile $reference_fasta $gene_info_file 
+else
+echo $GeneName already run
+fi
+done
+echo done
+
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/gene_fastas); do
+name=$(basename $file | cut -d '_' -f2,3)
+mv gene_fastas/$file /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/gene_fastas/$name
+done
+
+gff3sort.pl --precise --chr_order natural putative_transporter_genes.gff > putative_transporter_genes_sorted.gff
+
+for gene_multifasta in $(find gene_fastas/ -name "*.fa" -exec readlink -f {} \;); do  
+gff=putative_transporter_genes_sorted.gff
+geneID=$(echo $gene_multifasta | rev | cut -d '/' -f1 | rev | cut -d '.' -f1)  
+OutDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas
+OutFile=$(echo $geneID)_CDS.fa 
+echo $OutFile  
+ProgDir=/hpc-home/did23faz/git_repos/Wrappers/NBI 
+sbatch $ProgDir/run_splice_CDS.sh $gene_multifasta $gff $geneID $OutDir $OutFile 
+done #NOTE this script is not strand aware so - strand sequences will be the reverse compliment 
+
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2769_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2769_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2818_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2818_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3976_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3976_CDS+.fa
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/python3.sif python3
+```
+```python
+from Bio import SeqIO
+
+input_file='/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2769_CDS+.fa'
+output_file='/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2769_CDS.fa'
+
+def reverse_complement_fasta(input_file, output_file):
+    with open(output_file, "w") as output_handle:
+        for record in SeqIO.parse(input_file, "fasta"):
+            record.seq = record.seq.reverse_complement()
+            SeqIO.write(record, output_handle, "fasta")
+
+reverse_complement_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2769_CDS+.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2769_CDS.fa")
+reverse_complement_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2818_CDS+.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2818_CDS.fa")
+reverse_complement_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3976_CDS+.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3976_CDS.fa")
+
+
+def translate_fasta(input_file, output_file):
+    with open(output_file, "w") as output_handle:
+        for record in SeqIO.parse(input_file, "fasta"):
+            protein_seq = record.seq.translate()
+            protein_record = record
+            protein_record.seq = protein_seq
+            SeqIO.write(protein_record, output_handle, "fasta")
+
+translate_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2755_CDS.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2755_CDS.fa.aa")
+translate_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2769_CDS.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2769_CDS.fa.aa")
+translate_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2812_CDS.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2812_CDS.fa.aa")
+translate_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2818_CDS.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2818_CDS.fa.aa")
+translate_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3976_CDS.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3976_CDS.fa.aa")
+translate_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3984_CDS.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3984_CDS.fa.aa")
+translate_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3998_CDS.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3998_CDS.fa.aa")
+
+exit()
+```
+```bash
+rm /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/*+.fa
 ```
 
 PCA
