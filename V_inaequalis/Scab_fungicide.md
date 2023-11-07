@@ -2678,6 +2678,590 @@ outputXX$Lower_90 <-outputXX90$Lower_90
 outputXX$Upper_90 <-outputXX90$Upper_90
 write_xlsx(outputXX,"outputLLfinal.xlsx")
 ```
+
+
+
+
+
+
+
+
+```R
+data1 <- read_excel("Laura scab111.xlsx")
+pdata<-na.omit(data1)
+data<- data.frame()
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% mutate(percent_response = Av_growtharea/(mean(df$Av_growtharea[df$Concentration==0]))*100)
+data <- rbind(data, df)
+}
+
+Isolatex <- data[data$Isolate=="AF28", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="Spartan 1", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS1", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS10", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS100", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS101", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS102", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS103", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS104", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS105", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS106", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS107", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS108", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS109", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS11", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS110", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS111", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS114", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS115", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS116", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS117", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS118", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS119", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS12", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS121", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS122", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS123", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS124", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS125", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS127", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS128", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS129", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS130", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS14", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS15", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS16", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS17", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS2", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS21", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS22", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS23", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS24", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS28", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS29", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS3", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS31", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS32", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS33", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS35", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS36", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS37", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS38", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS39", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS40", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS41", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS42", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS43", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS44", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS45", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS48", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS49", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS50", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS54", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS57", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS58", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS59", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS60", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS70", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS71", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS72", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS73", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS74", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS75", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS76", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS77", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS78", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS79", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS80", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS81", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS82", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS83", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS84", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+Isolatex <- data[data$Isolate=="RS85", c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea", "percent_response")]
+exploremodel <- drm(percent_response~Concentration, data=Isolatex, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+plot(exploremodel)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#Plot for parents simultaneously
+#Add percentage response to each record
+#NOTE: transforming to a % is only valid if you use the absolute ED50 etc., as minmum growth is zero in this case relative and absolute ED are the same.
+data <- read_excel("Laura scab111.xlsx",sheet = 3)
+pdata<-na.omit(data)
+result_df <- data.frame()
+for (x in Isolates)
+{df <- pdata[pdata$Isolate==x, c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea","Av_growtharea")]
+df <- df %>% mutate(percent_response = Av_growtharea/(mean(df$Av_growtharea[df$Concentration==0]))*100)
+result_df <- rbind(result_df, df)
+}
+
+#Plot for parents simultaneously
+#Full model
+parents <- result_df[result_df$Isolate %in% c("AF28", "Spartan 1"), c("Isolate", "Concentration", "Plate", "Replicate", "Diameter1", "Diameter2", "growtharea", "Av_growtharea", "percent_response")]
+pmodel <- drm(percent_response~Concentration, data=parents, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+summary(pmodel)
+#Model fitted: Log-logistic (ED50 as parameter) (2 parms)
+#
+#Parameter estimates:
+#
+#            Estimate Std. Error t-value   p-value    
+#b:Spartan 1 0.794528   0.207098  3.8365 0.0016180 ** 
+#b:AF28      1.050358   0.203988  5.1491 0.0001188 ***
+#e:Spartan 1 1.840677   0.563822  3.2646 0.0052242 ** 
+#e:AF28      0.266387   0.080758  3.2986 0.0048730 ** 
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#
+#Residual standard error:
+#
+# 11.2479 (15 degrees of freedom)
+
+#reduced model:
+rpmodel <- drm(percent_response~Concentration, data=parents, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+summary(rpmodel)
+#Model fitted: Log-logistic (ED50 as parameter) (2 parms)
+#
+#Parameter estimates:
+#
+#              Estimate Std. Error t-value   p-value    
+#b:(Intercept)  0.86110    0.20040  4.2969 0.0004883 ***
+#e:(Intercept)  0.69077    0.21419  3.2250 0.0049730 ** 
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#
+#Residual standard error:
+#
+# 16.71215 (17 degrees of freedom)
+
+#Plot for all simultaneously
+model <- drm(percent_response~Concentration, data=result_df, Isolate, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+summary(model)
+```
+Model fitted: Log-logistic (ED50 as parameter) (2 parms)
+
+Parameter estimates:
+
+              Estimate Std. Error t-value   p-value    
+b:RS123     1.3168e+00 4.5577e-01  2.8892 0.0041230 ** 
+b:RS121     1.7436e+00 6.0179e-01  2.8973 0.0040204 ** 
+b:RS119     5.8380e+00 8.8080e+01  0.0663 0.9471952    
+b:RS118     1.5570e+00 4.4293e-01  3.5153 0.0005019 ***
+b:RS117     9.3285e-01 2.4413e-01  3.8211 0.0001593 ***
+b:RS116     9.3068e-01 2.0178e-01  4.6123 5.743e-06 ***
+b:RS128     1.9401e+00 1.2950e+00  1.4981 0.1350720    
+b:RS127     1.2757e+00 5.1666e-01  2.4691 0.0140614 *  
+b:RS125     2.1834e+00 9.3735e-01  2.3294 0.0204531 *  
+b:RS124     1.0383e+01        NaN     NaN       NaN    
+b:RS115     1.4399e+00 4.1345e-01  3.4828 0.0005644 ***
+b:RS111     1.2728e+00 3.3050e-01  3.8513 0.0001416 ***
+b:RS106     1.6915e+00 8.0632e-01  2.0978 0.0367009 *  
+b:RS110     2.6592e+00 2.6825e+00  0.9913 0.3222660    
+b:RS82      2.0374e+00 5.4103e-01  3.7659 0.0001971 ***
+b:RS2       1.8746e+00 6.6716e-01  2.8097 0.0052594 ** 
+b:RS102     8.7989e-01 2.1512e-01  4.0903 5.441e-05 ***
+b:RS101     2.9124e+00 3.7642e+00  0.7737 0.4396666    
+b:RS103     8.3446e-01 1.9051e-01  4.3802 1.603e-05 ***
+b:RS104     1.7002e+00 5.8435e-01  2.9095 0.0038702 ** 
+b:RS3       1.2233e+00 5.1993e-01  2.3528 0.0192279 *  
+b:RS85      4.7038e+00        NaN     NaN       NaN    
+b:RS79      3.8098e-01 8.9327e-02  4.2650 2.626e-05 ***
+b:RS78      1.0890e+00 2.8825e-01  3.7779 0.0001881 ***
+b:RS12      1.3492e+00 3.6890e-01  3.6573 0.0002974 ***
+b:RS58      5.2364e-01 1.0694e-01  4.8965 1.542e-06 ***
+b:RS77      7.6674e+00 2.6994e+02  0.0284 0.9773577    
+b:Spartan 1 7.9453e-01 1.9016e-01  4.1783 3.782e-05 ***
+b:RS11      1.3107e+00 1.0129e+00  1.2940 0.1965809    
+b:RS33      3.0934e+00 3.4809e+00  0.8887 0.3748349    
+b:RS49      1.5882e+00 5.0869e-01  3.1222 0.0019570 ** 
+b:RS48      1.8836e+00 5.1483e-01  3.6586 0.0002959 ***
+b:AF28      1.0503e+00 1.8728e-01  5.6082 4.384e-08 ***
+b:RS31      1.9736e+00 2.3264e+00  0.8483 0.3968708    
+b:RS38      1.2116e+01 7.5738e+02  0.0160 0.9872466    
+b:RS43      1.2417e+00 2.5340e-01  4.8999 1.518e-06 ***
+b:RS42      1.2300e+00 3.3888e-01  3.6297 0.0003297 ***
+b:RS17      1.7549e+00 1.1884e+00  1.4767 0.1407280    
+b:RS41      2.2139e+01 3.9236e+02  0.0564 0.9550383    
+b:RS21      5.2632e+00 4.0585e+01  0.1297 0.8968968    
+b:RS70      5.8026e-01 1.4215e-01  4.0819 5.632e-05 ***
+b:RS37      2.3370e+00 3.0122e+00  0.7758 0.4384132    
+b:RS16      1.3083e+00 3.8834e-01  3.3690 0.0008453 ***
+b:RS14      1.3941e+00 3.2711e-01  4.2617 2.663e-05 ***
+b:RS40      5.9759e+00 1.1513e+02  0.0519 0.9586368    
+b:RS29      5.1824e+00 1.0565e+02  0.0491 0.9609064    
+b:RS60      1.0064e+00 2.9303e-01  3.4346 0.0006705 ***
+e:RS123     7.4527e-02 1.7488e-02  4.2616 2.664e-05 ***
+e:RS121     5.1027e-01 1.4595e-01  3.4961 0.0005379 ***
+e:RS119     7.2663e-01 3.4947e+00  0.2079 0.8354186    
+e:RS118     3.6809e-01 1.1818e-01  3.1146 0.0020063 ** 
+e:RS117     5.6871e-01 1.7190e-01  3.3084 0.0010437 ** 
+e:RS116     1.3647e-01 4.9393e-02  2.7629 0.0060558 ** 
+e:RS128     5.4067e-02 2.3025e-02  2.3482 0.0194636 *  
+e:RS127     8.9813e-02 2.0049e-02  4.4797 1.037e-05 ***
+e:RS125     1.0831e+00 1.4494e-01  7.4725 7.388e-13 ***
+e:RS124     1.0367e+00        NaN     NaN       NaN    
+e:RS115     5.5704e-01 1.4721e-01  3.7838 0.0001839 ***
+e:RS111     1.5876e+00 3.1157e-01  5.0954 5.925e-07 ***
+e:RS106     1.0676e+00 2.4774e-01  4.3094 2.174e-05 ***
+e:RS110     5.8375e-01 3.1637e-01  1.8451 0.0659297 .  
+e:RS82      2.6298e+00 4.1093e-01  6.3997 5.454e-10 ***
+e:RS2       3.6890e-01 1.3617e-01  2.7091 0.0071062 ** 
+e:RS102     1.8260e-01 5.3666e-02  3.4025 0.0007515 ***
+e:RS101     6.3917e-01 3.6420e-01  1.7550 0.0802079 .  
+e:RS103     1.0622e-01 3.2208e-02  3.2981 0.0010815 ** 
+e:RS104     5.0724e-01 1.3801e-01  3.6755 0.0002777 ***
+e:RS3       1.0505e-01 2.5423e-02  4.1321 4.581e-05 ***
+e:RS85      1.3078e-01        NaN     NaN       NaN    
+e:RS79      2.5791e-02 1.5615e-02  1.6517 0.0995664 .  
+e:RS78      1.3276e-01 3.3932e-02  3.9126 0.0001113 ***
+e:RS12      6.1234e-01 1.4550e-01  4.2085 3.333e-05 ***
+e:RS58      7.4047e-02 3.6085e-02  2.0520 0.0409710 *  
+e:RS77      1.1991e-01 7.6643e-01  0.1565 0.8757757    
+e:Spartan 1 1.8407e+00 5.1770e-01  3.5555 0.0004335 ***
+e:RS11      9.5771e-02 3.7816e-02  2.5326 0.0117945 *  
+e:RS33      8.3673e-01 1.7892e-01  4.6767 4.287e-06 ***
+e:RS49      5.6533e-01 1.4143e-01  3.9971 7.943e-05 ***
+e:RS48      1.6926e+00 2.7069e-01  6.2528 1.272e-09 ***
+e:AF28      2.6647e-01 7.4188e-02  3.5919 0.0003792 ***
+e:RS31      1.1018e-01 2.5503e-02  4.3204 2.074e-05 ***
+e:RS38      9.5861e-02 2.5335e-01  0.3784 0.7054067    
+e:RS43      4.1355e-01 1.0848e-01  3.8122 0.0001648 ***
+e:RS42      8.2367e-01 1.8159e-01  4.5360 8.086e-06 ***
+e:RS17      1.2511e-01 3.1508e-02  3.9708 8.827e-05 ***
+e:RS41      1.0483e-01 8.7661e-02  1.1959 0.2326182    
+e:RS21      9.6936e-02 2.3860e-02  4.0627 6.092e-05 ***
+e:RS70      1.6804e-01 7.2135e-02  2.3295 0.0204492 *  
+e:RS37      6.9548e-02 3.3050e-02  2.1043 0.0361190 *  
+e:RS16      5.4813e-02 1.3896e-02  3.9446 9.801e-05 ***
+e:RS14      2.8085e-02 7.4566e-03  3.7665 0.0001966 ***
+e:RS40      1.1425e-01 2.9339e-01  0.3894 0.6972161    
+e:RS29      1.1275e-01 2.7597e-01  0.4085 0.6831478    
+e:RS60      1.5949e-02 4.3775e-03  3.6434 0.0003133 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error:
+
+ 10.32783 (324 degrees of freedom)
+
+```R
+rmodel <- drm(percent_response~Concentration, data=result_df, fct=LL.4(fixed=c(NA, 0, 100, NA)))
+summary(rmodel)
+```
+Model fitted: Log-logistic (ED50 as parameter) (2 parms)
+
+Parameter estimates:
+
+              Estimate Std. Error t-value   p-value    
+b:(Intercept) 0.896554   0.048673  18.420 < 2.2e-16 ***
+e:(Intercept) 0.284780   0.022651  12.573 < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error:
+
+ 18.4164 (416 degrees of freedom)
+```R
+outputXX <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX) <- c("EstimateED50", "StdError_50", "Lower_50", "Upper_50")
+output <- ED(model, c(50), interval="delta", type = c("absolute"))
+colnames(output) <- colnames(outputXX)
+outputXX <- rbind(output, outputXX)
+
+
+outputXX10 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX10) <- c("EstimateED10", "StdError_10", "Lower_10", "Upper_10")
+output10 <- ED(model, c(10), interval="delta", type = c("absolute"))
+colnames(output10) <- colnames(outputXX10)
+outputXX10 <- rbind(output10, outputXX10)
+
+outputXX90 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(outputXX90) <- c("EstimateED90", "StdError_90", "Lower_90", "Upper_90")
+output90 <- ED(model, c(90), interval="delta", type = c("absolute"))
+colnames(output90) <- colnames(outputXX90)
+outputXX90 <- rbind(output90, outputXX90)
+outputXX$Isolate <- rownames(outputXX)
+
+outputXX$EstimateED10 <-outputXX10$EstimateED10
+outputXX$StdError_10 <-outputXX10$StdError_10
+outputXX$Lower_10 <-outputXX10$Lower_10
+outputXX$Upper_10 <-outputXX10$Upper_10
+outputXX$EstimateED90 <-outputXX90$EstimateED90
+outputXX$StdError_90 <-outputXX90$StdError_90
+outputXX$Lower_90 <-outputXX90$Lower_90
+outputXX$Upper_90 <-outputXX90$Upper_90
+write_xlsx(outputXX,"outputLLfinal3.xlsx")
+```
+Add log and order columns to outputLLfinal2.xlsx
+
 Cumulative frequency plots:
 ```R
 setwd("C:/Users/heavt/OneDrive - NIAB/Documents/R/SNP calling")
@@ -2703,17 +3287,16 @@ plot3<-ggplot(data, aes(x=EstimateED90_log, y=ED90_order))+geom_point()+labs(y="
 grid.arrange(plot1, plot2, plot3, nrow=2, ncol=2)
 
 
-data <- read_excel("zz.xlsx")
+data <- read_excel("outputLLfinal2.xlsx")
 str(data)
-parents<-subset(data, Isolate=='e:AF28:50' | Isolate=='e:Spartan 1:50')
+AF28<-subset(data, Isolate=='e:AF28:50')
+Spartan<-subset(data, Isolate=='e:Spartan 1:50')
 
 require(gridExtra)
-plot1<-ggplot(data, aes(x=EstimateED10_log, y=ED10_order))+geom_point()+labs(y="Cumulative Frequency",  x=expression(lnED[10])) + geom_point(data=parents, aes(x=EstimateED10_log, y=ED10_order), colour="red", size=3) + ggtitle("ED10") + theme(plot.title = element_text(hjust = 0.5))
-plot2<-ggplot(data, aes(x=EstimateED50_log, y=ED50_order))+geom_point()+labs(y="Cumulative Frequency",  x=expression(lnED[50])) + geom_point(data=parents, aes(x=EstimateED50_log, y=ED50_order), colour="red", size=3) + ggtitle("ED50") + theme(plot.title = element_text(hjust = 0.5))
-plot3<-ggplot(data, aes(x=EstimateED90_log, y=ED90_order))+geom_point()+labs(y="Cumulative Frequency",  x=expression(lnED[90])) + geom_point(data=parents, aes(x=EstimateED90_log, y=ED90_order), colour="red", size=3) + ggtitle("ED90") + theme(plot.title = element_text(hjust = 0.5))
+plot1<-ggplot(data, aes(x=EstimateED10_log, y=ED10_order))+geom_point(size=4)+labs(y="Cumulative Frequency",  x=expression(lnED[10])) + geom_point(data=AF28, aes(x=EstimateED10_log, y=ED10_order), colour="#56B4E9", size=6) + geom_point(data=Spartan, aes(x=EstimateED10_log, y=ED10_order), colour="red", size=6) + ggtitle("ED10") + theme(plot.title = element_text(hjust = 0.5, size=26), axis.title.x = element_text(size = 24), axis.title.y = element_text(size = 24))
+plot2<-ggplot(data, aes(x=EstimateED50_log, y=ED50_order))+geom_point(size=4)+labs(y="Cumulative Frequency",  x=expression(lnED[50])) + geom_point(data=AF28, aes(x=EstimateED50_log, y=ED50_order), colour="#56B4E9", size=6) + geom_point(data=Spartan, aes(x=EstimateED50_log, y=ED50_order), colour="red", size=6) + ggtitle("ED50") + theme(plot.title = element_text(hjust = 0.5, size=26), axis.title.x = element_text(size = 24), axis.title.y = element_text(size = 24))
+plot3<-ggplot(data, aes(x=EstimateED90_log, y=ED90_order))+geom_point(size=4)+labs(y="Cumulative Frequency",  x=expression(lnED[90])) + geom_point(data=AF28, aes(x=EstimateED90_log, y=ED90_order), colour="#56B4E9", size=6) + geom_point(data=Spartan, aes(x=EstimateED90_log, y=ED90_order), colour="red", size=6) + ggtitle("ED90") + theme(plot.title = element_text(hjust = 0.5, size=26), axis.title.x = element_text(size = 24), axis.title.y = element_text(size = 24))
 grid.arrange(plot1, plot2, plot3, nrow=2, ncol=2)
-
-
 ```
 Check for normal distribution of ED50 against Isolates;
 ```R
@@ -3641,7 +4224,7 @@ write_xlsx(kk,"pcentW2_kruskal.xlsx")
 ANOVA - ED data was transformed to make it normal. https://www.statisticshowto.com/tukey-ladder-of-powers/ A square root transformation was found to be best by shapiro test. With normalised data we can use ANOVA with ordinal values rather than Kruskal-Wallis which uses rankings.
 ```r
 #For ED50
-genopheno <- read_excel("EDbySNP10.xlsx",sheet = 2)
+genopheno <- read_excel("EDbySNP_10.xlsx",sheet = 2)
 genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
 genopheno<-as.data.table(genopheno)
 filtered.df <- genopheno[,3:863]
@@ -3672,7 +4255,7 @@ for (i in 2){
 kk$ED50_pvaluesFDRcorrected <-test50$"ED50 pvaluesFDRcorrected"
 
 #For ED10:
-genopheno <- read_excel("EDbySNP10.xlsx",sheet = 1)
+genopheno <- read_excel("EDbySNP_10.xlsx",sheet = 1)
 genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
 genopheno<-as.data.table(genopheno)
 filtered.df <- genopheno[,3:863]
@@ -3704,7 +4287,7 @@ for (i in 2){
 kk$ED10_pvaluesFDRcorrected <-test10$"ED10_pvaluesFDRcorrected"
 
 #For ED90:
-genopheno <- read_excel("EDbySNP10.xlsx",sheet = 3)
+genopheno <- read_excel("EDbySNP_10.xlsx",sheet = 3)
 genopheno[,3:863]<-lapply(genopheno[,3:863], factor)#convert marker data to factors
 genopheno<-as.data.table(genopheno)
 filtered.df <- genopheno[,3:863]
@@ -3734,7 +4317,7 @@ for (i in 2){
   test<-p.adjust(kk90[,i], method="fdr") #false discovery rate correction
   test90[,i]<-test}
 kk$ED90_pvaluesFDRcorrected <-test90$"ED90_pvaluesFDRcorrected"
-write_xlsx(kk,"pcent_transformed_anova.xlsx")
+write_xlsx(kk,"pcent_transformed_anova2.xlsx")
 ```
 Manhattan plot:
 ```R
@@ -3916,13 +4499,13 @@ par(mfrow = c(2, 2))
 man <- read_excel("zz_anova.xlsx")
 #Estimated positional spacing
 ED10_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED10_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
-                           annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "ED10", ylim= c(0,2.5), xlab="Linkage group" )
+                           annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "ED10", ylim= c(0,2.5), xlab="Linkage group" ) + geom_hline(yintercept = 1, color = "black")
 
 ED50_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED50_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
-                           annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "ED50", ylim= c(0,3.5), xlab="Linkage group" )
+                           annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "ED50", ylim= c(0,3.5), xlab="Linkage group" ) + geom_hline(yintercept = 0, color = "black")
 
 ED90_man_plot <- manhattan(man, chr="LG", bp="Cumulative_position", snp="snp_1:", p="ED90_pvaluesFDRcorrected",genomewideline = -log10(0.05),suggestiveline = FALSE,
-                           annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "ED90", ylim= c(0,2.5), xlab="Linkage group" )
+                           annotateTop=TRUE, col = c("#cc1f56", "darkblue"),annotatePval=0.05, main = "ED90", ylim= c(0,2.5), xlab="Linkage group" ) + geom_hline(yintercept = 0, color = "black")
 
 ```
 For ANOVA -LL - RS1,44,59,80,81,109 removed, and the lower RS11 there are two QTL with significance p=<0.05, one in linakge group 1 on contig 9 and one in linkage group 7 on contig 5. 
@@ -4002,6 +4585,47 @@ for vcf in $(ls LLimon_SNPs_vcftools_gatk_filtered_snps_passed.vcf); do
     sbatch $ProgDir/run_extract_CDS_snps.sh $InFile $OutDir $OutFile $GffFile
 done
 
+####################################################################################################
+grep 'Vi05172_g3975\|Vi05172_g3976\|Vi05172_g3977\|Vi05172_g3978\|Vi05172_g3979\|Vi05172_g3980\|Vi05172_g3981\|Vi05172_g3982\|Vi05172_g3983\|Vi05172_g3984\|Vi05172_g3985\|Vi05172_g3986\|Vi05172_g3989\|Vi05172_g3990\|Vi05172_g3991\|Vi05172_g3992\|Vi05172_g3993\|Vi05172_g3994\|Vi05172_g3995\|Vi05172_g3998\|Vi05172_g3999\|Vi05172_g4001\|Vi05172_g4002\|Vi05172_g4003\|Vi05172_g4004\|Vi05172_g4005\|Vi05172_g4006\|Vi05172_g4007\|Vi05172_g4008\|Vi05172_g4009\|Vi05172_g4010\|Vi05172_g4011\|Vi05172_g4012\|Vi05172_g4013\|Vi05172_g4014\|Vi05172_g4015\|Vi05172_g4016\|Vi05172_g4017\|Vi05172_g4018\|Vi05172_g2743\|Vi05172_g2744\|Vi05172_g2745\|Vi05172_g2746\|Vi05172_g2747\|Vi05172_g2748\|Vi05172_g2749\|Vi05172_g2750\|Vi05172_g2751\|Vi05172_g2752\|Vi05172_g2753\|Vi05172_g2754\|Vi05172_g2755\|Vi05172_g2756\|Vi05172_g2757\|Vi05172_g2758\|Vi05172_g2759\|Vi05172_g2760\|Vi05172_g2762\|Vi05172_g2763\|Vi05172_g2764\|Vi05172_g2765\|Vi05172_g2766\|Vi05172_g2767\|Vi05172_g2768\|Vi05172_g2769\|Vi05172_g2770\|Vi05172_g2771\|Vi05172_g2772\|Vi05172_g2773\|Vi05172_g2774\|Vi05172_g2775\|Vi05172_g2776\|Vi05172_g2777\|Vi05172_g2779\|Vi05172_g2780\|Vi05172_g2782\|Vi05172_g2783\|Vi05172_g2785\|Vi05172_g2786\|Vi05172_g2787\|Vi05172_g2788\|Vi05172_g2789\|Vi05172_g2790\|Vi05172_g2791\|Vi05172_g2792\|Vi05172_g2793\|Vi05172_g2794\|Vi05172_g2795\|Vi05172_g2796\|Vi05172_g2797\|Vi05172_g2798\|Vi05172_g2799\|Vi05172_g2800\|Vi05172_g2802\|Vi05172_g2804\|Vi05172_g2806\|Vi05172_g2807\|Vi05172_g2808\|Vi05172_g2810\|Vi05172_g2812\|Vi05172_g2814\|Vi05172_g2815\|Vi05172_g2816\|Vi05172_g2817\|Vi05172_g2818\|Vi05172_g2819\|Vi05172_g2821\|Vi05172_g2822\|Vi05172_g2823' GCA_003351075.1_ASM335107v1_genomic.gff > QTL_genes.gff
+
+#Create a vcf file for each gene:
+for vcf in $(ls LLimon_SNPs_vcftools_gatk_filtered_snps_passed.vcf); do
+    InFile=$vcf
+    OutDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/snps_per_gene2
+    OutFile=NA
+    GffFile=QTL_genes.gff
+    ProgDir=/hpc-home/did23faz/git_repos/Wrappers/NBI
+    mkdir $OutDir
+    sbatch $ProgDir/run_extract_gene_snps.sh $InFile $OutDir $OutFile $GffFile
+done #56679647
+
+for file in $(ls snps_per_gene2/*.gz); do
+name=$(basename $file | sed 's@.gz@@g')
+bgzip -cd $file > $name
+done
+rm -r snps_per_gene2
+mkdir snps_per_gene2
+mv gene-*.vcf snps_per_gene2/.
+
+#Create a vcf file for each gene - CDS:
+for vcf in $(ls LLimon_SNPs_vcftools_gatk_filtered_snps_passed.vcf); do
+    InFile=$vcf
+    OutDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/snps_per_CDS2
+    OutFile=NA
+    GffFile=QTL_genes.gff
+    ProgDir=/hpc-home/did23faz/git_repos/Wrappers/NBI
+    mkdir $OutDir
+    sbatch $ProgDir/run_extract_CDS_snps.sh $InFile $OutDir $OutFile $GffFile
+done #56679651
+
+for file in $(ls snps_per_CDS2/*.gz); do
+name=$(basename $file | sed 's@.gz@@g')
+bgzip -cd $file > $name
+done
+rm -r snps_per_CDS2
+mkdir snps_per_CDS2
+mv cds-*.vcf snps_per_CDS2/.
+
 singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/python3.sif python3
 ```
 ```python
@@ -4009,6 +4633,31 @@ import re
 
 gff_file_path = '/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/putative_transporter_genes.gff'
 output_file_path = '/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/gene_info.txt'
+
+def extract_gene_info_from_gff(gff_file, output_file):
+    gene_info = []
+    with open(gff_file, 'r') as file:
+        for line in file:
+            if not line.startswith('#'):  # Ignore comment lines
+                fields = line.split('\t')
+                feature_type = fields[2]
+                if feature_type == 'gene':  # Process only gene features
+                    chromosome = fields[0]
+                    attributes = fields[8]
+                    gene_name = re.search(r'Name=(.*?)(;|$)', attributes).group(1)
+                    start_pos = int(fields[3])
+                    stop_pos = int(fields[4])
+                    gene_info.append((chromosome, gene_name, start_pos, stop_pos))
+    # Write gene information to output file
+    with open(output_file, 'w') as output:
+        for chromosome, gene_name, start_pos, stop_pos in gene_info:
+            output.write(f"Chromosome: {chromosome}\tGene Name: {gene_name}\tStart Position: {start_pos}\tStop Position: {stop_pos}\n")
+    print("Extraction complete. Gene information written to", output_file)
+
+extract_gene_info_from_gff(gff_file_path, output_file_path)
+
+gff_file_path = '/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/QTL_genes.gff'
+output_file_path = '/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/gene_info2.txt'
 
 def extract_gene_info_from_gff(gff_file, output_file):
     gene_info = []
@@ -4113,11 +4762,143 @@ mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/V
 mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3976_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3976_CDS+.fa
 singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/python3.sif python3
 ```
+Extract information for genes with CDSs in them:
+```bash
+for vcf in $(find /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/snps_per_gene2/ -name "*_snps.vcf" -exec readlink -f {} \;); do
+GeneName=$(echo $vcf | rev| cut -d '/' -f1 | rev | cut -d '_' -f1,2 | cut -d '-' -f2)
+echo $GeneName
+grep $GeneName /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/gene_info.txt >> /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/snps_gene_info2.txt
+done
+
+#Convert fasta to single line format:
+awk ' {if (NR==1) {print $0} else {if ($0 ~ /^>/) {print "\n"$0} else {printf $0}}}' GCA_003351075.1_ASM335107v1_genomic.fna > GCA_003351075.1_ASM335107v1_genomic.linear.fna
+awk ' {if (NR==1) {print $0} else {if ($0 ~ /^>/) {print "\n"$0} else {printf $0}}}' GCA_003351075.1_ASM335107v1_cds_from_genomic.fna > GCA_003351075.1_ASM335107v1_cds_from_genomic.linear.fna
+
+#Separate different scaffolds:
+for scaffold in $(grep '>QFBF01000005.1\|>QFBF01000009.1' GCA_003351075.1_ASM335107v1_genomic.linear.fna); do
+name=$(echo $scaffold | cut -d ' ' -f1 | sed 's@>@@g')
+echo $name
+grep -w -A 1 "$scaffold" GCA_003351075.1_ASM335107v1_genomic.linear.fna > GCA_003351075.1_ASM335107v1_genomic.linear.${name}.fa
+grep -w "##gff-version 3\|$name" QTL_genes.gff > putative_QTL_genes_${name}.gff
+done 
+
+grep -w "##gff-version 3\|QFBF01000009.1" QTL_genes.gff > putative_QTL_genes_QFBF01000009.1.gff
+grep -w "##gff-version 3\|QFBF01000005.1" QTL_genes.gff > putative_QTL_genes_QFBF01000005.1.gff
+
+#Generate gene sequences from scaffolds
+source package /tgac/software/testing/bin/bedops-2.2.0
+source package 4028d6e4-21a8-45ec-8545-90e4ed7e1a64
+source package 638df626-d658-40aa-80e5-14a275b7464b
+gff2bed < putative_QTL_genes_QFBF01000005.1.gff > putative_QTL_genes_QFBF01000005.1.bed
+gff2bed < putative_QTL_genes_QFBF01000009.1.gff > putative_QTL_genes_QFBF01000009.1.bed
+grep "gene" putative_QTL_genes_QFBF01000005.1.bed > putative_QTL_genes_QFBF01000005.1_2.bed
+grep "gene" putative_QTL_genes_QFBF01000009.1.bed > putative_QTL_genes_QFBF01000009.1_2.bed
+samtools faidx GCA_003351075.1_ASM335107v1_genomic.linear.QFBF01000005.1.fa
+samtools faidx GCA_003351075.1_ASM335107v1_genomic.linear.QFBF01000009.1.fa
+bedtools getfasta -fi GCA_003351075.1_ASM335107v1_genomic.linear.QFBF01000005.1.fa -bed putative_QTL_genes_QFBF01000005.1_2.bed -fo putative_QTL_genes_QFBF01000005.1.gff3.nt2 -name+
+bedtools getfasta -fi GCA_003351075.1_ASM335107v1_genomic.linear.QFBF01000009.1.fa -bed putative_QTL_genes_QFBF01000009.1_2.bed -fo putative_QTL_genes_QFBF01000009.1.gff3.nt2 -name+
+grep -A 1 'gene' putative_QTL_genes_QFBF01000005.1.gff3.nt2 > putative_QTL_genes_QFBF0100000x.1.gff3.nt
+grep -A 1 'gene' putative_QTL_genes_QFBF01000009.1.gff3.nt2 >> putative_QTL_genes_QFBF0100000x.1.gff3.nt
+
+for vcf in $(find snps_per_gene2/ -name "*_snps.vcf" -exec readlink -f {} \;); do
+gene_info_file=gene_info2.txt
+reference_fasta=putative_QTL_genes_QFBF0100000x.1.gff3.nt
+OutDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/gene_fastas2
+ProgDir=/hpc-home/did23faz/git_repos/Wrappers/NBI
+GeneName=$(echo $vcf |rev| cut -d '/' -f1 |rev| cut -d '_' -f1,2 | cut -d '-' -f2)
+vcf_file=$vcf
+OutFile=${GeneName}.fa
+if [ ! -e ${OutDir}/${OutFile} ]; then
+echo $GeneName
+sbatch $ProgDir/run_create_sample_sequence_files_haploid.sh $vcf_file $OutDir $OutFile $reference_fasta $gene_info_file 
+else
+echo $GeneName already run
+fi
+done
+echo done
+
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/gene_fastas2); do
+name=$(basename $file | cut -d '_' -f2,3)
+mv gene_fastas2/$file /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/gene_fastas2/$name
+done
+
+source package /tgac/software/testing/bin/gff3sort-1.0.0
+gff3sort.pl --precise --chr_order natural QTL_genes.gff > QTL_genes_sorted.gff #doesnt work on interactive
+
+for gene_multifasta in $(find gene_fastas2/ -name "*.fa" -exec readlink -f {} \;); do  
+gff=QTL_genes_sorted.gff
+geneID=$(echo $gene_multifasta | rev | cut -d '/' -f1 | rev | cut -d '.' -f1)  
+OutDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2
+OutFile=$(echo $geneID)_CDS.fa 
+echo $OutFile  
+ProgDir=/hpc-home/did23faz/git_repos/Wrappers/NBI 
+sbatch $ProgDir/run_splice_CDS.sh $gene_multifasta $gff $geneID $OutDir $OutFile 
+done #NOTE this script is not strand aware so - strand sequences will be the reverse compliment 
+
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2743_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2743_CDS+.fa 
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2744_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2744_CDS+.fa 
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2745_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2745_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2746_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2746_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2748_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2748_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2750_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2750_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2752_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2752_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2754_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2754_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2757_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2757_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2759_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2759_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2760_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2760_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2762_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2762_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2769_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2769_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2772_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2772_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2773_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2773_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2775_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2775_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2777_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2777_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2780_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2780_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2782_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2782_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2785_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2785_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2788_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2788_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2790_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2790_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2792_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2792_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2794_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2794_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2795_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2795_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2796_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2796_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2797_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2797_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2800_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2800_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2802_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2802_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2804_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2804_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2806_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2806_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2810_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2810_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2814_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2814_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2815_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2815_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2816_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2816_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2818_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2818_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2822_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g2822_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g3976_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g3976_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g3979_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g3979_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g3980_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g3980_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g3982_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g3982_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g3986_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g3986_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g3990_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g3990_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g3993_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g3993_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g3994_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g3994_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4001_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4001_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4002_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4002_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4004_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4004_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4005_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4005_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4006_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4006_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4007_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4007_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4008_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4008_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4009_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4009_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4010_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4010_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4011_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4011_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4013_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4013_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4014_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4014_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4015_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4015_CDS+.fa
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4018_CDS.fa /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas2/Vi05172_g4018_CDS+.fa
+cd CDS_fastas2
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/python3.sif python3
+```
 ```python
 from Bio import SeqIO
-
-input_file='/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2769_CDS+.fa'
-output_file='/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2769_CDS.fa'
 
 def reverse_complement_fasta(input_file, output_file):
     with open(output_file, "w") as output_handle:
@@ -4125,10 +4906,42 @@ def reverse_complement_fasta(input_file, output_file):
             record.seq = record.seq.reverse_complement()
             SeqIO.write(record, output_handle, "fasta")
 
-reverse_complement_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2769_CDS+.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2769_CDS.fa")
-reverse_complement_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2818_CDS+.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2818_CDS.fa")
-reverse_complement_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3976_CDS+.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3976_CDS.fa")
-
+reverse_complement_fasta("Vi05172_g2743_CDS+.fa", "Vi05172_g2743_CDS.fa")
+reverse_complement_fasta("Vi05172_g2746_CDS+.fa", "Vi05172_g2746_CDS.fa")
+reverse_complement_fasta("Vi05172_g2754_CDS+.fa", "Vi05172_g2754_CDS.fa")
+reverse_complement_fasta("Vi05172_g2757_CDS+.fa", "Vi05172_g2757_CDS.fa")
+reverse_complement_fasta("Vi05172_g2760_CDS+.fa", "Vi05172_g2760_CDS.fa")
+reverse_complement_fasta("Vi05172_g2762_CDS+.fa", "Vi05172_g2762_CDS.fa")
+reverse_complement_fasta("Vi05172_g2769_CDS+.fa", "Vi05172_g2769_CDS.fa")
+reverse_complement_fasta("Vi05172_g2772_CDS+.fa", "Vi05172_g2772_CDS.fa")
+reverse_complement_fasta("Vi05172_g2773_CDS+.fa", "Vi05172_g2773_CDS.fa")
+reverse_complement_fasta("Vi05172_g2775_CDS+.fa", "Vi05172_g2775_CDS.fa")
+reverse_complement_fasta("Vi05172_g2777_CDS+.fa", "Vi05172_g2777_CDS.fa")
+reverse_complement_fasta("Vi05172_g2780_CDS+.fa", "Vi05172_g2780_CDS.fa")
+reverse_complement_fasta("Vi05172_g2782_CDS+.fa", "Vi05172_g2782_CDS.fa")
+reverse_complement_fasta("Vi05172_g2792_CDS+.fa", "Vi05172_g2792_CDS.fa")
+reverse_complement_fasta("Vi05172_g2795_CDS+.fa", "Vi05172_g2795_CDS.fa")
+reverse_complement_fasta("Vi05172_g2796_CDS+.fa", "Vi05172_g2796_CDS.fa")
+reverse_complement_fasta("Vi05172_g2800_CDS+.fa", "Vi05172_g2800_CDS.fa")
+reverse_complement_fasta("Vi05172_g2804_CDS+.fa", "Vi05172_g2804_CDS.fa")
+reverse_complement_fasta("Vi05172_g2806_CDS+.fa", "Vi05172_g2806_CDS.fa")
+reverse_complement_fasta("Vi05172_g2810_CDS+.fa", "Vi05172_g2810_CDS.fa")
+reverse_complement_fasta("Vi05172_g2815_CDS+.fa", "Vi05172_g2815_CDS.fa")
+reverse_complement_fasta("Vi05172_g2816_CDS+.fa", "Vi05172_g2816_CDS.fa")
+reverse_complement_fasta("Vi05172_g2818_CDS+.fa", "Vi05172_g2818_CDS.fa")
+reverse_complement_fasta("Vi05172_g3976_CDS+.fa", "Vi05172_g3976_CDS.fa")
+reverse_complement_fasta("Vi05172_g3980_CDS+.fa", "Vi05172_g3980_CDS.fa")
+reverse_complement_fasta("Vi05172_g3982_CDS+.fa", "Vi05172_g3982_CDS.fa")
+reverse_complement_fasta("Vi05172_g3986_CDS+.fa", "Vi05172_g3986_CDS.fa")
+reverse_complement_fasta("Vi05172_g3994_CDS+.fa", "Vi05172_g3994_CDS.fa")
+reverse_complement_fasta("Vi05172_g4002_CDS+.fa", "Vi05172_g4002_CDS.fa")
+reverse_complement_fasta("Vi05172_g4006_CDS+.fa", "Vi05172_g4006_CDS.fa")
+reverse_complement_fasta("Vi05172_g4007_CDS+.fa", "Vi05172_g4007_CDS.fa")
+reverse_complement_fasta("Vi05172_g4008_CDS+.fa", "Vi05172_g4008_CDS.fa")
+reverse_complement_fasta("Vi05172_g4009_CDS+.fa", "Vi05172_g4009_CDS.fa")
+reverse_complement_fasta("Vi05172_g4013_CDS+.fa", "Vi05172_g4013_CDS.fa")
+reverse_complement_fasta("Vi05172_g4014_CDS+.fa", "Vi05172_g4014_CDS.fa")
+reverse_complement_fasta("Vi05172_g4015_CDS+.fa", "Vi05172_g4015_CDS.fa")
 
 def translate_fasta(input_file, output_file):
     with open(output_file, "w") as output_handle:
@@ -4138,13 +4951,68 @@ def translate_fasta(input_file, output_file):
             protein_record.seq = protein_seq
             SeqIO.write(protein_record, output_handle, "fasta")
 
-translate_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2755_CDS.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2755_CDS.fa.aa")
-translate_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2769_CDS.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2769_CDS.fa.aa")
-translate_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2812_CDS.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2812_CDS.fa.aa")
-translate_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2818_CDS.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g2818_CDS.fa.aa")
-translate_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3976_CDS.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3976_CDS.fa.aa")
-translate_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3984_CDS.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3984_CDS.fa.aa")
-translate_fasta("/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3998_CDS.fa", "/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/CDS_fastas/Vi05172_g3998_CDS.fa.aa")
+translate_fasta("Vi05172_g2743_CDS.fa", "Vi05172_g2743_CDS.fa.aa")
+translate_fasta("Vi05172_g2746_CDS.fa", "Vi05172_g2746_CDS.fa.aa")
+translate_fasta("Vi05172_g2747_CDS.fa", "Vi05172_g2747_CDS.fa.aa")
+translate_fasta("Vi05172_g2754_CDS.fa", "Vi05172_g2754_CDS.fa.aa")
+translate_fasta("Vi05172_g2755_CDS.fa", "Vi05172_g2755_CDS.fa.aa")
+translate_fasta("Vi05172_g2757_CDS.fa", "Vi05172_g2757_CDS.fa.aa")
+translate_fasta("Vi05172_g2758_CDS.fa", "Vi05172_g2758_CDS.fa.aa")
+translate_fasta("Vi05172_g2760_CDS.fa", "Vi05172_g2760_CDS.fa.aa")
+translate_fasta("Vi05172_g2762_CDS.fa", "Vi05172_g2762_CDS.fa.aa")
+translate_fasta("Vi05172_g2767_CDS.fa", "Vi05172_g2767_CDS.fa.aa")
+translate_fasta("Vi05172_g2769_CDS.fa", "Vi05172_g2769_CDS.fa.aa")
+translate_fasta("Vi05172_g2771_CDS.fa", "Vi05172_g2771_CDS.fa.aa")
+translate_fasta("Vi05172_g2772_CDS.fa", "Vi05172_g2772_CDS.fa.aa")
+translate_fasta("Vi05172_g2773_CDS.fa", "Vi05172_g2773_CDS.fa.aa")
+translate_fasta("Vi05172_g2775_CDS.fa", "Vi05172_g2775_CDS.fa.aa")
+translate_fasta("Vi05172_g2776_CDS.fa", "Vi05172_g2776_CDS.fa.aa")
+translate_fasta("Vi05172_g2777_CDS.fa", "Vi05172_g2777_CDS.fa.aa")
+translate_fasta("Vi05172_g2779_CDS.fa", "Vi05172_g2779_CDS.fa.aa")
+translate_fasta("Vi05172_g2780_CDS.fa", "Vi05172_g2780_CDS.fa.aa")
+translate_fasta("Vi05172_g2782_CDS.fa", "Vi05172_g2782_CDS.fa.aa")
+translate_fasta("Vi05172_g2783_CDS.fa", "Vi05172_g2783_CDS.fa.aa")
+translate_fasta("Vi05172_g2790_CDS.fa", "Vi05172_g2790_CDS.fa.aa")
+translate_fasta("Vi05172_g2792_CDS.fa", "Vi05172_g2792_CDS.fa.aa")
+translate_fasta("Vi05172_g2793_CDS.fa", "Vi05172_g2793_CDS.fa.aa")
+translate_fasta("Vi05172_g2795_CDS.fa", "Vi05172_g2795_CDS.fa.aa")
+translate_fasta("Vi05172_g2796_CDS.fa", "Vi05172_g2796_CDS.fa.aa")
+translate_fasta("Vi05172_g2800_CDS.fa", "Vi05172_g2800_CDS.fa.aa")
+translate_fasta("Vi05172_g2804_CDS.fa", "Vi05172_g2804_CDS.fa.aa")
+translate_fasta("Vi05172_g2806_CDS.fa", "Vi05172_g2806_CDS.fa.aa")
+translate_fasta("Vi05172_g2807_CDS.fa", "Vi05172_g2807_CDS.fa.aa")
+translate_fasta("Vi05172_g2810_CDS.fa", "Vi05172_g2810_CDS.fa.aa")
+translate_fasta("Vi05172_g2812_CDS.fa", "Vi05172_g2812_CDS.fa.aa")
+translate_fasta("Vi05172_g2815_CDS.fa", "Vi05172_g2815_CDS.fa.aa")
+translate_fasta("Vi05172_g2816_CDS.fa", "Vi05172_g2816_CDS.fa.aa")
+translate_fasta("Vi05172_g2818_CDS.fa", "Vi05172_g2818_CDS.fa.aa")
+translate_fasta("Vi05172_g2823_CDS.fa", "Vi05172_g2823_CDS.fa.aa")
+translate_fasta("Vi05172_g3975_CDS.fa", "Vi05172_g3975_CDS.fa.aa")
+translate_fasta("Vi05172_g3976_CDS.fa", "Vi05172_g3976_CDS.fa.aa")
+translate_fasta("Vi05172_g3977_CDS.fa", "Vi05172_g3977_CDS.fa.aa")
+translate_fasta("Vi05172_g3980_CDS.fa", "Vi05172_g3980_CDS.fa.aa")
+translate_fasta("Vi05172_g3981_CDS.fa", "Vi05172_g3981_CDS.fa.aa")
+translate_fasta("Vi05172_g3982_CDS.fa", "Vi05172_g3982_CDS.fa.aa")
+translate_fasta("Vi05172_g3983_CDS.fa", "Vi05172_g3983_CDS.fa.aa")
+translate_fasta("Vi05172_g3984_CDS.fa", "Vi05172_g3984_CDS.fa.aa")
+translate_fasta("Vi05172_g3985_CDS.fa", "Vi05172_g3985_CDS.fa.aa")
+translate_fasta("Vi05172_g3986_CDS.fa", "Vi05172_g3986_CDS.fa.aa")
+translate_fasta("Vi05172_g3989_CDS.fa", "Vi05172_g3989_CDS.fa.aa")
+translate_fasta("Vi05172_g3994_CDS.fa", "Vi05172_g3994_CDS.fa.aa")
+translate_fasta("Vi05172_g3998_CDS.fa", "Vi05172_g3998_CDS.fa.aa")
+translate_fasta("Vi05172_g4001_CDS.fa", "Vi05172_g4001_CDS.fa.aa")
+translate_fasta("Vi05172_g4002_CDS.fa", "Vi05172_g4002_CDS.fa.aa")
+translate_fasta("Vi05172_g4006_CDS.fa", "Vi05172_g4006_CDS.fa.aa")
+translate_fasta("Vi05172_g4007_CDS.fa", "Vi05172_g4007_CDS.fa.aa")
+translate_fasta("Vi05172_g4008_CDS.fa", "Vi05172_g4008_CDS.fa.aa")
+translate_fasta("Vi05172_g4009_CDS.fa", "Vi05172_g4009_CDS.fa.aa")
+translate_fasta("Vi05172_g4012_CDS.fa", "Vi05172_g4012_CDS.fa.aa")
+translate_fasta("Vi05172_g4013_CDS.fa", "Vi05172_g4013_CDS.fa.aa")
+translate_fasta("Vi05172_g4014_CDS.fa", "Vi05172_g4014_CDS.fa.aa")
+translate_fasta("Vi05172_g4015_CDS.fa", "Vi05172_g4015_CDS.fa.aa")
+translate_fasta("Vi05172_g4016_CDS.fa", "Vi05172_g4016_CDS.fa.aa")
+translate_fasta("Vi05172_g4017_CDS.fa", "Vi05172_g4017_CDS.fa.aa")
+
 
 exit()
 ```
