@@ -3286,6 +3286,11 @@ plot2<-ggplot(data, aes(x=EstimateED50_log, y=ED50_order))+geom_point()+labs(y="
 plot3<-ggplot(data, aes(x=EstimateED90_log, y=ED90_order))+geom_point()+labs(y="Cumulative Frequency",  x=expression(lnED[90])) + geom_point(data=parents, aes(x=EstimateED90_log, y=ED90_order), colour="red", size=3)
 grid.arrange(plot1, plot2, plot3, nrow=2, ncol=2)
 
+plot4 <- plot1 + scale_x_continuous(labels = function(x) ifelse(x == -2.5, "−2.5", ifelse(x == -5, "−5", ifelse(x == -7.5, "−7.5", x))))
+plot5 <- plot2 + scale_x_continuous(labels = function(x) ifelse(x == -1, "−1", ifelse(x == -2, "−2", ifelse(x == -3, "−3", ifelse(x == -4, "−4", x)))))
+plot6 <- plot3 + scale_x_continuous(labels = function(x) ifelse(x == -2, "−2", x))
+
+grid.arrange(plot4, plot5, plot6, nrow=2, ncol=2)
 
 data <- read_excel("outputLLfinal2.xlsx")
 str(data)
