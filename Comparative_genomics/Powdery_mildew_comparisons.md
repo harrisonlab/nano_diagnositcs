@@ -4189,3 +4189,762 @@ grep -A 1 '>contig_1598' mildews/HEAVEN_apple2019.fna > contig_1598.txt
 grep -A 1 '>contig_1488' mildews/HEAVEN_apple2020.fna > contig_1488.txt
 grep -A 1 '>contig_1528' mildews/HEAVEN_apple2021.fna > contig_1528.txt
 ```
+## MCAGs
+```bash
+mkdir mcag
+cd mcag
+for file in $(ls /home/theaven/scratch/uncompressed/mildews/*/gene_pred/braker/*/final_genes_renamed.pep.fasta); do
+name=$(echo $file | cut -d '/' -f7 | sed 's@Podosphaeraxanthii@P_x@g' | sed 's@Podosphaeracerasii@P_c@g' | sed 's@pleochaetashiraiana@Pl_s@g' | sed 's@phyllactiniamoricola@Phy_m@g' | sed 's@phialocephalasubalpina@Phi_s@g' | sed 's@Oidiumheveae@O_h@g' | sed 's@Oidiodendron_maius@Oi_m@g' | sed 's@neobulgariaablba@N_a@g' | sed 's@mollisiascopiformis@M_s@g' | sed 's@leveillulataurrica@L_t@g' | sed 's@HEAVEN_strawberry@P_a_frg@g' | sed 's@HEAVEN_raspberry@P_a_rub@g' | sed 's@HEAVEN_apple@P_l@g' | sed 's@Golovinomycesorontii_AssemblyScaffolds@G_o@g' | sed 's@Golovinomycesmagnicellulatus@G_m@g' | sed 's@Golovinomycescichoracearum@G_c@g' | sed 's@glareaiozoyensis@Gl_i@g' | sed 's@GANAN_apple@P_l_ganan@g' | sed 's@Erysiphepulchra@E_pu@g' | sed 's@Erysiphepisi@E_pi@g' | sed 's@Erysipheneolycopersici@E_neol@g' | sed 's@Erysiphenecator@E_neca@g' | sed 's@Erysiphealphitoides_CLCBIO_assembly_cdhitest_0@E_alph@g' | sed 's@drepanopezizabrunnea@D_b@g' | sed 's@chlorociboriaaeruginascens@C_a@g' | sed 's@Blumeriahordei@B_h@g' | sed 's@Blumeriagraminis@B_g@g' | sed 's@ascocorynesarcoides@A_s@g' | sed 's@arachnopezizaaraneosa@Ar_a@g' | sed 's@Amorphothecaresinae@Am_c@g' | sed 's@amorphothecaresinae@Am_c@g')
+echo $name
+cp $file ./${name}_$(basename $file)
+sed -i "s/>/>${name}_/g" ${name}_$(basename $file)
+done
+
+for file in $(ls *final_genes_renamed.pep.fasta); do
+seqkit rmdup $file > temp.fasta && mv temp.fasta $file
+done
+
+mkdir db
+cat *final_genes_renamed.pep.fasta > db/db.faa
+cd db
+makeblastdb -in db.faa -input_type fasta -dbtype prot  -title mildew+db  -parse_seqids -out mildew+db
+
+for file in $(ls ../prot/*); do
+name=$(basename $file | cut -d '.' -f1)
+blastp -query $file -db mildew+db -out ../${name}_results -evalue 1e-5 -outfmt 6 -num_threads 1
+done
+```
+```bash
+mkdir results
+cd results
+
+echo '##' > results.txt
+for file in $(ls ../*final_genes_renamed.pep.fasta); do
+name=$(echo $file | cut -d '/' -f2 | sed 's@_final_genes_renamed.pep.fasta@@g')
+echo $name >> results.txt
+done
+
+for file in $(ls *protein_results); do
+x=$(head -n 1 $file | awk '{print $1}')
+sed -i "1s/^/${x}\t/" results.txt
+done
+
+#!/bin/bash
+
+# Loop through each line in results.txt
+while IFS= read -r line; do
+    name=$(echo "$line" | awk '{print $1}' )
+
+    # Loop through each protein_results file
+    for file in *protein_results; do
+        x=$(grep -m 1 "$name" "$file" | awk '{print $11}')
+        if [ -z "$x" ]; then
+            x="missing"
+        fi
+        # Debugging: Print variables
+        echo "name: $name, x: $x"
+        # Append the value of x to the line in results.txt
+        awk -v val="$x" -v n="$name" '{if ($1 == n) print $0"\t"val; else print $0}' results.txt > results_tmp.txt && mv results_tmp.txt results.txt
+    done
+done < <(grep -v '##' results.txt)
+
+cat results.txt | sed 's@P_x@Podosphaeraxanthii@g' | sed 's@P_c@Podosphaeracerasii@g' | sed 's@Pl_s@pleochaetashiraiana@g' | sed 's@Phy_m@phyllactiniamoricola@g' | sed 's@Phi_s@phialocephalasubalpina@g' | sed 's@O_h@Oidiumheveae@g' | sed 's@Oi_m@Oidiodendron_maius@g' | sed 's@N_a@neobulgariaablba@g' | sed 's@M_s@mollisiascopiformis@g' | sed 's@L_t@leveillulataurrica@g' | sed 's@P_a_frg@HEAVEN_strawberry@g' | sed 's@P_a_rub@HEAVEN_raspberry@g' | sed 's@P_l@HEAVEN_apple@g' | sed 's@G_o@Golovinomycesorontii_AssemblyScaffolds@g' | sed 's@G_m@Golovinomycesmagnicellulatus@g' | sed 's@G_c@Golovinomycescichoracearum@g' | sed 's@Gl_i@glareaiozoyensis@g' | sed 's@P_l_ganan@GANAN_apple@g' | sed 's@E_pu@Erysiphepulchra@g' | sed 's@E_pi@Erysiphepisi@g' | sed 's@E_neol@Erysipheneolycopersici@g' | sed 's@E_neca@Erysiphenecator@g' | sed 's@E_alph@Erysiphealphitoides_CLCBIO_assembly_cdhitest_0@g' | sed 's@D_b@drepanopezizabrunnea@g' | sed 's@C_a@chlorociboriaaeruginascens@g' | sed 's@B_h@Blumeriahordei@g' | sed 's@B_g@Blumeriagraminis@g' | sed 's@A_s@ascocorynesarcoides@g' | sed 's@Ar_a@arachnopezizaaraneosa@g' | sed 's@Am_c@Amorphothecaresinae@g' | sed 's@Am_c@amorphothecaresinae@g' > results_tmp.txt && mv results_tmp.txt results.txt
+
+```
+
+
+
+
+##################################################################################################################################################################################################################################################################################
+#### BUSCO
+```bash
+for assembly in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Parauncinula/*/*/*a); do
+    Database=/jic/research-groups/Saskia-Hogenhout/BUSCO_sets/v5/fungi_odb10
+    ProgDir=~/git_repos/Wrappers/NBI
+    OutDir=$(dirname $assembly)/BUSCO
+    OutFile=$(echo $assembly | cut -d '/' -f9,10,11 | sed 's@/@_@g')
+    Jobs=$(squeue -u did23faz| grep 'busco'  | wc -l)
+    echo x
+    while [ $Jobs -gt 3 ]; do
+      sleep 900s
+      printf "."
+      Jobs=$(squeue -u did23faz| grep 'busco'  | wc -l)
+    done
+    mkdir $OutDir 
+    sleep 30s
+    sbatch $ProgDir/run_busco_keep.sh $assembly $Database $OutDir $OutFile
+done
+#...58940846
+
+#Extract complete busco IDs, keep those present in at least 3 genomes:
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/*/*/*/BUSCO/fungi_odb10/run_fungi_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/complete_busco_ids.txt;
+done
+
+sort /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/complete_busco_ids.txt |uniq -c > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/complete_busco_ids_with_counts.txt
+grep -v " 2 " /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/complete_busco_ids_with_counts.txt | grep -v " 1 " > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/complete_busco_ids.txt
+awk '{print $2}' /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/complete_busco_ids.txt > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/complete_busco_ids_3.txt
+
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt
+
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/*/*/*/BUSCO/fungi_odb10/run_fungi_odb10/busco_sequences/single_copy_busco_sequences.tar.gz); do
+cd $(dirname $file)
+tar -xzvf single_copy_busco_sequences.tar.gz
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/Genomes
+done
+
+#Give unique names to the complete busco genes from each assembly:
+for dir in $(ls -d /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/*/*/*/BUSCO/fungi_odb10/run_fungi_odb10/busco_sequences/single_copy_busco_sequences); do
+  sppname=$(echo $dir |cut -f9,10,11 -d "/" | sed 's@/@_@g');
+  abbrv=$(echo $dir | cut -d '/' -f9 | cut -c 1-3)_$(echo $dir | cut -d '/' -f10 | cut -c 1-3)_$(echo $dir | cut -d '/' -f11)
+  echo $sppname
+  echo $abbrv
+  for file in ${dir}/*.fna; do
+    out=$(echo $file |rev |cut -f 1 -d "/"|rev)
+    cp $file /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/${sppname}_${out}
+    sed -i 's/^>/>'${abbrv}'|/g' /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/${sppname}_${out}
+  cut -f 1 -d ":" /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/${sppname}_${out} | tr '[:lower:]' '[:upper:]' > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/${sppname}_${out}.1 && mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/${sppname}_${out}.1 /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/${sppname}_${out}  
+  done
+done
+
+#Combine genes from each assembly into a single file per gene:
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt
+buscos=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/complete_busco_ids_3.txt
+lines=$(cat $buscos)
+for line in $lines; do
+  for fna in $(ls *_$line.fna); do
+  output=$(echo $line)_nt.fasta
+  cat $fna >> $output
+  done
+done
+rm *.fna
+
+#58940918
+
+#Align the gene sequences;
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt
+for file in $(ls ${AlignDir}/*_nt.fasta); do
+OutFile=$(basename $file | sed 's@_nt.fasta@_nt_aligned.fasta@g')
+Jobs=$(squeue -u did23faz| grep 'mafft'  | wc -l)
+while [ $Jobs -gt 100 ]; do
+    sleep 300s
+    printf "."
+    Jobs=$(squeue -u did23faz| grep 'mafft'| wc -l)
+done
+OutDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt
+ProgDir=~/git_repos/Wrappers/NBI
+echo "$file" >> mafft_log.txt
+sbatch $ProgDir/sub_mafft_alignment.sh $file $OutDir $OutFile 2>&1 >> mafft_log.txt
+done
+
+for gene in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/*_aligned.fasta); do
+  ID=$(basename $gene |sed 's@_nt_aligned.fasta@@g')
+  echo $ID
+  mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/$ID
+  cp $gene /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/$ID
+done
+
+#Trim the alignments:
+for Alignment in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/*/*_aligned.fasta); do
+  OutDir=$(dirname $Alignment)
+  TrimmedName=$(basename $Alignment .fasta)"_trimmed.fasta"
+  echo $Alignment
+  echo $OutDir
+  echo $TrimmedName
+  sed -i 's/n/N/g' $Alignment
+  singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/trimal1.4.1.sif trimal -in $Alignment -out $OutDir/$TrimmedName -keepheader -automated1
+done
+
+#Trim header names as RAxML need <60 characters in length:
+for Alignment in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/*/*_aligned_trimmed.fasta); do
+New=$(dirname $Alignment)/$(basename $Alignment .fasta)_edit.fasta
+cat $Alignment  | cut -f1 -d '|'  > $New
+done
+
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/*/*_edit.fasta); do
+while IFS= read -r line; do
+    if [[ "$line" =~ ^\>.+ ]]; then
+        echo "$line" | wc -c
+    fi
+done < $file
+done
+
+#Run RAxML
+for Alignment in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/*/*_edit.fasta); do
+Prefix=$(basename $Alignment | cut -f1 -d '_')
+OutDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/RAxML/$Prefix
+ProgDir=~/git_repos/Wrappers/NBI
+mkdir -p $OutDir
+Jobs=$(squeue -u did23faz| grep 'RAxML'  | wc -l)
+while [ $Jobs -gt 190 ]; do
+    sleep 300s
+    printf "."
+    Jobs=$(squeue -u did23faz| grep 'RAxML'| wc -l)
+done
+sbatch $ProgDir/run_RAxML_msa.sh $Alignment $Prefix $OutDir 
+done
+```
+```bash
+ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/*_final_genes_renamed.pep.fasta > existing_protein_files.txt
+
+
+for assembly in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/*/*/*/*a); do
+  mkdir $(dirname $assembly)/braker2_prothint
+done
+
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/Am_c_GCA_003019875_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Amorphotheca/resinae/GCA_003019875.1/braker2_prothint/Amo_res_GCA_003019875.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/Am_c_GCA_018167515_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Amorphotheca/resinae/GCA_018167515.1/braker2_prothint/Amo_res_GCA_018167515.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/Ar_a_GCA_003988855_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Arachnopeziza/araneosa/GCA_003988855.1/braker2_prothint/Ara_ara_GCA_003988855.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/A_s_GCA_000328965_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Ascocoryne/sarcoides/GCA_000328965.1/braker2_prothint/Asc_sar_GCA_000328965.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/B_g_GCA_000417025_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Blumeria/graminis/GCA_000417025.1/braker2_prothint/Blu_gra_GCA_000417025.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/B_g_GCA_000417865_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Blumeria/graminis/GCA_000417865.1/braker2_prothint/Blu_gra_GCA_000417865.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/B_g_GCA_000418435_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Blumeria/graminis/GCA_000418435.1/braker2_prothint/Blu_gra_GCA_000418435.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/B_g_GCA_000441875_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Blumeria/graminis/GCA_000441875.1/braker2_prothint/Blu_gra_GCA_000441875.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/B_g_GCA_900519115_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Blumeria/hordei/GCA_900519115.1/braker2_prothint/Blu_hor_GCA_900519115.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/B_g_GCA_905067625_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Blumeria/graminis-triticale/GCA_905067625.1/braker2_prothint/Blu_gra_GCA_905067625.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/B_h_GCA_000401675_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Blumeria/hordei/GCA_000401675.1/braker2_prothint/Blu_hor_GCA_000401675.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/B_h_GCA_900237765_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Blumeria/hordei/GCA_900237765.1/braker2_prothint/Blu_hor_GCA_900237765.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/B_h_GCA_900239735_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Blumeria/hordei/GCA_900239735.1/braker2_prothint/Blu_hor_GCA_900239735.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/B_h_GCA_900638725_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Blumeria/hordei/GCA_900638725.1/braker2_prothint/Blu_hor_GCA_900638725.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/C_a_GCA_002276475_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Chlorociboria/aeruginascens/GCA_002276475.2/braker2_prothint/Chl_aer_GCA_002276475.2_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/D_b_GCA_000298775_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Drepanopeziza/brunnea/GCF_000298775.1/braker2_prothint/Dre_bru_GCF_000298775.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/E_alph_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Erysiphe/alphitoides/CLCBIO_7.0.3/braker2_prothint/Ery_alp_CLCBIO_7.0.3_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/E_neca_GCA_000798715_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Erysiphe/necator/GCA_000798715.1/braker2_prothint/Ery_nec_GCA_000798715.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/E_neca_GCA_000798735_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Erysiphe/necator/GCA_000798735.1/braker2_prothint/Ery_nec_GCA_000798735.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/E_neca_GCA_000798755_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Erysiphe/necator/GCA_000798755.1/braker2_prothint/Ery_nec_GCA_000798755.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/E_neca_GCA_000798775_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Erysiphe/necator/GCA_000798775.1/braker2_prothint/Ery_nec_GCA_000798775.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/E_neca_GCA_000798795_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Erysiphe/necator/GCA_000798795.1/braker2_prothint/Ery_nec_GCA_000798795.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/E_neca_GCA_016906895_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Erysiphe/necator/GCA_016906895.2/braker2_prothint/Ery_nec_GCA_016906895.2_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/E_neol_GCA_003610855_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Erysiphe/neolycopersici/GCA_003610855.1/braker2_prothint/Ery_neo_GCA_003610855.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/E_pi_GCA_000208805_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Erysiphe/pisi/GCA_000208805.1/braker2_prothint/Ery_pis_GCA_000208805.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/E_pi_GCA_000214055_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Erysiphe/pisi/GCA_000214055.1/braker2_prothint/Ery_pis_GCA_000214055.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/E_pu_GCA_002918395_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Erysiphe/pulchra/GCA_002918395.1/braker2_prothint/Ery_pul_GCA_002918395.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/G_c_GCA_003611195_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Golovinomyces/cichoracearum/GCA_003611195.1/braker2_prothint/Gol_cic_GCA_003611195.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/G_c_GCA_003611215_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Golovinomyces/cichoracearum/GCA_003611215.1/braker2_prothint/Gol_cic_GCA_003611215.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/G_c_GCA_003611235_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Golovinomyces/cichoracearum/GCA_003611235.1/braker2_prothint/Gol_cic_GCA_003611235.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/Gl_i_GCA_000409485_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Glarea/lozoyensis/GCF_000409485.1/braker2_prothint/Gla_loz_GCF_000409485.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/G_m_GCA_006912115_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Golovinomyces/magnicellulatus/GCA_006912115.1/braker2_prothint/Gol_mag_GCA_006912115.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/G_o_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Golovinomyces/orontii/MGH1/braker2_prothint/Gol_oro_MGH1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/L_t_CADEPA01_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Leveillula/taurica/CADEPA01/braker2_prothint/Lev_tau_CADEPA01_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/M_s_GCA_001500285_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Mollisia/scopiformis/GCF_001500285.1/braker2_prothint/Mol_sco_GCF_001500285.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/N_a_GCA_003988965_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Neobulgaria/alba/GCA_003988965.1/braker2_prothint/Neo_alb_GCA_003988965.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/O_h_GCA_003957845_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Erysiphe/quercicola/GCA_003957845.1/braker2_prothint/Ery_que_GCA_003957845.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/Oi_m_GCA_000827325_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Oidiodendron/maius/GCA_000827325.1/braker2_prothint/Oid_mai_GCA_000827325.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/P_a_frg2020_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Podosphaera/aphanis/DRCT72020/braker2_prothint/Pod_aph_DRCT72020_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/P_a_frg2021_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Podosphaera/aphanis/DRCT72021/braker2_prothint/Pod_aph_DRCT72021_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/P_a_rub2020_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Podosphaera/aphanis/SCOTT2020/braker2_prothint/Pod_aph_SCOTT2020_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/P_c_GCA_018398735_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Podosphaera/cerasi/GCA_018398735.1/braker2_prothint/Pod_cer_GCA_018398735.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/Phi_s-GCA_900073065_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Phialocephala/subalpina/GCA_900073065.1/braker2_prothint/Phi_sub_GCA_900073065.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/Phy_m_GCA_019455665_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Phyllactinia/moricola/GCA_019455665.1/braker2_prothint/Phy_mor_GCA_019455665.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/P_l2019_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Podosphaera/leucotricha/P112019/braker2_prothint/Pod_leu_P112019_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/P_l2020_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Podosphaera/leucotricha/OGB2020/braker2_prothint/Pod_leu_OGB2020_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/P_l2021_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Podosphaera/leucotricha/OGB2021/braker2_prothint/Pod_leu_OGB2021_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/P_l_ganan_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Podosphaera/leucotricha/GCA_013170925.1/braker2_prothint/Pod_leu_GCA_013170925.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/Pl_s_GCA_019455505_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Pleochaeta/shiraiana/GCA_019455505.1/braker2_prothint/Ple_shi_GCA_019455505.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/P_x_GCA_010015925_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Podosphaera/xanthii/GCA_010015925.1/braker2_prothint/Pod_xan_GCA_010015925.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/P_x_GCA_014884795_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Podosphaera/xanthii/GCA_014884795.1/braker2_prothint/Pod_xan_GCA_014884795.1_final_genes_renamed.pep.fasta
+ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/Scereviseae_GCF_000146045_final_genes_renamed.pep.fasta /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Saccharomyces/cerevisiae/GCF_001500285.1/braker2_prothint/Sac_cer_GCF_001500285.1_final_genes_renamed.pep.fasta
+
+for assembly in /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/*/*/*/*a; do
+  peptide_file=$(ls $(dirname "$assembly")/braker2_prothint/*_final_genes_renamed.pep.fasta)
+  Dir=$(echo $assembly | cut -d '/' -f9,10,11)
+  if [[ ! -f $peptide_file ]]; then
+    echo "no peptides for $assembly"
+    mkdir -p temp_genomes/$Dir
+    cp $assembly temp_genomes/$Dir/.
+  fi
+done
+
+for Genome in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/temp_genomes/Parauncinula/*/*/*a); do
+OutFile=$(basename $Genome | sed 's@.fa@@g')
+OutDir=$(dirname $Genome)/repeatmodeler
+ProgDir=~/git_repos/Wrappers/NBI
+mkdir $OutDir
+sbatch $ProgDir/run_repeatmodeler.sh $Genome $OutFile $OutDir
+done
+#58170701, 58940849
+
+for Genome in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/temp_genomes/Parauncinula/*/*/*a); do
+Species=$(echo $Genome | cut -d '/' -f9,10 | sed 's@/@_@g')
+Repeat_library=$(ls $(dirname $Genome)/repeatmodeler/*/consensi.fa.classified)
+OutFile=$(basename $Genome | sed 's@.fa@@g')
+OutDir=$(dirname $Genome)/repeatmasker
+ProgDir=~/git_repos/Wrappers/NBI
+mkdir $OutDir
+sbatch $ProgDir/run_repeatmasker4.1.5.sh $Genome $OutFile $OutDir $Species $Repeat_library
+done
+#58734862-58734887, 58941051
+
+for Dir in $(ls -d /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/temp_genomes/*/*/*/repeatmasker/); do
+path=$(echo $Dir | cut -d '/' -f9,10,11)
+ls ${Dir}hardmask/*.fna.out.gff
+ls ${Dir}softmask/*.fna.masked
+mkdir -p temp_download/${path}
+cp ${Dir}hardmask/*.fna.out.gff temp_download/${path}/.
+cp ${Dir}softmask/*.fna.masked temp_download/${path}/.
+done
+
+#move to gruffalo
+
+screen -S repeats
+
+conda activate transposonpsi
+for assembly in $(ls temp_genomes/*/*/*/*na); do
+    ID=$(echo $assembly | cut -d '/' -f2 | cut -c 1-3)_$(echo $assembly | cut -d '/' -f3 | cut -c 1-3)_$(echo $assembly | cut -d '/' -f4)
+    echo $ID
+    ProgDir=~/scratch/apps/repeat_masking
+    #ProgDir=~/git_repos/tools/seq_tools/repeat_masking
+    OutDir=$(dirname $assembly)/transposonpsi
+    mkdir -p $OutDir
+    if [[ ! -f ${OutDir}/formatdb.log ]]; then
+    echo missing for $ID
+    sbatch $ProgDir/gomez_transposonPSI.sh $assembly $OutDir $ID
+    else 
+    echo done for $ID
+    fi
+done
+conda deactivate
+#16614879-85, 16619084-5, 17931618, 17931637
+
+conda activate bedtools
+#Merge the masking:
+for Assembly in $(ls temp_genomes/*/*/*/*.f*); do
+    ID=$(dirname $Assembly | cut -d '/' -f2,3,4)
+File=$(ls temp_download/$ID/*.fna.masked)
+OutDir=$(dirname $Assembly)/repeatmasking/combined
+TPSI=$(ls temp_genomes/${ID}/transposonpsi/*allHits.chains.gff3)
+OutFile=${OutDir}/$(basename $File | sed 's/.fna.masked/_contigs_softmasked_repeatmasker_TPSI_appended.fa/g')
+if [[ ! -f ${OutFile} ]]; then
+if [[ -f ${TPSI} && -f ${File} ]]; then
+mkdir -p $OutDir
+echo "$OutFile"
+bedtools maskfasta -soft -fi $File -bed $TPSI -fo ${OutFile}
+No=$(cat $OutFile | grep -v '>' | tr -d '\n' | wc -c)
+No2=$(cat $OutFile | grep -v '>' | tr -d '\n' | awk '{print $0, gsub("[a-z]", ".")}' | cut -f2 -d ' ')
+echo $ID >> mildews/combinedrepeatreport.txt
+echo "Number of bases:" >> mildews/combinedrepeatreport.txt
+echo $No >> mildews/combinedrepeatreport.txt
+echo "Number of masked bases:" >> mildews/combinedrepeatreport.txt
+echo $No2 >> mildews/combinedrepeatreport.txt
+echo "% of masked bases:" >> mildews/combinedrepeatreport.txt
+echo "100/$No*$No2" | bc -l >> mildews/combinedrepeatreport.txt
+printf "\n" >> mildews/combinedrepeatreport.txt
+else 
+echo "inputs missing for $ID"
+fi
+else
+echo "already run for $ID"
+fi 
+done
+conda deactivate
+
+
+conda activate braker
+for assembly in $(ls temp_genomes/*/*/*/repeatmasking/combined/*_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+  ID=$(echo $assembly | cut -d '/' -f2 | cut -c 1-3)_$(echo $assembly | cut -d '/' -f3 | cut -c 1-3)_$(echo $assembly | cut -d '/' -f4)
+  OutDir=mildews/${ID}/gene_pred/prothint
+  ProgDir=/home/theaven/scratch/apps/braker
+  if [[ ! -f ${OutDir}/prothint.gff ]]; then
+  if [[ -f ${assembly} ]]; then
+    echo "running for $ID"
+  sbatch $ProgDir/prothint_fungi.sh $assembly $OutDir
+  else 
+  echo "inputs missing for $ID"
+  fi
+  else
+  echo "already run for $ID"
+  fi 
+done
+#17883503,17885380-97,17936567
+conda deactivate
+
+conda activate braker
+for Assembly in $(ls temp_genomes/*/*/*/repeatmasking/combined/*_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+  ID=$(echo $Assembly | cut -d '/' -f2 | cut -c 1-3)_$(echo $Assembly | cut -d '/' -f3 | cut -c 1-3)_$(echo $Assembly | cut -d '/' -f4)
+  echo $ID
+  OutDir=mildews/${ID}/gene_pred/braker
+  GeneModelName=${ID}_genemodels
+  Hintfile=mildews/${ID}/gene_pred/prothint/prothint_augustus.gff
+  ProgDir=/home/theaven/scratch/apps/braker
+  if [[ ! -f ${OutDir}/braker.gff3 ]]; then
+  if [[ -f ${Hintfile} ]]; then
+    echo "running for $ID"
+  sbatch $ProgDir/braker_fungi_noRNA.sh $Assembly $OutDir $GeneModelName $Hintfile
+  else 
+  echo "inputs missing for $ID"
+  fi
+  else
+  echo "already run for $ID"
+  fi 
+done #
+conda deactivate
+
+for job in $(squeue -u theaven | awk '{print $1}'); do
+file=slurm-${job}.out
+echo $job
+grep -A 1 'OutDir:' $file
+done
+
+
+mildews/Cop_cin_GCA_000182895.1/gene_pred/prothint
+
+mildews/Fus_oxy_GCF_013085055.1/gene_pred/prothint
+
+mildews/Ple_ost_GCA_014466165.1/gene_pred/prothint
+
+mildews/Tub_mel_GCF_000151645.1/gene_pred/prothint
+
+mildews/Scl_scl_GCF_000146945.1/gene_pred/prothint
+
+mildews/Puc_str_GCA_021901695.1/gene_pred/prothint
+
+mildews/Bot_cin_GCA_000143535.4/gene_pred/prothint
+
+mildews/Col_hig_broad_KN1394/gene_pred/prothint
+
+mildews/Pod_fus_GCA_030378345.1/gene_pred/prothint
+
+mildews/Pod_xan_GCA_028751805.1/gene_pred/prothint
+
+mildews/Puc_tri_GCA_000151525.2/gene_pred/prothint
+
+```
+
+```bash
+mkdir mcag
+cd mcag
+for file in $(ls /home/theaven/scratch/uncompressed/mildews/*/gene_pred/braker/*/final_genes_renamed.pep.fasta); do
+name=$(echo $file | cut -d '/' -f7 | sed 's@Podosphaeraxanthii@P_x@g' | sed 's@Podosphaeracerasii@P_c@g' | sed 's@pleochaetashiraiana@Pl_s@g' | sed 's@phyllactiniamoricola@Phy_m@g' | sed 's@phialocephalasubalpina@Phi_s@g' | sed 's@Oidiumheveae@O_h@g' | sed 's@Oidiodendron_maius@Oi_m@g' | sed 's@neobulgariaablba@N_a@g' | sed 's@mollisiascopiformis@M_s@g' | sed 's@leveillulataurrica@L_t@g' | sed 's@HEAVEN_strawberry@P_a_frg@g' | sed 's@HEAVEN_raspberry@P_a_rub@g' | sed 's@HEAVEN_apple@P_l@g' | sed 's@Golovinomycesorontii_AssemblyScaffolds@G_o@g' | sed 's@Golovinomycesmagnicellulatus@G_m@g' | sed 's@Golovinomycescichoracearum@G_c@g' | sed 's@glareaiozoyensis@Gl_i@g' | sed 's@GANAN_apple@P_l_ganan@g' | sed 's@Erysiphepulchra@E_pu@g' | sed 's@Erysiphepisi@E_pi@g' | sed 's@Erysipheneolycopersici@E_neol@g' | sed 's@Erysiphenecator@E_neca@g' | sed 's@Erysiphealphitoides_CLCBIO_assembly_cdhitest_0@E_alph@g' | sed 's@drepanopezizabrunnea@D_b@g' | sed 's@chlorociboriaaeruginascens@C_a@g' | sed 's@Blumeriahordei@B_h@g' | sed 's@Blumeriagraminis@B_g@g' | sed 's@ascocorynesarcoides@A_s@g' | sed 's@arachnopezizaaraneosa@Ar_a@g' | sed 's@Amorphothecaresinae@Am_c@g' | sed 's@amorphothecaresinae@Am_c@g')
+echo $name
+cp $file ./${name}_$(basename $file)
+sed -i "s/>/>${name}_/g" ${name}_$(basename $file)
+done
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+for file in $(ls *final_genes_renamed.pep.fasta); do
+seqkit rmdup $file > temp.fasta && mv temp.fasta $file
+done
+
+mkdir db
+cat *final_genes_renamed.pep.fasta > db/db.faa
+cd db
+makeblastdb -in db.faa -input_type fasta -dbtype prot  -title mildew+db  -parse_seqids -out mildew+db
+
+for file in $(ls ../prot/*); do
+name=$(basename $file | cut -d '.' -f1)
+blastp -query $file -db mildew+db -out ../${name}_results -evalue 1e-5 -outfmt 6 -num_threads 1
+done
+
+ls *_results | wc -l
+
+
+echo Gene: > out.tsv
+
+for file2 in $(ls *_final_genes_renamed.pep.fasta); do
+  name=$(echo $file2 | sed 's@_final_genes_renamed.pep.fasta@@g')
+sed -i "\$s/\$/ $name/" out.tsv
+done
+
+
+for file in $(ls *_results); do
+gene=$(awk '{print $1; exit}' $file)
+echo $gene >> out.tsv
+for file2 in $(ls *_final_genes_renamed.pep.fasta); do
+  name=$(echo $file2 | sed 's@_final_genes_renamed.pep.fasta@@g')
+x=$(grep -m 1 $name $file | awk '{print $11}')
+if [ -z "$x" ]; then
+    y=missing
+else
+    y=$x
+fi
+sed -i "\$s/\$/ $y/" out.tsv
+done
+done
+```
+```bash
+ls *_final_genes_renamed.pep.fasta | sed 's@_final_genes_renamed.pep.fasta@@g' > assemblies.txt
+
+for assembly_id in $(cat assemblies.txt); do
+for protein in $(ls results/*_protein_results); do
+grep -m 1 "$assembly_id" $protein | awk '{print $2}' >> blast/${assembly_id}_proteins.txt
+done
+done
+
+for file in $(ls blast/*_proteins.txt); do
+sort $file > temp-temp.txt && mv temp-temp.txt $file
+done
+
+
+for file in $(ls blast/*_proteins.txt); do
+  ID=$(basename $file | sed 's@_proteins.txt@@g')
+  ls ${ID}_final_genes_renamed.pep.fasta
+  singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/python3.sif python3 ~/git_repos/Scripts/NBI/seq_get.py --id_file $file --input ${ID}_final_genes_renamed.pep.fasta --output blast/${ID}_final_genes_renamed.pep.fasta
+done
+
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/*_final_genes_renamed.pep.fasta); do
+Database=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/databases/blast/uniprot_01102023/Uniprot_01102023_reference_proteomes.dmnd
+OutDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast
+OutFile=$(basename $file | sed 's@_final_genes_renamed.pep.fasta@@g')
+hits=5
+ProgDir=~/git_repos/Wrappers/NBI
+sbatch $ProgDir/run_diamond_blastp.sh $file $Database $OutDir $OutFile $hits
+done
+#58566040-91
+
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/*.out); do
+cat $file | wc -l
+done
+
+
+
+for assembly_id in $(cat assemblies.txt); do
+echo -e "MCAG\tTop_hit\tblast_1\tblast_2\tblast_3\tblast_4\tblast_5\tID_1\tID_2\tID_3\tID_4\tID_5" > blast/${assembly_id}_proteins_notes.txt
+for protein in $(ls results/*_protein_results); do
+x=$(echo $protein | sed 's@_protein_results@@g'| sed 's@results/@@g') 
+y=$(grep -m 1 "$assembly_id" $protein | awk '{print $2}')
+echo -e "$x\t$y" >> blast/${assembly_id}_proteins_notes.txt
+done
+done
+
+for file in $(ls blast/*_proteins_notes.txt); do
+awk 'BEGIN {FS=OFS="\t"} $2 == "" {$2="###"}1' $file > temp.txt && mv temp.txt $file
+done
+
+#There are many duplicate hits, eg different AAD proteins have blasted to the same gene.
+
+for file in blast/*_proteins_notes.txt; do
+    ID=$(basename "$file" | sed 's@_proteins_notes.txt@@g')
+    while IFS=$'\t' read -r col1 col2 rest; do
+        matches=$(grep "^$col2" "blast/${ID}.vs.Uniprot_01102023_reference_proteomes.dmnd.diamond_blastp.out" | awk -v col2="$col2" '$1 == col2 {printf "%s\t", $5}')
+        if [ -n "$matches" ]; then
+            matches="${matches%?}"  # Remove the last character (trailing tab)
+        fi
+        echo -e "$col1\t$col2\t$rest\t$matches"
+    done < "$file" > "${ID}merged_notes.txt"
+    awk 'BEGIN {FS=OFS="\t"} {print $1, $2, $4, $5, $6, $7, $8, $9}' ${ID}merged_notes.txt > $file
+    rm ${ID}merged_notes.txt
+done
+
+for file in /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/uniprot/*.xlsx; do
+    Out=$(echo $file | sed 's@.xlsx@.tsv@g')
+    singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/python3.sif python3 ~/git_repos/Scripts/NBI/xlsx2tsv.py $file $Out
+done
+
+for notes in $(ls blast/*_proteins_notes.txt); do
+tsv=uniprot/$(basename "$notes" | sed 's@_proteins_notes.txt@@g').tsv
+output_file="edited_file.txt"
+rm "$output_file"
+touch "$output_file"
+while IFS= read -r line; do
+    id=$(echo "$line" | awk -F'\t' '{split($3, arr, "|"); print arr[2]}')
+    fifth_column=$(awk -v var="$id" -F'\t' '$1 == var {print $5}' $tsv | cut -d ' ' -f1,2)
+    edited_line="$line\t$fifth_column"
+    echo -e "$edited_line" >> "$output_file"
+done < $notes
+mv "$output_file" $notes
+rm "$output_file"
+touch "$output_file"
+while IFS= read -r line; do
+    id=$(echo "$line" | awk -F'\t' '{split($4, arr, "|"); print arr[2]}')
+    fifth_column=$(awk -v var="$id" -F'\t' '$1 == var {print $5}' $tsv | cut -d ' ' -f1,2)
+    edited_line="$line\t$fifth_column"
+    echo -e "$edited_line" >> "$output_file"
+done < $notes
+mv "$output_file" $notes
+rm "$output_file"
+touch "$output_file"
+while IFS= read -r line; do
+    id=$(echo "$line" | awk -F'\t' '{split($5, arr, "|"); print arr[2]}')
+    fifth_column=$(awk -v var="$id" -F'\t' '$1 == var {print $5}' $tsv | cut -d ' ' -f1,2)
+    edited_line="$line\t$fifth_column"
+    echo -e "$edited_line" >> "$output_file"
+done < $notes
+mv "$output_file" $notes
+rm "$output_file"
+touch "$output_file"
+while IFS= read -r line; do
+    id=$(echo "$line" | awk -F'\t' '{split($6, arr, "|"); print arr[2]}')
+    fifth_column=$(awk -v var="$id" -F'\t' '$1 == var {print $5}' $tsv | cut -d ' ' -f1,2)
+    edited_line="$line\t$fifth_column"
+    echo -e "$edited_line" >> "$output_file"
+done < $notes
+mv "$output_file" $notes
+rm "$output_file"
+touch "$output_file"
+while IFS= read -r line; do
+    id=$(echo "$line" | awk -F'\t' '{split($7, arr, "|"); print arr[2]}')
+    fifth_column=$(awk -v var="$id" -F'\t' '$1 == var {print $5}' $tsv | cut -d ' ' -f1,2)
+    edited_line="$line\t$fifth_column"
+    echo -e "$edited_line" >> "$output_file"
+done < $notes
+mv "$output_file" $notes
+done
+```
+```python
+import pandas as pd
+import sys
+
+def merge_notes_xlsx(notes_file, xlsx_file, output_file):
+    # Read the .xlsx file
+  xlsx_df = pd.read_excel(xlsx_file, header=None, names=['ID', 'Name', 'Accession', 'Description', 'Species'])
+    # Read the .notes file
+  notes_df = pd.read_csv(notes_file, sep='\t', header=None, names=['ID', 'Gene_IDs'])
+    # Split the 'Gene_IDs' column in the .notes file by '|' and explode it into multiple rows
+  notes_df['Gene_IDs'] = notes_df['Gene_IDs'].str.split('|')
+  notes_df = notes_df.explode('Gene_IDs')
+    # Merge the dataframes based on the 'ID' column in the .xlsx file and the 'Gene_IDs' column in the .notes file
+  merged_df = pd.merge(notes_df, xlsx_df, left_on='Gene_IDs', right_on='ID', how='left')
+    # Concatenate the 'Description' column from the .xlsx file to the matched rows in the .notes file
+  merged_df['Notes_with_Description'] = merged_df['ID'] + '\t' + merged_df['Gene_IDs'] + '\t' + merged_df['Description'] + '\t' + merged_df['Species']
+    # Group the concatenated data back into a single row for each ID in the .notes file
+  final_df = merged_df.groupby('ID')['Notes_with_Description'].apply(lambda x: '\t'.join(x)).reset_index()
+    # Save the final result to the output file
+  final_df.to_csv(output_file, sep='\t', header=False, index=False)
+
+if __name__ == "__main__":
+  if len(sys.argv) != 4:
+    print("Usage: python script.py notes_file.xlsx xlsx_file.xlsx output_file.notes")
+    sys.exit(1)
+  notes_file = sys.argv[1]
+  xlsx_file = sys.argv[2]
+  output_file = sys.argv[3]
+
+merge_notes_xlsx(notes_file, xlsx_file, output_file)
+```
+```python
+import pandas as pd
+import sys
+
+def convert_xlsx_to_tsv(input_file, output_file):
+  try:
+    # Read the .xlsx file
+    df = pd.read_excel(input_file)
+    # Write the DataFrame to a .tsv file
+    df.to_csv(output_file, sep='\t', index=False)
+    print(f"Conversion successful. TSV file saved as {output_file}")
+  except Exception as e:
+    print(f"Error converting file: {e}")
+
+if __name__ == "__main__":
+  if len(sys.argv) != 3:
+    print("Usage: python convert_xlsx_to_tsv.py input_file.xlsx output_file.tsv")
+  else:
+    input_file = sys.argv[1]
+    output_file = sys.argv[2]
+    convert_xlsx_to_tsv(input_file, output_file)
+
+
+```
+```bash
+#Kraken 
+for Assembly in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/*/*/*/*.fna /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/*/*/*/*.fasta); do
+sleep 30s
+      while  squeue -u did23faz | grep -q '(AssocMaxJobsLimit)\|(Resources)\|(Priority)'; do
+        sleep 300s
+        printf "."
+    done
+Jobs=$(squeue -u did23faz| grep 'kraken'  | wc -l)
+      while [ $Jobs -gt 4 ]; do
+          sleep 300s
+            printf "."
+          Jobs=$(squeue -u did23faz| grep 'kraken'| wc -l)
+      done
+OutPrefix=$(echo $Assembly | cut -d '/' -f9,10,11 | sed 's@/@_@g')_kraken2nt
+OutDir=$(dirname $Assembly)/kraken2.1.3
+Database=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/databases/kraken/nt_14092023
+if [ ! -e "${OutDir}/${OutPrefix}_report.txt" ] || [ ! -s "${OutDir}/${OutPrefix}_report.txt" ]; then
+echo $OutPrefix
+mkdir $OutDir
+sbatch $ProgDir/run_kraken2.sh $Assembly $Database $OutDir $OutPrefix
+else
+echo already done for $OutPrefix
+fi
+done
+
+for report in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/*/*/*/kraken2.1.3/*_kraken2nt_report.txt); do
+echo $(basename $report | sed 's@_kraken2nt_report.txt@@g')
+grep 'Fungi' $report
+grep 'Erysiphales' $report
+done
+
+
+#58072788
+
+Genome=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/Psyllidae/assembly/genome/T_anthrisci/hifiasm_19.5/820m/48/1/10.0/0.25/break10x/purge_dups/sanger/MitoHifi/filtered/T_anthrisci_820m_48_1_10.0_0.25_break_TellSeqPurged_curated_nomito_filtered.fa
+OutFile=$(basename $Genome | sed 's@.fa@@g')
+OutDir=$(dirname $Genome)
+RMsearch=arthropoda
+ProgDir=~/git_repos/Wrappers/NBI
+mkdir $OutDir
+sbatch $ProgDir/run_earlgrey.sh $Genome $OutFile $OutDir $RMsearch
+#58115057
+```
+
+#### Helixer
+```bash
+for file in $(ls mildews/*a); do
+ln -s /home/theaven/scratch/uncompressed/$file /home/theaven/scratch/uncompressed/genomes/.
+done
+
+fasta=/home/theaven/scratch/uncompressed/genomes/Scereviseae_GCF_000146045.2_R64_genomic.fna
+model_filepath=/home/theaven/scratch/apps/helixer/models/fungi_v0.3_a_0100/fungi_v0.3_a_0100.h5
+lineage=fungi
+species=$(basename $fasta | cut -d '.' -f1)
+outfile=$(echo $species | sed 's@Podosphaeraxanthii@P_x@g' | sed 's@Podosphaeracerasii@P_c@g' | sed 's@pleochaetashiraiana@Pl_s@g' | sed 's@phyllactiniamoricola@Phy_m@g' | sed 's@phialocephalasubalpina@Phi_s@g' | sed 's@Oidiumheveae@O_h@g' | sed 's@Oidiodendron_maius@Oi_m@g' | sed 's@neobulgariaablba@N_a@g' | sed 's@mollisiascopiformis@M_s@g' | sed 's@leveillulataurrica@L_t@g' | sed 's@HEAVEN_strawberry@P_a_frg@g' | sed 's@HEAVEN_raspberry@P_a_rub@g' | sed 's@HEAVEN_apple@P_l@g' | sed 's@Golovinomycesorontii_AssemblyScaffolds@G_o@g' | sed 's@Golovinomycesmagnicellulatus@G_m@g' | sed 's@Golovinomycescichoracearum@G_c@g' | sed 's@glareaiozoyensis@Gl_i@g' | sed 's@GANAN_apple@P_l_ganan@g' | sed 's@Erysiphepulchra@E_pu@g' | sed 's@Erysiphepisi@E_pi@g' | sed 's@Erysipheneolycopersici@E_neol@g' | sed 's@Erysiphenecator@E_neca@g' | sed 's@Erysiphealphitoides_CLCBIO_assembly_cdhitest_0@E_alph@g' | sed 's@drepanopezizabrunnea@D_b@g' | sed 's@chlorociboriaaeruginascens@C_a@g' | sed 's@Blumeriahordei@B_h@g' | sed 's@Blumeriagraminis@B_g@g' | sed 's@ascocorynesarcoides@A_s@g' | sed 's@arachnopezizaaraneosa@Ar_a@g' | sed 's@Amorphothecaresinae@Am_c@g' | sed 's@amorphothecaresinae@Am_c@g' | sed 's@Scereviseae@S_cere@g')
+outdir=/home/theaven/scratch/uncompressed/mildews/${species}/gene_pred/helixer
+ProgDir=/home/theaven/scratch/apps
+mkdir $outdir
+sbatch $ProgDir/helixer/run_helixer.sh $fasta $model_filepath $lineage $species $outfile $outdir
+#16601800,16601823,16601871, 16601894
+
+```
+## Comparmentalised genome?
+
+See Frantzeskakis et al. (2019) (Parauncinula) and Armitage et al. (2018).
+
+Gene density plot for Podosphaera - mark BUSCOs and CSEPs + Violin plot of CSEP vs non-CSEP gene to TE distance for Podosphaera.
+
+```bash
+ls ~/projects/niab/theaven/gene_pred/*/*/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3
+ls ~/projects/niab/theaven/gene_pred/P_aphanis/THeavenSCOTT2020_1/predector_singularity3/results/final_genes_appended_renamed.pep/P_aphanis-THeavenSCOTT2020_1-ranked.tsv
+
+../apps/tools/find_intergenic_regions.py --Gff $GeneGff > $OutDir/10300_intergenic_regions.txt
+
+#Find the 3' and 5' intergenic distances + match names to the predector output files
+conda activate predector2.7
+for Gff in $(ls ~/projects/niab/theaven/gene_pred/*/*/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3); do
+OutFile=$(dirname $Gff)/intergenic_regions.txt
+echo -e "name\tfive_prime\tthree_prime\tstrand" > $OutFile
+python2.7 ../apps/tools/find_intergenic_regions.py --Gff $Gff >> $OutFile
+head -n 1 $OutFile > temp.temp
+tail -n +2 $OutFile | awk -F'\t' '{print $1 ".t1\t" $2 "\t" $3 "\t" $4}' >> temp.temp && mv temp.temp $OutFile
+w=$(echo $Gff | cut -d '/' -f9)
+x=$(grep 'gene' $Gff | wc -l)
+y=$(cat $OutFile | wc -l)
+echo "Genes in $w GFF: $x, intergenic regions found for: $y"
+done
+conda deactivate
+```
+```R
+
+
+colnames(all) <- c('gene1','scaffold1','start1','stop1','scaffold2','start2','stop2','gene2','distance_size_up','ds','scaffold1','start1','stop1','scaffold2','start2','stop2','gene2','distance_size_down','us')
+
+all$distance_size_up <- abs(all$distance_size_up)
+all$distance_size_down <- abs(all$distance_size_down)
+
+all$group <- "Non SP"
+all$group[all$gene1 %in% sps$V1] <- "SP"
+
+ggplot(all, aes(x= distance_size_up,y=distance_size_down)) +
+  #geom_hex()+
+  stat_bin2d(binwidth=c(0.06, 0.06))+
+  scale_fill_distiller(palette = "Spectral", name="Gene\ncount")+
+  scale_x_log10()+
+  scale_y_log10()+
+  ylab("5' prime intergenic length (bp)") +
+  xlab("3' prime intergenic length (bp)") +
+  geom_point(data=subset(all, group == "SP"), color = 'black', fill = 'white',shape = 21,alpha = 0.8, size = 2)+
+  theme_minimal()
+```
