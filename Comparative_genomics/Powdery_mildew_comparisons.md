@@ -4370,19 +4370,21 @@ done < $file
 done
 
 #Run RAxML
-for Alignment in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/*/*_edit.fasta); do
+conda activate raxml
+for Alignment in $(ls /home/theaven/scratch/uncompressed/analysis/phylogeny/busco/busco_nt/*/*_edit.fasta); do
 Prefix=$(basename $Alignment | cut -f1 -d '_')
-OutDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/RAxML/$Prefix
-ProgDir=~/git_repos/Wrappers/NBI
+OutDir=/home/theaven/scratch/uncompressed/analysis/phylogeny/busco/mildew_fungi_busco_nt/RAxML/$Prefix
+ProgDir=/home/theaven/scratch/apps/phylogeny
 mkdir -p $OutDir
-Jobs=$(squeue -u did23faz| grep 'RAxML'  | wc -l)
-while [ $Jobs -gt 190 ]; do
+Jobs=$(squeue -u theaven| grep 'RAxML'  | wc -l)
+while [ $Jobs -gt 99 ]; do
     sleep 300s
     printf "."
-    Jobs=$(squeue -u did23faz| grep 'RAxML'| wc -l)
+    Jobs=$(squeue -u theaven| grep 'RAxML'| wc -l)
 done
-sbatch $ProgDir/run_RAxML_msa.sh $Alignment $Prefix $OutDir 
+sbatch $ProgDir/run_RAxML_msa.sh $Alignment $OutDir $Prefix
 done
+conda deactivate
 ```
 ```bash
 ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/*_final_genes_renamed.pep.fasta > existing_protein_files.txt
@@ -4555,7 +4557,7 @@ for assembly in $(ls temp_genomes/*/*/*/repeatmasking/combined/*_contigs_softmas
   echo "already run for $ID"
   fi 
 done
-#17883503,17885380-97,17936567
+#17883503,17885380-97,17936567,17999831
 conda deactivate
 
 conda activate braker
@@ -4907,27 +4909,73 @@ Gene density plot for Podosphaera - mark BUSCOs and CSEPs + Violin plot of CSEP 
 
 ```bash
 ls ~/projects/niab/theaven/gene_pred/*/*/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3
-ls ~/projects/niab/theaven/gene_pred/P_aphanis/THeavenSCOTT2020_1/predector_singularity3/results/final_genes_appended_renamed.pep/P_aphanis-THeavenSCOTT2020_1-ranked.tsv
+ls ~/projects/niab/theaven/gene_pred/*/*/predector_singularity3/results/final_genes_appended_renamed.pep/P*-ranked.tsv
 
 ../apps/tools/find_intergenic_regions.py --Gff $GeneGff > $OutDir/10300_intergenic_regions.txt
 
 #Find the 3' and 5' intergenic distances + match names to the predector output files
 conda activate predector2.7
 for Gff in $(ls ~/projects/niab/theaven/gene_pred/*/*/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3); do
-OutFile=$(dirname $Gff)/intergenic_regions.txt
+  ID=$(echo $Gff | cut -d '/' -f9)
+OutFile=$(dirname $Gff)/${ID}_intergenic_regions_nonest.txt
 echo -e "name\tfive_prime\tthree_prime\tstrand" > $OutFile
-python2.7 ../apps/tools/find_intergenic_regions.py --Gff $Gff >> $OutFile
+python2.7 ../apps/tools/find_intergenic_regions_nonest.py --Gff $Gff >> $OutFile
 head -n 1 $OutFile > temp.temp
 tail -n +2 $OutFile | awk -F'\t' '{print $1 ".t1\t" $2 "\t" $3 "\t" $4}' >> temp.temp && mv temp.temp $OutFile
-w=$(echo $Gff | cut -d '/' -f9)
 x=$(grep 'gene' $Gff | wc -l)
 y=$(cat $OutFile | wc -l)
-echo "Genes in $w GFF: $x, intergenic regions found for: $y"
+echo "Genes in $ID GFF: $x, intergenic regions found for: $y"
+done
+conda deactivate
+
+#Investigate missing genes:
+for Gff in $(ls ~/projects/niab/theaven/gene_pred/*/*/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3); do
+file=$(dirname $Gff)/intergenic_regions.txt
+while IFS= read -r value; do
+    # Extract the value from the first column
+    search_value=$(echo "$value" | grep 'mRNA' | awk '{print $9}' | cut -d ';' -f1 | cut -d '=' -f2)
+    # Search for the value in the first column of the GFF file
+    if ! grep -q "$search_value" "$file"; then
+        # If no match found, print the value
+        echo "$value" >> $(dirname $file)/missing.txt
+    fi
+done < "$Gff"
+done
+
+for file in $(ls ~/projects/niab/theaven/gene_pred/*/*/codingquarry/rep_modeling/final/intergenic_regions_nonest.txt); do 
+echo $Gff | cut -d '/' -f9
+max_column_2=$(awk 'NR>1 { if ($2 > max) max = $2 } END { print max }' "$file")
+max_column_3=$(awk 'NR>1 { if ($3 > max) max = $3 } END { print max }' "$file")
+echo "Maximum 5' value: $max_column_2"
+echo "Maximum 3' value: $max_column_3"
+done
+```
+```bash
+screen -S blast
+srun -p long --mem 10G --pty bash
+conda activate 
+mkdir busco_db
+find gene_pred/Podosphaera/leucotricha/THeavenpOGB2019_1.c/BUSCO/leotiomycetes_odb10/THeavenpOGB2019_1.c/run_leotiomycetes_odb10/busco_sequences/single_copy_busco_sequences/ \
+     gene_pred/Podosphaera/leucotricha/THeavenpOGB2021_1.c/BUSCO/leotiomycetes_odb10/THeavenpOGB2021_1.c/run_leotiomycetes_odb10/busco_sequences/single_copy_busco_sequences/ \
+     gene_pred/Podosphaera/leucotricha/THeavenp11_1.c/BUSCO/leotiomycetes_odb10/THeavenp11_1.c/run_leotiomycetes_odb10/busco_sequences/single_copy_busco_sequences/ \
+     gene_pred/Podosphaera/aphanis/THeavenDRCT72020_1.c/BUSCO/leotiomycetes_odb10/THeavenDRCT72020_1.c/run_leotiomycetes_odb10/busco_sequences/single_copy_busco_sequences/ \
+     gene_pred/Podosphaera/aphanis/THeavenDRCT72021_1.c/BUSCO/leotiomycetes_odb10/THeavenDRCT72021_1.c/run_leotiomycetes_odb10/busco_sequences/single_copy_busco_sequences/ \
+     gene_pred/Podosphaera/aphanis/THeavenSCOTT2020_1.c/BUSCO/leotiomycetes_odb10/THeavenSCOTT2020_1.c/run_leotiomycetes_odb10/busco_sequences/single_copy_busco_sequences/ \
+     -name '*.faa' -exec cat {} >> busco_db/my_busco_db.faa \;
+
+cd busco_db
+makeblastdb -in my_busco_db.faa -dbtype prot -title buscodb -out buscodb
+
+for file in $(ls ~/projects/niab/theaven/gene_pred/*/*/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta); do
+  ID=$(echo $file | cut -d '/' -f9)
+  blastp -query $file -db db/CSEPdb -out ${ID}_busco_blast.tsv -max_target_seqs 1 -evalue 1e-5 -outfmt '6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qseq sseq'
 done
 conda deactivate
 ```
 ```R
-
+data1 <- read.table("file1.txt", header = FALSE, sep = "\t", stringsAsFactors = FALSE)
+data2 <- read.table("file2.txt", header = FALSE, sep = "\t", stringsAsFactors = FALSE)
+merged_data <- merge(data1, data2, by = "name", all = TRUE)
 
 colnames(all) <- c('gene1','scaffold1','start1','stop1','scaffold2','start2','stop2','gene2','distance_size_up','ds','scaffold1','start1','stop1','scaffold2','start2','stop2','gene2','distance_size_down','us')
 
@@ -4947,4 +4995,18 @@ ggplot(all, aes(x= distance_size_up,y=distance_size_down)) +
   xlab("3' prime intergenic length (bp)") +
   geom_point(data=subset(all, group == "SP"), color = 'black', fill = 'white',shape = 21,alpha = 0.8, size = 2)+
   theme_minimal()
+```
+#### EarlGreyTE
+```bash
+conda activate earlgrey
+for Genome in $(ls /home/theaven/scratch/uncompressed/genomes/HEAVEN_apple2020.fna); do
+  OutFile=Pod_leu_OGB2020
+  OutDir=$(dirname $Genome)/earlgreyte/${OutFile}
+  ProgDir=~/scratch/apps
+  RMsearch=fungi
+  mkdir -p $OutDir
+  sbatch ${ProgDir}/earlgrey/run_earlgrey.sh $Genome $OutFile $OutDir $RMsearch
+done
+#17999884
+conda deactivate
 ```
