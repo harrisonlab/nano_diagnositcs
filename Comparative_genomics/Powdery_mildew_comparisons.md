@@ -726,7 +726,7 @@ exit
 Now that BUSCO genes have been named uniquely for each genome analysed they were copied into a single .fasta file one for each gene.
 ```bash
 screen -S comps
-srun -p long  --mem 10G --pty bash
+srun -p long  -c 8 --mem 50G --pty bash
 cd /home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa
 buscos=/home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_final_buscos_ids.txt
 lines=$(cat $buscos)
@@ -4561,10 +4561,10 @@ done
 conda deactivate
 
 conda activate braker
-for Assembly in $(ls temp_genomes/*/*/*/repeatmasking/combined/*_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+for Assembly in $(ls temp_genomes/*/*/GCA_000146945.2/repeatmasking/combined/*_contigs_softmasked_repeatmasker_TPSI_appended.fa temp_genomes/*/*/GCF_000151645.1/repeatmasking/combined/*_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
   ID=$(echo $Assembly | cut -d '/' -f2 | cut -c 1-3)_$(echo $Assembly | cut -d '/' -f3 | cut -c 1-3)_$(echo $Assembly | cut -d '/' -f4)
   echo $ID
-  OutDir=mildews/${ID}/gene_pred/braker
+  OutDir=mildews/${ID}/gene_pred/braker-2
   GeneModelName=${ID}_genemodels
   Hintfile=mildews/${ID}/gene_pred/prothint/prothint_augustus.gff
   ProgDir=/home/theaven/scratch/apps/braker
@@ -4578,7 +4578,8 @@ for Assembly in $(ls temp_genomes/*/*/*/repeatmasking/combined/*_contigs_softmas
   else
   echo "already run for $ID"
   fi 
-done #
+done #19242548-19242574
+#19317486-7
 conda deactivate
 
 for job in $(squeue -u theaven | awk '{print $1}'); do
@@ -4586,30 +4587,6 @@ file=slurm-${job}.out
 echo $job
 grep -A 1 'OutDir:' $file
 done
-
-
-mildews/Cop_cin_GCA_000182895.1/gene_pred/prothint
-
-mildews/Fus_oxy_GCF_013085055.1/gene_pred/prothint
-
-mildews/Ple_ost_GCA_014466165.1/gene_pred/prothint
-
-mildews/Tub_mel_GCF_000151645.1/gene_pred/prothint
-
-mildews/Scl_scl_GCF_000146945.1/gene_pred/prothint
-
-mildews/Puc_str_GCA_021901695.1/gene_pred/prothint
-
-mildews/Bot_cin_GCA_000143535.4/gene_pred/prothint
-
-mildews/Col_hig_broad_KN1394/gene_pred/prothint
-
-mildews/Pod_fus_GCA_030378345.1/gene_pred/prothint
-
-mildews/Pod_xan_GCA_028751805.1/gene_pred/prothint
-
-mildews/Puc_tri_GCA_000151525.2/gene_pred/prothint
-
 ```
 
 ```bash
@@ -4917,9 +4894,9 @@ ls ~/projects/niab/theaven/gene_pred/*/*/predector_singularity3/results/final_ge
 conda activate predector2.7
 for Gff in $(ls ~/projects/niab/theaven/gene_pred/*/*/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3); do
   ID=$(echo $Gff | cut -d '/' -f9)
-OutFile=$(dirname $Gff)/${ID}_intergenic_regions_nonest.txt
+OutFile=$(dirname $Gff)/${ID}_intergenic_regions.txt
 echo -e "name\tfive_prime\tthree_prime\tstrand" > $OutFile
-python2.7 ../apps/tools/find_intergenic_regions_nonest.py --Gff $Gff >> $OutFile
+python2.7 ../apps/tools/find_intergenic_regions.py --Gff $Gff >> $OutFile
 head -n 1 $OutFile > temp.temp
 tail -n +2 $OutFile | awk -F'\t' '{print $1 ".t1\t" $2 "\t" $3 "\t" $4}' >> temp.temp && mv temp.temp $OutFile
 x=$(grep 'gene' $Gff | wc -l)
@@ -4953,7 +4930,7 @@ done
 ```bash
 screen -S blast
 srun -p long --mem 10G --pty bash
-conda activate 
+conda activate blast+
 mkdir busco_db
 find gene_pred/Podosphaera/leucotricha/THeavenpOGB2019_1.c/BUSCO/leotiomycetes_odb10/THeavenpOGB2019_1.c/run_leotiomycetes_odb10/busco_sequences/single_copy_busco_sequences/ \
      gene_pred/Podosphaera/leucotricha/THeavenpOGB2021_1.c/BUSCO/leotiomycetes_odb10/THeavenpOGB2021_1.c/run_leotiomycetes_odb10/busco_sequences/single_copy_busco_sequences/ \
@@ -4968,45 +4945,1414 @@ makeblastdb -in my_busco_db.faa -dbtype prot -title buscodb -out buscodb
 
 for file in $(ls ~/projects/niab/theaven/gene_pred/*/*/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta); do
   ID=$(echo $file | cut -d '/' -f9)
-  blastp -query $file -db db/CSEPdb -out ${ID}_busco_blast.tsv -max_target_seqs 1 -evalue 1e-5 -outfmt '6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qseq sseq'
+  blastp -query $file -db buscodb -out ${ID}_busco_blast.tsv -max_target_seqs 1 -evalue 1e-15 -outfmt '6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qseq sseq'
+  echo -e "name\tmatch\tpident\tlength\tmismatch\tgapopen\tqstart\tqend\tsstart\tsend\tevalue\tbitscore\tqseq\tsseq" > temp.tsv
+  cat ${ID}_busco_blast.tsv >> temp.tsv && mv temp.tsv ${ID}_busco_blast.tsv
 done
+
+#Make blast database as in Praz et al., 2017
+cat podosporaanserina_GCF_000226545.1_ASM22654v1_protein.faa neurosporacrassa_GCF_000182925.2_NC12_protein.faa > mydb.faa
+mkdir /home/theaven/scratch/uncompressed/csep_db/db
+makeblastdb -in mydb.faa -dbtype prot -title CSEPdb -out /home/theaven/scratch/uncompressed/csep_db/db/CSEPdb
+
+#blast for matches
+for file in $(ls ~/projects/niab/theaven/gene_pred/*/*/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta); do
+  ID=$(echo $file | cut -d '/' -f9)
+blastp -query $file -db /home/theaven/scratch/uncompressed/csep_db/db/CSEPdb -out ${ID}_csep_blast.tsv -max_target_seqs 1 -evalue 1e-5 -outfmt '6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qseq sseq'
+  echo -e "name\tmatch_1\tpident_1\tlength_1\tmismatch_1\tgapopen_1\tqstart_1\tqend_1\tsstart_1\tsend_1\tevalue_1\tbitscore_1\tqseq_1\tsseq_1" > temp.tsv
+  cat ${ID}_csep_blast.tsv >> temp.tsv && mv temp.tsv ${ID}_csep_blast.tsv
+done
+
 conda deactivate
 ```
 ```R
-data1 <- read.table("file1.txt", header = FALSE, sep = "\t", stringsAsFactors = FALSE)
-data2 <- read.table("file2.txt", header = FALSE, sep = "\t", stringsAsFactors = FALSE)
-merged_data <- merge(data1, data2, by = "name", all = TRUE)
+setwd("C:/Users/did23faz/OneDrive - Norwich Bioscience Institutes/Desktop/R")
 
-colnames(all) <- c('gene1','scaffold1','start1','stop1','scaffold2','start2','stop2','gene2','distance_size_up','ds','scaffold1','start1','stop1','scaffold2','start2','stop2','gene2','distance_size_down','us')
+library(ggplot2)
+library(hexbin)
+library(patchwork)
 
-all$distance_size_up <- abs(all$distance_size_up)
-all$distance_size_down <- abs(all$distance_size_down)
+predector <- read.table("download/download/P_aphanis-THeavenDRCT72020_1-ranked.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+nonest <- read.table("download/download/THeavenDRCT72020_1_intergenic_regions_nonest.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+nest <- read.table("download/download/THeavenDRCT72020_1_intergenic_regions.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+names(nest)[2:4] <- paste0(names(nest)[2:4], "_2")
+blast <- read.table("download/download/THeavenDRCT72020_1_busco_blast.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+csep_blast <- read.table("download/download/THeavenDRCT72020_1_csep_blast.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+merged_data <- merge(predector, nonest,  by = "name", all = TRUE)
+merged_data2 <- merge(merged_data, nest, by = "name", all = TRUE)
+merged_data3 <- merge(merged_data2, blast, by = "name", all = TRUE)
+merged_data4 <- merge(merged_data3, csep_blast, by = "name", all = TRUE)
 
-all$group <- "Non SP"
-all$group[all$gene1 %in% sps$V1] <- "SP"
+colnames(merged_data4) <- c('name','effector_score','manual_effector_score','manual_secretion_score','effector_matches','phibase_genes','phibase_phenotypes','phibase_ids','has_phibase_effector_match','has_phibase_virulence_match','has_phibase_lethal_match','pfam_ids','pfam_names','has_pfam_virulence_match','dbcan_matches','has_dbcan_virulence_match','effectorp1','effectorp2','effectorp3_cytoplasmic','effectorp3_apoplastic','effectorp3_noneffector','deepredeff_fungi','deepredeff_oomycete','apoplastp','is_secreted','any_signal_peptide','single_transmembrane','multiple_transmembrane','molecular_weight','residue_number','charge','isoelectric_point','aa_c_number','aa_tiny_number','aa_small_number','aa_aliphatic_number','aa_aromatic_number','aa_nonpolar_number','aa_charged_number','aa_basic_number','aa_acidic_number','fykin_gap','kex2_cutsites','rxlr_like_motifs','localizer_nucleus','localizer_chloro','localizer_mito','signal_peptide_cutsites','signalp3_nn','signalp3_hmm','signalp4','signalp5','signalp6','deepsig','phobius_sp','phobius_tmcount','phobius_tm_domains','tmhmm_tmcount','tmhmm_first_60','tmhmm_exp_aa','tmhmm_first_tm_sp_coverage','tmhmm_domains','targetp_secreted','targetp_secreted_prob','targetp_mitochondrial_prob','deeploc_membrane','deeploc_nucleus','deeploc_cytoplasm','deeploc_extracellular','deeploc_mitochondrion','deeploc_cell_membrane','deeploc_endoplasmic_reticulum','deeploc_plastid','deeploc_golgi','deeploc_lysosome','deeploc_peroxisome','signalp3_nn_d','signalp3_hmm_s','signalp4_d','signalp5_prob','signalp6_prob','deepsig_signal_prob','deepsig_transmembrane_prob','deepsig_other_prob','five_prime','three_prime','strand','five_prime_2','three_prime_2','strand_2','match','pident','length','mismatch','gapopen','qstart','qend','sstart','send','evalue','bitscore','qseq','sseq','match_1','pident_1','length_1','mismatch_1','gapopen_1','qstart_1','qend_1','sstart_1','send_1','evalue_1','bitscore_1','qseq_1','sseq_1')
 
-ggplot(all, aes(x= distance_size_up,y=distance_size_down)) +
-  #geom_hex()+
-  stat_bin2d(binwidth=c(0.06, 0.06))+
-  scale_fill_distiller(palette = "Spectral", name="Gene\ncount")+
-  scale_x_log10()+
-  scale_y_log10()+
+merged_data4$five_prime <- abs(merged_data4$five_prime)
+merged_data4$three_prime <- abs(merged_data4$three_prime)
+
+merged_data4$group <- "Non SP"
+merged_data4$group[!is.na(merged_data4$match)] <- "BUSCO"
+merged_data4$group[is.na(merged_data4$match_1) & merged_data4$is_secreted == 1 & merged_data4$effectorp3_noneffector == "."] <- "CSEP"
+merged_data4$group[merged_data4$effector_matches != "."] <- "Effector ortholog"
+
+plot1 <- ggplot(merged_data4, aes(x= five_prime,y=three_prime)) +
+  geom_hex(binwidth=c(0.05, 0.05))+
+  #stat_bin2d(binwidth=c(0.05, 0.05))+
+  scale_fill_distiller(palette = "Spectral", name="Gene\ncount", trans = "log10", breaks = c(0, 10, 100, 1000, 4000))+
+  scale_x_log10(labels = scales::number_format()) +
+  scale_y_log10(labels = scales::number_format()) +
   ylab("5' prime intergenic length (bp)") +
   xlab("3' prime intergenic length (bp)") +
-  geom_point(data=subset(all, group == "SP"), color = 'black', fill = 'white',shape = 21,alpha = 0.8, size = 2)+
-  theme_minimal()
+  #geom_point(data=subset(merged_data4, group == "BUSCO"), color = 'black', fill = 'grey',shape = 21,alpha = 0.7, size = 0.5)+
+  geom_point(data=subset(merged_data4, group == "CSEP"), color = 'black', fill = 'white',shape = 21,alpha = 0.8, size = 1.5)+
+  geom_point(data=subset(merged_data4, group == "Effector ortholog"), color = 'black', fill = 'red',shape = 21,alpha = 0.7, size = 1)+
+  theme_minimal() +
+    theme(panel.background = element_rect(fill = "grey90"), 
+        panel.grid.major = element_line(color = "white"),  
+        panel.grid.minor = element_line(color = "white", size = 0.2)) +
+  ggtitle("Effector Intergenic Distances")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+plot2 <- ggplot(merged_data4, aes(x= five_prime,y=three_prime)) +
+  geom_hex(binwidth=c(0.05, 0.05))+
+  #stat_bin2d(binwidth=c(0.05, 0.05))+
+  scale_fill_distiller(palette = "Spectral", name="Gene\ncount", trans = "log10", breaks = c(0, 10, 100, 1000, 4000))+
+  scale_x_log10(labels = scales::number_format()) +
+  scale_y_log10(labels = scales::number_format()) +
+  ylab("5' prime intergenic length (bp)") +
+  xlab("3' prime intergenic length (bp)") +
+  geom_point(data=subset(merged_data4, group == "BUSCO"), color = 'black', fill = 'grey',shape = 21,alpha = 0.7, size = 0.5)+
+  #geom_point(data=subset(merged_data4, group == "CSEP"), color = 'black', fill = 'white',shape = 21,alpha = 0.8, size = 1.5)+
+  #geom_point(data=subset(merged_data4, group == "Effector ortholog"), color = 'black', fill = 'red',shape = 21,alpha = 0.7, size = 1)+
+  theme_minimal() +
+    theme(panel.background = element_rect(fill = "grey90"), 
+        panel.grid.major = element_line(color = "white"),  
+        panel.grid.minor = element_line(color = "white", size = 0.2)) +
+  ggtitle("BUSCO Intergenic Distances")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+combined_plots <- plot1 + plot2 + plot_layout(ncol = 2)
+combined_plots_with_title <- combined_plots + plot_annotation(title = "THeavenDRCT72020", theme = theme(plot.title = element_text(hjust = 0.5)))
+
+# Print the combined plots with title
+print(combined_plots_with_title)
+
+#####################################################################################################################################################################################################################################################################################
+predector <- read.table("download/download/P_aphanis-THeavenDRCT72021_1-ranked.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+nonest <- read.table("download/download/THeavenDRCT72021_1_intergenic_regions_nonest.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+nest <- read.table("download/download/THeavenDRCT72021_1_intergenic_regions.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+names(nest)[2:4] <- paste0(names(nest)[2:4], "_2")
+blast <- read.table("download/download/THeavenDRCT72021_1_busco_blast.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+csep_blast <- read.table("download/download/THeavenDRCT72021_1_csep_blast.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+merged_data <- merge(predector, nonest,  by = "name", all = TRUE)
+merged_data2 <- merge(merged_data, nest, by = "name", all = TRUE)
+merged_data3 <- merge(merged_data2, blast, by = "name", all = TRUE)
+merged_data5 <- merge(merged_data3, csep_blast, by = "name", all = TRUE)
+
+colnames(merged_data5) <- c('name','effector_score','manual_effector_score','manual_secretion_score','effector_matches','phibase_genes','phibase_phenotypes','phibase_ids','has_phibase_effector_match','has_phibase_virulence_match','has_phibase_lethal_match','pfam_ids','pfam_names','has_pfam_virulence_match','dbcan_matches','has_dbcan_virulence_match','effectorp1','effectorp2','effectorp3_cytoplasmic','effectorp3_apoplastic','effectorp3_noneffector','deepredeff_fungi','deepredeff_oomycete','apoplastp','is_secreted','any_signal_peptide','single_transmembrane','multiple_transmembrane','molecular_weight','residue_number','charge','isoelectric_point','aa_c_number','aa_tiny_number','aa_small_number','aa_aliphatic_number','aa_aromatic_number','aa_nonpolar_number','aa_charged_number','aa_basic_number','aa_acidic_number','fykin_gap','kex2_cutsites','rxlr_like_motifs','localizer_nucleus','localizer_chloro','localizer_mito','signal_peptide_cutsites','signalp3_nn','signalp3_hmm','signalp4','signalp5','signalp6','deepsig','phobius_sp','phobius_tmcount','phobius_tm_domains','tmhmm_tmcount','tmhmm_first_60','tmhmm_exp_aa','tmhmm_first_tm_sp_coverage','tmhmm_domains','targetp_secreted','targetp_secreted_prob','targetp_mitochondrial_prob','deeploc_membrane','deeploc_nucleus','deeploc_cytoplasm','deeploc_extracellular','deeploc_mitochondrion','deeploc_cell_membrane','deeploc_endoplasmic_reticulum','deeploc_plastid','deeploc_golgi','deeploc_lysosome','deeploc_peroxisome','signalp3_nn_d','signalp3_hmm_s','signalp4_d','signalp5_prob','signalp6_prob','deepsig_signal_prob','deepsig_transmembrane_prob','deepsig_other_prob','five_prime','three_prime','strand','five_prime_2','three_prime_2','strand_2','match','pident','length','mismatch','gapopen','qstart','qend','sstart','send','evalue','bitscore','qseq','sseq','match_1','pident_1','length_1','mismatch_1','gapopen_1','qstart_1','qend_1','sstart_1','send_1','evalue_1','bitscore_1','qseq_1','sseq_1')
+
+merged_data5$five_prime <- abs(merged_data5$five_prime)
+merged_data5$three_prime <- abs(merged_data5$three_prime)
+
+merged_data5$group <- "Non SP"
+merged_data5$group[!is.na(merged_data5$match)] <- "BUSCO"
+merged_data5$group[is.na(merged_data5$match_1) & merged_data5$is_secreted == 1 & merged_data5$effectorp3_noneffector == "."] <- "CSEP"
+merged_data5$group[merged_data5$effector_matches != "."] <- "Effector ortholog"
+
+plot3 <- ggplot(merged_data5, aes(x= five_prime,y=three_prime)) +
+  geom_hex(binwidth=c(0.05, 0.05))+
+  #stat_bin2d(binwidth=c(0.05, 0.05))+
+  scale_fill_distiller(palette = "Spectral", name="Gene\ncount", trans = "log10", breaks = c(0, 10, 100, 1000, 4000))+
+  scale_x_log10(labels = scales::number_format()) +
+  scale_y_log10(labels = scales::number_format()) +
+  ylab("5' prime intergenic length (bp)") +
+  xlab("3' prime intergenic length (bp)") +
+  #geom_point(data=subset(merged_data4, group == "BUSCO"), color = 'black', fill = 'grey',shape = 21,alpha = 0.7, size = 0.5)+
+  geom_point(data=subset(merged_data5, group == "CSEP"), color = 'black', fill = 'white',shape = 21,alpha = 0.8, size = 1.5)+
+  geom_point(data=subset(merged_data5, group == "Effector ortholog"), color = 'black', fill = 'red',shape = 21,alpha = 0.7, size = 1)+
+  theme_minimal() +
+    theme(panel.background = element_rect(fill = "grey90"), 
+        panel.grid.major = element_line(color = "white"),  
+        panel.grid.minor = element_line(color = "white", size = 0.2)) +
+  ggtitle("Effector Intergenic Distances")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+plot4 <- ggplot(merged_data5, aes(x= five_prime,y=three_prime)) +
+  geom_hex(binwidth=c(0.05, 0.05))+
+  #stat_bin2d(binwidth=c(0.05, 0.05))+
+  scale_fill_distiller(palette = "Spectral", name="Gene\ncount", trans = "log10", breaks = c(0, 10, 100, 1000, 4000))+
+  scale_x_log10(labels = scales::number_format()) +
+  scale_y_log10(labels = scales::number_format()) +
+  ylab("5' prime intergenic length (bp)") +
+  xlab("3' prime intergenic length (bp)") +
+  geom_point(data=subset(merged_data5, group == "BUSCO"), color = 'black', fill = 'grey',shape = 21,alpha = 0.7, size = 0.5)+
+  #geom_point(data=subset(merged_data4, group == "CSEP"), color = 'black', fill = 'white',shape = 21,alpha = 0.8, size = 1.5)+
+  #geom_point(data=subset(merged_data4, group == "Effector ortholog"), color = 'black', fill = 'red',shape = 21,alpha = 0.7, size = 1)+
+  theme_minimal() +
+    theme(panel.background = element_rect(fill = "grey90"), 
+        panel.grid.major = element_line(color = "white"),  
+        panel.grid.minor = element_line(color = "white", size = 0.2)) +
+  ggtitle("BUSCO Intergenic Distances")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+combined_plots <- plot1 + plot2 + plot_layout(ncol = 2)
+combined_plots_with_title <- combined_plots + plot_annotation(title = "THeavenDRCT72021", theme = theme(plot.title = element_text(hjust = 0.5)))
+
+# Print the combined plots with title
+print(combined_plots_with_title)
+
+#####################################################################################################################################################################################################################################################################################
+predector <- read.table("download/download/P_aphanis-THeavenSCOTT2020_1-ranked.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+nonest <- read.table("download/download/THeavenSCOTT2020_1_intergenic_regions_nonest.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+nest <- read.table("download/download/THeavenSCOTT2020_1_intergenic_regions.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+names(nest)[2:4] <- paste0(names(nest)[2:4], "_2")
+blast <- read.table("download/download/THeavenSCOTT2020_1_busco_blast.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+csep_blast <- read.table("download/download/THeavenSCOTT2020_1_csep_blast.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+merged_data <- merge(predector, nonest,  by = "name", all = TRUE)
+merged_data2 <- merge(merged_data, nest, by = "name", all = TRUE)
+merged_data3 <- merge(merged_data2, blast, by = "name", all = TRUE)
+merged_data6 <- merge(merged_data3, csep_blast, by = "name", all = TRUE)
+
+colnames(merged_data6) <- c('name','effector_score','manual_effector_score','manual_secretion_score','effector_matches','phibase_genes','phibase_phenotypes','phibase_ids','has_phibase_effector_match','has_phibase_virulence_match','has_phibase_lethal_match','pfam_ids','pfam_names','has_pfam_virulence_match','dbcan_matches','has_dbcan_virulence_match','effectorp1','effectorp2','effectorp3_cytoplasmic','effectorp3_apoplastic','effectorp3_noneffector','deepredeff_fungi','deepredeff_oomycete','apoplastp','is_secreted','any_signal_peptide','single_transmembrane','multiple_transmembrane','molecular_weight','residue_number','charge','isoelectric_point','aa_c_number','aa_tiny_number','aa_small_number','aa_aliphatic_number','aa_aromatic_number','aa_nonpolar_number','aa_charged_number','aa_basic_number','aa_acidic_number','fykin_gap','kex2_cutsites','rxlr_like_motifs','localizer_nucleus','localizer_chloro','localizer_mito','signal_peptide_cutsites','signalp3_nn','signalp3_hmm','signalp4','signalp5','signalp6','deepsig','phobius_sp','phobius_tmcount','phobius_tm_domains','tmhmm_tmcount','tmhmm_first_60','tmhmm_exp_aa','tmhmm_first_tm_sp_coverage','tmhmm_domains','targetp_secreted','targetp_secreted_prob','targetp_mitochondrial_prob','deeploc_membrane','deeploc_nucleus','deeploc_cytoplasm','deeploc_extracellular','deeploc_mitochondrion','deeploc_cell_membrane','deeploc_endoplasmic_reticulum','deeploc_plastid','deeploc_golgi','deeploc_lysosome','deeploc_peroxisome','signalp3_nn_d','signalp3_hmm_s','signalp4_d','signalp5_prob','signalp6_prob','deepsig_signal_prob','deepsig_transmembrane_prob','deepsig_other_prob','five_prime','three_prime','strand','five_prime_2','three_prime_2','strand_2','match','pident','length','mismatch','gapopen','qstart','qend','sstart','send','evalue','bitscore','qseq','sseq','match_1','pident_1','length_1','mismatch_1','gapopen_1','qstart_1','qend_1','sstart_1','send_1','evalue_1','bitscore_1','qseq_1','sseq_1')
+
+merged_data6$five_prime <- abs(merged_data6$five_prime)
+merged_data6$three_prime <- abs(merged_data6$three_prime)
+
+merged_data6$group <- "Non SP"
+merged_data6$group[!is.na(merged_data6$match)] <- "BUSCO"
+merged_data6$group[is.na(merged_data6$match_1) & merged_data6$is_secreted == 1 & merged_data6$effectorp3_noneffector == "."] <- "CSEP"
+merged_data6$group[merged_data6$effector_matches != "."] <- "Effector ortholog"
+
+plot5 <- ggplot(merged_data6, aes(x= five_prime,y=three_prime)) +
+  geom_hex(binwidth=c(0.05, 0.05))+
+  #stat_bin2d(binwidth=c(0.05, 0.05))+
+  scale_fill_distiller(palette = "Spectral", name="Gene\ncount", trans = "log10", breaks = c(0, 10, 100, 1000, 4000))+
+  scale_x_log10(labels = scales::number_format()) +
+  scale_y_log10(labels = scales::number_format()) +
+  ylab("5' prime intergenic length (bp)") +
+  xlab("3' prime intergenic length (bp)") +
+  #geom_point(data=subset(merged_data4, group == "BUSCO"), color = 'black', fill = 'grey',shape = 21,alpha = 0.7, size = 0.5)+
+  geom_point(data=subset(merged_data6, group == "CSEP"), color = 'black', fill = 'white',shape = 21,alpha = 0.8, size = 1.5)+
+  geom_point(data=subset(merged_data6, group == "Effector ortholog"), color = 'black', fill = 'red',shape = 21,alpha = 0.7, size = 1)+
+  theme_minimal() +
+    theme(panel.background = element_rect(fill = "grey90"), 
+        panel.grid.major = element_line(color = "white"),  
+        panel.grid.minor = element_line(color = "white", size = 0.2)) +
+  ggtitle("Effector Intergenic Distances")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+plot6 <- ggplot(merged_data6, aes(x= five_prime,y=three_prime)) +
+  geom_hex(binwidth=c(0.05, 0.05))+
+  #stat_bin2d(binwidth=c(0.05, 0.05))+
+  scale_fill_distiller(palette = "Spectral", name="Gene\ncount", trans = "log10", breaks = c(0, 10, 100, 1000, 4000))+
+  scale_x_log10(labels = scales::number_format()) +
+  scale_y_log10(labels = scales::number_format()) +
+  ylab("5' prime intergenic length (bp)") +
+  xlab("3' prime intergenic length (bp)") +
+  geom_point(data=subset(merged_data6, group == "BUSCO"), color = 'black', fill = 'grey',shape = 21,alpha = 0.7, size = 0.5)+
+  #geom_point(data=subset(merged_data4, group == "CSEP"), color = 'black', fill = 'white',shape = 21,alpha = 0.8, size = 1.5)+
+  #geom_point(data=subset(merged_data4, group == "Effector ortholog"), color = 'black', fill = 'red',shape = 21,alpha = 0.7, size = 1)+
+  theme_minimal() +
+    theme(panel.background = element_rect(fill = "grey90"), 
+        panel.grid.major = element_line(color = "white"),  
+        panel.grid.minor = element_line(color = "white", size = 0.2)) +
+  ggtitle("BUSCO Intergenic Distances")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+combined_plots <- plot1 + plot2 + plot_layout(ncol = 2)
+combined_plots_with_title <- combined_plots + plot_annotation(title = "THeavenSCOTT2020", theme = theme(plot.title = element_text(hjust = 0.5)))
+
+# Print the combined plots with title
+print(combined_plots_with_title)
+
+#####################################################################################################################################################################################################################################################################################
+predector <- read.table("download/download/P_leucotricha-THeavenpOGB2019_1-ranked.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+nonest <- read.table("download/download/THeavenpOGB2019_1_intergenic_regions_nonest.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+nest <- read.table("download/download/THeavenpOGB2019_1_intergenic_regions.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+names(nest)[2:4] <- paste0(names(nest)[2:4], "_2")
+blast <- read.table("download/download/THeavenpOGB2019_1_busco_blast.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+csep_blast <- read.table("download/download/THeavenpOGB2019_1_csep_blast.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+merged_data <- merge(predector, nonest,  by = "name", all = TRUE)
+merged_data2 <- merge(merged_data, nest, by = "name", all = TRUE)
+merged_data3 <- merge(merged_data2, blast, by = "name", all = TRUE)
+merged_data7 <- merge(merged_data3, csep_blast, by = "name", all = TRUE)
+
+colnames(merged_data7) <- c('name','effector_score','manual_effector_score','manual_secretion_score','effector_matches','phibase_genes','phibase_phenotypes','phibase_ids','has_phibase_effector_match','has_phibase_virulence_match','has_phibase_lethal_match','pfam_ids','pfam_names','has_pfam_virulence_match','dbcan_matches','has_dbcan_virulence_match','effectorp1','effectorp2','effectorp3_cytoplasmic','effectorp3_apoplastic','effectorp3_noneffector','deepredeff_fungi','deepredeff_oomycete','apoplastp','is_secreted','any_signal_peptide','single_transmembrane','multiple_transmembrane','molecular_weight','residue_number','charge','isoelectric_point','aa_c_number','aa_tiny_number','aa_small_number','aa_aliphatic_number','aa_aromatic_number','aa_nonpolar_number','aa_charged_number','aa_basic_number','aa_acidic_number','fykin_gap','kex2_cutsites','rxlr_like_motifs','localizer_nucleus','localizer_chloro','localizer_mito','signal_peptide_cutsites','signalp3_nn','signalp3_hmm','signalp4','signalp5','signalp6','deepsig','phobius_sp','phobius_tmcount','phobius_tm_domains','tmhmm_tmcount','tmhmm_first_60','tmhmm_exp_aa','tmhmm_first_tm_sp_coverage','tmhmm_domains','targetp_secreted','targetp_secreted_prob','targetp_mitochondrial_prob','deeploc_membrane','deeploc_nucleus','deeploc_cytoplasm','deeploc_extracellular','deeploc_mitochondrion','deeploc_cell_membrane','deeploc_endoplasmic_reticulum','deeploc_plastid','deeploc_golgi','deeploc_lysosome','deeploc_peroxisome','signalp3_nn_d','signalp3_hmm_s','signalp4_d','signalp5_prob','signalp6_prob','deepsig_signal_prob','deepsig_transmembrane_prob','deepsig_other_prob','five_prime','three_prime','strand','five_prime_2','three_prime_2','strand_2','match','pident','length','mismatch','gapopen','qstart','qend','sstart','send','evalue','bitscore','qseq','sseq','match_1','pident_1','length_1','mismatch_1','gapopen_1','qstart_1','qend_1','sstart_1','send_1','evalue_1','bitscore_1','qseq_1','sseq_1')
+
+merged_data7$five_prime <- abs(merged_data7$five_prime)
+merged_data7$three_prime <- abs(merged_data7$three_prime)
+
+merged_data7$group <- "Non SP"
+merged_data7$group[!is.na(merged_data7$match)] <- "BUSCO"
+merged_data7$group[is.na(merged_data7$match_1) & merged_data7$is_secreted == 1 & merged_data7$effectorp3_noneffector == "."] <- "CSEP"
+merged_data7$group[merged_data7$effector_matches != "."] <- "Effector ortholog"
+
+plot7 <- ggplot(merged_data7, aes(x= five_prime,y=three_prime)) +
+  geom_hex(binwidth=c(0.05, 0.05))+
+  #stat_bin2d(binwidth=c(0.05, 0.05))+
+  scale_fill_distiller(palette = "Spectral", name="Gene\ncount", trans = "log10", breaks = c(0, 10, 100, 1000, 4000))+
+  scale_x_log10(labels = scales::number_format()) +
+  scale_y_log10(labels = scales::number_format()) +
+  ylab("5' prime intergenic length (bp)") +
+  xlab("3' prime intergenic length (bp)") +
+  #geom_point(data=subset(merged_data4, group == "BUSCO"), color = 'black', fill = 'grey',shape = 21,alpha = 0.7, size = 0.5)+
+  geom_point(data=subset(merged_data7, group == "CSEP"), color = 'black', fill = 'white',shape = 21,alpha = 0.8, size = 1.5)+
+  geom_point(data=subset(merged_data7, group == "Effector ortholog"), color = 'black', fill = 'red',shape = 21,alpha = 0.7, size = 1)+
+  theme_minimal() +
+    theme(panel.background = element_rect(fill = "grey90"), 
+        panel.grid.major = element_line(color = "white"),  
+        panel.grid.minor = element_line(color = "white", size = 0.2)) +
+  ggtitle("Effector Intergenic Distances")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+plot8 <- ggplot(merged_data7, aes(x= five_prime,y=three_prime)) +
+  geom_hex(binwidth=c(0.05, 0.05))+
+  #stat_bin2d(binwidth=c(0.05, 0.05))+
+  scale_fill_distiller(palette = "Spectral", name="Gene\ncount", trans = "log10", breaks = c(0, 10, 100, 1000, 4000))+
+  scale_x_log10(labels = scales::number_format()) +
+  scale_y_log10(labels = scales::number_format()) +
+  ylab("5' prime intergenic length (bp)") +
+  xlab("3' prime intergenic length (bp)") +
+  geom_point(data=subset(merged_data7, group == "BUSCO"), color = 'black', fill = 'grey',shape = 21,alpha = 0.7, size = 0.5)+
+  #geom_point(data=subset(merged_data4, group == "CSEP"), color = 'black', fill = 'white',shape = 21,alpha = 0.8, size = 1.5)+
+  #geom_point(data=subset(merged_data4, group == "Effector ortholog"), color = 'black', fill = 'red',shape = 21,alpha = 0.7, size = 1)+
+  theme_minimal() +
+    theme(panel.background = element_rect(fill = "grey90"), 
+        panel.grid.major = element_line(color = "white"),  
+        panel.grid.minor = element_line(color = "white", size = 0.2)) +
+  ggtitle("BUSCO Intergenic Distances")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+combined_plots <- plot1 + plot2 + plot_layout(ncol = 2)
+combined_plots_with_title <- combined_plots + plot_annotation(title = "THeavenpOGB2019", theme = theme(plot.title = element_text(hjust = 0.5)))
+
+# Print the combined plots with title
+print(combined_plots_with_title)
+
+#####################################################################################################################################################################################################################################################################################
+predector <- read.table("download/download/P_leucotricha-THeavenp11_1-ranked.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+nonest <- read.table("download/download/THeavenp11_1_intergenic_regions_nonest.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+nest <- read.table("download/download/THeavenp11_1_intergenic_regions.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+names(nest)[2:4] <- paste0(names(nest)[2:4], "_2")
+blast <- read.table("download/download/THeavenp11_1_busco_blast.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+csep_blast <- read.table("download/download/THeavenp11_1_csep_blast.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+merged_data <- merge(predector, nonest,  by = "name", all = TRUE)
+merged_data2 <- merge(merged_data, nest, by = "name", all = TRUE)
+merged_data3 <- merge(merged_data2, blast, by = "name", all = TRUE)
+merged_data8 <- merge(merged_data3, csep_blast, by = "name", all = TRUE)
+
+colnames(merged_data8) <- c('name','effector_score','manual_effector_score','manual_secretion_score','effector_matches','phibase_genes','phibase_phenotypes','phibase_ids','has_phibase_effector_match','has_phibase_virulence_match','has_phibase_lethal_match','pfam_ids','pfam_names','has_pfam_virulence_match','dbcan_matches','has_dbcan_virulence_match','effectorp1','effectorp2','effectorp3_cytoplasmic','effectorp3_apoplastic','effectorp3_noneffector','deepredeff_fungi','deepredeff_oomycete','apoplastp','is_secreted','any_signal_peptide','single_transmembrane','multiple_transmembrane','molecular_weight','residue_number','charge','isoelectric_point','aa_c_number','aa_tiny_number','aa_small_number','aa_aliphatic_number','aa_aromatic_number','aa_nonpolar_number','aa_charged_number','aa_basic_number','aa_acidic_number','fykin_gap','kex2_cutsites','rxlr_like_motifs','localizer_nucleus','localizer_chloro','localizer_mito','signal_peptide_cutsites','signalp3_nn','signalp3_hmm','signalp4','signalp5','signalp6','deepsig','phobius_sp','phobius_tmcount','phobius_tm_domains','tmhmm_tmcount','tmhmm_first_60','tmhmm_exp_aa','tmhmm_first_tm_sp_coverage','tmhmm_domains','targetp_secreted','targetp_secreted_prob','targetp_mitochondrial_prob','deeploc_membrane','deeploc_nucleus','deeploc_cytoplasm','deeploc_extracellular','deeploc_mitochondrion','deeploc_cell_membrane','deeploc_endoplasmic_reticulum','deeploc_plastid','deeploc_golgi','deeploc_lysosome','deeploc_peroxisome','signalp3_nn_d','signalp3_hmm_s','signalp4_d','signalp5_prob','signalp6_prob','deepsig_signal_prob','deepsig_transmembrane_prob','deepsig_other_prob','five_prime','three_prime','strand','five_prime_2','three_prime_2','strand_2','match','pident','length','mismatch','gapopen','qstart','qend','sstart','send','evalue','bitscore','qseq','sseq','match_1','pident_1','length_1','mismatch_1','gapopen_1','qstart_1','qend_1','sstart_1','send_1','evalue_1','bitscore_1','qseq_1','sseq_1')
+
+merged_data8$five_prime <- abs(merged_data8$five_prime)
+merged_data8$three_prime <- abs(merged_data8$three_prime)
+
+merged_data8$group <- "Non SP"
+merged_data8$group[!is.na(merged_data8$match)] <- "BUSCO"
+merged_data8$group[is.na(merged_data8$match_1) & merged_data8$is_secreted == 1 & merged_data8$effectorp3_noneffector == "."] <- "CSEP"
+merged_data8$group[merged_data8$effector_matches != "."] <- "Effector ortholog"
+
+plot9 <- ggplot(merged_data8, aes(x= five_prime,y=three_prime)) +
+  geom_hex(binwidth=c(0.05, 0.05))+
+  #stat_bin2d(binwidth=c(0.05, 0.05))+
+  scale_fill_distiller(palette = "Spectral", name="Gene\ncount", trans = "log10", breaks = c(0, 10, 100, 1000, 4000))+
+  scale_x_log10(labels = scales::number_format()) +
+  scale_y_log10(labels = scales::number_format()) +
+  ylab("5' prime intergenic length (bp)") +
+  xlab("3' prime intergenic length (bp)") +
+  #geom_point(data=subset(merged_data4, group == "BUSCO"), color = 'black', fill = 'grey',shape = 21,alpha = 0.7, size = 0.5)+
+  geom_point(data=subset(merged_data8, group == "CSEP"), color = 'black', fill = 'white',shape = 21,alpha = 0.8, size = 1.5)+
+  geom_point(data=subset(merged_data8, group == "Effector ortholog"), color = 'black', fill = 'red',shape = 21,alpha = 0.7, size = 1)+
+  theme_minimal() +
+    theme(panel.background = element_rect(fill = "grey90"), 
+        panel.grid.major = element_line(color = "white"),  
+        panel.grid.minor = element_line(color = "white", size = 0.2)) +
+  ggtitle("Effector Intergenic Distances")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+plot10 <- ggplot(merged_data8, aes(x= five_prime,y=three_prime)) +
+  geom_hex(binwidth=c(0.05, 0.05))+
+  #stat_bin2d(binwidth=c(0.05, 0.05))+
+  scale_fill_distiller(palette = "Spectral", name="Gene\ncount", trans = "log10", breaks = c(0, 10, 100, 1000, 4000))+
+  scale_x_log10(labels = scales::number_format()) +
+  scale_y_log10(labels = scales::number_format()) +
+  ylab("5' prime intergenic length (bp)") +
+  xlab("3' prime intergenic length (bp)") +
+  geom_point(data=subset(merged_data8, group == "BUSCO"), color = 'black', fill = 'grey',shape = 21,alpha = 0.7, size = 0.5)+
+  #geom_point(data=subset(merged_data4, group == "CSEP"), color = 'black', fill = 'white',shape = 21,alpha = 0.8, size = 1.5)+
+  #geom_point(data=subset(merged_data4, group == "Effector ortholog"), color = 'black', fill = 'red',shape = 21,alpha = 0.7, size = 1)+
+  theme_minimal() +
+    theme(panel.background = element_rect(fill = "grey90"), 
+        panel.grid.major = element_line(color = "white"),  
+        panel.grid.minor = element_line(color = "white", size = 0.2)) +
+  ggtitle("BUSCO Intergenic Distances")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+combined_plots <- plot1 + plot2 + plot_layout(ncol = 2)
+combined_plots_with_title <- combined_plots + plot_annotation(title = "THeavenp112020", theme = theme(plot.title = element_text(hjust = 0.5)))
+
+# Print the combined plots with title
+print(combined_plots_with_title)
+
+#####################################################################################################################################################################################################################################################################################
+predector <- read.table("download/download/P_leucotricha-THeavenpOGB2021_1-ranked.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+nonest <- read.table("download/download/THeavenpOGB2021_1_intergenic_regions_nonest.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+nest <- read.table("download/download/THeavenpOGB2021_1_intergenic_regions.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+names(nest)[2:4] <- paste0(names(nest)[2:4], "_2")
+blast <- read.table("download/download/THeavenpOGB2021_1_busco_blast.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+csep_blast <- read.table("download/download/THeavenpOGB2021_1_csep_blast.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+merged_data <- merge(predector, nonest,  by = "name", all = TRUE)
+merged_data2 <- merge(merged_data, nest, by = "name", all = TRUE)
+merged_data3 <- merge(merged_data2, blast, by = "name", all = TRUE)
+merged_data9 <- merge(merged_data3, csep_blast, by = "name", all = TRUE)
+
+colnames(merged_data9) <- c('name','effector_score','manual_effector_score','manual_secretion_score','effector_matches','phibase_genes','phibase_phenotypes','phibase_ids','has_phibase_effector_match','has_phibase_virulence_match','has_phibase_lethal_match','pfam_ids','pfam_names','has_pfam_virulence_match','dbcan_matches','has_dbcan_virulence_match','effectorp1','effectorp2','effectorp3_cytoplasmic','effectorp3_apoplastic','effectorp3_noneffector','deepredeff_fungi','deepredeff_oomycete','apoplastp','is_secreted','any_signal_peptide','single_transmembrane','multiple_transmembrane','molecular_weight','residue_number','charge','isoelectric_point','aa_c_number','aa_tiny_number','aa_small_number','aa_aliphatic_number','aa_aromatic_number','aa_nonpolar_number','aa_charged_number','aa_basic_number','aa_acidic_number','fykin_gap','kex2_cutsites','rxlr_like_motifs','localizer_nucleus','localizer_chloro','localizer_mito','signal_peptide_cutsites','signalp3_nn','signalp3_hmm','signalp4','signalp5','signalp6','deepsig','phobius_sp','phobius_tmcount','phobius_tm_domains','tmhmm_tmcount','tmhmm_first_60','tmhmm_exp_aa','tmhmm_first_tm_sp_coverage','tmhmm_domains','targetp_secreted','targetp_secreted_prob','targetp_mitochondrial_prob','deeploc_membrane','deeploc_nucleus','deeploc_cytoplasm','deeploc_extracellular','deeploc_mitochondrion','deeploc_cell_membrane','deeploc_endoplasmic_reticulum','deeploc_plastid','deeploc_golgi','deeploc_lysosome','deeploc_peroxisome','signalp3_nn_d','signalp3_hmm_s','signalp4_d','signalp5_prob','signalp6_prob','deepsig_signal_prob','deepsig_transmembrane_prob','deepsig_other_prob','five_prime','three_prime','strand','five_prime_2','three_prime_2','strand_2','match','pident','length','mismatch','gapopen','qstart','qend','sstart','send','evalue','bitscore','qseq','sseq','match_1','pident_1','length_1','mismatch_1','gapopen_1','qstart_1','qend_1','sstart_1','send_1','evalue_1','bitscore_1','qseq_1','sseq_1')
+
+merged_data9$five_prime <- abs(merged_data9$five_prime)
+merged_data9$three_prime <- abs(merged_data9$three_prime)
+
+merged_data9$group <- "Non SP"
+merged_data9$group[!is.na(merged_data9$match)] <- "BUSCO"
+merged_data9$group[is.na(merged_data9$match_1) & merged_data9$is_secreted == 1 & merged_data9$effectorp3_noneffector == "."] <- "CSEP"
+merged_data9$group[merged_data9$effector_matches != "."] <- "Effector ortholog"
+
+plot11 <- ggplot(merged_data9, aes(x= five_prime,y=three_prime)) +
+  geom_hex(binwidth=c(0.05, 0.05))+
+  #stat_bin2d(binwidth=c(0.05, 0.05))+
+  scale_fill_distiller(palette = "Spectral", name="Gene\ncount", trans = "log10", breaks = c(0, 10, 100, 1000, 4000))+
+  scale_x_log10(labels = scales::number_format()) +
+  scale_y_log10(labels = scales::number_format()) +
+  ylab("5' prime intergenic length (bp)") +
+  xlab("3' prime intergenic length (bp)") +
+  #geom_point(data=subset(merged_data4, group == "BUSCO"), color = 'black', fill = 'grey',shape = 21,alpha = 0.7, size = 0.5)+
+  geom_point(data=subset(merged_data9, group == "CSEP"), color = 'black', fill = 'white',shape = 21,alpha = 0.8, size = 1.5)+
+  geom_point(data=subset(merged_data9, group == "Effector ortholog"), color = 'black', fill = 'red',shape = 21,alpha = 0.7, size = 1)+
+  theme_minimal() +
+    theme(panel.background = element_rect(fill = "grey90"), 
+        panel.grid.major = element_line(color = "white"),  
+        panel.grid.minor = element_line(color = "white", size = 0.2)) +
+  ggtitle("Effector Intergenic Distances")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+plot12 <- ggplot(merged_data9, aes(x= five_prime,y=three_prime)) +
+  geom_hex(binwidth=c(0.05, 0.05))+
+  #stat_bin2d(binwidth=c(0.05, 0.05))+
+  scale_fill_distiller(palette = "Spectral", name="Gene\ncount", trans = "log10", breaks = c(0, 10, 100, 1000, 4000))+
+  scale_x_log10(labels = scales::number_format()) +
+  scale_y_log10(labels = scales::number_format()) +
+  ylab("5' prime intergenic length (bp)") +
+  xlab("3' prime intergenic length (bp)") +
+  geom_point(data=subset(merged_data9, group == "BUSCO"), color = 'black', fill = 'grey',shape = 21,alpha = 0.7, size = 0.5)+
+  #geom_point(data=subset(merged_data4, group == "CSEP"), color = 'black', fill = 'white',shape = 21,alpha = 0.8, size = 1.5)+
+  #geom_point(data=subset(merged_data4, group == "Effector ortholog"), color = 'black', fill = 'red',shape = 21,alpha = 0.7, size = 1)+
+  theme_minimal() +
+    theme(panel.background = element_rect(fill = "grey90"), 
+        panel.grid.major = element_line(color = "white"),  
+        panel.grid.minor = element_line(color = "white", size = 0.2)) +
+  ggtitle("BUSCO Intergenic Distances")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+combined_plots <- plot1 + plot2 + plot_layout(ncol = 2)
+combined_plots_with_title <- combined_plots + plot_annotation(title = "THeavenpOGB2021", theme = theme(plot.title = element_text(hjust = 0.5)))
+
+# Print the combined plots with title
+print(combined_plots_with_title)
 ```
+```R
+library(ggplot2)
+library(patchwork)
+library(dplyr)
+
+df_all <- merged_data4 #DRCT72020
+#df_all <- merged_data5 #DRCT72021
+#df_all <- merged_data6 #SCOTT2020
+#df_all <- merged_data7 #OGB2019
+#df_all <- merged_data8 #p112020
+#df_all <- merged_data9 #OGB2021
+
+df_all$BUSCO <- "Non BUSCO"
+df_all$BUSCO[!is.na(df_all$match)] <- "BUSCO"
+
+df_all$CSEP <- "Non SP"
+df_all$CSEP[is.na(df_all$match_1) & df_all$is_secreted == 1 & df_all$effectorp3_noneffector == "."] <- "CSEP"
+
+df_all$cazy <- "Non CAZY"
+df_all$cazy[df_all$dbcan_matches != "."] <- "CAZY"
+
+df_all$ralph <- "Non RALPH"
+df_all <- df_all %>%
+  mutate(ralph = ifelse(grepl("BghBEC1011|BgtAVRa10|BgAVRA13|BgtAvrPm2|BgtSvrPm3a1f1", effector_matches), "RALPH", ralph))
+
+df_all$eka <- "Non EKA"
+df_all <- df_all %>%
+  mutate(eka = ifelse(grepl("BgtAVRk1|BgtAVRa10", effector_matches), "EKA", eka))
+df_all$eka[df_all$is_secreted == 1] <- "Non EKA"
+
+# Plot 1
+df_all$tempvar <- "Total"
+plot101 <- ggplot(df_all, aes(x= five_prime, y=three_prime)) +
+  geom_hex(binwidth=c(0.05, 0.05)) +
+  scale_fill_distiller(palette = "Spectral", name="Gene\ncount", trans = "log10", breaks = c(0, 10, 100, 1000, 4000)) +
+  scale_x_log10(labels = scales::number_format(), breaks = NULL) +
+  scale_y_log10(labels = scales::number_format(), breaks = c(1, 10, 100, 1000, 10000, 100000)) +
+  ylab("") +
+  xlab("") +
+  theme_minimal() +
+  theme(panel.background = element_rect(fill = "grey93"), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+plot101 <- plot101 + facet_grid(. ~ tempvar) +
+  theme(strip.background = element_rect(fill="grey35"),
+        strip.text = element_text(size=15, colour="white"))
+
+# Plot 2
+df_all$tempvar <- "BUSCO"
+plot102 <- ggplot(df_all, aes(x = five_prime, y = three_prime)) +
+  geom_hex(binwidth = c(0.05, 0.05), fill = "grey") +
+  scale_x_log10(labels = scales::number_format(), breaks = NULL) +
+  scale_y_log10(labels = scales::number_format(), breaks = NULL) +
+  ylab("") +
+  xlab("") +
+  geom_point(data=subset(df_all, BUSCO == "BUSCO"), color = 'black', fill = 'firebrick2',shape = 21,alpha = 0.7, size = 1) +
+  theme_minimal() +
+  theme(panel.background = element_rect(fill = "grey93"), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+plot102 <- plot102 + facet_grid(. ~ tempvar) +
+  theme(strip.background = element_rect(fill="grey35"),
+        strip.text = element_text(size=15, colour="white"))
+
+# Plot 3
+df_all$tempvar <- "CAZY"
+plot103 <- ggplot(df_all, aes(x = five_prime, y = three_prime)) +
+  geom_hex(binwidth = c(0.05, 0.05), fill = "grey") +
+  scale_x_log10(labels = scales::number_format(), breaks = NULL) +
+  scale_y_log10(labels = scales::number_format(), breaks = c(1, 10, 100, 1000, 10000, 100000)) +
+  ylab("5' prime intergenic length (bp)") +
+  xlab("") +
+  geom_point(data=subset(df_all, cazy == "CAZY"), color = 'black', fill = 'firebrick2',shape = 21,alpha = 0.7, size = 1.5) +
+  theme_minimal() +
+  theme(panel.background = element_rect(fill = "grey93"), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) 
+
+plot103 <- plot103 + facet_grid(. ~ tempvar) +
+  theme(strip.background = element_rect(fill="grey35"),
+        strip.text = element_text(size=15, colour="white"))
+
+# Plot 4
+df_all$tempvar <- "CSEP"
+plot104 <- ggplot(df_all, aes(x = five_prime, y = three_prime)) +
+  geom_hex(binwidth = c(0.05, 0.05), fill = "grey") +
+  scale_x_log10(labels = scales::number_format(), breaks = NULL) +
+  scale_y_log10(labels = scales::number_format(), breaks = NULL) +
+  ylab("") +
+  xlab("") +
+  geom_point(data=subset(df_all, CSEP == "CSEP"), color = 'black', fill = 'firebrick2',shape = 21,alpha = 0.7, size = 1.5) +
+  theme_minimal() +
+  theme(panel.background = element_rect(fill = "grey93"), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) 
+
+plot104 <- plot104 + facet_grid(. ~ tempvar) +
+  theme(strip.background = element_rect(fill="grey35"),
+        strip.text = element_text(size=15, colour="white"))
+
+# Plot 5
+df_all$tempvar <- "EKA"
+plot105 <- ggplot(df_all, aes(x = five_prime, y = three_prime)) +
+  geom_hex(binwidth = c(0.05, 0.05), fill = "grey") +
+  scale_x_log10(labels = scales::number_format(), breaks = c(1, 10, 100, 1000, 10000, 100000)) +
+  scale_y_log10(labels = scales::number_format(), breaks = c(1, 10, 100, 1000, 10000, 100000)) +
+  ylab("") +
+  xlab("") +
+  geom_point(data=subset(df_all, eka == "EKA"), color = 'black', fill = 'firebrick2',shape = 21,alpha = 0.7, size = 1.5) +
+  theme_minimal() +
+  theme(panel.background = element_rect(fill = "grey93"), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) 
+
+plot105 <- plot105 + facet_grid(. ~ tempvar) +
+  theme(strip.background = element_rect(fill="grey35"),
+        strip.text = element_text(size=15, colour="white"))
+
+# Plot 6
+df_all$tempvar <- "RALPH"
+plot106 <- ggplot(df_all, aes(x = five_prime, y = three_prime)) +
+  geom_hex(binwidth = c(0.05, 0.05), fill = "grey") +
+  scale_x_log10(labels = scales::number_format(), breaks = c(1, 10, 100, 1000, 10000, 100000)) +
+  scale_y_log10(labels = scales::number_format(), breaks = NULL) +
+  ylab("") +
+  xlab("3' prime intergenic length (bp)") +
+  geom_point(data=subset(df_all, ralph == "RALPH"), color = 'black', fill = 'firebrick2',shape = 21,alpha = 0.7, size = 1.5) +
+  theme_minimal() +
+  theme(panel.background = element_rect(fill = "grey93"), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.title.x = element_text(hjust = -0.6, vjust = -1))  
+
+plot106 <- plot106 + facet_grid(. ~ tempvar) +
+  theme(strip.background = element_rect(fill="grey35"),
+        strip.text = element_text(size=15, colour="white"))
+
+
+# Combine plots with axis titles
+combined_plot <- plot101 + plot102 + plot103 + plot104 + plot105 + plot106 +
+  plot_layout(ncol = 2, nrow = 3, guides = 'collect') 
+
+# Display combined plot
+combined_plot
+```
+```R
+install.packages("ggthemr")
+library(ggthemr)
+ggthemr('dust')
+
+ggplot(allte) +
+  geom_point(aes(x=te_type, y=distance), alpha = 0.04, position = 'jitter') +
+  geom_violin(aes(x=te_type, y=distance, fill=te_type)) +
+  facet_wrap(~group+secr) +
+  scale_fill_brewer(palette = "Spectral", name = "Types") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, size = 9, hjust = 1), plot.title = element_text(hjust = 0.5)) +
+  scale_y_log10() +
+  ylab("Distance for start/stop codon (bp)") +
+  xlab("Repetitive element type (bp)")
+
+
+```
+```R
+#permutation test
+
+#df <- merged_data4 #DRCT72020
+#df <- merged_data5 #DRCT72021
+#df <- merged_data6 #SCOTT2020
+#df <- merged_data7 #OGB2019
+df <- merged_data8 #p112020
+#df <- merged_data9 #OGB2021
+
+search <- read.table("p112020_good.txt", header = FALSE)
+df_all <- df %>%
+  filter(name %in% search$V1)
+
+df_all$BUSCO <- "Non"
+df_all$BUSCO[!is.na(df_all$match)] <- "BUSCO"
+
+df_all$CSEP <- "Non"
+df_all$CSEP[is.na(df_all$match_1) & df_all$is_secreted == 1 & df_all$effectorp3_noneffector == "."] <- "CSEP"
+
+df_all$cazy <- "Non"
+df_all$cazy[df_all$dbcan_matches != "."] <- "CAZY"
+
+df_all$ralph <- "Non"
+df_all <- df_all %>%
+  mutate(ralph = ifelse(grepl("BghBEC1011|BgtAVRa10|BgAVRA13|BgtAvrPm2|BgtSvrPm3a1f1", effector_matches), "RALPH", ralph))
+
+df_all$eka <- "Non"
+df_all <- df_all %>%
+  mutate(eka = ifelse(grepl("BgtAVRk1|BgtAVRa10", effector_matches), "EKA", eka))
+df_all$eka[df_all$is_secreted == 1] <- "Non"
+
+df_all <- read.xlsx(OBG2021_output.xlsx)
+# 5-prime IG
+df_filtered <- df_all[!is.na(df_all$five_prime_2), ]
+
+
+mean_other <- mean(subset(df_filtered$five_prime_2, df_filtered$CSEP == "Non"))
+subset_df <- subset(df_filtered, CSEP == "CSEP")
+num_treatment <- nrow(subset_df)
+mean_treatment <- mean(subset_df$five_prime_2, na.rm = TRUE)
+obs_diff <- mean_other - mean_treatment
+
+list <- vector()
+i <- 1
+while(i < 10000) {
+    test_group1 <- df_filtered[sample(nrow(df_filtered), num_treatment), ]
+    test_group1$treatment <- rep("treatment",nrow(test_group1))
+
+    test_group1_names <- test_group1$name
+    control_group <- df_filtered[!df_filtered$name %in% test_group1_names, ]
+    control_group$treatment <- rep("control",nrow(control_group))
+
+    pred_df <- rbind(test_group1, control_group)
+    pred_df$treatment <- as.factor(pred_df$treatment)
+
+    mean_other <- mean(subset(pred_df$five_prime_2, pred_df$treatment == "control"))
+    mean_treatment <- mean(subset(pred_df$five_prime_2, pred_df$treatment == "treatment"))
+    pred_diff <- mean_other - mean_treatment
+    list[[i]] <- pred_diff
+    i <- i + 1
+}
+
+preds <- data.frame(matrix(unlist(list), byrow=T))
+colnames(preds) <- c("Diff")
+preds$Diff <- as.vector(preds$Diff)
+preds$Diff <- round(preds$Diff)
+hist_5 <- ggplot(preds, aes(preds$Diff)) +
+  xlab("Mean difference in 5' intergenic distance in resampled genes") +
+  ylab("Frequency") +
+  geom_histogram(binwidth = 25) +
+  scale_y_continuous(expand=c(0,0)) +
+  scale_x_continuous(breaks=seq(-800,(obs_diff + 1000),100), expand=c(0,0)) +
+  geom_vline(xintercept = obs_diff) +
+  ggtitle("Five prime intergenic distance permutation test for p112020 CSEPs") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+hist_5
+
+sig_5 = sum(list > obs_diff)
+
+# 3-prime IG
+df_filtered <- df_all[!is.na(df_all$three_prime_2), ]
+
+
+mean_other <- mean(subset(df_filtered$three_prime_2, df_filtered$CSEP == "Non"))
+subset_df <- subset(df_filtered, CSEP == "CSEP")
+num_treatment <- nrow(subset_df)
+mean_treatment <- mean(subset_df$three_prime_2, na.rm = TRUE)
+obs_diff <- mean_other - mean_treatment
+
+list <- vector()
+i <- 1
+while(i < 10000) {
+    test_group1 <- df_filtered[sample(nrow(df_filtered), num_treatment), ]
+    test_group1$treatment <- rep("treatment",nrow(test_group1))
+
+    test_group1_names <- test_group1$name
+    control_group <- df_filtered[!df_filtered$name %in% test_group1_names, ]
+    control_group$treatment <- rep("control",nrow(control_group))
+
+    pred_df <- rbind(test_group1, control_group)
+    pred_df$treatment <- as.factor(pred_df$treatment)
+
+    mean_other <- mean(subset(pred_df$three_prime_2, pred_df$treatment == "control"))
+    mean_treatment <- mean(subset(pred_df$three_prime_2, pred_df$treatment == "treatment"))
+    pred_diff <- mean_other - mean_treatment
+    list[[i]] <- pred_diff
+    i <- i + 1
+}
+
+preds <- data.frame(matrix(unlist(list), byrow=T))
+colnames(preds) <- c("Diff")
+preds$Diff <- as.vector(preds$Diff)
+preds$Diff <- round(preds$Diff)
+hist_3 <- ggplot(preds, aes(preds$Diff)) +
+  xlab("Mean difference in 3' intergenic distance in resampled genes") +
+  ylab("Frequency") +
+  geom_histogram(binwidth = 25) +
+  scale_y_continuous(expand=c(0,0)) +
+  scale_x_continuous(breaks=seq(-800,(obs_diff + 1000),100), expand=c(0,0)) +
+  geom_vline(xintercept = obs_diff) +
+  ggtitle("Three prime intergenic distance permutation test for p112020 CSEPs") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+hist_3
+
+sig_3 = sum(list > obs_diff)
+
+# Total IG
+
+df_filtered2 <- df_all[!is.na(df_all$five_prime_2), ]
+df_filtered <-df_filtered2[!is.na(df_filtered2$three_prime_2), ]
+
+df_filtered$total_IG = df_filtered$five_prime_2 + df_filtered$three_prime_2
+
+mean_other <- mean(subset(df_filtered$total_IG, df_filtered$CSEP == "Non"))
+subset_df <- subset(df_filtered, CSEP == "CSEP")
+num_treatment <- nrow(subset_df)
+mean_treatment <- mean(subset_df$total_IG, na.rm = TRUE)
+obs_diff <- mean_other - mean_treatment
+
+list <- vector()
+i <- 1
+while(i < 10000) {
+    test_group1 <- df_filtered[sample(nrow(df_filtered), num_treatment), ]
+    test_group1$treatment <- rep("treatment",nrow(test_group1))
+
+    test_group1_names <- test_group1$name
+    control_group <- df_filtered[!df_filtered$name %in% test_group1_names, ]
+    control_group$treatment <- rep("control",nrow(control_group))
+
+    pred_df <- rbind(test_group1, control_group)
+    pred_df$treatment <- as.factor(pred_df$treatment)
+
+    mean_other <- mean(subset(pred_df$total_IG, pred_df$treatment == "control"))
+    mean_treatment <- mean(subset(pred_df$total_IG, pred_df$treatment == "treatment"))
+    pred_diff <- mean_other - mean_treatment
+    list[[i]] <- pred_diff
+    i <- i + 1
+}
+
+preds <- data.frame(matrix(unlist(list), byrow=T))
+colnames(preds) <- c("Diff")
+preds$Diff <- as.vector(preds$Diff)
+preds$Diff <- round(preds$Diff)
+total_hist <- ggplot(preds, aes(preds$Diff)) +
+  xlab("Mean difference in total intergenic distance in resampled genes") +
+  ylab("Frequency") +
+  geom_histogram(binwidth = 25) +
+  scale_y_continuous(expand=c(0,0)) +
+  scale_x_continuous(breaks=seq(-800,(obs_diff + 1000),100), expand=c(0,0)) +
+  geom_vline(xintercept = obs_diff) +
+  ggtitle("Total intergenic distance permutation test for p112020 CSEPs") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+total_hist
+
+total_sig = sum(list > obs_diff)
+
+ggsave("p112020_CSEPs_total_IG_histogram_plot.png", plot = total_hist, width = 10, height = 10, units = "in")
+ggsave("p112020_CSEPs_5_IG_histogram_plot.png", plot = hist_5, width = 10, height = 10, units = "in")
+ggsave("p112020_CSEPs_3_IG_histogram_plot.png", plot = hist_3, width = 10, height = 10, units = "in")
+
+print(paste("p112020 CSEPs total intergenic distance:", total_sig))
+print(paste("p112020 CSEPs 5' intergenic distance:", sig_5))
+print(paste("p112020 CSEPs 3' intergenic distance:", sig_3))
+
+#Larger values means that treatment has greater intergenic distance than average
+```
+DRCT72020 BUSCOs total intergenic distance: 9999
+DRCT72020 BUSCOs 5' intergenic distance: 9858
+DRCT72020 BUSCOs 3' intergenic distance: 9999
+DRCT72021 BUSCOs total intergenic distance: 9994
+DRCT72021 BUSCOs 5' intergenic distance: 4191
+DRCT72021 BUSCOs 3' intergenic distance: 9999
+SCOTT2020 BUSCOs total intergenic distance: 9996
+SCOTT2020 BUSCOs 5' intergenic distance: 8594
+SCOTT2020 BUSCOs 3' intergenic distance: 9999
+OGB2019 BUSCOs total intergenic distance: 9999
+OGB2019 BUSCOs 5' intergenic distance: 9999
+OGB2019 BUSCOs 3' intergenic distance: 9999
+p112020 BUSCOs total intergenic distance: 9999
+p112020 BUSCOs 5' intergenic distance: 9999
+p112020 BUSCOs 3' intergenic distance: 9999
+OGB2021 BUSCOs total intergenic distance: 9999
+OGB2021 BUSCOs 5' intergenic distance: 9999
+OGB2021 BUSCOs 3' intergenic distance: 9999
+
+DRCT72020 CSEPs total intergenic distance: 7949
+DRCT72020 CSEPs 5' intergenic distance: 9865
+DRCT72020 CSEPs 3' intergenic distance: 825
+DRCT72021 CSEPs total intergenic distance: 9920
+DRCT72021 CSEPs 5' intergenic distance: 9900
+DRCT72021 CSEPs 3' intergenic distance: 9103
+SCOTT2020 CSEPs total intergenic distance: 9353
+SCOTT2020 CSEPs 5' intergenic distance: 9680
+SCOTT2020 CSEPs 3' intergenic distance: 6623
+OGB2019 CSEPs total intergenic distance: 9999
+OGB2019 CSEPs 5' intergenic distance: 9991
+OGB2019 CSEPs 3' intergenic distance: 9993
+p112020 CSEPs total intergenic distance: 9999
+p112020 CSEPs 5' intergenic distance: 9996
+p112020 CSEPs 3' intergenic distance: 9990
+OGB2021 CSEPs total intergenic distance: 9998
+OGB2021 CSEPs 5' intergenic distance: 9992
+OGB2021 CSEPs 3' intergenic distance: 9946
+
+DRCT72020 CAZYs total intergenic distance: 7855
+DRCT72020 CAZYs 5' intergenic distance: 9884
+DRCT72020 CAZYs 3' intergenic distance: 783
+DRCT72021 CAZYs total intergenic distance: 9913
+DRCT72021 CAZYs 5' intergenic distance: 9890
+DRCT72021 CAZYs 3' intergenic distance: 9140
+SCOTT2020 CAZYs total intergenic distance: 9334
+SCOTT2020 CAZYs 5' intergenic distance: 9626
+SCOTT2020 CAZYs 3' intergenic distance: 6646
+OGB2019 CAZYs total intergenic distance: 9999
+OGB2019 CAZYs 5' intergenic distance: 9995
+OGB2019 CAZYs 3' intergenic distance: 9992
+p112020 CAZYs total intergenic distance: 9999
+p112020 CAZYs 5' intergenic distance: 9999
+p112020 CAZYs 3' intergenic distance: 9989
+OGB2021 CAZYs total intergenic distance: 9999
+OGB2021 CAZYs 5' intergenic distance: 9997
+OGB2021 CAZYs 3' intergenic distance: 9940
+
+DRCT72020 RALPHs total intergenic distance: 7969
+DRCT72020 RALPHs 5' intergenic distance: 9892
+DRCT72020 RALPHs 3' intergenic distance: 755
+DRCT72021 RALPHs total intergenic distance: 9929
+DRCT72021 RALPHs 5' intergenic distance: 9898
+DRCT72021 RALPHs 3' intergenic distance: 9170
+SCOTT2020 RALPHs total intergenic distance: 9314
+SCOTT2020 RALPHs 5' intergenic distance: 9645
+SCOTT2020 RALPHs 3' intergenic distance: 6658
+OGB2019 RALPHs total intergenic distance: 9999
+OGB2019 RALPHs 5' intergenic distance: 9998
+OGB2019 RALPHs 3' intergenic distance: 9995
+p112020 RALPHs total intergenic distance: 9998
+p112020 RALPHs 5' intergenic distance: 9999
+p112020 RALPHs 3' intergenic distance: 9297
+OGB2021 RALPHs total intergenic distance: 9998
+OGB2021 RALPHs 5' intergenic distance: 9993
+OGB2021 RALPHs 3' intergenic distance: 9938
+
+DRCT72020 EKAs total intergenic distance: 7923 
+DRCT72020 EKAs 5' intergenic distance: 9875 
+DRCT72020 EKAs 3' intergenic distance: 738 
+DRCT72021 EKAs total intergenic distance: 9933
+DRCT72021 EKAs 5' intergenic distance: 9870
+DRCT72021 EKAs 3' intergenic distance: 9112
+SCOTT2020 EKAs total intergenic distance: 9393
+SCOTT2020 EKAs 5' intergenic distance: 9635
+SCOTT2020 EKAs 3' intergenic distance: 6625
+OGB2019 EKAs total intergenic distance: 9999
+OGB2019 EKAs 5' intergenic distance: 9995
+OGB2019 EKAs 3' intergenic distance: 9996
+p112020 EKAs total intergenic distance: 77
+p112020 EKAs 5' intergenic distance: 6454
+p112020 EKAs 3' intergenic distance: 0
+OGB2021 EKAs total intergenic distance: 9999 
+OGB2021 EKAs 5' intergenic distance: 9989 
+OGB2021 EKAs 3' intergenic distance: 9930 
+
+Investigate short IG genes:
+```R
+df <- merged_data4 #DRCT72020
+search <- read.table("DRCT72020_good.txt", header = FALSE)
+df_all <- df %>%
+  filter(name %in% search$V1)
+filtered_rows <- df_all %>%
+  filter(five_prime_2 >= 0 & five_prime_2 <= 200)
+write.table(filtered_rows$name, "DRCT72020_low5.txt", row.names = FALSE, col.names = FALSE)
+filtered_rows <- df_all %>%
+  filter(five_prime_2 >= 0 & three_prime_2 <= 200)
+write.table(filtered_rows$name, "DRCT72020_low3.txt", row.names = FALSE, col.names = FALSE)
+
+df <- merged_data5 #DRCT72021
+search <- read.table("DRCT72021_good.txt", header = FALSE)
+df_all <- df %>%
+  filter(name %in% search$V1)
+filtered_rows <- df_all %>%
+  filter(five_prime_2 >= 0 & five_prime_2 <= 200)
+write.table(filtered_rows$name, "DRCT72021_low5.txt", row.names = FALSE, col.names = FALSE)
+filtered_rows <- df_all %>%
+  filter(five_prime_2 >= 0 & three_prime_2 <= 200)
+write.table(filtered_rows$name, "DRCT72021_low3.txt", row.names = FALSE, col.names = FALSE)
+
+df <- merged_data6 #SCOTT2020
+search <- read.table("SCOTT2020_good.txt", header = FALSE)
+df_all <- df %>%
+  filter(name %in% search$V1)
+filtered_rows <- df_all %>%
+  filter(five_prime_2 >= 0 & five_prime_2 <= 200)
+write.table(filtered_rows$name, "SCOTT2020_low5.txt", row.names = FALSE, col.names = FALSE)
+filtered_rows <- df_all %>%
+  filter(five_prime_2 >= 0 & three_prime_2 <= 200)
+write.table(filtered_rows$name, "SCOTT2020_low3.txt", row.names = FALSE, col.names = FALSE)
+
+df <- merged_data7 #OGB2019
+search <- read.table("OGB2019_good.txt", header = FALSE)
+df_all <- df %>%
+  filter(name %in% search$V1)
+filtered_rows <- df_all %>%
+  filter(five_prime_2 >= 0 & five_prime_2 <= 200)
+write.table(filtered_rows$name, "OGB2019_low5.txt", row.names = FALSE, col.names = FALSE)
+filtered_rows <- df_all %>%
+  filter(five_prime_2 >= 0 & three_prime_2 <= 200)
+write.table(filtered_rows$name, "OGB2019_low3.txt", row.names = FALSE, col.names = FALSE)
+
+df <- merged_data8 #p112020
+search <- read.table("p11_1_good.txt", header = FALSE)
+df_all <- df %>%
+  filter(name %in% search$V1)
+filtered_rows <- df_all %>%
+  filter(five_prime_2 >= 0 & five_prime_2 <= 200)
+write.table(filtered_rows$name, "p112020_low5.txt", row.names = FALSE, col.names = FALSE)
+filtered_rows <- df_all %>%
+  filter(five_prime_2 >= 0 & three_prime_2 <= 200)
+write.table(filtered_rows$name, "p112020_low3.txt", row.names = FALSE, col.names = FALSE)
+
+df <- merged_data9 #OGB2021
+search <- read.table("OGB2021_good.txt", header = FALSE)
+df_all <- df %>%
+  filter(name %in% search$V1)
+filtered_rows <- df_all %>%
+  filter(five_prime_2 >= 0 & five_prime_2 <= 200)
+write.table(filtered_rows$name, "OGB2021_low5.txt", row.names = FALSE, col.names = FALSE)
+filtered_rows <- df_all %>%
+  filter(three_prime_2 >= 0 & three_prime_2 <= 200)
+write.table(filtered_rows$name, "OGB2021_low3.txt", row.names = FALSE, col.names = FALSE)
+```
+```bash
+sed -i 's/"//g' *low3.txt
+sed -i 's/"//g' *low5.txt
+sed -i 's/[^[:print:]\t]//g' *low3.txt
+sed -i 's/[^[:print:]\t]//g' *low5.txt
+
+grep -f DRCT72020_low5.txt gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/NRI/P.aphanis_strawberry2020_interproscan.tsv | grep 'GO:' | awk -F'\t' '{split($NF, arr, "|"); for (i in arr) {print $1, arr[i]}}' | sort -u | awk '{print $2}' | awk '{count[$1]++} END {for (word in count) print word, count[word]}' | awk '{print $2, $1}' | sort -nr | awk '{print $2, $1}' > DRCT72020_sub200-5.tsv
+grep -f DRCT72021_low5.txt gene_pred/P_aphanis/THeavenDRCT72021_1/interproscan/NRI/P.aphanis_strawberry2021_interproscan.tsv | grep 'GO:' | awk -F'\t' '{split($NF, arr, "|"); for (i in arr) {print $1, arr[i]}}' | sort -u | awk '{print $2}' | awk '{count[$1]++} END {for (word in count) print word, count[word]}' | awk '{print $2, $1}' | sort -nr | awk '{print $2, $1}' > DRCT72021_sub200-5.tsv
+grep -f SCOTT2020_low5.txt gene_pred/P_aphanis/THeavenSCOTT2020_1/interproscan/NRI/P.aphanis_raspberry2020_interproscan.tsv | grep 'GO:' | awk -F'\t' '{split($NF, arr, "|"); for (i in arr) {print $1, arr[i]}}' | sort -u | awk '{print $2}' | awk '{count[$1]++} END {for (word in count) print word, count[word]}' | awk '{print $2, $1}' | sort -nr | awk '{print $2, $1}' > SCOTT2020_sub200-5.tsv
+grep -f OGB2019_low5.txt gene_pred/P_leucotricha/THeavenpOGB2019_1/interproscan/NRI/P.leucotricha_apple2019_interproscan.tsv | grep 'GO:' | awk -F'\t' '{split($NF, arr, "|"); for (i in arr) {print $1, arr[i]}}' | sort -u | awk '{print $2}' | awk '{count[$1]++} END {for (word in count) print word, count[word]}' | awk '{print $2, $1}' | sort -nr | awk '{print $2, $1}' > OGB2019_sub200-5.tsv
+grep -f p112020_low5.txt gene_pred/P_leucotricha/THeavenp11_1/interproscan/NRI/P.leucotricha_apple2020_interproscan.tsv | grep 'GO:' | awk -F'\t' '{split($NF, arr, "|"); for (i in arr) {print $1, arr[i]}}' | sort -u | awk '{print $2}' | awk '{count[$1]++} END {for (word in count) print word, count[word]}' | awk '{print $2, $1}' | sort -nr | awk '{print $2, $1}' > p112020_sub200-5.tsv
+grep -f OGB2021_low5.txt gene_pred/P_leucotricha/THeavenpOGB2021_1/interproscan/NRI/P.leucotricha_apple2021_interproscan.tsv | grep 'GO:' | awk -F'\t' '{split($NF, arr, "|"); for (i in arr) {print $1, arr[i]}}' | sort -u | awk '{print $2}' | awk '{count[$1]++} END {for (word in count) print word, count[word]}' | awk '{print $2, $1}' | sort -nr | awk '{print $2, $1}' > OGB2021_sub200-5.tsv
+
+grep -f DRCT72020_low3.txt gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/NRI/P.aphanis_strawberry2020_interproscan.tsv | grep 'GO:' | awk -F'\t' '{split($NF, arr, "|"); for (i in arr) {print $1, arr[i]}}' | sort -u | awk '{print $2}' | awk '{count[$1]++} END {for (word in count) print word, count[word]}' | awk '{print $2, $1}' | sort -nr | awk '{print $2, $1}' > DRCT72020_sub200-3.tsv
+grep -f DRCT72021_low3.txt gene_pred/P_aphanis/THeavenDRCT72021_1/interproscan/NRI/P.aphanis_strawberry2021_interproscan.tsv | grep 'GO:' | awk -F'\t' '{split($NF, arr, "|"); for (i in arr) {print $1, arr[i]}}' | sort -u | awk '{print $2}' | awk '{count[$1]++} END {for (word in count) print word, count[word]}' | awk '{print $2, $1}' | sort -nr | awk '{print $2, $1}' > DRCT72021_sub200-3.tsv
+grep -f SCOTT2020_low3.txt gene_pred/P_aphanis/THeavenSCOTT2020_1/interproscan/NRI/P.aphanis_raspberry2020_interproscan.tsv | grep 'GO:' | awk -F'\t' '{split($NF, arr, "|"); for (i in arr) {print $1, arr[i]}}' | sort -u | awk '{print $2}' | awk '{count[$1]++} END {for (word in count) print word, count[word]}' | awk '{print $2, $1}' | sort -nr | awk '{print $2, $1}' > SCOTT2020_sub200-3.tsv
+grep -f OGB2019_low3.txt gene_pred/P_leucotricha/THeavenpOGB2019_1/interproscan/NRI/P.leucotricha_apple2019_interproscan.tsv | grep 'GO:' | awk -F'\t' '{split($NF, arr, "|"); for (i in arr) {print $1, arr[i]}}' | sort -u | awk '{print $2}' | awk '{count[$1]++} END {for (word in count) print word, count[word]}' | awk '{print $2, $1}' | sort -nr | awk '{print $2, $1}' > OGB2019_sub200-3.tsv
+grep -f p112020_low3.txt gene_pred/P_leucotricha/THeavenp11_1/interproscan/NRI/P.leucotricha_apple2020_interproscan.tsv | grep 'GO:' | awk -F'\t' '{split($NF, arr, "|"); for (i in arr) {print $1, arr[i]}}' | sort -u | awk '{print $2}' | awk '{count[$1]++} END {for (word in count) print word, count[word]}' | awk '{print $2, $1}' | sort -nr | awk '{print $2, $1}' > p112020_sub200-3.tsv
+grep -f OGB2021_low3.txt gene_pred/P_leucotricha/THeavenpOGB2021_1/interproscan/NRI/P.leucotricha_apple2021_interproscan.tsv | grep 'GO:' | awk -F'\t' '{split($NF, arr, "|"); for (i in arr) {print $1, arr[i]}}' | sort -u | awk '{print $2}' | awk '{count[$1]++} END {for (word in count) print word, count[word]}' | awk '{print $2, $1}' | sort -nr | awk '{print $2, $1}' > OGB2021_sub200-3.tsv
+
+files=(DRCT72020_sub200-5.tsv DRCT72020_sub200-3.tsv DRCT72021_sub200-5.tsv DRCT72021_sub200-3.tsv SCOTT2020_sub200-5.tsv SCOTT2020_sub200-3.tsv OGB2019_sub200-5.tsv OGB2019_sub200-3.tsv p112020_sub200-5.tsv p112020_sub200-3.tsv OGB2021_sub200-5.tsv OGB2021_sub200-3.tsv)
+for file in "${files[@]:1}"; do
+    paste -d'\t' combined_lowIG.tsv <(cut -f1 "$file") > temp_merged_file.txt
+    mv temp_merged_file.txt combined_lowIG.tsv
+done
+
+```
+
+Müller et al. (2018) found that in the B. graminis genome the upstream regions of short CSEPs were enriched for LTRs of the Copia and Gypsy superfamilies, whereas upstream regions of longer CSEPs were enriched for LINEs and SINEs.
+```bash
+awk '$3 == "gene"' /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3 > /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/te.gff
+cat /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72020/fcs/earlgreyte/Pod_aph_DRT72020/Pod_aph_DRT72020_EarlGrey/Pod___summaryFiles/Pod__.filteredRepeats.gff >> /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/te.gff
+grep '>' /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72020/fcs/HEAVEN_strawberry2020_clean.fasta | sed 's@>@@g' > search.txt
+awk 'FNR==NR {patterns[$0]; next} $1 in patterns' search.txt /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/te.gff > temp.txt && mv temp.txt /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/te.gff
+
+
+awk '$3 == "gene"' /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72021_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3 > /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72021_1/codingquarry/rep_modeling/final/te.gff  
+cat /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72021/fcs/earlgreyte/Pod_aph_DRT72021/Pod_aph_DRT72021_EarlGrey/Pod___summaryFiles/Pod__.filteredRepeats.gff >> /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72021_1/codingquarry/rep_modeling/final/te.gff 
+grep '>' /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72021/fcs/HEAVEN_strawberry2021_clean.fasta | sed 's@>@@g' > search.txt
+awk 'FNR==NR {patterns[$0]; next} $1 in patterns' search.txt /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72021_1/codingquarry/rep_modeling/final/te.gff > temp.txt && mv temp.txt /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72021_1/codingquarry/rep_modeling/final/te.gff
+
+
+awk '$3 == "gene"' /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenSCOTT2020_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3 > /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenSCOTT2020_1/codingquarry/rep_modeling/final/te.gff 
+cat /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/SCOTT2020/fcs/earlgreyte/Pod_aph_SCOTT2020/Pod_aph_SCOTT2020_EarlGrey/Pod___summaryFiles/Pod__.filteredRepeats.gff >> /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenSCOTT2020_1/codingquarry/rep_modeling/final/te.gff
+grep '>' /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/SCOTT2020/fcs/HEAVEN_raspberry2020_clean.fasta | sed 's@>@@g' > search.txt
+awk 'FNR==NR {patterns[$0]; next} $1 in patterns' search.txt /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenSCOTT2020_1/codingquarry/rep_modeling/final/te.gff > temp.txt && mv temp.txt /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenSCOTT2020_1/codingquarry/rep_modeling/final/te.gff
+
+
+awk '$3 == "gene"' /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3 > /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/te.gff 
+cat /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGBp112020/fcs/earlgreyte/Pod_leu_OGBp112020/Pod_leu_OGBp112020_EarlGrey/Pod___summaryFiles/Pod__.filteredRepeats.gff >> /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/te.gff
+grep '>' /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGBp112020/fcs/HEAVEN_apple2020_clean.fasta | sed 's@>@@g' > search.txt
+awk 'FNR==NR {patterns[$0]; next} $1 in patterns' search.txt /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/te.gff > temp.txt && mv temp.txt /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/te.gff
+
+
+awk '$3 == "gene"' /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenpOGB2019_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3 > /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenpOGB2019_1/codingquarry/rep_modeling/final/te.gff 
+cat /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGB2019/fcs/earlgreyte/Pod_leu_OGB2019/Pod_leu_OGB2019_EarlGrey/Pod___summaryFiles/Pod__.filteredRepeats.gff >> /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenpOGB2019_1/codingquarry/rep_modeling/final/te.gff 
+grep '>' /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGB2019/fcs/HEAVEN_apple2019_clean.fasta | sed 's@>@@g' > search.txt
+awk 'FNR==NR {patterns[$0]; next} $1 in patterns' search.txt /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenpOGB2019_1/codingquarry/rep_modeling/final/te.gff > temp.txt && mv temp.txt /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenpOGB2019_1/codingquarry/rep_modeling/final/te.gff
+
+
+awk '$3 == "gene"' /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3 > /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/te.gff
+cat /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGB2021/fcs/earlgreyte/Pod_leu_OGB2021/Pod_leu_OGB2021_EarlGrey/Pod___summaryFiles/Pod__.filteredRepeats.gff >> /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/te.gff
+grep '>' /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGB2021/fcs/HEAVEN_apple2021_clean.fasta | sed 's@>@@g' > search.txt
+awk 'FNR==NR {patterns[$0]; next} $1 in patterns' search.txt /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/te.gff > temp.txt && mv temp.txt /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/te.gff
+
+sort /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72020/fcs/earlgreyte/Pod_aph_DRT72020/Pod_aph_DRT72020_EarlGrey/Pod___summaryFiles/Pod__.filteredRepeats.gff | uniq -c
+awk '{count[$1]++} END {for (word in count) print word, count[word]}' /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72020/fcs/earlgreyte/Pod_aph_DRT72020/Pod_aph_DRT72020_EarlGrey/Pod___summaryFiles/Pod__.filteredRepeats.gff | wc -l
+awk -F'\t' '{split($NF, arr, "|"); for (i in arr) {count[arr[i]]++}} END {for (word in count) print word, count[word]}' OGB2021_sub200-5-GO.tsv
+
+
+awk '$3 ~ /gene/ {gsub("ID=", "", $9); gsub(";", "", $9); print $9".t1"}' /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/te.gff > OGB2021_good.txt
+awk '$3 ~ /gene/ {gsub("ID=", "", $9); gsub(";", "", $9); print $9".t1"}' /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenpOGB2019_1/codingquarry/rep_modeling/final/te.gff > OGB2019_good.txt
+awk '$3 ~ /gene/ {gsub("ID=", "", $9); gsub(";", "", $9); print $9".t1"}' /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/te.gff > p11_1_good.txt
+awk '$3 ~ /gene/ {gsub("ID=", "", $9); gsub(";", "", $9); print $9".t1"}' /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenSCOTT2020_1/codingquarry/rep_modeling/final/te.gff > SCOTT2020_good.txt
+awk '$3 ~ /gene/ {gsub("ID=", "", $9); gsub(";", "", $9); print $9".t1"}' /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72021_1/codingquarry/rep_modeling/final/te.gff > DRCT72021_good.txt
+awk '$3 ~ /gene/ {gsub("ID=", "", $9); gsub(";", "", $9); print $9".t1"}' /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/te.gff > DRCT72020_good.txt
+
+#Find the 3' and 5' te distances + match names to the predector output files
+#script is written for earlgrey output only
+conda activate predector2.7
+for Gff in $(ls /home/theaven/projects/niab/theaven/gene_pred/P_*/*/codingquarry/rep_modeling/final/te.gff); do
+  ID=$(echo $Gff | cut -d '/' -f9)
+OutFile=$(dirname $Gff)/${ID}_flanking_tes.txt
+echo -e "ID\tfive_prime_lgth\tfive_prime_family\tfive_prime_ID\tthree_prime_lgth\tthree_prime_family\tthree_prime_ID\tstrand" > $OutFile
+python2.7 ../apps/tools/find_intergenic_te_regions.py --Gff $Gff >> $OutFile
+head -n 1 $OutFile > temp.temp
+tail -n +2 $OutFile | awk -F'\t' '{print $1 ".t1\t" $2 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8}' >> temp.temp && mv temp.temp $OutFile
+x=$(grep 'gene' $Gff | wc -l)
+y=$(cat $OutFile | wc -l)
+echo "Genes in $ID GFF: $x, TEs found for: $y"
+done
+conda deactivate
+
+sort -t$'\t' -k1,1 -k4n /home/theaven/projects/niab/theaven/gene_pred/P_*/*OGB2019_1/codingquarry/rep_modeling/final/te.gff > temp.gff
+
+contig_1049
+
+contig_141      TE       Unknown 20703   21067   2137    -       .       TSTART=3;TEND=377;ID=RND-1_FAMILY-325;SHORTTE=F
+contig_141      TE       LTR/Gypsy       21070   21174   396     +       .       TSTART=39;TEND=118;ID=RND-1_FAMILY-16;SHORTTE=F
+contig_141      TE       Simple_repeat   21372   21467   34      +       .       TSTART=1;TEND=95;ID=(TTA)N;SHORTTE=F
+contig_141      TE       Unknown 21526   21826   1481    +       .       TSTART=4;TEND=467;ID=RND-1_FAMILY-553;SHORTTE=F;TEGROUP=CTG_137|RND-1_FAMILY-553|1
+contig_141      CodingQuarry_v2.0       gene    21825   21938   .       -       .       ID=g2769
+contig_141      TE       LTR/Gypsy       22116   22374   844     -       .       TSTART=1;TEND=260;ID=RND-1_FAMILY-1148;SHORTTE=F
+contig_141      AUGUSTUS        gene    22415   25478   0.22    -       .       ID=g2770;
+contig_141      TE       LTR/Gypsy       22467   23107   2483    -       .       TSTART=2;TEND=524;ID=RND-1_FAMILY-509;SHORTTE=F
+contig_141      TE       LTR/Gypsy       23110   23400   1662    -       .       TSTART=1;TEND=295;ID=RND-3_FAMILY-930;SHORTTE=F
+contig_141      TE       LTR/Gypsy       23401   25987   9724    -       .       TSTART=21;TEND=3243;ID=RND-1_FAMILY-622;SHORTTE=F
+contig_141      AUGUSTUS        gene    25714   26634   0.81    -       .       ID=g2771;
+contig_141      TE       LTR/Gypsy       25988   26201   1143    +       .       TSTART=810;TEND=1128;ID=RND-1_FAMILY-1031;SHORTTE=F
+contig_141      TE       LTR/Gypsy       26202   26427   737     -       .       TSTART=58;TEND=277;ID=RND-1_FAMILY-819;SHORTTE=F
+contig_141      TE       Unknown 26719   27015   1472    +       .       TSTART=7;TEND=466;ID=RND-1_FAMILY-553;SHORTTE=F;TEGROUP=CTG_137|RND-1_FAMILY-553|2
+contig_141      CodingQuarry_v2.0       gene    27034   27378   .       -       .       ID=g2772
+
+
+#Find the 3' and 5' te distances + match names to the predector output files
+#script is written for earlgrey output only
+conda activate predector2.7
+for Gff in $(ls /home/theaven/projects/niab/theaven/gene_pred/P_*/*/codingquarry/rep_modeling/final/te.gff); do
+  ID=$(echo $Gff | cut -d '/' -f9)
+OutFile=$(dirname $Gff)/${ID}_flanking_LINEs.txt
+echo -e "ID\tfive_prime_lgth\tfive_prime_family\tfive_prime_ID\tthree_prime_lgth\tthree_prime_family\tthree_prime_ID\tstrand" > $OutFile
+python2.7 ../apps/tools/find_intergenic_te_distances.py --Gff $Gff --Family LINE >> $OutFile
+head -n 1 $OutFile > temp.temp
+tail -n +2 $OutFile | awk -F'\t' '{print $1 ".t1\t" $2 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8}' >> temp.temp && mv temp.temp $OutFile
+x=$(grep 'gene' $Gff | wc -l)
+y=$(cat $OutFile | wc -l)
+echo "Genes in $ID GFF: $x, distances found for: $y"
+done
+
+for Gff in $(ls /home/theaven/projects/niab/theaven/gene_pred/P_*/*/codingquarry/rep_modeling/final/te.gff); do
+  ID=$(echo $Gff | cut -d '/' -f9)
+OutFile=$(dirname $Gff)/${ID}_flanking_LTRs.txt
+echo -e "ID\tfive_prime_lgth\tfive_prime_family\tfive_prime_ID\tthree_prime_lgth\tthree_prime_family\tthree_prime_ID\tstrand" > $OutFile
+python2.7 ../apps/tools/find_intergenic_te_distances.py --Gff $Gff --Family LTR >> $OutFile
+head -n 1 $OutFile > temp.temp
+tail -n +2 $OutFile | awk -F'\t' '{print $1 ".t1\t" $2 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8}' >> temp.temp && mv temp.temp $OutFile
+x=$(grep 'gene' $Gff | wc -l)
+y=$(cat $OutFile | wc -l)
+echo "Genes in $ID GFF: $x, distances found for: $y"
+done
+
+for Gff in $(ls /home/theaven/projects/niab/theaven/gene_pred/P_*/*/codingquarry/rep_modeling/final/te.gff); do
+  ID=$(echo $Gff | cut -d '/' -f9)
+OutFile=$(dirname $Gff)/${ID}_flanking_DNAs.txt
+echo -e "ID\tfive_prime_lgth\tfive_prime_family\tfive_prime_ID\tthree_prime_lgth\tthree_prime_family\tthree_prime_ID\tstrand" > $OutFile
+python2.7 ../apps/tools/find_intergenic_te_distances.py --Gff $Gff --Family DNA >> $OutFile
+head -n 1 $OutFile > temp.temp
+tail -n +2 $OutFile | awk -F'\t' '{print $1 ".t1\t" $2 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8}' >> temp.temp && mv temp.temp $OutFile
+x=$(grep 'gene' $Gff | wc -l)
+y=$(cat $OutFile | wc -l)
+echo "Genes in $ID GFF: $x, distances found for: $y"
+done
+
+for Gff in $(ls /home/theaven/projects/niab/theaven/gene_pred/P_*/*/codingquarry/rep_modeling/final/te.gff); do
+  ID=$(echo $Gff | cut -d '/' -f9)
+OutFile=$(dirname $Gff)/${ID}_flanking_Pogos.txt
+echo -e "ID\tfive_prime_lgth\tfive_prime_family\tfive_prime_ID\tthree_prime_lgth\tthree_prime_family\tthree_prime_ID\tstrand" > $OutFile
+python2.7 ../apps/tools/find_intergenic_te_distances.py --Gff $Gff --ID DNA/TcMar_Pogo >> $OutFile
+head -n 1 $OutFile > temp.temp
+tail -n +2 $OutFile | awk -F'\t' '{print $1 ".t1\t" $2 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8}' >> temp.temp && mv temp.temp $OutFile
+x=$(grep 'gene' $Gff | wc -l)
+y=$(cat $OutFile | wc -l)
+echo "Genes in $ID GFF: $x, distances found for: $y"
+done
+
+for Gff in $(ls /home/theaven/projects/niab/theaven/gene_pred/P_*/*/codingquarry/rep_modeling/final/te.gff); do
+  ID=$(echo $Gff | cut -d '/' -f9)
+OutFile=$(dirname $Gff)/${ID}_flanking_Mariners.txt
+echo -e "ID\tfive_prime_lgth\tfive_prime_family\tfive_prime_ID\tthree_prime_lgth\tthree_prime_family\tthree_prime_ID\tstrand" > $OutFile
+python2.7 ../apps/tools/find_intergenic_te_distances.py --Gff $Gff --ID DNA/TcMar_Mariner >> $OutFile
+head -n 1 $OutFile > temp.temp
+tail -n +2 $OutFile | awk -F'\t' '{print $1 ".t1\t" $2 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8}' >> temp.temp && mv temp.temp $OutFile
+x=$(grep 'gene' $Gff | wc -l)
+y=$(cat $OutFile | wc -l)
+echo "Genes in $ID GFF: $x, distances found for: $y"
+done
+
+for Gff in $(ls /home/theaven/projects/niab/theaven/gene_pred/P_*/*/codingquarry/rep_modeling/final/te.gff); do
+  ID=$(echo $Gff | cut -d '/' -f9)
+OutFile=$(dirname $Gff)/${ID}_flanking_Tads.txt
+echo -e "ID\tfive_prime_lgth\tfive_prime_family\tfive_prime_ID\tthree_prime_lgth\tthree_prime_family\tthree_prime_ID\tstrand" > $OutFile
+python2.7 ../apps/tools/find_intergenic_te_distances.py --Gff $Gff --ID LINE/Tad1 >> $OutFile
+head -n 1 $OutFile > temp.temp
+tail -n +2 $OutFile | awk -F'\t' '{print $1 ".t1\t" $2 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8}' >> temp.temp && mv temp.temp $OutFile
+x=$(grep 'gene' $Gff | wc -l)
+y=$(cat $OutFile | wc -l)
+echo "Genes in $ID GFF: $x, distances found for: $y"
+done
+
+for Gff in $(ls /home/theaven/projects/niab/theaven/gene_pred/P_*/*/codingquarry/rep_modeling/final/te.gff); do
+  ID=$(echo $Gff | cut -d '/' -f9)
+OutFile=$(dirname $Gff)/${ID}_flanking_Gypsys.txt
+echo -e "ID\tfive_prime_lgth\tfive_prime_family\tfive_prime_ID\tthree_prime_lgth\tthree_prime_family\tthree_prime_ID\tstrand" > $OutFile
+python2.7 ../apps/tools/find_intergenic_te_distances.py --Gff $Gff --ID LTR/Gypsy >> $OutFile
+head -n 1 $OutFile > temp.temp
+tail -n +2 $OutFile | awk -F'\t' '{print $1 ".t1\t" $2 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8}' >> temp.temp && mv temp.temp $OutFile
+x=$(grep 'gene' $Gff | wc -l)
+y=$(cat $OutFile | wc -l)
+echo "Genes in $ID GFF: $x, distances found for: $y"
+done
+
+for Gff in $(ls /home/theaven/projects/niab/theaven/gene_pred/P_*/*/codingquarry/rep_modeling/final/te.gff); do
+  ID=$(echo $Gff | cut -d '/' -f9)
+OutFile=$(dirname $Gff)/${ID}_flanking_Copias.txt
+echo -e "ID\tfive_prime_lgth\tfive_prime_family\tfive_prime_ID\tthree_prime_lgth\tthree_prime_family\tthree_prime_ID\tstrand" > $OutFile
+python2.7 ../apps/tools/find_intergenic_te_distances.py --Gff $Gff --ID LTR/Copia >> $OutFile
+head -n 1 $OutFile > temp.temp
+tail -n +2 $OutFile | awk -F'\t' '{print $1 ".t1\t" $2 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8}' >> temp.temp && mv temp.temp $OutFile
+x=$(grep 'gene' $Gff | wc -l)
+y=$(cat $OutFile | wc -l)
+echo "Genes in $ID GFF: $x, distances found for: $y"
+done
+conda deactivate
+```
+
 #### EarlGreyTE
 ```bash
+head -n 2 /home/theaven/scratch/uncompressed/genomes/HEAVEN_apple2020.fna > temp_earlgreytest.fna
+
 conda activate earlgrey
-for Genome in $(ls /home/theaven/scratch/uncompressed/genomes/HEAVEN_apple2020.fna); do
-  OutFile=Pod_leu_OGB2020
+for Genome in $(ls /home/theaven/scratch/uncompressed/genomes/Leveillula/*/*/fcs/*_clean.fasta); do
+  OutFile=$(echo $Genome | cut -d '/' -f7 | cut -c 1-3)_$(echo $Genome | cut -d '/' -f8 | cut -c 1-3)_$(echo $Genome | cut -d '/' -f9)
   OutDir=$(dirname $Genome)/earlgreyte/${OutFile}
   ProgDir=~/scratch/apps
-  RMsearch=fungi
+  RMsearch=erysiphales
   mkdir -p $OutDir
   sbatch ${ProgDir}/earlgrey/run_earlgrey.sh $Genome $OutFile $OutDir $RMsearch
 done
-#17999884
+conda deactivate
+#19269205-8
+#19312435-8
+#19312820-2
+#19313867-71
+
+#19315485-92
+#19317438-49
+#19317478-81
+#19317484
+```
+```bash
+cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/Psyllidae/assembly/genome/T_apicales/hifiasm_19.5/880m/29/3/3.0/0.75/break10x/purge_dups/sanger/MitoHifi/filtered/inspector/T_apicales_880m_29_3_3.0_0.75_break_TellSeqPurged_curated_nomito_filtered_corrected.fa download/.
+cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/Psyllidae/assembly/genome/T_urticae/hifiasm_19.5/715m/12/2/3.0/0.5/filtered/purge_dups/purge_haplotigs/break10x/yahs/filtered/inspector/T_urticae_715m_12_2_3.0_0.5_filtered_HiFiPurged_HiFiPurged_curated_break_scaffolds_final_nomito_filtered_corrected.fa download/.
+cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/Psyllidae/assembly/genome/T_anthrisci/hifiasm_19.5/820m/48/1/10.0/0.25/break10x/purge_dups/sanger/MitoHifi/filtered/inspector/T_anthrisci_820m_48_1_10.0_0.25_break_TellSeqPurged_curated_nomito_filtered_corrected.fa download/.
+
+conda activate earlgrey
+for Genome in $(ls /home/theaven/scratch/uncompressed/hogenhout/T*.fa); do
+  OutFile=$(basename $Genome | sed 's@.fa@@g' | cut -d '_' -f1,2)
+  OutDir=$(dirname $Genome)/earlgreyte2/${OutFile}
+  ProgDir=~/scratch/apps
+  RMsearch=Sternorrhyncha
+  mkdir -p $OutDir
+  sbatch ${ProgDir}/earlgrey/run_earlgrey.sh $Genome $OutFile $OutDir $RMsearch
+done
+#19238763,5
+#19306652-4
 conda deactivate
 ```
+#### FCS
+```bash
+for Genome in $(ls /home/theaven/scratch/uncompressed/genomes/Leveillula/taurrica/CADEPA01/leveillulataurrica_CADEPA01.fasta); do
+Jobs=$(squeue -u theaven| grep 'fcs' | wc -l)
+while [ $Jobs -gt 1 ]; do
+sleep 120s
+printf "."
+Jobs=$(squeue -u theaven| grep 'fcs' | wc -l)
+done
+Species=$(echo $Genome | cut -d '/' -f7,8)
+if [ "$Species" = "Amorphotheca/resinae" ]; then
+TAXID=5101
+elif [ "$Species" = "Arachnopeziza/araneosa" ]; then
+  TAXID=2259763
+elif [ "$Species" = "Ascocoryne/sarcoides" ]; then
+  TAXID=139061
+elif [ "$Species" = "Aspergillus/nidulans" ]; then
+  TAXID=162425
+elif [ "$Species" = "Blumeria/graminis" ]; then
+  TAXID=34373
+elif [ "$Species" = "Blumeria/graminis-secale" ]; then
+  TAXID=34373
+elif [ "$Species" = "Blumeria/hordei" ]; then
+  TAXID=2867405
+elif [ "$Species" = "Botrytis/cineria" ]; then
+  TAXID=40559
+elif [ "$Species" = "Chlorociboria/aeruginascens" ]; then
+  TAXID=296797
+elif [ "$Species" = "Colletotrichum/higginsianum" ]; then
+  TAXID=80884
+elif [ "$Species" = "Coprinus/cinereus" ]; then
+  TAXID=5346
+elif [ "$Species" = "Cryptococcus/neoformans" ]; then
+  TAXID=5207
+elif [ "$Species" = "Drepanopeziza/brunnea" ]; then
+  TAXID=698440
+elif [ "$Species" = "Erysiphe/alphitoides" ]; then
+  TAXID=157594
+elif [ "$Species" = "Erysiphe/necator" ]; then
+  TAXID=52586
+elif [ "$Species" = "Erysiphe/neolycopersici" ]; then
+  TAXID=212602
+elif [ "$Species" = "Erysiphe/pisi" ]; then
+  TAXID=36044
+elif [ "$Species" = "Erysiphe/pulchra" ]; then
+  TAXID=225359
+elif [ "$Species" = "Fusarium/graminearum" ]; then
+  TAXID=5518
+elif [ "$Species" = "Fusarium/oxysporum" ]; then
+  TAXID=5507
+elif [ "$Species" = "Glarea/lozoyensis" ]; then
+  TAXID=101852
+elif [ "$Species" = "Golovinomyces/cichoracearum" ]; then
+  TAXID=62708
+elif [ "$Species" = "Golovinomyces/magnicellulatus" ]; then
+  TAXID=62714
+elif [ "$Species" = "Golovinomyces/orontii" ]; then
+  TAXID=62715
+elif [ "$Species" = "Leveillula/taurrica" ]; then
+  TAXID=62718
+elif [ "$Species" = "Magnaporthe/oryzae" ]; then
+  TAXID=318829
+elif [ "$Species" = "Melampsora/laricis-populina" ]; then
+  TAXID=203908
+elif [ "$Species" = "Mollisia/scopiformis" ]; then
+  TAXID=149040
+elif [ "$Species" = "Neobulgaria/alba" ]; then
+  TAXID=1461596
+elif [ "$Species" = "Neurospora/crassa" ]; then
+  TAXID=5141
+elif [ "$Species" = "Oidiodendron/maius" ]; then
+  TAXID=78148
+elif [ "$Species" = "Oidium/heveae" ]; then
+  TAXID=299130
+elif [ "$Species" = "Parauncinula/polyspora" ]; then
+  TAXID=2016243
+elif [ "$Species" = "Phialocephala/subalpina" ]; then
+  TAXID=576137
+elif [ "$Species" = "Phyllactinia/moricola" ]; then
+  TAXID=57460
+elif [ "$Species" = "Pleochaeta/shiraiana" ]; then
+  TAXID=57462
+elif [ "$Species" = "Pleurotus/ostreatus" ]; then
+  TAXID=5322
+elif [ "$Species" = "Podosphaera/aphanis" ]; then
+  TAXID=79252
+elif [ "$Species" = "Podosphaera/cerasii" ]; then
+  TAXID=2086344
+elif [ "$Species" = "Podosphaera/fusca" ]; then
+  TAXID=62727
+elif [ "$Species" = "Podosphaera/leucotricha" ]; then
+  TAXID=79249
+elif [ "$Species" = "Podosphaera/xanthii" ]; then
+  TAXID=135283
+elif [ "$Species" = "Psilocybe/cubensis" ]; then
+  TAXID=181762
+elif [ "$Species" = "Puccinia/graminis" ]; then
+  TAXID=5297
+elif [ "$Species" = "Puccinia/striiformis" ]; then
+  TAXID=27350
+elif [ "$Species" = "Puccinia/triticina" ]; then
+  TAXID=208348
+elif [ "$Species" = "Pyricularia/oryzae" ]; then
+  TAXID=318829
+elif [ "$Species" = "Saccharomyces/cerevisiae" ]; then
+  TAXID=4932
+elif [ "$Species" = "Schizophyllum/commune" ]; then
+  TAXID=5334
+elif [ "$Species" = "Sclerotinia/sclerotiorum" ]; then
+  TAXID=5180
+elif [ "$Species" = "Tuber/melanosporum" ]; then
+  TAXID=39416
+elif [ "$Species" = "Ustilago/maydis" ]; then
+  TAXID=5270
+else
+  TAXID=NA
+fi
+OutDir=$(dirname $Genome)/fcs
+OutFile=$(basename $Genome | sed 's@.c.fna@@g'| sed 's@.fna@@g'| sed 's@.fasta@@g')
+mkdir $OutDir
+ProgDir=/home/theaven/scratch/apps
+sbatch $ProgDir/fcs/run_fcs.sh $Genome $TAXID $OutDir $OutFile
+#
+done
+```
+Shared by B.cinerea, M. oryzae, C. higginsianum, S. sclerotiorum and S. cerevisiae
+```bash
+
+```
+```bash
+ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/*fcs_gx_report.txt
+ls /home/theaven/scratch/uncompressed/mildews/*/gene_pred/braker/final_2/final_genes_renamed.gff3 > temp_search.txt
+ls other/*/gene_pred/braker/final/final_genes_renamed.gff3
+
+for file in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/*clean.fasta); do
+gff=$(dirname $file | sed 's@/fcs@@g')/braker/final_genes_renamed.gff3
+out_gff=$(dirname $file | sed 's@/fcs@@g')/braker/final_genes_renamed_filtered.gff3
+for search in $(grep '>' $file | cut -d ' ' -f1 | sed 's@.@_@g' | sed 's@>@@g'); do
+grep "$search" $gff >> $out_gff
+done
+
+Genome=
+Gff=
+OutFile=
+singularity exec /home/theaven/scratch/apps/containers/agat_1.3.2--pl5321hdfd78af_0 agat_sp_extract_sequences.pl -g $Gff -f $Genome -t cds --output $OutFile --clean_final_stop --protein
+
+
+head -n 1 /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/*clean.fasta
+for file in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/*fcs_gx_report.txt); do
+ID=$(echo $file | cut -d '/' -f9 | cut -d '.' -f1)
+gff=$(grep "$ID" temp_search.txt)
+OutDir=$(dirname $file | sed 's@/fcs@@g')/braker
+if [ -n "$gff" ]; then
+#echo $ID found:
+#echo $gff
+#mkdir $OutDir
+#ln -s $gff ${OutDir}/.
+sleep 1s
+else
+echo $ID not found
+#mkdir $OutDir
+echo $OutDir
+fi
+done
+
+
+```
+/home/theaven/scratch/uncompressed/genomes/Ustilago/maydis/GCA_000328475.2/fcs/GCA_000328475.2_Umaydis521_2.0_genom.fcs_gx_report.txt
+
+/home/theaven/scratch/uncompressed/mildews/Scereviseae_GCF_000146045/gene_pred/braker/final_2/final_genes_renamed.pep.fasta
+
+
+
+GCA_000151065 not found
+/home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000151065.3/braker #
+SRR2153116 not found
+/home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153116/braker #
+SRR2153117 not found
+/home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153117/braker #
+SRR2153118 not found
+/home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153118/braker #
+SRR2153119 not found
+/home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153119/braker #
+SRR2153120 not found
+/home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153120/braker #
+GCA_000143535 not found
+/home/theaven/scratch/uncompressed/genomes/Botrytis/cineria/GCA_000143535.4/braker #
+broad_KN1394 not found
+/home/theaven/scratch/uncompressed/genomes/Colletotrichum/higginsianum/broad_KN1394/braker #
+GCA_000182895 not found
+/home/theaven/scratch/uncompressed/genomes/Coprinus/cinereus/GCA_000182895.1/braker #
+GCF_000091045 not found
+/home/theaven/scratch/uncompressed/genomes/Cryptococcus/neoformans/GCF_000091045.1/braker #
+GCA_024703715 not found
+/home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_024703715.1/braker #
+GCA_000240135 not found
+/home/theaven/scratch/uncompressed/genomes/Fusarium/graminearum/GCA_000240135.3/braker #
+GCF_013085055 not found
+/home/theaven/scratch/uncompressed/genomes/Fusarium/oxysporum/GCF_013085055.1/braker #
+GCF_000002495 not found
+/home/theaven/scratch/uncompressed/genomes/Magnaporthe/oryzae/GCF_000002495.2/braker #
+Parp01 not found
+/home/theaven/scratch/uncompressed/genomes/Parauncinula/polyspora/Parp01/braker #
+GCA_014466165 not found
+/home/theaven/scratch/uncompressed/genomes/Pleurotus/ostreatus/GCA_014466165.1/braker #
+GCA_030378345 not found
+/home/theaven/scratch/uncompressed/genomes/Podosphaera/fusca/GCA_030378345.1/braker #
+GCA_028751805 not found
+/home/theaven/scratch/uncompressed/genomes/Podosphaera/xanthii/GCA_028751805.1/braker #
+GCA_017499595 not found
+/home/theaven/scratch/uncompressed/genomes/Psilocybe/cubensis/GCA_017499595.2/braker #
+GCA_000149925 not found
+/home/theaven/scratch/uncompressed/genomes/Puccinia/graminis/GCA_000149925.1/braker #
+GCA_021901695 not found
+/home/theaven/scratch/uncompressed/genomes/Puccinia/striiformis/GCA_021901695.1/braker #
+GCA_000151525 not found
+/home/theaven/scratch/uncompressed/genomes/Puccinia/triticina/GCA_000151525.2/braker #
+GCA_000143185 not found
+/home/theaven/scratch/uncompressed/genomes/Schizophyllum/commune/GCA_000143185.2/braker #
+GCA_000146945 not found
+/home/theaven/scratch/uncompressed/genomes/Sclerotinia/sclerotiorum/GCA_000146945.2/braker #
+GCF_000146945 not found
+/home/theaven/scratch/uncompressed/genomes/Sclerotinia/sclerotiorum/GCF_000146945.1/braker #
+GCF_000151645 not found
+/home/theaven/scratch/uncompressed/genomes/Tuber/melanosporum/GCF_000151645.1/braker #
+GCA_000328475 not found
+/home/theaven/scratch/uncompressed/genomes/Ustilago/maydis/GCA_000328475.2/braker #
