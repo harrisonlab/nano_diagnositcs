@@ -4561,16 +4561,17 @@ done
 conda deactivate
 
 conda activate braker
-for Assembly in $(ls temp_genomes/*/*/GCA_000146945.2/repeatmasking/combined/*_contigs_softmasked_repeatmasker_TPSI_appended.fa temp_genomes/*/*/GCF_000151645.1/repeatmasking/combined/*_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
-  ID=$(echo $Assembly | cut -d '/' -f2 | cut -c 1-3)_$(echo $Assembly | cut -d '/' -f3 | cut -c 1-3)_$(echo $Assembly | cut -d '/' -f4)
+for Assembly in $(ls /home/theaven/scratch/uncompressed/genomes/Sclerotinia/sclerotiorum/GCF_000146945.1/fcs/repeatmasking/combined/*_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+  ID=$(echo $Assembly | cut -d '/' -f7 | cut -c 1-3)_$(echo $Assembly | cut -d '/' -f8 | cut -c 1-3)_$(echo $Assembly | cut -d '/' -f9)
   echo $ID
-  OutDir=mildews/${ID}/gene_pred/braker-2
-  GeneModelName=${ID}_genemodels
-  Hintfile=mildews/${ID}/gene_pred/prothint/prothint_augustus.gff
+  OutDir=/home/theaven/scratch/uncompressed/genomes/Sclerotinia/sclerotiorum/GCF_000146945.1/fcs/gene_pred/braker2
+  GeneModelName=${ID}_genemodels4
+  Hintfile=/home/theaven/scratch/uncompressed/genomes/Sclerotinia/sclerotiorum/GCF_000146945.1/fcs/gene_pred/prothint/prothint_augustus.gff
   ProgDir=/home/theaven/scratch/apps/braker
   if [[ ! -f ${OutDir}/braker.gff3 ]]; then
   if [[ -f ${Hintfile} ]]; then
     echo "running for $ID"
+    mkdir -p $OutDir
   sbatch $ProgDir/braker_fungi_noRNA.sh $Assembly $OutDir $GeneModelName $Hintfile
   else 
   echo "inputs missing for $ID"
@@ -4579,13 +4580,442 @@ for Assembly in $(ls temp_genomes/*/*/GCA_000146945.2/repeatmasking/combined/*_c
   echo "already run for $ID"
   fi 
 done #19242548-19242574
-#19317486-7
+#19320471-2
+#19323176
 conda deactivate
 
-for job in $(squeue -u theaven | awk '{print $1}'); do
+for job in $(ls -d braker/* | cut -d '/' -f2 | cut -d '_' -f2); do
 file=slurm-${job}.out
-echo $job
-grep -A 1 'OutDir:' $file
+#echo $job
+head -n 1 $file
+sacct -j $job --format=JobID,JobName,ReqMem,MaxRSS,TotalCPU,AllocCPUS,Elapsed,State,ExitCode,Ntasks,NCPUS,User | head -n 3 | tail -n 1
+done
+
+cp -r braker/theaven_19242587/braker/* mildews/Blu_gra_GCA_000151065.3/gene_pred/braker/.  
+cp -r braker/theaven_19242588/braker/* mildews/Blu_gra_SRR2153116/gene_pred/braker/.    
+cp -r braker/theaven_19242589/braker/* mildews/Blu_gra_SRR2153117/gene_pred/braker/.     
+cp -r braker/theaven_19242590/braker/* mildews/Blu_gra_SRR2153118/gene_pred/braker/. 
+cp -r braker/theaven_19242591/braker/* mildews/Blu_gra_SRR2153119/gene_pred/braker/.         
+cp -r braker/theaven_19242592/braker/* mildews/Blu_gra_SRR2153120/gene_pred/braker/.         
+cp -r braker/theaven_19242593/braker/* mildews/Bot_cin_GCA_000143535.4/gene_pred/braker/.        
+cp -r braker/theaven_19242594/braker/* mildews/Col_hig_broad_KN1394/gene_pred/braker/.         
+cp -r braker/theaven_19242595/braker/* mildews/Cop_cin_GCA_000182895.1/gene_pred/braker/.        
+cp -r braker/theaven_19242596/braker/* mildews/Cry_neo_GCF_000091045.1/gene_pred/braker/.        
+cp -r braker/theaven_19242597/braker/* mildews/Ery_nec_GCA_024703715.1/gene_pred/braker/.       
+cp -r braker/theaven_19242598/braker/* mildews/Fus_gra_GCA_000240135.3/gene_pred/braker/.     
+cp -r braker/theaven_19242599/braker/* mildews/Fus_oxy_GCF_013085055.1/gene_pred/braker/.        
+cp -r braker/theaven_19242600/braker/* mildews/Mag_ory_GCF_000002495.2/gene_pred/braker/.       
+cp -r braker/theaven_19242601/braker/* mildews/Par_pol_Parp01/gene_pred/braker/.        
+cp -r braker/theaven_19242602/braker/* mildews/Ple_ost_GCA_014466165.1/gene_pred/braker/.       
+cp -r braker/theaven_19242603/braker/* mildews/Pod_fus_GCA_030378345.1/gene_pred/braker/.     
+cp -r braker/theaven_19242604/braker/* mildews/Pod_xan_GCA_028751805.1/gene_pred/braker/.       
+cp -r braker/theaven_19242605/braker/* mildews/Psi_cub_GCA_017499595.2/gene_pred/braker/.       
+cp -r braker/theaven_19242606/braker/* mildews/Puc_gra_GCA_000149925.1/gene_pred/braker/.       
+cp -r braker/theaven_19242607/braker/* mildews/Puc_str_GCA_021901695.1/gene_pred/braker/.       
+cp -r braker/theaven_19242608/braker/* mildews/Puc_tri_GCA_000151525.2/gene_pred/braker/.        
+cp -r braker/theaven_19242609/braker/* mildews/Sch_com_GCA_000143185.2/gene_pred/braker/.       
+cp -r braker/theaven_19242610/braker/* mildews/Scl_scl_GCA_000146945.2/gene_pred/braker/.       
+cp -r braker/theaven_19242613/braker/* mildews/Ust_may_GCA_000328475.2/gene_pred/braker/.       
+
+cp -r other/Melampsoralaricis-populina_GCA_000204055.1/gene_pred /home/theaven/scratch/uncompressed/mildews/Melampsoralaricis-populina_GCA_000204055.1/.
+cp -r other/Neurosporacrassa_GCA_000182925.2/gene_pred /home/theaven/scratch/uncompressed/mildews/Neurosporacrassa_GCA_000182925.2/.
+cp -r other/Pyriculariaoryzae_GCA_000002495.2/gene_pred /home/theaven/scratch/uncompressed/mildews/Pyriculariaoryzae_GCA_000002495.2/. 
+cp -r other/Aspergillusnidulans_GCA_000149205.2/gene_pred /home/theaven/scratch/uncompressed/mildews/Aspergillusnidulans_GCA_000149205.2/.
+
+cp -r other/Sclerotiniasclerotiorum_GCA_000146945.2/gene_pred /home/theaven/scratch/uncompressed/mildews/Sclerotiniasclerotiorum_GCA_000146945.2/.
+cp -r other/Pucciniagraminis_GCA_000149925.1/gene_pred /home/theaven/scratch/uncompressed/mildews/Pucciniagraminis_GCA_000149925.1/.
+cp -r other/Colletotrichumhigginsianum_GCA_001672515.1/gene_pred /home/theaven/scratch/uncompressed/mildews/Colletotrichumhigginsianum_GCA_001672515.1/.
+
+ln -s temp_genomes/Blumeria/graminis/GCA_000151065.3/repeatmasking /home/theaven/scratch/uncompressed/mildews/Blu_gra_GCA_000151065.3/. 
+ln -s temp_genomes/Blumeria/graminis-secale/SRR2153116/repeatmasking /home/theaven/scratch/uncompressed/mildews/Blu_gra_SRR2153116/.
+ln -s temp_genomes/Blumeria/graminis-secale/SRR2153117/repeatmasking /home/theaven/scratch/uncompressed/mildews/Blu_gra_SRR2153117/.
+ln -s temp_genomes/Blumeria/graminis-secale/SRR2153118/repeatmasking /home/theaven/scratch/uncompressed/mildews/Blu_gra_SRR2153118/.
+ln -s temp_genomes/Blumeria/graminis-secale/SRR2153119/repeatmasking /home/theaven/scratch/uncompressed/mildews/Blu_gra_SRR2153119/.
+ln -s temp_genomes/Blumeria/graminis-secale/SRR2153120/repeatmasking /home/theaven/scratch/uncompressed/mildews/Blu_gra_SRR2153120/.
+ln -s temp_genomes/Botrytis/cineria/GCA_000143535.4/repeatmasking /home/theaven/scratch/uncompressed/mildews/Bot_cin_GCA_000143535.4/.
+ln -s temp_genomes/Colletotrichum/higginsianum/broad_KN1394/repeatmasking /home/theaven/scratch/uncompressed/mildews/Col_hig_broad_KN1394/.
+ln -s temp_genomes/Coprinus/cinereus/GCA_000182895.1/repeatmasking /home/theaven/scratch/uncompressed/mildews/Cop_cin_GCA_000182895.1/.
+ln -s temp_genomes/Cryptococcus/neoformans/GCF_000091045.1/repeatmasking /home/theaven/scratch/uncompressed/mildews/Cry_neo_GCF_000091045.1/.
+ln -s temp_genomes/Erysiphe/necator/GCA_024703715.1/repeatmasking /home/theaven/scratch/uncompressed/mildews/Ery_nec_GCA_024703715.1/.
+ln -s temp_genomes/Fusarium/graminearum/GCA_000240135.3/repeatmasking /home/theaven/scratch/uncompressed/mildews/Fus_gra_GCA_000240135.3/.
+ln -s temp_genomes/Fusarium/oxysporum/GCF_013085055.1/repeatmasking /home/theaven/scratch/uncompressed/mildews/Fus_oxy_GCF_013085055.1/.
+ln -s temp_genomes/Magnaporthe/oryzae/GCF_000002495.2/repeatmasking /home/theaven/scratch/uncompressed/mildews/Mag_ory_GCF_000002495.2/.
+ln -s temp_genomes/Parauncinula/polyspora/Parp01/repeatmasking /home/theaven/scratch/uncompressed/mildews/Par_pol_Parp01/.
+ln -s temp_genomes/Pleurotus/ostreatus/GCA_014466165.1/repeatmasking /home/theaven/scratch/uncompressed/mildews/Ple_ost_GCA_014466165.1/.
+ln -s temp_genomes/Podosphaera/fusca/GCA_030378345.1/repeatmasking /home/theaven/scratch/uncompressed/mildews/Pod_fus_GCA_030378345.1/.
+ln -s temp_genomes/Podosphaera/xanthii/GCA_028751805.1/repeatmasking /home/theaven/scratch/uncompressed/mildews/Pod_xan_GCA_028751805.1/.
+ln -s temp_genomes/Psilocybe/cubensis/GCA_017499595.2/repeatmasking /home/theaven/scratch/uncompressed/mildews/Psi_cub_GCA_017499595.2/.
+ln -s temp_genomes/Puccinia/graminis/GCA_000149925.1/repeatmasking /home/theaven/scratch/uncompressed/mildews/Puc_gra_GCA_000149925.1/.
+ln -s temp_genomes/Puccinia/striiformis/GCA_021901695.1/repeatmasking /home/theaven/scratch/uncompressed/mildews/Puc_str_GCA_021901695.1/.
+ln -s temp_genomes/Puccinia/triticina/GCA_000151525.2/repeatmasking /home/theaven/scratch/uncompressed/mildews/Puc_tri_GCA_000151525.2/.
+ln -s temp_genomes/Schizophyllum/commune/GCA_000143185.2/repeatmasking /home/theaven/scratch/uncompressed/mildews/Sch_com_GCA_000143185.2/.
+ln -s temp_genomes/Scleotinia/sclerotiorum/GCA_000146945.2/repeatmasking /home/theaven/scratch/uncompressed/mildews/Scl_scl_GCA_000146945.2/.
+ln -s temp_genomes/Scleotinia/sclerotiorum/GCF_000146945.1/repeatmasking /home/theaven/scratch/uncompressed/mildews/Scl_scl_GCF_000146945.1/.
+ln -s temp_genomes/Tuber/melanosporum/GCF_000151645.1/repeatmasking /home/theaven/scratch/uncompressed/mildews/Tub_mel_GCF_000151645.1/.
+ln -s temp_genomes/Ustilago/maydis/GCA_000328475.2/repeatmasking /home/theaven/scratch/uncompressed/mildews/Ust_may_GCA_000328475.2/.
+
+mv /home/theaven/scratch/uncompressed/mildews/amorphothecaresinae_GCA_003019875/gene_pred /home/theaven/scratch/uncompressed/genomes/Amorphotheca/resinae/GCA_003019875.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/amorphothecaresinae_GCA_003019875/repeatmasking /home/theaven/scratch/uncompressed/genomes/Amorphotheca/resinae/GCA_003019875.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Amorphothecaresinae_GCA_018167515/gene_pred /home/theaven/scratch/uncompressed/genomes/Amorphotheca/resinae/GCA_018167515.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Amorphothecaresinae_GCA_018167515/repeatmasking /home/theaven/scratch/uncompressed/genomes/Amorphotheca/resinae/GCA_018167515.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/arachnopezizaaraneosa_GCA_003988855/gene_pred /home/theaven/scratch/uncompressed/genomes/Arachnopeziza/araneosa/GCA_003988855.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/arachnopezizaaraneosa_GCA_003988855/repeatmasking /home/theaven/scratch/uncompressed/genomes/Arachnopeziza/araneosa/GCA_003988855.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/ascocorynesarcoides_GCA_000328965/gene_pred /home/theaven/scratch/uncompressed/genomes/Ascocoryne/sarcoides/GCA_000328965.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/ascocorynesarcoides_GCA_000328965/repeatmasking /home/theaven/scratch/uncompressed/genomes/Ascocoryne/sarcoides/GCA_000328965.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Aspergillusnidulans_GCA_000149205.2/gene_pred /home/theaven/scratch/uncompressed/genomes/Aspergillus/nidulans/GCA_000149205.2/fcs/
+mv other/Aspergillusnidulans_GCA_000149205.2/repeatmasking /home/theaven/scratch/uncompressed/genomes/Aspergillus/nidulans/GCA_000149205.2/fcs/
+
+mv temp_genomes/Blumeria/graminis/GCA_000151065.3/repeatmasking /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000151065.3/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Blu_gra_GCA_000151065.3/gene_pred /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000151065.3/fcs/
+ 
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriagraminis_GCA_000417025/gene_pred /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000417025.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriagraminis_GCA_000417025/repeatmasking /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000417025.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriagraminis_GCA_000417865/gene_pred /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000417865.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriagraminis_GCA_000417865/repeatmasking /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000417865.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriagraminis_GCA_000418435/gene_pred /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000418435.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriagraminis_GCA_000418435/repeatmasking /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000418435.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriagraminis_GCA_000441875/gene_pred /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000441875.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriagraminis_GCA_000441875/repeatmasking /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000441875.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriagraminis_GCA_900519115/gene_pred /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_900519115.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriagraminis_GCA_900519115/repeatmasking /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_900519115.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriagraminis_GCA_905067625/gene_pred /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_905067625.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriagraminis_GCA_905067625/repeatmasking /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_905067625.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Blu_gra_SRR2153116/gene_pred /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153116/fcs/
+mv temp_genomes/Blumeria/graminis-secale/SRR2153116/repeatmasking /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153116/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Blu_gra_SRR2153117/gene_pred /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153117/fcs/
+mv temp_genomes/Blumeria/graminis-secale/SRR2153117/repeatmasking /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153117/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Blu_gra_SRR2153118/gene_pred /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153118/fcs/
+mv temp_genomes/Blumeria/graminis-secale/SRR2153118/repeatmasking /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153118/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Blu_gra_SRR2153119/gene_pred /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153119/fcs/
+mv temp_genomes/Blumeria/graminis-secale/SRR2153119/repeatmasking /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153119/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Blu_gra_SRR2153120/gene_pred /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153120/fcs/
+mv temp_genomes/Blumeria/graminis-secale/SRR2153120/repeatmasking /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153120/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriahordei_GCA_000401675/gene_pred /home/theaven/scratch/uncompressed/genomes/Blumeria/hordei/GCA_000401675.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriahordei_GCA_000401675/repeatmasking /home/theaven/scratch/uncompressed/genomes/Blumeria/hordei/GCA_000401675.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriahordei_GCA_900237765/gene_pred /home/theaven/scratch/uncompressed/genomes/Blumeria/hordei/GCA_900237765.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriahordei_GCA_900237765/repeatmasking /home/theaven/scratch/uncompressed/genomes/Blumeria/hordei/GCA_900237765.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriahordei_GCA_900239735/gene_pred /home/theaven/scratch/uncompressed/genomes/Blumeria/hordei/GCA_900239735.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriahordei_GCA_900239735/repeatmasking /home/theaven/scratch/uncompressed/genomes/Blumeria/hordei/GCA_900239735.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriahordei_GCA_900638725/gene_pred /home/theaven/scratch/uncompressed/genomes/Blumeria/hordei/GCA_900638725.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Blumeriahordei_GCA_900638725/repeatmasking /home/theaven/scratch/uncompressed/genomes/Blumeria/hordei/GCA_900638725.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Bot_cin_GCA_000143535.4/gene_pred /home/theaven/scratch/uncompressed/genomes/Botrytis/cineria/GCA_000143535.4/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Botrytiscinerea_GCA_000143535.4/repeatmasking /home/theaven/scratch/uncompressed/genomes/Botrytis/cineria/GCA_000143535.4/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/chlorociboriaaeruginascens_GCA_002276475/gene_pred /home/theaven/scratch/uncompressed/genomes/Chlorociboria/aeruginascens/GCA_002276475.2/fcs/ 
+mv /home/theaven/scratch/uncompressed/mildews/chlorociboriaaeruginascens_GCA_002276475/repeatmasking /home/theaven/scratch/uncompressed/genomes/Chlorociboria/aeruginascens/GCA_002276475.2/fcs/ 
+
+mv /home/theaven/scratch/uncompressed/mildews/Col_hig_broad_KN1394/gene_pred /home/theaven/scratch/uncompressed/genomes/Colletotrichum/higginsianum/broad_KN1394/fcs/
+mv temp_genomes/Colletotrichum/higginsianum/broad_KN1394/repeatmasking /home/theaven/scratch/uncompressed/genomes/Colletotrichum/higginsianum/broad_KN1394/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Colletotrichumhigginsianum_GCA_001672515.1/gene_pred /home/theaven/scratch/uncompressed/genomes/Colletotrichum/higginsianum/GCA_001672515.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Colletotrichumhigginsianum_GCA_001672515.1/repeatmasking /home/theaven/scratch/uncompressed/genomes/Colletotrichum/higginsianum/GCA_001672515.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Cop_cin_GCA_000182895.1/gene_pred /home/theaven/scratch/uncompressed/genomes/Coprinus/cinereus/GCA_000182895.1/fcs/
+mv temp_genomes/Coprinus/cinereus/GCA_000182895.1/repeatmasking /home/theaven/scratch/uncompressed/genomes/Coprinus/cinereus/GCA_000182895.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Cry_neo_GCF_000091045.1/gene_pred /home/theaven/scratch/uncompressed/genomes/Cryptococcus/neoformans/GCF_000091045.1/fcs/
+mv temp_genomes/Cryptococcus/neoformans/GCF_000091045.1/repeatmasking /home/theaven/scratch/uncompressed/genomes/Cryptococcus/neoformans/GCF_000091045.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/drepanopezizabrunnea_GCA_000298775/gene_pred /home/theaven/scratch/uncompressed/genomes/Drepanopeziza/brunnea/GCA_000298775.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/drepanopezizabrunnea_GCA_000298775/repeatmasking /home/theaven/scratch/uncompressed/genomes/Drepanopeziza/brunnea/GCA_000298775.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphealphitoides_CLCBIO_assembly_cdhitest_0/gene_pred /home/theaven/scratch/uncompressed/genomes/Erysiphe/alphitoides/CLCBIO/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphealphitoides_CLCBIO_assembly_cdhitest_0/repeatmasking /home/theaven/scratch/uncompressed/genomes/Erysiphe/alphitoides/CLCBIO/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphenecator_GCA_000798715/gene_pred /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798715.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphenecator_GCA_000798715/repeatmasking /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798715.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphenecator_GCA_000798735/gene_pred /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798735.1/fcs/ 
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphenecator_GCA_000798735/repeatmasking /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798735.1/fcs/ 
+
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphenecator_GCA_000798755/gene_pred /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798755.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphenecator_GCA_000798755/repeatmasking /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798755.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphenecator_GCA_000798775/gene_pred /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798775.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphenecator_GCA_000798775/repeatmasking /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798775.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphenecator_GCA_000798795/gene_pred /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798795.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphenecator_GCA_000798795/repeatmasking /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798795.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphenecator_GCA_016906895/gene_pred /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_016906895.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphenecator_GCA_016906895/repeatmasking /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_016906895.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Ery_nec_GCA_024703715.1/gene_pred /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_024703715.1/fcs/
+mv temp_genomes/Erysiphe/necator/GCA_024703715.1/repeatmasking /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_024703715.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Erysipheneolycopersici_GCA_003610855/gene_pred /home/theaven/scratch/uncompressed/genomes/Erysiphe/neolycopersici/GCA_003610855.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Erysipheneolycopersici_GCA_003610855/repeatmasking /home/theaven/scratch/uncompressed/genomes/Erysiphe/neolycopersici/GCA_003610855.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphepisi_GCA_000208805/gene_pred /home/theaven/scratch/uncompressed/genomes/Erysiphe/pisi/GCA_000208805.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphepisi_GCA_000208805/repeatmasking /home/theaven/scratch/uncompressed/genomes/Erysiphe/pisi/GCA_000208805.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphepisi_GCA_000214055/gene_pred /home/theaven/scratch/uncompressed/genomes/Erysiphe/pisi/GCA_000214055.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphepisi_GCA_000214055/repeatmasking /home/theaven/scratch/uncompressed/genomes/Erysiphe/pisi/GCA_000214055.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphepulchra_GCA_002918395/gene_pred /home/theaven/scratch/uncompressed/genomes/Erysiphe/pulchra/GCA_002918395.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Erysiphepulchra_GCA_002918395/repeatmasking /home/theaven/scratch/uncompressed/genomes/Erysiphe/pulchra/GCA_002918395.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Fusariumgraminearum_GCA_000240135.3/repeatmasking /home/theaven/scratch/uncompressed/genomes/Fusarium/graminearum/GCA_000240135.3/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Fus_gra_GCA_000240135.3/gene_pred /home/theaven/scratch/uncompressed/genomes/Fusarium/graminearum/GCA_000240135.3/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Fus_oxy_GCF_013085055.1/gene_pred /home/theaven/scratch/uncompressed/genomes/Fusarium/oxysporum/GCF_013085055.1/fcs/
+mv temp_genomes/Fusarium/oxysporum/GCF_013085055.1/repeatmasking /home/theaven/scratch/uncompressed/genomes/Fusarium/oxysporum/GCF_013085055.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/glareaiozoyensis_GCA_000409485/gene_pred /home/theaven/scratch/uncompressed/genomes/Glarea/lozoyensis/GCA_000409485.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/glareaiozoyensis_GCA_000409485/repeatmasking /home/theaven/scratch/uncompressed/genomes/Glarea/lozoyensis/GCA_000409485.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Golovinomycescichoracearum_GCA_003611195/gene_pred /home/theaven/scratch/uncompressed/genomes/Golovinomyces/cichoracearum/GCA_003611195.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Golovinomycescichoracearum_GCA_003611195/repeatmasking /home/theaven/scratch/uncompressed/genomes/Golovinomyces/cichoracearum/GCA_003611195.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Golovinomycescichoracearum_GCA_003611215/gene_pred /home/theaven/scratch/uncompressed/genomes/Golovinomyces/cichoracearum/GCA_003611215.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Golovinomycescichoracearum_GCA_003611215/repeatmasking /home/theaven/scratch/uncompressed/genomes/Golovinomyces/cichoracearum/GCA_003611215.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Golovinomycescichoracearum_GCA_003611235/gene_pred /home/theaven/scratch/uncompressed/genomes/Golovinomyces/cichoracearum/GCA_003611235.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Golovinomycescichoracearum_GCA_003611235/repeatmasking /home/theaven/scratch/uncompressed/genomes/Golovinomyces/cichoracearum/GCA_003611235.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Golovinomycesmagnicellulatus_GCA_006912115/gene_pred /home/theaven/scratch/uncompressed/genomes/Golovinomyces/magnicellulatus/GCA_006912115.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Golovinomycesmagnicellulatus_GCA_006912115/repeatmasking /home/theaven/scratch/uncompressed/genomes/Golovinomyces/magnicellulatus/GCA_006912115.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Golovinomycesorontii_AssemblyScaffolds/gene_pred /home/theaven/scratch/uncompressed/genomes/Golovinomyces/orontii/MGH1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Golovinomycesorontii_AssemblyScaffolds/repeatmasking /home/theaven/scratch/uncompressed/genomes/Golovinomyces/orontii/MGH1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/leveillulataurrica_CADEPA01/gene_pred /home/theaven/scratch/uncompressed/genomes/Leveillula/taurrica/CADEPA01/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/leveillulataurrica_CADEPA01/repeatmasking /home/theaven/scratch/uncompressed/genomes/Leveillula/taurrica/CADEPA01/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Mag_ory_GCF_000002495.2/gene_pred /home/theaven/scratch/uncompressed/genomes/Magnaporthe/oryzae/GCF_000002495.2/fcs/
+mv temp_genomes/Magnaporthe/oryzae/GCF_000002495.2/repeatmasking /home/theaven/scratch/uncompressed/genomes/Magnaporthe/oryzae/GCF_000002495.2/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Melampsoralaricis-populina_GCA_000204055.1/gene_pred /home/theaven/scratch/uncompressed/genomes/Melampsora/laricis-populina/GCA_000204055.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Melampsoralaricis-populina_GCA_000204055.1/repeatmasking /home/theaven/scratch/uncompressed/genomes/Melampsora/laricis-populina/GCA_000204055.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/mollisiascopiformis_GCA_001500285/gene_pred /home/theaven/scratch/uncompressed/genomes/Mollisia/scopiformis/GCA_001500285.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/mollisiascopiformis_GCA_001500285/repeatmasking /home/theaven/scratch/uncompressed/genomes/Mollisia/scopiformis/GCA_001500285.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/neobulgariaablba_GCA_003988965/gene_pred /home/theaven/scratch/uncompressed/genomes/Neobulgaria/alba/GCA_003988965.1/fcs/ 
+mv /home/theaven/scratch/uncompressed/mildews/neobulgariaablba_GCA_003988965/repeatmasking /home/theaven/scratch/uncompressed/genomes/Neobulgaria/alba/GCA_003988965.1/fcs/ 
+
+mv /home/theaven/scratch/uncompressed/mildews/Neurosporacrassa_GCA_000182925.2/gene_pred /home/theaven/scratch/uncompressed/genomes/Neurospora/crassa/GCA_000182925.2/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Neurosporacrassa_GCA_000182925.2/repeatmasking /home/theaven/scratch/uncompressed/genomes/Neurospora/crassa/GCA_000182925.2/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Oidiodendron_maius_GCA_000827325/gene_pred /home/theaven/scratch/uncompressed/genomes/Oidiodendron/maius/GCA_000827325.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Oidiodendron_maius_GCA_000827325/repeatmasking /home/theaven/scratch/uncompressed/genomes/Oidiodendron/maius/GCA_000827325.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Oidiumheveae_GCA_003957845/gene_pred /home/theaven/scratch/uncompressed/genomes/Oidium/heveae/GCA_003957845.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Oidiumheveae_GCA_003957845/repeatmasking /home/theaven/scratch/uncompressed/genomes/Oidium/heveae/GCA_003957845.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Par_pol_Parp01/gene_pred /home/theaven/scratch/uncompressed/genomes/Parauncinula/polyspora/Parp01/fcs/
+mv temp_genomes/Parauncinula/polyspora/Parp01/repeatmasking /home/theaven/scratch/uncompressed/genomes/Parauncinula/polyspora/Parp01/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/phialocephalasubalpina-GCA_900073065/gene_pred /home/theaven/scratch/uncompressed/genomes/Phialocephala/subalpina/GCA_900073065.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/phialocephalasubalpina-GCA_900073065/repeatmasking /home/theaven/scratch/uncompressed/genomes/Phialocephala/subalpina/GCA_900073065.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/phyllactiniamoricola_GCA_019455665/gene_pred /home/theaven/scratch/uncompressed/genomes/Phyllactinia/moricola/GCA_019455665.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/phyllactiniamoricola_GCA_019455665/repeatmasking /home/theaven/scratch/uncompressed/genomes/Phyllactinia/moricola/GCA_019455665.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/pleochaetashiraiana_GCA_019455505/gene_pred /home/theaven/scratch/uncompressed/genomes/Pleochaeta/shiraiana/GCA_019455505.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/pleochaetashiraiana_GCA_019455505/repeatmasking /home/theaven/scratch/uncompressed/genomes/Pleochaeta/shiraiana/GCA_019455505.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Ple_ost_GCA_014466165.1/gene_pred /home/theaven/scratch/uncompressed/genomes/Pleurotus/ostreatus/GCA_014466165.1/fcs/
+mv temp_genomes/Pleurotus/ostreatus/GCA_014466165.1/repeatmasking /home/theaven/scratch/uncompressed/genomes/Pleurotus/ostreatus/GCA_014466165.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/HEAVEN_strawberry2020/gene_pred /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72020/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/HEAVEN_strawberry2020/repeatmasking /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72020/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/HEAVEN_strawberry2021/gene_pred /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72021/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/HEAVEN_strawberry2021/repeatmasking /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72021/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/HEAVEN_raspberry2020/gene_pred /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/SCOTT2020/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/HEAVEN_raspberry2020/repeatmasking /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/SCOTT2020/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Podosphaeracerasii_GCA_018398735/gene_pred /home/theaven/scratch/uncompressed/genomes/Podosphaera/cerasii/GCA_018398735.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Podosphaeracerasii_GCA_018398735/repeatmasking /home/theaven/scratch/uncompressed/genomes/Podosphaera/cerasii/GCA_018398735.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Pod_fus_GCA_030378345.1/gene_pred /home/theaven/scratch/uncompressed/genomes/Podosphaera/fusca/GCA_030378345.1/fcs/
+mv temp_genomes/Podosphaera/fusca/GCA_030378345.1/repeatmasking /home/theaven/scratch/uncompressed/genomes/Podosphaera/fusca/GCA_030378345.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/GANAN_apple/gene_pred /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/GCA_013170925.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/GANAN_apple/repeatmasking /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/GCA_013170925.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/HEAVEN_apple2019/gene_pred /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGB2019/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/HEAVEN_apple2019/repeatmasking /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGB2019/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/HEAVEN_apple2021/gene_pred /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGB2021/fcs/ 
+mv /home/theaven/scratch/uncompressed/mildews/HEAVEN_apple2021/repeatmasking /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGB2021/fcs/ 
+
+mv /home/theaven/scratch/uncompressed/mildews/HEAVEN_apple2020/gene_pred /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGBp112020/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/HEAVEN_apple2020/repeatmasking /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGBp112020/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Podosphaeraxanthii_GCA_010015925/gene_pred /home/theaven/scratch/uncompressed/genomes/Podosphaera/xanthii/GCA_010015925.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Podosphaeraxanthii_GCA_010015925/repeatmasking /home/theaven/scratch/uncompressed/genomes/Podosphaera/xanthii/GCA_010015925.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Podosphaeraxanthii_GCA_014884795/gene_pred /home/theaven/scratch/uncompressed/genomes/Podosphaera/xanthii/GCA_014884795.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Podosphaeraxanthii_GCA_014884795/repeatmasking /home/theaven/scratch/uncompressed/genomes/Podosphaera/xanthii/GCA_014884795.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Pod_xan_GCA_028751805.1/gene_pred /home/theaven/scratch/uncompressed/genomes/Podosphaera/xanthii/GCA_028751805.1/fcs/
+mv temp_genomes/Podosphaera/xanthii/GCA_028751805.1/repeatmasking /home/theaven/scratch/uncompressed/genomes/Podosphaera/xanthii/GCA_028751805.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Psi_cub_GCA_017499595.2/gene_pred /home/theaven/scratch/uncompressed/genomes/Psilocybe/cubensis/GCA_017499595.2/fcs/
+mv temp_genomes/Psilocybe/cubensis/GCA_017499595.2/repeatmasking /home/theaven/scratch/uncompressed/genomes/Psilocybe/cubensis/GCA_017499595.2/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Pucciniagraminis_GCA_000149925.1/gene_pred /home/theaven/scratch/uncompressed/genomes/Puccinia/graminis/GCA_000149925.1/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Pucciniagraminis_GCA_000149925.1/repeatmasking /home/theaven/scratch/uncompressed/genomes/Puccinia/graminis/GCA_000149925.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Puc_str_GCA_021901695.1/gene_pred /home/theaven/scratch/uncompressed/genomes/Puccinia/striiformis/GCA_021901695.1/fcs/
+mv temp_genomes/Puccinia/striiformis/GCA_021901695.1/repeatmasking /home/theaven/scratch/uncompressed/genomes/Puccinia/striiformis/GCA_021901695.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Puc_tri_GCA_000151525.2/gene_pred /home/theaven/scratch/uncompressed/genomes/Puccinia/triticina/GCA_000151525.2/fcs/
+mv temp_genomes/Puccinia/triticina/GCA_000151525.2/repeatmasking /home/theaven/scratch/uncompressed/genomes/Puccinia/triticina/GCA_000151525.2/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Pyriculariaoryzae_GCA_000002495.2/gene_pred /home/theaven/scratch/uncompressed/genomes/Pyricularia/oryzae/GCA_000002495.2/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Pyriculariaoryzae_GCA_000002495.2/repeatmasking /home/theaven/scratch/uncompressed/genomes/Pyricularia/oryzae/GCA_000002495.2/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Scereviseae_GCF_000146045/gene_pred /home/theaven/scratch/uncompressed/genomes/Saccharomyces/cerevisiae/GCF_000146045.2/fcs/
+mv /home/theaven/scratch/uncompressed/mildews/Scereviseae_GCF_000146045/repeatmasking /home/theaven/scratch/uncompressed/genomes/Saccharomyces/cerevisiae/GCF_000146045.2/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Sch_com_GCA_000143185.2/gene_pred /home/theaven/scratch/uncompressed/genomes/Schizophyllum/commune/GCA_000143185.2/fcs/
+mv temp_genomes/Schizophyllum/commune/GCA_000143185.2/repeatmasking /home/theaven/scratch/uncompressed/genomes/Schizophyllum/commune/GCA_000143185.2/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Sclerotiniasclerotiorum_GCA_000146945.2/gene_pred /home/theaven/scratch/uncompressed/genomes/Sclerotinia/sclerotiorum/GCA_000146945.2/fcs/ 
+mv /home/theaven/scratch/uncompressed/mildews/Sclerotiniasclerotiorum_GCA_000146945.2/repeatmasking /home/theaven/scratch/uncompressed/genomes/Sclerotinia/sclerotiorum/GCA_000146945.2/fcs/ 
+
+mv /home/theaven/scratch/uncompressed/mildews/Scl_scl_GCF_000146945.1/gene_pred /home/theaven/scratch/uncompressed/genomes/Sclerotinia/sclerotiorum/GCF_000146945.1/fcs/ #
+mv temp_genomes/Scleotinia/sclerotiorum/GCF_000146945.1/repeatmasking /home/theaven/scratch/uncompressed/genomes/Sclerotinia/sclerotiorum/GCF_000146945.1/fcs/
+
+mv /home/theaven/scratch/uncompressed/mildews/Tub_mel_GCF_000151645.1/gene_pred /home/theaven/scratch/uncompressed/genomes/Tuber/melanosporum/GCF_000151645.1/fcs/ #
+mv temp_genomes/Tuber/melanosporum/GCF_000151645.1/repeatmasking /home/theaven/scratch/uncompressed/genomes/Tuber/melanosporum/GCF_000151645.1/fcs/ #
+
+mv /home/theaven/scratch/uncompressed/mildews/Ust_may_GCA_000328475.2/gene_pred /home/theaven/scratch/uncompressed/genomes/Ustilago/maydis/GCA_000328475.2/fcs/
+mv temp_genomes/Ustilago/maydis/GCA_000328475.2/repeatmasking /home/theaven/scratch/uncompressed/genomes/Ustilago/maydis/GCA_000328475.2/fcs/
+```
+```bash
+for file in $(ls -d /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs); do
+  FinalDir=$(ls $file/repeatmasking/combined/*_contigs_softmasked_repeatmasker_TPSI_appended.fa)
+  if [ ! "$FinalDir" ]; then
+      ls $file/gene_pred/braker/*/final_genes_renamed.pep.fasta
+  fi
+done
+
+
+conda activate predector2.7
+for Assembly in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/repeatmasking/combined/*_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+  #remove duplicates and rename:
+  ID=$(basename $Assembly|cut -f1,2,3 -d '_'| sed 's@_contigs_softmasked_repeatmasker_TPSI_appended@@g')
+  echo $ID
+  Gff=$(echo $Assembly | cut -d '/' -f1,2,3,4,5,6,7,8,9,10 )/gene_pred/braker/braker.gff3
+  ab_gff=$(echo $Assembly | cut -d '/' -f1,2,3,4,5,6,7,8,9,10 )/gene_pred/braker/augustus.ab_initio.gff3
+  FinalDir=$(echo $Assembly | cut -d '/' -f1,2,3,4,5,6,7,8,9,10 )/gene_pred/braker/final
+  echo $FinalDir
+  if [ ! -d "$FinalDir" ]; then
+  mkdir $FinalDir
+  GffFiltered=$FinalDir/filtered_duplicates.gff
+  ab_GffFiltered=$FinalDir/ab_initio_filtered_duplicates.gff
+  ProgDir=/home/theaven/scratch/apps/tools
+  #ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Gene_prediction 
+  $ProgDir/remove_dup_features.py --inp_gff $Gff --out_gff $GffFiltered
+  $ProgDir/remove_dup_features.py --inp_gff $ab_gff --out_gff $ab_GffFiltered
+  awk '{ gsub("\\.","_",$1); print}' $GffFiltered > ${GffFiltered}.2
+  awk '{ gsub("\\.","_",$1); print}' $ab_GffFiltered > ${ab_GffFiltered}.2
+  GffRenamed=$FinalDir/final_genes_renamed.gff3 
+  LogFile=$FinalDir/final_genes_renamed.log 
+  ab_GffRenamed=$FinalDir/ab_initio_final_genes_renamed.gff3 
+  ab_LogFile=$FinalDir/ab_initio_final_genes_renamed.log
+  $ProgDir/gff_rename_genes.py --inp_gff ${GffFiltered}.2 --conversion_log $LogFile > $GffRenamed 
+  $ProgDir/gff_rename_genes.py --inp_gff ${ab_GffFiltered}.2 --conversion_log $ab_LogFile > $ab_GffRenamed  
+  awk '{ gsub("\\.","_"); print}' $Assembly > ${Assembly}.2
+  $ProgDir/gff2fasta.pl ${Assembly}.2 $GffRenamed $FinalDir/final_genes_renamed
+  $ProgDir/gff2fasta.pl ${Assembly}.2 $ab_GffRenamed $FinalDir/ab_initio_final_genes_renamed
+  sed -i 's/*/X/g' $FinalDir/final_genes_renamed.pep.fasta
+  sed -i 's/*/X/g' $FinalDir/ab_initio_final_genes_renamed.pep.fasta
+  #remove any discovered duplicates
+  Output=$(dirname $LogFile)/$(echo $LogFile |cut -f2 -d '/')_duplicated_genes
+  ab_Output=$(dirname $ab_LogFile)/$(echo $ab_LogFile |cut -f2 -d '/')ab_initio_duplicated_genes
+  for prediction in $(cat $LogFile |cut -f1|sort|uniq -c|sort -nr | awk '$1>1' | awk '{print $2}'); do
+    printf ">\n" >> $Output
+    grep -w $prediction $LogFile | awk '{print $3}' >> $Output
+  done
+  sed -e '/>/,+1d' ${Output} > ${Output}.txt #removed one of each duplicate from the removal list
+  awk '/^>/ {printf("%s%s\t",(N>0?"\n":""),$0);N++;next;} {printf("%s",$0);} END {printf("\n");}' < $FinalDir/final_genes_renamed.cdna.fasta > linearized.fasta
+  for var1 in $(cat ${Output}.txt); do
+    sed -i "/>${var1}.t1/d" linearized.fasta
+  done
+  tr "\t" "\n" < linearized.fasta | fold -w 60 > $FinalDir/final_genes_renamed.cdna.fasta
+  awk '/^>/ {printf("%s%s\t",(N>0?"\n":""),$0);N++;next;} {printf("%s",$0);} END {printf("\n");}' < $FinalDir/final_genes_renamed.pep.fasta > linearized.fasta
+  for var1 in $(cat ${Output}.txt); do
+    sed -i "/>${var1}.t1/d" linearized.fasta
+  done
+  tr "\t" "\n" < linearized.fasta | fold -w 60 > $FinalDir/final_genes_renamed.pep.fasta
+  for prediction in $(cat $ab_LogFile |cut -f1|sort|uniq -c|sort -nr | awk '$1>1' | awk '{print $2}'); do
+    printf ">\n" >> $ab_Output
+    grep -w $prediction $ab_LogFile | awk '{print $3}' >> $ab_Output
+  done
+  sed -e '/>/,+1d' ${ab_Output} > ${ab_Output}.txt #removed one of each duplicate from the removal list
+  awk '/^>/ {printf("%s%s\t",(N>0?"\n":""),$0);N++;next;} {printf("%s",$0);} END {printf("\n");}' < $FinalDir/ab_initio_final_genes_renamed.cdna.fasta > linearized.fasta
+  for var1 in $(cat ${ab_Output}.txt); do
+    sed -i "/>${var1}.t1/d" linearized.fasta
+  done
+  tr "\t" "\n" < linearized.fasta | fold -w 60 > $FinalDir/ab_initio_final_genes_renamed.cdna.fasta
+  awk '/^>/ {printf("%s%s\t",(N>0?"\n":""),$0);N++;next;} {printf("%s",$0);} END {printf("\n");}' < $FinalDir/ab_initio_final_genes_renamed.pep.fasta > linearized.fasta
+  for var1 in $(cat ${ab_Output}.txt); do
+    sed -i "/>${var1}.t1/d" linearized.fasta
+  done
+  tr "\t" "\n" < linearized.fasta | fold -w 60 > $FinalDir/ab_initio_final_genes_renamed.pep.fasta
+  rm $Output
+  rm $ab_Output
+  #count predicated genes
+  cat $FinalDir/final_genes_renamed.cdna.fasta | grep '>' > $FinalDir/genenames.txt
+  echo ""  >> other/brakerreport.txt
+  echo $ID >> other/brakerreport.txt
+  echo No. of prothint guided genes: >> other/brakerreport.txt
+  grep -c -i '>' $FinalDir/final_genes_renamed.cdna.fasta >> other/brakerreport.txt
+  cat $FinalDir/ab_initio_final_genes_renamed.cdna.fasta | grep '>' > $FinalDir/ab_initio_genenames.txt
+  echo No. of ab initio predicted genes: >> other/brakerreport.txt
+  grep -c -i '>' $FinalDir/ab_initio_final_genes_renamed.cdna.fasta >> other/brakerreport.txt
+  rm ${Assembly}.2
+  rm ${GffFiltered}.2
+  rm ${ab_GffFiltered}.2
+  fi
+done
+```
+```bash
+for file in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/*clean.fasta); do
+grep '>' $file | cut -d ' ' -f1 | sed 's@>@@g'| sed 's@\.@_@g' > temp_contig_ids.txt
+Dir=$(dirname $file)/gene_pred/braker
+if [ -d "${Dir}/final_2" ]; then
+gff=${Dir}/final_2/final_genes_renamed.gff3
+fasta=${Dir}/final_2/final_genes_renamed.pep.fasta
+out=${Dir}/final_2/clean_final_genes_renamed.pep.fasta
+grep -f temp_contig_ids.txt $gff | grep 'gene'| cut -d ' ' -f9  | cut -d ';' -f1 | cut -d '=' -f2 | sed 's@$@.t1@' > temp_gene_ids.txt
+python3 /home/theaven/scratch/apps/tools/seq_get.py --id_file temp_gene_ids.txt --input $fasta --output $out
+elif [ -d "${Dir}/final" ]; then
+gff=${Dir}/final/final_genes_renamed.gff3
+fasta=${Dir}/final/final_genes_renamed.pep.fasta
+out=${Dir}/final/clean_final_genes_renamed.pep.fasta
+grep -f temp_contig_ids.txt $gff | grep 'gene'| cut -d ' ' -f9  | cut -d ';' -f1 | cut -d '=' -f2 | sed 's@$@.t1@' > temp_gene_ids.txt
+python3 /home/theaven/scratch/apps/tools/seq_get.py --id_file temp_gene_ids.txt --input $fasta --output $out
+else
+echo error
+fi
+rm temp_contig_ids.txt
+rm temp_gene_ids.txt
 done
 ```
 
@@ -4759,6 +5189,9 @@ while IFS= read -r line; do
 done < $notes
 mv "$output_file" $notes
 done
+```
+```bash
+/home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred
 ```
 ```python
 import pandas as pd
@@ -6092,7 +6525,7 @@ conda deactivate
 head -n 2 /home/theaven/scratch/uncompressed/genomes/HEAVEN_apple2020.fna > temp_earlgreytest.fna
 
 conda activate earlgrey
-for Genome in $(ls /home/theaven/scratch/uncompressed/genomes/Leveillula/*/*/fcs/*_clean.fasta); do
+for Genome in $(ls /home/theaven/scratch/uncompressed/genomes/Golovinomyces/cichoracearum/GCA_003611215.1/fcs/Golovinomycescichoracearum_GCA_003611215.1_ASM361121v1_genomic_clean.fasta /home/theaven/scratch/uncompressed/genomes/Golovinomyces/cichoracearum/GCA_003611235.1/fcs/Golovinomycescichoracearum_GCA_003611235.1_ASM361123v11_genomic_clean.fasta /home/theaven/scratch/uncompressed/genomes/Golovinomyces/magnicellulatus/GCA_006912115.1/fcs/Golovinomycesmagnicellulatus_GCA_006912115.1_ASM691211v1_genomic_clean.fasta); do
   OutFile=$(echo $Genome | cut -d '/' -f7 | cut -c 1-3)_$(echo $Genome | cut -d '/' -f8 | cut -c 1-3)_$(echo $Genome | cut -d '/' -f9)
   OutDir=$(dirname $Genome)/earlgreyte/${OutFile}
   ProgDir=~/scratch/apps
@@ -6110,7 +6543,27 @@ conda deactivate
 #19317438-49
 #19317478-81
 #19317484
+#19320460-63
+#19320467-19320469
+
+
+
+/home/theaven/scratch/uncompressed/genomes/Golovinomyces/magnicellulatus/GCA_006912115.1/fcs/Golovinomycesmagnicellulatus_GCA_006912115.1_ASM691211v1_genomic_clean.fasta
+
+
 ```
+
+19315486     EarlgreyTE        50G             05:01.693         32   00:06:06  COMPLETED      0:0                  32   theaven
+19315487     EarlgreyTE        50G             05:46.201         32   00:06:49  COMPLETED      0:0                  32   theaven
+19315488     EarlgreyTE        50G             15:55.929         32   00:12:09  COMPLETED      0:0                  32   theaven
+
+19317478     EarlgreyTE       100G             12:25.531         32   00:04:50  COMPLETED      0:0                  32   theaven
+19317479     EarlgreyTE       100G             00:45.574         32   00:01:16  COMPLETED      0:0                  32   theaven
+19317481     EarlgreyTE       100G             00:51.028         32   00:01:12  COMPLETED      0:0                  32   theaven
+
+
+
+
 ```bash
 cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/Psyllidae/assembly/genome/T_apicales/hifiasm_19.5/880m/29/3/3.0/0.75/break10x/purge_dups/sanger/MitoHifi/filtered/inspector/T_apicales_880m_29_3_3.0_0.75_break_TellSeqPurged_curated_nomito_filtered_corrected.fa download/.
 cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/Psyllidae/assembly/genome/T_urticae/hifiasm_19.5/715m/12/2/3.0/0.5/filtered/purge_dups/purge_haplotigs/break10x/yahs/filtered/inspector/T_urticae_715m_12_2_3.0_0.5_filtered_HiFiPurged_HiFiPurged_curated_break_scaffolds_final_nomito_filtered_corrected.fa download/.
