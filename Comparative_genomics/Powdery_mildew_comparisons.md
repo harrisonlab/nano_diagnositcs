@@ -726,7 +726,7 @@ exit
 Now that BUSCO genes have been named uniquely for each genome analysed they were copied into a single .fasta file one for each gene.
 ```bash
 screen -S comps
-srun -p long  -c 8 --mem 50G --pty bash
+srun -p long  -c 1 --mem 50G --pty bash
 cd /home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa
 buscos=/home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_final_buscos_ids.txt
 lines=$(cat $buscos)
@@ -4385,6 +4385,100 @@ done
 sbatch $ProgDir/run_RAxML_msa.sh $Alignment $OutDir $Prefix
 done
 conda deactivate
+
+
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir
+for gene in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/*/*_edit.fasta); do
+ln -s $gene /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir/.
+done
+
+#Randomly select 100 BUSCO genes and use these for model selection, also select the GTR model as almost certainly best base model
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-100
+ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir/ | shuf -n 100 | xargs -I {} ln -s /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir/{} /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-100/{}
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir
+cpu=32
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -s $AlignDir -m MFA -T AUTO --threads-max $cpu
+#59524339, 59531606 (all)
+#Best-fit model: SYM+I+R9 chosen according to BIC, with 100 only SYM+I+R7 was chosen
+
+#Analysis results written to:
+#  IQ-TREE report:                /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir.iqtree
+#  Tree used for ModelFinder:     /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir.treefile
+#  Screen log file:               /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir.log
+
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir* /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/Psyllidae/analysis/phylogeny/busco_nt/iqtree2-test/.
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir
+cpu=32
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -s $AlignDir -m SYM+I+R9 -B 1000 -T AUTO --threads-max $cpu
+#59546091
+
+#Consensus tree written to /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir.contree
+#Reading input trees file /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir.contree
+#Log-likelihood of consensus tree: -37228500.941
+
+#Analysis results written to:
+#  IQ-TREE report:                /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir.iqtree
+#  Maximum-likelihood tree:       /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir.treefile
+#  Likelihood distances:          /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir.mldist
+
+#Ultrafast bootstrap approximation results written to:
+#  Split support values:          /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir.splits.nex
+#  Consensus tree:                /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir.contree
+#  Screen log file:               /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir.log
+
+cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir* /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2/.
+
+cat /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/RAxML2/*/*.raxml.bestTree > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/Psyllidae/analysis/phylogeny/tree-files.txt
+ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/RAxML2/*/*.raxml.bestTree > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/Psyllidae/analysis/phylogeny/tree-files2.txt
+ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir/*_edit.fasta > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/align-files.txt
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -t /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2/AlignDir.contree --gcf /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/Psyllidae/analysis/phylogeny/tree-files.txt --prefix concord -T 1
+#Tree with concordance factors written to concord.cf.tree
+#Annotated tree (best viewed in FigTree) written to concord.cf.tree.nex
+#Tree with branch IDs written to concord.cf.branch
+#Concordance factors per branch printed to concord.cf.stat
+
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -te /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2/AlignDir.contree -p /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir/ --scfl 100 --prefix concord2 -T 8
+#59546576
+```
+#### R8s
+Making the species tree ultrametric CAFE requires a tree that is ultramatric. There are many ways to obtain ultrametric trees (also known as timetrees, these are phylogenetic trees scaled to time, where all paths from root to tips have the same length). Here, we use a fast program called r8s. You will need to know the number of sites in the alignment used to estimate the species tree (the one you want to make ultrametric), and then you can specify one or more calibration points (ideally, the age or age window of a documented fossil) to scale branch lengths into time units. We provide you with a script that prepares the control file for running r8s on the species tree above (the number of sites is 35157236, and the calibration point for cats and humans is 94). In your shell, type:
+
+```bash
+source package /nbi/software/testing/bin/r8s-1.80
+
+echo "#NEXUS" > r8s_ctl_file-m.txt
+echo "begin trees; " >> r8s_ctl_file-m.txt
+echo "tree hemiptera_tree = [&R] $(cat /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/mildew-iq-reroot.txt)" >> r8s_ctl_file-m.txt
+echo "End;" >> r8s_ctl_file-m.txt
+echo "begin rates;" >> r8s_ctl_file-m.txt
+echo "blformat nsites=3121748 lengths=persite ultrametric=no;" >> r8s_ctl_file-m.txt
+echo "collapse;" >> r8s_ctl_file-m.txt
+echo "mrca callibration_node_1 BLU_GRA_GCA_000417025.1 ERY_PIS_GCA_000208805.1;" >> r8s_ctl_file-m.txt
+echo "mrca callibration_node_2 POD_APH_DRCT72020 ERY_PIS_GCA_000208805.1;" >> r8s_ctl_file-m.txt
+echo "mrca callibration_node_3 POD_APH_DRCT72020 BOT_CIN_GCA_000143535.4;" >> r8s_ctl_file-m.txt
+echo "mrca callibration_node_4 POD_APH_DRCT72020 FUS_OXY_GCF_013085055.1;" >> r8s_ctl_file-m.txt
+echo "mrca callibration_node_5 POD_APH_DRCT72020 TUB_MEL_GCF_000151645.1;" >> r8s_ctl_file-m.txt
+echo "mrca callibration_node_6 TUB_MEL_GCF_000151645.1 UST_MAY_GCA_000328475.2;" >> r8s_ctl_file-m.txt
+echo "mrca callibration_node_7 PUC_GRA_GCA_000149925.1 UST_MAY_GCA_000328475.2;" >> r8s_ctl_file-m.txt
+echo "constrain taxon=callibration_node_1 min_age=53.2 max_age=75;" >> r8s_ctl_file-m.txt
+echo "constrain taxon=callibration_node_2 min_age=53.2 max_age=75;" >> r8s_ctl_file-m.txt
+echo "constrain taxon=callibration_node_3 min_age=131.4 max_age=222;" >> r8s_ctl_file-m.txt
+echo "constrain taxon=callibration_node_4 min_age=239.7 max_age=320;" >> r8s_ctl_file-m.txt
+echo "constrain taxon=callibration_node_5 min_age=387.7 max_age=723;" >> r8s_ctl_file-m.txt
+echo "constrain taxon=callibration_node_6 min_age=583.2 max_age=749;" >> r8s_ctl_file-m.txt
+echo "constrain taxon=callibration_node_7 min_age=428.4 max_age=551;" >> r8s_ctl_file-m.txt
+echo "divtime method=pl algorithm=tn cvStart=0 cvInc=0.5 cvNum=8 crossv=yes;" >> r8s_ctl_file-m.txt
+echo "describe plot=chronogram;" >> r8s_ctl_file-m.txt
+echo "describe plot=tree_description;" >> r8s_ctl_file-m.txt
+echo "end;" >> r8s_ctl_file-m.txt
+
+r8s -b -f r8s_ctl_file-m.txt > temp_r8s-m.txt
+tail -n 1 temp_r8s-m.txt | cut -c 16- > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/iqtree_rerooted_r8s.txt
 ```
 ```bash
 ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/*_final_genes_renamed.pep.fasta > existing_protein_files.txt
@@ -4897,11 +4991,11 @@ mv temp_genomes/Schizophyllum/commune/GCA_000143185.2/repeatmasking /home/theave
 mv /home/theaven/scratch/uncompressed/mildews/Sclerotiniasclerotiorum_GCA_000146945.2/gene_pred /home/theaven/scratch/uncompressed/genomes/Sclerotinia/sclerotiorum/GCA_000146945.2/fcs/ 
 mv /home/theaven/scratch/uncompressed/mildews/Sclerotiniasclerotiorum_GCA_000146945.2/repeatmasking /home/theaven/scratch/uncompressed/genomes/Sclerotinia/sclerotiorum/GCA_000146945.2/fcs/ 
 
-mv /home/theaven/scratch/uncompressed/mildews/Scl_scl_GCF_000146945.1/gene_pred /home/theaven/scratch/uncompressed/genomes/Sclerotinia/sclerotiorum/GCF_000146945.1/fcs/ #
+mv /home/theaven/scratch/uncompressed/mildews/Scl_scl_GCF_000146945.1/gene_pred /home/theaven/scratch/uncompressed/genomes/Sclerotinia/sclerotiorum/GCF_000146945.1/fcs/ 
 mv temp_genomes/Scleotinia/sclerotiorum/GCF_000146945.1/repeatmasking /home/theaven/scratch/uncompressed/genomes/Sclerotinia/sclerotiorum/GCF_000146945.1/fcs/
 
-mv /home/theaven/scratch/uncompressed/mildews/Tub_mel_GCF_000151645.1/gene_pred /home/theaven/scratch/uncompressed/genomes/Tuber/melanosporum/GCF_000151645.1/fcs/ #
-mv temp_genomes/Tuber/melanosporum/GCF_000151645.1/repeatmasking /home/theaven/scratch/uncompressed/genomes/Tuber/melanosporum/GCF_000151645.1/fcs/ #
+mv /home/theaven/scratch/uncompressed/mildews/Tub_mel_GCF_000151645.1/gene_pred /home/theaven/scratch/uncompressed/genomes/Tuber/melanosporum/GCF_000151645.1/fcs/ 
+mv temp_genomes/Tuber/melanosporum/GCF_000151645.1/repeatmasking /home/theaven/scratch/uncompressed/genomes/Tuber/melanosporum/GCF_000151645.1/fcs/ 
 
 mv /home/theaven/scratch/uncompressed/mildews/Ust_may_GCA_000328475.2/gene_pred /home/theaven/scratch/uncompressed/genomes/Ustilago/maydis/GCA_000328475.2/fcs/
 mv temp_genomes/Ustilago/maydis/GCA_000328475.2/repeatmasking /home/theaven/scratch/uncompressed/genomes/Ustilago/maydis/GCA_000328475.2/fcs/
@@ -4914,7 +5008,6 @@ for file in $(ls -d /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs); do
   fi
 done
 
-
 conda activate predector2.7
 for Assembly in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/repeatmasking/combined/*_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
   #remove duplicates and rename:
@@ -4922,9 +5015,9 @@ for Assembly in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/repeat
   echo $ID
   Gff=$(echo $Assembly | cut -d '/' -f1,2,3,4,5,6,7,8,9,10 )/gene_pred/braker/braker.gff3
   ab_gff=$(echo $Assembly | cut -d '/' -f1,2,3,4,5,6,7,8,9,10 )/gene_pred/braker/augustus.ab_initio.gff3
-  FinalDir=$(echo $Assembly | cut -d '/' -f1,2,3,4,5,6,7,8,9,10 )/gene_pred/braker/final
+  FinalDir=$(echo $Assembly | cut -d '/' -f1,2,3,4,5,6,7,8,9,10 )/gene_pred/braker/final-02042924
   echo $FinalDir
-  if [ ! -d "$FinalDir" ]; then
+  if [ ! -e "${FinalDir}/final_genes_renamed.pep.fasta" ]; then
   mkdir $FinalDir
   GffFiltered=$FinalDir/filtered_duplicates.gff
   ab_GffFiltered=$FinalDir/ab_initio_filtered_duplicates.gff
@@ -4996,26 +5089,20 @@ for Assembly in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/repeat
 done
 ```
 ```bash
-for file in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/*clean.fasta); do
+for file in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/*_clean.fasta); do
 grep '>' $file | cut -d ' ' -f1 | sed 's@>@@g'| sed 's@\.@_@g' > temp_contig_ids.txt
 Dir=$(dirname $file)/gene_pred/braker
-if [ -d "${Dir}/final_2" ]; then
-gff=${Dir}/final_2/final_genes_renamed.gff3
-fasta=${Dir}/final_2/final_genes_renamed.pep.fasta
-out=${Dir}/final_2/clean_final_genes_renamed.pep.fasta
-grep -f temp_contig_ids.txt $gff | grep 'gene'| cut -d ' ' -f9  | cut -d ';' -f1 | cut -d '=' -f2 | sed 's@$@.t1@' > temp_gene_ids.txt
-python3 /home/theaven/scratch/apps/tools/seq_get.py --id_file temp_gene_ids.txt --input $fasta --output $out
-elif [ -d "${Dir}/final" ]; then
-gff=${Dir}/final/final_genes_renamed.gff3
-fasta=${Dir}/final/final_genes_renamed.pep.fasta
-out=${Dir}/final/clean_final_genes_renamed.pep.fasta
-grep -f temp_contig_ids.txt $gff | grep 'gene'| cut -d ' ' -f9  | cut -d ';' -f1 | cut -d '=' -f2 | sed 's@$@.t1@' > temp_gene_ids.txt
+if [ -d "${Dir}/final-02042924" ]; then
+gff=${Dir}/final-02042924/final_genes_renamed.gff3
+fasta=${Dir}/final-02042924/final_genes_renamed.pep.fasta
+out=${Dir}/final-02042924/clean_final_genes_renamed.pep.fasta
+grep -f temp_contig_ids.txt $gff | grep 'mRNA'| cut -d ' ' -f9  | cut -d ';' -f1 | cut -d '=' -f2 > temp_gene_ids.txt
 python3 /home/theaven/scratch/apps/tools/seq_get.py --id_file temp_gene_ids.txt --input $fasta --output $out
 else
 echo error
 fi
-rm temp_contig_ids.txt
-rm temp_gene_ids.txt
+#rm temp_contig_ids.txt
+#rm temp_gene_ids.txt
 done
 ```
 
@@ -5936,6 +6023,154 @@ combined_plot <- plot101 + plot102 + plot103 + plot104 + plot105 + plot106 +
 combined_plot
 ```
 ```R
+library(ggplot2)
+library(patchwork)
+library(dplyr)
+
+df_all <- merged_data4 #DRCT72020
+#df_all <- merged_data5 #DRCT72021
+#df_all <- merged_data6 #SCOTT2020
+#df_all <- merged_data7 #OGB2019
+#df_all <- merged_data8 #p112020
+#df_all <- merged_data9 #OGB2021
+
+df_all$BUSCO <- "Non BUSCO"
+df_all$BUSCO[!is.na(df_all$match)] <- "BUSCO"
+
+df_all$CSEP <- "Non SP"
+df_all$CSEP[is.na(df_all$match_1) & df_all$is_secreted == 1 & df_all$effectorp3_noneffector == "."] <- "CSEP"
+
+df_all$cazy <- "Non CAZY"
+df_all$cazy[df_all$dbcan_matches != "."] <- "CAZY"
+
+df_all$ralph <- "Non RALPH"
+df_all <- df_all %>%
+  mutate(ralph = ifelse(grepl("BghBEC1011|BgtAVRa10|BgAVRA13|BgtAvrPm2|BgtSvrPm3a1f1", effector_matches), "RALPH", ralph))
+
+df_all$eka <- "Non EKA"
+df_all <- df_all %>%
+  mutate(eka = ifelse(grepl("BgtAVRk1|BgtAVRa10", effector_matches), "EKA", eka))
+df_all$eka[df_all$is_secreted == 1] <- "Non EKA"
+
+# Plot 1
+df_all$tempvar <- "Total"
+plot101 <- ggplot(df_all, aes(x = five_prime, y = three_prime)) +
+  geom_hex(binwidth = c(0.15, 0.15)) +
+  scale_fill_distiller(palette = "Spectral", name = "Gene\ncount", trans = "log10", breaks = c(0, 10, 100, 1000, 4000)) +
+  scale_x_continuous(trans = "log2", breaks = c(2, 8, 32, 128, 512, 2048, 8192, 32768)) +
+  scale_y_continuous(trans = "log2", breaks = c(2, 8, 32, 128, 512, 2048, 8192, 32768)) +
+  ylab("") +
+  xlab("") +
+  theme_minimal() +
+  theme(panel.background = element_rect(fill = "grey93"), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+plot1011 <- plot101 + facet_grid(. ~ tempvar) +
+  theme(strip.background = element_rect(fill = "grey35"),
+        strip.text = element_text(size = 15, colour = "white"))
+
+# Plot 2
+df_all$tempvar <- "BUSCO"
+plot102 <- ggplot(df_all, aes(x = five_prime, y = three_prime)) +
+  geom_hex(binwidth = c(0.15, 0.15), fill = "grey") +
+  scale_x_continuous(trans = "log2", breaks = c(2, 8, 32, 128, 512, 2048, 8192, 32768)) +
+  scale_y_continuous(trans = "log2", breaks = c(2, 8, 32, 128, 512, 2048, 8192, 32768)) +
+  ylab("") +
+  xlab("") +
+  geom_point(data = subset(df_all, BUSCO == "BUSCO"), color = 'black', fill = 'firebrick2', shape = 21, alpha = 0.7, size = 1.5) +
+  theme_minimal() +
+  theme(panel.background = element_rect(fill = "grey93"), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+plot1022 <- plot102 + facet_grid(. ~ tempvar) +
+  theme(strip.background = element_rect(fill = "grey35"),
+        strip.text = element_text(size = 15, colour = "white"))
+
+#Plot3
+df_all$tempvar <- "CAZY"
+plot103 <- ggplot(df_all, aes(x = five_prime, y = three_prime)) +
+  geom_hex(binwidth = c(0.15, 0.15), fill = "grey") +
+  scale_x_continuous(trans = "log2", breaks = NULL) +
+  scale_y_continuous(trans = "log2", breaks = c(2, 8, 32, 128, 512, 2048, 8192, 32768)) +
+  ylab("5' prime intergenic length (bp)") +
+  xlab("") +
+  geom_point(data = subset(df_all, cazy == "CAZY"), color = 'black', fill = 'firebrick2', shape = 21, alpha = 0.7, size = 2) +
+  theme_minimal() +
+  theme(panel.background = element_rect(fill = "grey93"), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+plot1033 <- plot103 + facet_grid(. ~ tempvar) +
+  theme(strip.background = element_rect(fill = "grey35"),
+        strip.text = element_text(size = 15, colour = "white"))
+
+
+# Plot 4
+df_all$tempvar <- "CSEP"
+plot104 <- ggplot(df_all, aes(x = five_prime, y = three_prime)) +
+  geom_hex(binwidth = c(0.15, 0.15), fill = "grey") +
+  scale_x_continuous(trans = "log2", breaks = NULL) +
+  scale_y_continuous(trans = "log2", breaks = NULL) +
+  ylab("") +
+  xlab("") +
+  geom_point(data=subset(df_all, CSEP == "CSEP"), color = 'black', fill = 'firebrick2',shape = 21,alpha = 0.7, size = 2) +
+  theme_minimal() +
+  theme(panel.background = element_rect(fill = "grey93"), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) 
+
+plot1044 <- plot104 + facet_grid(. ~ tempvar) +
+  theme(strip.background = element_rect(fill="grey35"),
+        strip.text = element_text(size=15, colour="white"))
+
+# Plot 5
+df_all$tempvar <- "EKA"
+plot105 <- ggplot(df_all, aes(x = five_prime, y = three_prime)) +
+  geom_hex(binwidth = c(0.15, 0.15), fill = "grey") +
+  scale_x_continuous(trans = "log2", breaks = c(2, 8, 32, 128, 512, 2048, 8192, 32768)) +
+  scale_y_continuous(trans = "log2", breaks = c(2, 8, 32, 128, 512, 2048, 8192, 32768)) +
+  ylab("") +
+  xlab("") +
+  geom_point(data=subset(df_all, eka == "EKA"), color = 'black', fill = 'firebrick2',shape = 21,alpha = 0.7, size = 2) +
+  theme_minimal() +
+  theme(panel.background = element_rect(fill = "grey93"), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) 
+
+plot1055 <- plot105 + facet_grid(. ~ tempvar) +
+  theme(strip.background = element_rect(fill="grey35"),
+        strip.text = element_text(size=15, colour="white"))
+
+# Plot 6
+df_all$tempvar <- "RALPH"
+plot1066 <- ggplot(df_all, aes(x = five_prime, y = three_prime)) +
+  geom_hex(binwidth = c(0.15, 0.15), fill = "grey") +
+  scale_x_continuous(trans = "log2", breaks = c(2, 8, 32, 128, 512, 2048, 8192, 32768)) +
+  scale_y_continuous(trans = "log2", breaks = NULL) +
+  ylab("") +
+  xlab("3' prime intergenic length (bp)") +
+  geom_point(data=subset(df_all, ralph == "RALPH"), color = 'black', fill = 'firebrick2',shape = 21,alpha = 0.7, size = 2) +
+  theme_minimal() +
+  theme(panel.background = element_rect(fill = "grey93"), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.title.x = element_text(hjust = -0.6, vjust = -1))  
+
+plot106 <- plot106 + facet_grid(. ~ tempvar) +
+  theme(strip.background = element_rect(fill="grey35"),
+        strip.text = element_text(size=15, colour="white"))
+
+
+# Combine plots with axis titles
+combined_plot <- plot101 + plot102 + plot103 + plot104 + plot105 + plot106 +
+  plot_layout(ncol = 2, nrow = 3, guides = 'collect') 
+
+# Display combined plot
+combined_plot
+```
+```R
 install.packages("ggthemr")
 library(ggthemr)
 ggthemr('dust')
@@ -5962,7 +6197,7 @@ ggplot(allte) +
 df <- merged_data8 #p112020
 #df <- merged_data9 #OGB2021
 
-search <- read.table("p112020_good.txt", header = FALSE)
+search <- read.table("p11_1_good.txt", header = FALSE)
 df_all <- df %>%
   filter(name %in% search$V1)
 
@@ -5984,16 +6219,15 @@ df_all <- df_all %>%
   mutate(eka = ifelse(grepl("BgtAVRk1|BgtAVRa10", effector_matches), "EKA", eka))
 df_all$eka[df_all$is_secreted == 1] <- "Non"
 
-df_all <- read.xlsx(OBG2021_output.xlsx)
+#df_all <- read.xlsx(OBG2021_output.xlsx)
 # 5-prime IG
-df_filtered <- df_all[!is.na(df_all$five_prime_2), ]
-
-
-mean_other <- mean(subset(df_filtered$five_prime_2, df_filtered$CSEP == "Non"))
+#df_filtered <- df_all[!is.na(df_all$five_prime_2), ]
+df_filtered <- df_all %>% filter(!is.na(five_prime) & five_prime != 99999)
+mean_other <- mean(subset(df_filtered$five_prime, df_filtered$CSEP == "Non"))
 subset_df <- subset(df_filtered, CSEP == "CSEP")
 num_treatment <- nrow(subset_df)
-mean_treatment <- mean(subset_df$five_prime_2, na.rm = TRUE)
-obs_diff <- mean_other - mean_treatment
+mean_treatment <- mean(subset_df$five_prime, na.rm = TRUE)
+obs_diff_five <- mean_other - mean_treatment
 
 list <- vector()
 i <- 1
@@ -6024,24 +6258,23 @@ hist_5 <- ggplot(preds, aes(preds$Diff)) +
   ylab("Frequency") +
   geom_histogram(binwidth = 25) +
   scale_y_continuous(expand=c(0,0)) +
-  scale_x_continuous(breaks=seq(-800,(obs_diff + 1000),100), expand=c(0,0)) +
-  geom_vline(xintercept = obs_diff) +
+  scale_x_continuous(breaks=seq(-800,(obs_diff_five + 1000),100), expand=c(0,0)) +
+  geom_vline(xintercept = obs_diff_five) +
   ggtitle("Five prime intergenic distance permutation test for p112020 CSEPs") +
   theme(plot.title = element_text(hjust = 0.5))
 
 hist_5
 
-sig_5 = sum(list > obs_diff)
+sig_5 = sum(list > obs_diff_five)
 
 # 3-prime IG
-df_filtered <- df_all[!is.na(df_all$three_prime_2), ]
-
-
-mean_other <- mean(subset(df_filtered$three_prime_2, df_filtered$CSEP == "Non"))
+#df_filtered <- df_all[!is.na(df_all$three_prime_2), ]
+df_filtered <- df_all %>% filter(!is.na(three_prime) & three_prime != 99999)
+mean_other <- mean(subset(df_filtered$three_prime, df_filtered$CSEP == "Non"))
 subset_df <- subset(df_filtered, CSEP == "CSEP")
 num_treatment <- nrow(subset_df)
-mean_treatment <- mean(subset_df$three_prime_2, na.rm = TRUE)
-obs_diff <- mean_other - mean_treatment
+mean_treatment <- mean(subset_df$three_prime, na.rm = TRUE)
+obs_diff_three <- mean_other - mean_treatment
 
 list <- vector()
 i <- 1
@@ -6072,21 +6305,23 @@ hist_3 <- ggplot(preds, aes(preds$Diff)) +
   ylab("Frequency") +
   geom_histogram(binwidth = 25) +
   scale_y_continuous(expand=c(0,0)) +
-  scale_x_continuous(breaks=seq(-800,(obs_diff + 1000),100), expand=c(0,0)) +
-  geom_vline(xintercept = obs_diff) +
+  scale_x_continuous(breaks=seq(-800,(obs_diff_three + 1000),100), expand=c(0,0)) +
+  geom_vline(xintercept = obs_diff_three) +
   ggtitle("Three prime intergenic distance permutation test for p112020 CSEPs") +
   theme(plot.title = element_text(hjust = 0.5))
 
 hist_3
 
-sig_3 = sum(list > obs_diff)
+sig_3 = sum(list > obs_diff_three)
 
 # Total IG
 
-df_filtered2 <- df_all[!is.na(df_all$five_prime_2), ]
-df_filtered <-df_filtered2[!is.na(df_filtered2$three_prime_2), ]
+#df_filtered2 <- df_all[!is.na(df_all$five_prime_2), ]
+#df_filtered <-df_filtered2[!is.na(df_filtered2$three_prime_2), ]
+df_filtered2 <- df_all %>% filter(!is.na(five_prime) & five_prime != 99999)
+df_filtered <- df_filtered2 %>% filter(!is.na(three_prime) & three_prime != 99999)
 
-df_filtered$total_IG = df_filtered$five_prime_2 + df_filtered$three_prime_2
+df_filtered$total_IG = df_filtered$five_prime + df_filtered$three_prime
 
 mean_other <- mean(subset(df_filtered$total_IG, df_filtered$CSEP == "Non"))
 subset_df <- subset(df_filtered, CSEP == "CSEP")
@@ -6132,53 +6367,67 @@ total_hist
 
 total_sig = sum(list > obs_diff)
 
-ggsave("p112020_CSEPs_total_IG_histogram_plot.png", plot = total_hist, width = 10, height = 10, units = "in")
-ggsave("p112020_CSEPs_5_IG_histogram_plot.png", plot = hist_5, width = 10, height = 10, units = "in")
-ggsave("p112020_CSEPs_3_IG_histogram_plot.png", plot = hist_3, width = 10, height = 10, units = "in")
+#ggsave("p112020_CSEPs_total_IG_histogram_plot.png", plot = total_hist, width = 10, height = 10, units = "in")
+#ggsave("p112020_CSEPs_5_IG_histogram_plot.png", plot = hist_5, width = 10, height = 10, units = "in")
+#ggsave("p112020_CSEPs_3_IG_histogram_plot.png", plot = hist_3, width = 10, height = 10, units = "in")
 
 print(paste("p112020 CSEPs total intergenic distance:", total_sig))
 print(paste("p112020 CSEPs 5' intergenic distance:", sig_5))
 print(paste("p112020 CSEPs 3' intergenic distance:", sig_3))
 
+#OGB2019
+#[1] -222.6766
+#> obs_diff_three
+#[1] 131.8372
+#> obs_diff
+#[1] -121.6358
+
+#p11:
+#> obs_diff_five
+#[1] -239.8106
+#> obs_diff_three
+#[1] -133.9127
+#> obs_diff
+#[1] -354.4823
 #Larger values means that treatment has greater intergenic distance than average
 ```
-DRCT72020 BUSCOs total intergenic distance: 9999
-DRCT72020 BUSCOs 5' intergenic distance: 9858
-DRCT72020 BUSCOs 3' intergenic distance: 9999
-DRCT72021 BUSCOs total intergenic distance: 9994
-DRCT72021 BUSCOs 5' intergenic distance: 4191
-DRCT72021 BUSCOs 3' intergenic distance: 9999
-SCOTT2020 BUSCOs total intergenic distance: 9996
-SCOTT2020 BUSCOs 5' intergenic distance: 8594
-SCOTT2020 BUSCOs 3' intergenic distance: 9999
-OGB2019 BUSCOs total intergenic distance: 9999
-OGB2019 BUSCOs 5' intergenic distance: 9999
-OGB2019 BUSCOs 3' intergenic distance: 9999
-p112020 BUSCOs total intergenic distance: 9999
-p112020 BUSCOs 5' intergenic distance: 9999
-p112020 BUSCOs 3' intergenic distance: 9999
-OGB2021 BUSCOs total intergenic distance: 9999
-OGB2021 BUSCOs 5' intergenic distance: 9999
-OGB2021 BUSCOs 3' intergenic distance: 9999
+DRCT72020 BUSCOs total intergenic distance: 9999 -417.9701
+DRCT72020 BUSCOs 5' intergenic distance: 9858 -183.9207
+DRCT72020 BUSCOs 3' intergenic distance: 9999 -356.8109
+DRCT72021 BUSCOs total intergenic distance: 9994 -172.3595
+DRCT72021 BUSCOs 5' intergenic distance: 4191  -26.40291
+DRCT72021 BUSCOs 3' intergenic distance: 9999  -230.5262
+SCOTT2020 BUSCOs total intergenic distance: 9996 -241.4624
+SCOTT2020 BUSCOs 5' intergenic distance: 8594 -136.1806
+SCOTT2020 BUSCOs 3' intergenic distance: 9999 -316.6873
+OGB2019 BUSCOs total intergenic distance: 9999 -560.0114
+OGB2019 BUSCOs 5' intergenic distance: 9999 -245.8632
+OGB2019 BUSCOs 3' intergenic distance: 9999 -391.0658
+p112020 BUSCOs total intergenic distance: 9999 -602.9644
+p112020 BUSCOs 5' intergenic distance: 9999 -291.3127
+p112020 BUSCOs 3' intergenic distance: 9999 -421.7756
+OGB2021 BUSCOs total intergenic distance: 9999 -563.4564
+OGB2021 BUSCOs 5' intergenic distance: 9999 -252.8035
+OGB2021 BUSCOs 3' intergenic distance: 9999 -433.852
 
-DRCT72020 CSEPs total intergenic distance: 7949
-DRCT72020 CSEPs 5' intergenic distance: 9865
-DRCT72020 CSEPs 3' intergenic distance: 825
-DRCT72021 CSEPs total intergenic distance: 9920
-DRCT72021 CSEPs 5' intergenic distance: 9900
-DRCT72021 CSEPs 3' intergenic distance: 9103
-SCOTT2020 CSEPs total intergenic distance: 9353
-SCOTT2020 CSEPs 5' intergenic distance: 9680
-SCOTT2020 CSEPs 3' intergenic distance: 6623
-OGB2019 CSEPs total intergenic distance: 9999
-OGB2019 CSEPs 5' intergenic distance: 9991
-OGB2019 CSEPs 3' intergenic distance: 9993
-p112020 CSEPs total intergenic distance: 9999
-p112020 CSEPs 5' intergenic distance: 9996
-p112020 CSEPs 3' intergenic distance: 9990
-OGB2021 CSEPs total intergenic distance: 9998
-OGB2021 CSEPs 5' intergenic distance: 9992
-OGB2021 CSEPs 3' intergenic distance: 9946
+DRCT72020 CSEPs total intergenic distance: 7949 -240.2212 -240.2212
+DRCT72020 CSEPs 5' intergenic distance: 9865 -408.6646 -408.6646
+DRCT72020 CSEPs 3' intergenic distance: 825 -5.500626 -5.500626
+DRCT72021 CSEPs total intergenic distance: 9920 -240.2212 -705.1919
+DRCT72021 CSEPs 5' intergenic distance: 9900 -519.6433 -352.3155
+DRCT72021 CSEPs 3' intergenic distance: 9103 249.3098 -278.8598
+SCOTT2020 CSEPs total intergenic distance: 9353 -121.8177 -625.3545
+SCOTT2020 CSEPs 5' intergenic distance: 9680 -223.0411 -267.9205
+SCOTT2020 CSEPs 3' intergenic distance: 6623 131.3029 -157.6641
+OGB2019 CSEPs total intergenic distance: 9999 -121.8177 -888.3778
+OGB2019 CSEPs 5' intergenic distance: 9991 -223.0411 -526.7162
+OGB2019 CSEPs 3' intergenic distance: 9993 131.3029 -411.5581
+p112020 CSEPs total intergenic distance: 9999 -354.6657 -869.7425
+p112020 CSEPs 5' intergenic distance: 9996 -240.2913 -400.2325
+p112020 CSEPs 3' intergenic distance: 9990 -134.4478 -415.7889
+OGB2021 CSEPs total intergenic distance: 9998  -570.2163 -798.4079
+OGB2021 CSEPs 5' intergenic distance: 9992 -354.4675 -475.466
+OGB2021 CSEPs 3' intergenic distance: 9946 -170.8715 -372.2526
 
 DRCT72020 CAZYs total intergenic distance: 7855
 DRCT72020 CAZYs 5' intergenic distance: 9884
@@ -6519,13 +6768,30 @@ echo "Genes in $ID GFF: $x, distances found for: $y"
 done
 conda deactivate
 ```
+```python
+from collections import Counter
+
+# Open the file
+with open('/home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/THeavenp11_1_flanking_tes.txt', 'r') as file:
+    next(file)
+    nested_strings_counter = Counter()
+    for line in file:
+        columns = line.split()
+        if "Nested" in columns[2]:
+            nested_strings_counter[columns[4]] += 1
+
+# Print the occurrences of each unique string in the fourth column
+for string, count in nested_strings_counter.items():
+    print(f"{string}: {count} occurrences")
+
+```
 
 #### EarlGreyTE
 ```bash
 head -n 2 /home/theaven/scratch/uncompressed/genomes/HEAVEN_apple2020.fna > temp_earlgreytest.fna
 
 conda activate earlgrey
-for Genome in $(ls /home/theaven/scratch/uncompressed/genomes/Golovinomyces/cichoracearum/GCA_003611215.1/fcs/Golovinomycescichoracearum_GCA_003611215.1_ASM361121v1_genomic_clean.fasta /home/theaven/scratch/uncompressed/genomes/Golovinomyces/cichoracearum/GCA_003611235.1/fcs/Golovinomycescichoracearum_GCA_003611235.1_ASM361123v11_genomic_clean.fasta /home/theaven/scratch/uncompressed/genomes/Golovinomyces/magnicellulatus/GCA_006912115.1/fcs/Golovinomycesmagnicellulatus_GCA_006912115.1_ASM691211v1_genomic_clean.fasta); do
+for Genome in $(ls /home/theaven/scratch/uncompressed/genomes/Blumeria/hordei/GCA_900237765.1/fcs/Blumeriahordei_GCA_900237765.1_BghRACE1_v1_genomic_clean.fasta); do
   OutFile=$(echo $Genome | cut -d '/' -f7 | cut -c 1-3)_$(echo $Genome | cut -d '/' -f8 | cut -c 1-3)_$(echo $Genome | cut -d '/' -f9)
   OutDir=$(dirname $Genome)/earlgreyte/${OutFile}
   ProgDir=~/scratch/apps
@@ -6538,29 +6804,31 @@ conda deactivate
 #19312435-8
 #19312820-2
 #19313867-71
+#19315485-92 Golovinomyces + endophytic + parauncinula
+#19317438-49 Erysiphe
+#19317478-81 Fusca + xanthii
+#19317484 Leveillula
+#19320460-63 Erysiphe + xanthii + fusca
+#19320467-19320469 Golovinomyces 
+#19326488 magnicellulatus
+#19425290-7 graminis
+#19544807-12
+#19573744-7 hordei
+#19573750-55 graminis-secale Oidium
 
-#19315485-92
-#19317438-49
-#19317478-81
-#19317484
-#19320460-63
-#19320467-19320469
-
-
-
+#19633989
 /home/theaven/scratch/uncompressed/genomes/Golovinomyces/magnicellulatus/GCA_006912115.1/fcs/Golovinomycesmagnicellulatus_GCA_006912115.1_ASM691211v1_genomic_clean.fasta
 
 
 ```
 
-19315486     EarlgreyTE        50G             05:01.693         32   00:06:06  COMPLETED      0:0                  32   theaven
-19315487     EarlgreyTE        50G             05:46.201         32   00:06:49  COMPLETED      0:0                  32   theaven
-19315488     EarlgreyTE        50G             15:55.929         32   00:12:09  COMPLETED      0:0                  32   theaven
 
-19317478     EarlgreyTE       100G             12:25.531         32   00:04:50  COMPLETED      0:0                  32   theaven
-19317479     EarlgreyTE       100G             00:45.574         32   00:01:16  COMPLETED      0:0                  32   theaven
-19317481     EarlgreyTE       100G             00:51.028         32   00:01:12  COMPLETED      0:0                  32   theaven
-
+19320460     EarlgreyTE       100G            3-09:50:49         32   07:52:52 OUT_OF_ME+    0:125                  32   theaven
+19320461     EarlgreyTE       100G            5-22:40:55         32   18:25:22 OUT_OF_ME+    0:125                  32   theaven
+19320463     EarlgreyTE       100G            9-09:58:29         32   20:14:47 OUT_OF_ME+    0:125                  32   theaven
+19326488     EarlgreyTE        50G             16:31.940         32   00:06:29  COMPLETED      0:0                  32   theaven
+19425296     EarlgreyTE        50G            6-03:05:42         32   09:56:54 OUT_OF_ME+    0:125                  32   theaven
+19425297     EarlgreyTE        50G            6-08:56:48         32   12:09:28 OUT_OF_ME+    0:125                  32   theaven
 
 
 
@@ -6570,8 +6838,8 @@ cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/Psyllidae/assembly/genome/T_u
 cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/Psyllidae/assembly/genome/T_anthrisci/hifiasm_19.5/820m/48/1/10.0/0.25/break10x/purge_dups/sanger/MitoHifi/filtered/inspector/T_anthrisci_820m_48_1_10.0_0.25_break_TellSeqPurged_curated_nomito_filtered_corrected.fa download/.
 
 conda activate earlgrey
-for Genome in $(ls /home/theaven/scratch/uncompressed/hogenhout/T*.fa); do
-  OutFile=$(basename $Genome | sed 's@.fa@@g' | cut -d '_' -f1,2)
+for Genome in $(ls /home/theaven/scratch/uncompressed/hogenhout/GCA_024506275.2_CRF-UY_Dcit_genomic.fna /home/theaven/scratch/uncompressed/hogenhout/GCA_000475195.1_Diaci_psyllid_genome_assembly_version_1.1_genomic.fna); do
+  OutFile=$(basename $Genome | sed 's@.fna@@g' | cut -d '_' -f1,2)
   OutDir=$(dirname $Genome)/earlgreyte2/${OutFile}
   ProgDir=~/scratch/apps
   RMsearch=Sternorrhyncha
@@ -6581,6 +6849,13 @@ done
 #19238763,5
 #19306652-4
 conda deactivate
+#19546924-19546937
+
+19546924
+19546927
+#19582121-2
+
+
 ```
 #### FCS
 ```bash
@@ -6709,7 +6984,162 @@ done
 ```
 Shared by B.cinerea, M. oryzae, C. higginsianum, S. sclerotiorum and S. cerevisiae
 ```bash
+for file in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta); do
+seqkit rmdup $file > temp.fasta && mv temp.fasta $file
+done
 
+for file in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta); do
+x=$(grep '>' $file | wc -l)
+ID=$(echo $file | cut -d '/' -f7 | cut -c 1-3)_$(echo $file | cut -d '/' -f8 | cut -c 1-3)_$(echo $file | cut -d '/' -f9)
+echo "$ID $x"
+done
+
+Amo_res_GCA_003019875.1 8871
+Amo_res_GCA_018167515.1 9001
+Ara_ara_GCA_003988855.1 13791
+Asc_sar_GCA_000328965.1 10965
+Asp_nid_GCA_000149205.2 10793
+Blu_gra_GCA_000151065.3 9659
+Blu_gra_GCA_000417025.1 9837
+Blu_gra_GCA_000417865.1 10573
+Blu_gra_GCA_000418435.1 9043
+Blu_gra_GCA_000441875.1 10911
+Blu_gra_GCA_900519115.1 9282
+Blu_gra_GCA_905067625.1 8912
+Blu_gra_SRR2153116 11831
+Blu_gra_SRR2153117 11895
+Blu_gra_SRR2153118 12044
+Blu_gra_SRR2153119 11938
+Blu_gra_SRR2153120 11610
+Blu_hor_GCA_000401675.1 9760
+Blu_hor_GCA_900237765.1 8569
+Blu_hor_GCA_900239735.1 8507
+Blu_hor_GCA_900638725.1 8316
+Bot_cin_GCA_000143535.4 12046
+Chl_aer_GCA_002276475.2 10500
+Col_hig_broad_KN1394 15454
+Col_hig_GCA_001672515.1 13839
+Cop_cin_GCA_000182895.1 13654
+Cry_neo_GCF_000091045.1 7475
+Dre_bru_GCA_000298775.1 10008
+Ery_alp_CLCBIO 52758
+Ery_nec_GCA_000798715.1 9125
+Ery_nec_GCA_000798735.1 8963
+Ery_nec_GCA_000798755.1 8991
+Ery_nec_GCA_000798775.1 9070
+Ery_nec_GCA_000798795.1 9027
+Ery_nec_GCA_016906895.1 9785
+Ery_nec_GCA_024703715.1 8945
+Ery_neo_GCA_003610855.1 9782
+Ery_pis_GCA_000208805.1 14712
+Ery_pis_GCA_000214055.1 11032
+Ery_pul_GCA_002918395.1 14532
+Fus_gra_GCA_000240135.3 12829
+Fus_oxy_GCF_013085055.1 17818
+Gla_loz_GCA_000409485.1 13423
+Gol_cic_GCA_003611195.1 10947
+Gol_cic_GCA_003611215.1 10790
+Gol_cic_GCA_003611235.1 10746
+Gol_mag_GCA_006912115.1 33442
+Gol_oro_MGH1 16686
+Lev_tau_CADEPA01 14978
+Mag_ory_GCF_000002495.2 11245
+Mel_lar_GCA_000204055.1 23912
+Mol_sco_GCA_001500285.1 18404
+Neo_alb_GCA_003988965.1 11189
+Neu_cra_GCA_000182925.2 9449
+Oid_mai_GCA_000827325.1 16737
+Oid_hev_GCA_003957845.1 10034
+Par_pol_Parp01 6879
+Phi_sub_GCA_900073065.1 22146
+Phy_mor_GCA_019455665.1 14886
+Ple_shi_GCA_019455505.1 11647
+Ple_ost_GCA_014466165.1 13018
+Pod_aph_DRT72020 10287
+Pod_aph_DRT72021 9894
+Pod_aph_SCOTT2020 8819
+Pod_cer_GCA_018398735.1 6560
+Pod_fus_GCA_030378345.1 10982
+Pod_leu_GCA_013170925.1 7954
+Pod_leu_OGB2019 10752
+Pod_leu_OGB2021 10004
+Pod_leu_OGBp112020 9529
+Pod_xan_GCA_010015925.1 5368
+Pod_xan_GCA_014884795.1 9571
+Pod_xan_GCA_028751805.1 10400
+Psi_cub_GCA_017499595.2 14054
+Puc_gra_GCA_000149925.1 16981
+Puc_str_GCA_021901695.1 19169
+Puc_tri_GCA_000151525.2 20207
+Pyr_ory_GCA_000002495.2 11217
+Sac_cer_GCF_000146045.2 5549
+Sch_com_GCA_000143185.2 14390
+Scl_scl_GCA_000146945.2 10978
+Scl_scl_GCF_000146945.1 10971
+Tub_mel_GCF_000151645.1 9818
+Ust_may_GCA_000328475.2 6780
+
+
+cd /home/theaven/scratch/uncompressed/mcag/db
+makeblastdb -in /home/theaven/scratch/uncompressed/genomes/Botrytis/cineria/GCA_000143535.4/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta -input_type fasta -dbtype prot  -title Bot_cin  -parse_seqids -out Bot_cin
+makeblastdb -in /home/theaven/scratch/uncompressed/genomes/Magnaporthe/oryzae/GCF_000002495.2/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta -input_type fasta -dbtype prot  -title Mag_ory  -parse_seqids -out Mag_ory
+makeblastdb -in /home/theaven/scratch/uncompressed/genomes/Colletotrichum/higginsianum/GCA_001672515.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta -input_type fasta -dbtype prot  -title Col_hig  -parse_seqids -out Col_hig
+makeblastdb -in /home/theaven/scratch/uncompressed/genomes/Sclerotinia/sclerotiorum/GCA_000146945.2/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta -input_type fasta -dbtype prot  -title Scl_scl  -parse_seqids -out Scl_scl
+makeblastdb -in /home/theaven/scratch/uncompressed/genomes/Saccharomyces/cerevisiae/GCF_000146045.2/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta -input_type fasta -dbtype prot  -title Sac_cer  -parse_seqids -out Sac_cer
+
+blastp -query /home/theaven/scratch/uncompressed/genomes/Saccharomyces/cerevisiae/GCF_000146045.2/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta -db Scl_scl -out ../Scl_scl_results -evalue 1e-5 -outfmt 6 -num_threads 1 -max_target_seqs 1
+awk '{print $1}' ../Scl_scl_results | sort | uniq > hits.txt
+python3 /home/theaven/scratch/apps/tools/seq_get.py --id_file hits.txt --input /home/theaven/scratch/uncompressed/genomes/Saccharomyces/cerevisiae/GCF_000146045.2/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta --output Sac_cer_Scl_scl.faa
+blastp -query Sac_cer_Scl_scl.faa -db Col_hig -out ../Col_hig_results -evalue 1e-5 -outfmt 6 -num_threads 1 -max_target_seqs 1
+awk '{print $1}' ../Col_hig_results | sort | uniq > hits.txt
+python3 /home/theaven/scratch/apps/tools/seq_get.py --id_file hits.txt --input Sac_cer_Scl_scl.faa --output Sac_cer_Scl_scl_Col_hig.faa
+blastp -query Sac_cer_Scl_scl_Col_hig.faa -db Mag_ory -out ../Mag_ory_results -evalue 1e-5 -outfmt 6 -num_threads 1 -max_target_seqs 1
+awk '{print $1}' ../Mag_ory_results | sort | uniq > hits.txt
+python3 /home/theaven/scratch/apps/tools/seq_get.py --id_file hits.txt --input Sac_cer_Scl_scl_Col_hig.faa --output Sac_cer_Scl_scl_Col_hig_Mag_ory.faa
+blastp -query Sac_cer_Scl_scl_Col_hig_Mag_ory.faa -db Bot_cin -out ../Bot_cin_results -evalue 1e-5 -outfmt 6 -num_threads 1 -max_target_seqs 1
+awk '{print $1}' ../Bot_cin_results | sort | uniq > hits.txt
+python3 /home/theaven/scratch/apps/tools/seq_get.py --id_file hits.txt --input Sac_cer_Scl_scl_Col_hig_Mag_ory.faa --output Sac_cer_Scl_scl_Col_hig_Mag_ory_Bot_cin.faa
+grep '>' Sac_cer_Scl_scl_Col_hig_Mag_ory_Bot_cin.faa | wc -l #4,048
+
+blastp -query /home/theaven/scratch/uncompressed/genomes/Saccharomyces/cerevisiae/GCF_000146045.2/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta -db Scl_scl -out ../Scl_scl_results -evalue 1e-10 -outfmt 6 -num_threads 1 -max_target_seqs 1
+awk '{print $1}' ../Scl_scl_results | sort | uniq > hits.txt
+python3 /home/theaven/scratch/apps/tools/seq_get.py --id_file hits.txt --input /home/theaven/scratch/uncompressed/genomes/Saccharomyces/cerevisiae/GCF_000146045.2/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta --output Sac_cer_Scl_scl.faa
+blastp -query Sac_cer_Scl_scl.faa -db Col_hig -out ../Col_hig_results -evalue 1e-10 -outfmt 6 -num_threads 1 -max_target_seqs 1
+awk '{print $1}' ../Col_hig_results | sort | uniq > hits.txt
+python3 /home/theaven/scratch/apps/tools/seq_get.py --id_file hits.txt --input Sac_cer_Scl_scl.faa --output Sac_cer_Scl_scl_Col_hig.faa
+blastp -query Sac_cer_Scl_scl_Col_hig.faa -db Mag_ory -out ../Mag_ory_results -evalue 1e-10 -outfmt 6 -num_threads 1 -max_target_seqs 1
+awk '{print $1}' ../Mag_ory_results | sort | uniq > hits.txt
+python3 /home/theaven/scratch/apps/tools/seq_get.py --id_file hits.txt --input Sac_cer_Scl_scl_Col_hig.faa --output Sac_cer_Scl_scl_Col_hig_Mag_ory.faa
+blastp -query Sac_cer_Scl_scl_Col_hig_Mag_ory.faa -db Bot_cin -out ../Bot_cin_results -evalue 1e-10 -outfmt 6 -num_threads 1 -max_target_seqs 1
+awk '{print $1}' ../Bot_cin_results | sort | uniq > hits.txt
+python3 /home/theaven/scratch/apps/tools/seq_get.py --id_file hits.txt --input Sac_cer_Scl_scl_Col_hig_Mag_ory.faa --output Sac_cer_Scl_scl_Col_hig_Mag_ory_Bot_cin2.faa
+grep '>' Sac_cer_Scl_scl_Col_hig_Mag_ory_Bot_cin2.faa | wc -l #3,660
+
+screen -S mcag
+srun -p long  -c 1 --mem 50G --pty bash
+mkdir -p test/out
+cd /home/theaven/scratch/uncompressed/mcag/db/test
+for proteome in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta); do
+ID=$(echo $file | cut -d '/' -f7 | cut -c 1-3)_$(echo $file | cut -d '/' -f8 | cut -c 1-3)_$(echo $file | cut -d '/' -f9)
+makeblastdb -in $proteome -input_type fasta -dbtype prot  -title $ID -parse_seqids -out $ID
+blastp -query ../Sac_cer_Scl_scl_Col_hig_Mag_ory_Bot_cin2.faa -db $ID -out out/${ID}_results -evalue 1e-6 -outfmt 6 -num_threads 1 -max_target_seqs 1
+done
+
+grep '>' ../Sac_cer_Scl_scl_Col_hig_Mag_ory_Bot_cin2.faa | sed 's@>@@G' > CAGs.txt
+echo CAGs > mcags.txt
+cat CAGs.txt >> mcags.txt
+for proteome in *_results; do
+    echo "$proteome" > temp.txt
+    while IFS= read -r line; do
+        # Check if the line exists in the current proteome file
+        if grep -qF "$line" "$proteome"; then
+            echo "1" >> temp.txt
+        else
+            echo "0" >> temp.txt
+        fi
+    done < "CAGs.txt"
+    paste mcags.txt temp.txt > temp2.txt && mv temp2.txt mcags.txt
+done
 ```
 ```bash
 ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/*fcs_gx_report.txt
