@@ -505,6 +505,21 @@ for assembly in $(ls data/assembly/genome/marssonina/brunnea/*.f*); do
 done
 #3057167-
 
+
+conda activate BUSCO
+for assembly in $(ls data/assembly/genome/cucumis/melo/GCA_025177605.1_USDA_Cmelo_AY_1.0_genomic.fna); do
+  echo $assembly
+  ProgDir=~/scratch/apps/busco
+  BuscoDB=viridiplantae_odb10
+  OutDir=$(dirname $assembly|sed 's@data/assembly/genome@gene_pred@g')/$(echo $assembly|rev|cut -f1 -d '/' --output-delimiter '-'|rev|sed 's@.fna@@g'|sed 's@_genomic@@g'|sed 's@.mod@@g')/BUSCO
+  echo $OutDir
+  echo $BuscoDB
+  sbatch $ProgDir/sub_busco.sh $assembly $BuscoDB $OutDir
+done
+
+
+ls -d gene_pred/*/*/*/BUSCO/viridiplantae_odb10/*/run_viridiplantae_odb10/busco_sequences/single_copy_busco_sequences
+
 ls gene_pred/*/*/*/BUSCO/*/*/*/full_table.tsv
 ```
 
@@ -643,6 +658,9 @@ done
 for file in $(ls gene_pred/Morus/*/*/BUSCO/viridiplantae_odb10/*/run_viridiplantae_odb10/full_table.tsv); do
 grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/host_viridiplantae_complete_busco_ids.txt;
 done
+for file in $(ls gene_pred/cucumis/melo/*/BUSCO/viridiplantae_odb10/*/run_viridiplantae_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> analysis/phylogeny/busco/host_viridiplantae_complete_busco_ids.txt;
+done
 ```
 BUSCOs that were only present in less than 3 genomes were filtered out:
 
@@ -740,8 +758,8 @@ for line in $lines; do
 done
 rm *.faa
 
-cd /home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa
-buscos=/home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_final_buscos_ids.txt
+cd /home/theaven/scratch/uncompressed/analysis/phylogeny/busco/host_viridiplantae_busco_aa
+buscos=/home/theaven/scratch/uncompressed/analysis/phylogeny/busco/host_viridiplantae_final_buscos_ids.txt
 lines=$(cat $buscos)
 for line in $lines; do
   for faa in $(ls *_$line.faa); do
@@ -765,11 +783,11 @@ conda activate mafft
   sbatch $ProgDir/sub_mafft_alignment.sh $AlignDir
 #2569979, 2859967, 3113181
 
-  AlignDir=/home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa
+  AlignDir=/home/theaven/scratch/uncompressed/analysis/phylogeny/busco/host_viridiplantae_busco_aa
   cd $AlignDir
   ProgDir=/home/theaven/scratch/apps/phylogeny
   sbatch $ProgDir/sub_mafft_alignment.sh $AlignDir
-#2569980, 2859968, 3113182
+#2569980, 2859968, 3113182, 22958584
 conda deactivate
 
 cd ~/scratch  
@@ -783,11 +801,11 @@ for gene in $(ls /home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomyc
   cp $gene /home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/$ID
 done
 
-for gene in $(ls /home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa/*_aligned.fasta); do
+for gene in $(ls /home/theaven/scratch/uncompressed/analysis/phylogeny/busco/host_viridiplantae_busco_aa/*_aligned.fasta); do
   ID=$(basename $gene |sed 's@_aa_aligned.fasta@@g')
   echo $ID
-  mkdir /home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa/$ID
-  cp $gene /home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa/$ID
+  mkdir /home/theaven/scratch/uncompressed/analysis/phylogeny/busco/host_viridiplantae_busco_aa/$ID
+  cp $gene /home/theaven/scratch/uncompressed/analysis/phylogeny/busco/host_viridiplantae_busco_aa/$ID
 done
 ```
 Collect pathogen and hosts only:
@@ -799,9 +817,9 @@ grep -A1 '>AMORPHOTHECARESINAE\|>ARACHNOPEZIZAARANEO\|>ASCOCORYNESARCOIDES\|>BLU
 done
 
 #Host:
-for Alignment in $(ls /home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa/*/*_aligned.fasta); do
+for Alignment in $(ls /home/theaven/scratch/uncompressed/analysis/phylogeny/busco/host_viridiplantae_busco_aa/*/*_aligned.fasta); do
   Output=$(echo $Alignment | sed 's@aligned.fasta@aligned_host.fasta@g')
-grep -A1 '>ARABIDOPSISTHALIANA\|>CAPSICUMANNUUM\|>CUCUMISSATIVUS\|>CUCURBITAPEPO\|>FRAGARIA\|>HEVEABRASILIENS\|>HORDEUMVULGARE\|>MALUSDOMESTICA\|>MORUSALBA\|>NICOTIANATABACUM\|>PISUMSATIVUM\|>PRUNUSAVIUM\|>QUERCUSROBUR\|>RUBUS\|>SACCHAROMYCESCEREVISIAE\|>SECALECEREALE\|>SOLANUMLYCOPERSICUM\|>VITUSVINIFERA\|>TRITICUMAESTIVUM' $Alignment > $Output
+grep -A1 '>ARABIDOPSISTHALIANA\|>CAPSICUMANNUUM\|>CUCUMISSATIVUS\|>CUCURBITAPEPO\|>FRAGARIA\|>HEVEABRASILIENS\|>HORDEUMVULGARE\|>MALUSDOMESTICA\|>MORUSALBA\|>NICOTIANATABACUM\|>PISUMSATIVUM\|>PRUNUSAVIUM\|>QUERCUSROBUR\|>RUBUS\|>SACCHAROMYCESCEREVISIAE\|>SECALECEREALE\|>SOLANUMLYCOPERSICUM\|>VITUSVINIFERA\|>TRITICUMAESTIVUM\|>CUCUMISMELO' $Alignment > $Output
 done
 ```
 
@@ -818,7 +836,7 @@ conda activate trimal
     trimal -in $Alignment -out $OutDir/$TrimmedName -keepheader -automated1
   done
 
-  for Alignment in $(ls /home/theaven/scratch/analysis/phylogeny/busco/host_viridiplantae_busco_aa/*/*_aligned.fasta); do
+  for Alignment in $(ls /home/theaven/scratch/uncompressed/analysis/phylogeny/busco/host_viridiplantae_busco_aa/*/*aa_aligned.fasta); do
     OutDir=$(dirname $Alignment)
     TrimmedName=$(basename $Alignment .fasta)"_trimmed.fasta"
     echo $Alignment
@@ -828,7 +846,7 @@ conda activate trimal
   done
 conda deactivate
 
-99at147548
+grep 'CUCUMISMELO' /home/theaven/scratch/uncompressed/analysis/phylogeny/busco/host_viridiplantae_busco_aa/*/*_trimmed.fasta
 ```
 ```bash
 #headers contain special characters, are longer than 60 characters and include contig information, in this form astral will not run and will consider each contig a different species, the headers must therefore be edited, prior to running RAxML.
@@ -898,7 +916,7 @@ sed -i 's@>PODOSPHAERAXANTHIIGCA014884795.1ASM1488479V1.C@>P.XANTHII.GCA01488479
 sed -i 's@>SACCHAROMYCESCEREVISIAEGCF000146045.2R64@>S.CEREVISIAE.GCF000146045@g' $New
 done
 
-for Alignment in $(ls analysis/phylogeny/busco/host_viridiplantae_busco_aa/*/*_trimmed.fasta); do
+for Alignment in $(ls analysis/phylogeny/busco/host_viridiplantae_busco_aa/*/*aa_aligned_trimmed.fasta); do
 New=$(dirname $Alignment)/$(basename $Alignment .fasta)_edit.fasta
 echo $New
 cat $Alignment  | cut -f1 -d '|' > $New 
@@ -924,6 +942,7 @@ sed -i 's@>SACCHAROMYCESCEREVISIAEGCF000146045.2R64@>S.CEREVISIAE.GCF000146045@g
 sed -i 's@>SECALECEREALEGCA016097815.1HAUWEININGV1.0@>S.CEREALE.GCA016097815@g' $New
 sed -i 's@>SOLANUMLYCOPERSICUMGCA000188115.3SL3.0@>S.LYCOPERSICUM.GCA000188115@g' $New
 sed -i 's@>VITUSVINIFERAGCA000003745.212X@>V.VINEFERA.GCA000003745@g' $New
+sed -i 's@>CUCUMISMELOGCA025177605.1USDACMELOAY1.0@>C.MELO.GCA025177605@g' $New
 done
 
 #Is there a reason to use an array rather than a loop as below? Seem to make things more commpicated to rerun.
@@ -943,7 +962,7 @@ ProgDir=/home/theaven/scratch/apps/phylogeny
 sbatch $ProgDir/sub_RAxML.sh $Alignment $Prefix $OutDir 2>&1 >> pathraxmllog.txt
 done
 #3217974
-for Alignment in $(ls analysis/phylogeny/busco/host_viridiplantae_busco_aa/*/*_trimmed_edit.fasta); do
+for Alignment in $(ls analysis/phylogeny/busco/host_viridiplantae_busco_aa/*/*aa_aligned_trimmed_edit.fasta); do
 Jobs=$(squeue -u theaven | wc -l)
 echo x
 while [ $Jobs -gt 64 ]; do
@@ -959,6 +978,42 @@ ProgDir=/home/theaven/scratch/apps/phylogeny
 sbatch $ProgDir/sub_RAxML.sh $Alignment $Prefix $OutDir 2>&1 >> hostraxmllog2.txt
 done
 scontrol show job 3184121
+
+mkdir -p /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/host/busco_nt/iqtree2
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/host/busco_nt/iqtree2
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/AlignDir2
+cpu=4
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -s $AlignDir -m MFA -T AUTO --threads-max $cpu -redo
+#6290051
+
+#Akaike Information Criterion:           Q.plant+F+R6
+#Corrected Akaike Information Criterion: Q.plant+F+R6
+#Bayesian Information Criterion:         Q.plant+F+R6
+#Best-fit model: Q.plant+F+R6 chosen according to BIC
+
+#Analysis results written to:
+#  IQ-TREE report:                /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/suzz.iqtree
+#  Tree used for ModelFinder:     /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/suzz.treefile
+#  Screen log file:               /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/suzz.log
+
+mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/suzz /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/host/busco_nt/iqtree2/AlignDir
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/host/busco_nt/iqtree2
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/host/busco_nt/iqtree2/AlignDir3
+cpu=4
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -s $AlignDir -m Q.plant+F+R6 -B 1000 -T AUTO --threads-max $cpu
+#6323037
+
+#Analysis results written to:
+#  IQ-TREE report:                /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/host/busco_nt/iqtree2/AlignDir3.iqtree
+#  Maximum-likelihood tree:       /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/host/busco_nt/iqtree2/AlignDir3.treefile
+#  Likelihood distances:          /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/host/busco_nt/iqtree2/AlignDir3.mldist
+
+#Ultrafast bootstrap approximation results written to:
+#  Split support values:          /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/host/busco_nt/iqtree2/AlignDir3.splits.nex
+#  Consensus tree:                /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/host/busco_nt/iqtree2/AlignDir3.contree
+#  Screen log file:               /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/host/busco_nt/iqtree2/AlignDir3.log
+
+
 ```
 ```bash
 for Alignment in $(ls analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/*/*_trimmed.fasta); do
@@ -4258,7 +4313,7 @@ cat results.txt | sed 's@P_x@Podosphaeraxanthii@g' | sed 's@P_c@Podosphaeraceras
 ##################################################################################################################################################################################################################################################################################
 #### BUSCO
 ```bash
-for assembly in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/Parauncinula/*/*/*a); do
+for assembly in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/*/*/*/*a); do
     Database=/jic/research-groups/Saskia-Hogenhout/BUSCO_sets/v5/fungi_odb10
     ProgDir=~/git_repos/Wrappers/NBI
     OutDir=$(dirname $assembly)/BUSCO
@@ -4276,18 +4331,49 @@ for assembly in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagno
 done
 #...58940846
 
+for assembly in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/*/*/*/*a); do
+    Database=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/databases/busco/leotiomycetes_odb10
+    ProgDir=~/git_repos/Wrappers/NBI
+    OutDir=$(dirname $assembly)/BUSCO
+    OutFile=$(echo $assembly | cut -d '/' -f9,10,11 | sed 's@/@_@g')
+    Jobs=$(squeue -u did23faz| grep 'busco'  | wc -l)
+    echo x
+    while [ $Jobs -gt 3 ]; do
+      sleep 900s
+      printf "."
+      Jobs=$(squeue -u did23faz| grep 'busco'  | wc -l)
+    done
+    mkdir $OutDir 
+    sleep 30s
+    sbatch $ProgDir/run_busco_keep.sh $assembly $Database $OutDir $OutFile
+done
+
 #Extract complete busco IDs, keep those present in at least 3 genomes:
 for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/*/*/*/BUSCO/fungi_odb10/run_fungi_odb10/full_table.tsv); do
 grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/complete_busco_ids.txt;
+done
+
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/*/*/*/BUSCO/leotiomycetes_odb10/run_leotiomycetes_odb10/full_table.tsv); do
+grep -v "^#" $file | awk '$2=="Complete" {print $1}' >> /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leotiomycetes_complete_busco_ids.txt;
 done
 
 sort /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/complete_busco_ids.txt |uniq -c > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/complete_busco_ids_with_counts.txt
 grep -v " 2 " /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/complete_busco_ids_with_counts.txt | grep -v " 1 " > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/complete_busco_ids.txt
 awk '{print $2}' /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/complete_busco_ids.txt > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/complete_busco_ids_3.txt
 
-mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt
+sort /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leotiomycetes_complete_busco_ids.txt |uniq -c > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leotiomycetes_complete_busco_ids_with_counts.txt
+grep -v " 2 " /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leotiomycetes_complete_busco_ids_with_counts.txt | grep -v " 1 " > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leotiomycetes_complete_busco_ids.txt
+awk '{print $2}' /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leotiomycetes_complete_busco_ids.txt > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leotiomycetes_complete_busco_ids_3.txt
 
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt
 for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/*/*/*/BUSCO/fungi_odb10/run_fungi_odb10/busco_sequences/single_copy_busco_sequences.tar.gz); do
+cd $(dirname $file)
+tar -xzvf single_copy_busco_sequences.tar.gz
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/Genomes
+done
+
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leo_busco_nt
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/*/*/*/BUSCO/leotiomycetes_odb10/run_leotiomycetes_odb10/busco_sequences/single_copy_busco_sequences.tar.gz); do
 cd $(dirname $file)
 tar -xzvf single_copy_busco_sequences.tar.gz
 cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/Genomes
@@ -4307,9 +4393,33 @@ for dir in $(ls -d /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnost
   done
 done
 
+for dir in $(ls -d /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Genomes/*/*/*/BUSCO/leotiomycetes_odb10/run_leotiomycetes_odb10/busco_sequences/single_copy_busco_sequences); do
+  sppname=$(echo $dir |cut -f9,10,11 -d "/" | sed 's@/@_@g');
+  abbrv=$(echo $dir | cut -d '/' -f9 | cut -c 1-3)_$(echo $dir | cut -d '/' -f10 | cut -c 1-3)_$(echo $dir | cut -d '/' -f11)
+  echo $sppname
+  echo $abbrv
+  for file in ${dir}/*.fna; do
+    out=$(echo $file |rev |cut -f 1 -d "/"|rev)
+    cp $file /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leo_busco_nt/${sppname}_${out}
+    sed -i 's/^>/>'${abbrv}'|/g' /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leo_busco_nt/${sppname}_${out}
+  cut -f 1 -d ":" /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leo_busco_nt/${sppname}_${out} | tr '[:lower:]' '[:upper:]' > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leo_busco_nt/${sppname}_${out}.1 && mv /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leo_busco_nt/${sppname}_${out}.1 /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leo_busco_nt/${sppname}_${out}  
+  done
+done
+
 #Combine genes from each assembly into a single file per gene:
 cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt
 buscos=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/complete_busco_ids_3.txt
+lines=$(cat $buscos)
+for line in $lines; do
+  for fna in $(ls *_$line.fna); do
+  output=$(echo $line)_nt.fasta
+  cat $fna >> $output
+  done
+done
+rm *.fna
+
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leo_busco_nt
+buscos=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leotiomycetes_complete_busco_ids_3.txt
 lines=$(cat $buscos)
 for line in $lines; do
   for fna in $(ls *_$line.fna); do
@@ -4337,11 +4447,33 @@ echo "$file" >> mafft_log.txt
 sbatch $ProgDir/sub_mafft_alignment.sh $file $OutDir $OutFile 2>&1 >> mafft_log.txt
 done
 
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leo_busco_nt
+for file in $(ls ${AlignDir}/*_nt.fasta); do
+OutFile=$(basename $file | sed 's@_nt.fasta@_nt_aligned.fasta@g')
+Jobs=$(squeue -u did23faz| grep 'mafft'  | wc -l)
+while [ $Jobs -gt 150 ]; do
+    sleep 300s
+    printf "."
+    Jobs=$(squeue -u did23faz| grep 'mafft'| wc -l)
+done
+OutDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leo_busco_nt
+ProgDir=~/git_repos/Wrappers/NBI
+echo "$file" >> mafft_log.txt
+sbatch $ProgDir/sub_mafft_alignment.sh $file $OutDir $OutFile 2>&1 >> mafft_log.txt
+done
+
 for gene in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/*_aligned.fasta); do
   ID=$(basename $gene |sed 's@_nt_aligned.fasta@@g')
   echo $ID
   mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/$ID
   cp $gene /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/$ID
+done
+
+for gene in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leo_busco_nt/*_aligned.fasta); do
+  ID=$(basename $gene |sed 's@_nt_aligned.fasta@@g')
+  echo $ID
+  mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leo_busco_nt/$ID
+  cp $gene /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leo_busco_nt/$ID
 done
 
 #Trim the alignments:
@@ -4352,6 +4484,16 @@ for Alignment in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagn
   echo $OutDir
   echo $TrimmedName
   sed -i 's/n/N/g' $Alignment
+  singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/trimal1.4.1.sif trimal -in $Alignment -out $OutDir/$TrimmedName -keepheader -automated1
+done
+
+for Alignment in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leo_busco_nt/*/*_aligned.fasta); do
+  OutDir=$(dirname $Alignment)
+  TrimmedName=$(basename $Alignment .fasta)"_trimmed.fasta"
+  echo $Alignment
+  echo $OutDir
+  echo $TrimmedName
+  sed -i '/^>/! s/[yrmwn]/N/g' "$Alignment" #trimal does not like all IUPAC symbols, just atgcn
   singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/trimal1.4.1.sif trimal -in $Alignment -out $OutDir/$TrimmedName -keepheader -automated1
 done
 
@@ -4369,7 +4511,21 @@ while IFS= read -r line; do
 done < $file
 done
 
+for Alignment in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leo_busco_nt/*/*_aligned_trimmed.fasta); do
+New=$(dirname $Alignment)/$(basename $Alignment .fasta)_edit.fasta
+cat $Alignment  | cut -f1 -d '|'  > $New
+done
+
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/leo_busco_nt/*/*_edit.fasta); do
+while IFS= read -r line; do
+    if [[ "$line" =~ ^\>.+ ]]; then
+        echo "$line" | wc -c
+    fi
+done < $file
+done
+
 #Run RAxML
+#In practice, one should use specialized tools such as ModelTest-NG, IQTree/ModelFinder or PartitionFinder for model selection
 conda activate raxml
 for Alignment in $(ls /home/theaven/scratch/uncompressed/analysis/phylogeny/busco/busco_nt/*/*_edit.fasta); do
 Prefix=$(basename $Alignment | cut -f1 -d '_')
@@ -4382,10 +4538,78 @@ while [ $Jobs -gt 99 ]; do
     printf "."
     Jobs=$(squeue -u theaven| grep 'RAxML'| wc -l)
 done
-sbatch $ProgDir/run_RAxML_msa.sh $Alignment $OutDir $Prefix
+sbatch $ProgDir/run_RAxML_msa.sh $Alignment $OutDir $Prefix 
 done
 conda deactivate
 
+conda activate raxml
+for Alignment in $(ls /home/theaven/scratch/uncompressed/analysis/phylogeny/busco/leo_busco_nt/*/*_edit.fasta); do
+Prefix=$(basename $Alignment | cut -f1 -d '_')
+OutDir=/home/theaven/scratch/uncompressed/analysis/phylogeny/busco/mildew_leo_busco_nt/RAxML/$Prefix
+ProgDir=/home/theaven/scratch/apps/phylogeny
+mkdir -p $OutDir
+if [ ! -f ${OutDir}/${Prefix}.raxml.bestTree ]; then
+Jobs=$(squeue -u theaven| grep 'RAxML'  | wc -l)
+while [ $Jobs -gt 16 ]; do
+    sleep 300s
+    printf "."
+    Jobs=$(squeue -u theaven| grep 'RAxML'| wc -l)
+done
+model=SYM+I+R9
+sbatch $ProgDir/run_RAxML_msa.sh $Alignment $OutDir $Prefix $model 2>&1 >> raxmllog.txt
+echo $Prefix >> raxmllog.txt
+tail -n 2 raxmllog.txt
+else
+echo $Prefix already done
+fi
+done
+conda deactivate
+
+conda activate raxml
+for Alignment in $(ls /home/theaven/scratch/uncompressed/analysis/phylogeny/busco/leo_busco_nt/*/*_edit.fasta); do
+Prefix=$(basename $Alignment | cut -f1 -d '_')
+OutDir=/home/theaven/scratch/uncompressed/analysis/phylogeny/busco/mildew_leo_busco_nt/RAxML-2/$Prefix
+ProgDir=/home/theaven/scratch/apps/phylogeny
+mkdir -p $OutDir
+if [ ! -f ${OutDir}/${Prefix}.raxml.bestTree ]; then
+Jobs=$(squeue -u theaven| grep 'RAxML'  | wc -l)
+while [ $Jobs -gt 63 ]; do
+    sleep 300s
+    printf "."
+    Jobs=$(squeue -u theaven| grep 'RAxML'| wc -l)
+done
+model=GTR+G
+sbatch $ProgDir/run_RAxML_msa.sh $Alignment $OutDir $Prefix $model 2>&1 >> raxmllog2.txt
+echo $Prefix >> raxmllog2.txt
+tail -n 2 raxmllog.txt
+else
+echo $Prefix already done
+fi
+done
+conda deactivate
+
+
+#Combine individual gene trees into a consensus tree:
+srun -p medium --mem 64G --cpus-per-task 32 --pty bash
+conda activate astral
+ProgDir=../apps/astral/Astral/
+cat /home/theaven/scratch/uncompressed/analysis/phylogeny/busco/mildew_leo_busco_nt/RAxML/*/*.raxml.bestTree > /home/theaven/scratch/uncompressed/analysis/phylogeny/tree-files.txt
+ls /home/theaven/scratch/uncompressed/analysis/phylogeny/busco/mildew_leo_busco_nt/RAxML/*/*.raxml.bootstraps > /home/theaven/scratch/uncompressed/analysis/phylogeny/bs-files.txt
+java -Xmx60000M -jar $ProgDir/astral.5.7.8.jar -i /home/theaven/scratch/uncompressed/analysis/phylogeny/tree-files.txt -o /home/theaven/scratch/uncompressed/analysis/phylogeny/leotiomycetes_phylogeny+++.astral.tre
+java -Xmx60000M -jar $ProgDir/astral.5.7.8.jar -t 4 -i /home/theaven/scratch/uncompressed/analysis/phylogeny/tree-files.txt -b /home/theaven/scratch/uncompressed/analysis/phylogeny/bs-files.txt -r 100 -o /home/theaven/scratch/uncompressed/analysis/phylogeny/leotiomycetes_phylogeny+++.bootstrapped.astral.tre-4
+
+tail -n 1 /home/theaven/scratch/uncompressed/analysis/phylogeny/leotiomycetes_phylogeny+++.bootstrapped.astral.tre-2 > /home/theaven/scratch/uncompressed/analysis/phylogeny/leotiomycetes_phylogeny+++.bootstrapped.consensus2.astral.tre
+head -n 100 /home/theaven/scratch/uncompressed/analysis/phylogeny/leotiomycetes_phylogeny+++.bootstrapped.astral.tre-2 > /home/theaven/scratch/uncompressed/analysis/phylogeny/leotiomycetes_phylogeny+++.bootstraps.astral.tre
+java -Xmx60000M -jar $ProgDir/astral.5.7.8.jar -t 32 -q /home/theaven/scratch/uncompressed/analysis/phylogeny/leotiomycetes_phylogeny+++.bootstrapped.consensus2.astral.tre -i /home/theaven/scratch/uncompressed/analysis/phylogeny/leotiomycetes_phylogeny+++.bootstraps.astral.tre -o /home/theaven/scratch/uncompressed/analysis/phylogeny/leotiomycetes_phylogeny+++.bootstrapped.scored2.astral.tre 
+java -Xmx60000M -jar $ProgDir/astral.5.7.8.jar -t 32 -i /home/theaven/scratch/uncompressed/analysis/phylogeny/tree-files.txt -q /home/theaven/scratch/uncompressed/analysis/phylogeny/leotiomycetes_phylogeny+++.bootstrapped.consensus2.astral.tre -o /home/theaven/scratch/uncompressed/analysis/phylogeny/leotiomycetes_phylogeny+++.bootstrapped.localposteriorprobabilityscored2.astral.tre 2> astral-scored.log
+
+#OutDir=/home/theaven/scratch/analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/ASTRAL_boot
+#mkdir -p $OutDir
+#cat analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/RAxML2/*/RAxML_bipartitionsBranchLabels.*  | sed -r "s/CTG.\w+:/:/g" > $OutDir/leotiomycetes_Nd_phylogeny.boot.appended.tre
+#java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -i $OutDir/leotiomycetes_Nd_phylogeny.boot.appended.tre -o $OutDir/leotiomycetes_Nd_phylogeny.boot.consensus.tre | tee 2> $OutDir/leotiomycetes_Nd_phylogeny.boot.consensus.log
+#java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -q $OutDir/leotiomycetes_Nd_phylogeny.boot.consensus.tre -i $OutDir/leotiomycetes_Nd_phylogeny.boot.appended.tre -o $OutDir/leotiomycetes_Nd_phylogeny.boot.consensus.scored.tre 2> $OutDir/leotiomycetes_Nd_phylogeny.boot.consensus.scored.log
+#ls analysis/phylogeny/busco/mildew_leotiomycetes_busco_aa/RAxML2/*/RAxML_bootstrap.* >  $OutDir/bs-files
+#java -Xmx1000M -jar $ProgDir/astral.5.7.8.jar -i $OutDir/leotiomycetes_Nd_phylogeny.boot.appended.tre -b $OutDir/bs-files -r 1000 -o $OutDir/leotiomycetes_Nd_phylogeny.bootstrapped.astral.tre 2> $OutDir/leotiomycetes_Nd_phylogeny.bootstrapped.astral.log
 
 mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir
 for gene in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/*/*_edit.fasta); do
@@ -4444,6 +4668,249 @@ singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtr
 
 singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -te /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2/AlignDir.contree -p /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir/ --scfl 100 --prefix concord2 -T 8
 #59546576
+
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-2
+for gene in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/*/*_edit.fasta); do
+ln -s $gene /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-2/.
+done
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-2
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-2
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-2
+cpu=32
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -s $AlignDir -m JTT+I+G4+F -B 1000 -T AUTO --threads-max $cpu
+#1944889
+
+cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-2* /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-2/.
+
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-3
+for gene in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/*/*_edit.fasta); do
+ln -s $gene /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-3/.
+done
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-3
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-3
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-3
+cpu=32
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -s $AlignDir -m GTR+G4 -B 1000 -T AUTO --threads-max $cpu
+#1944890
+
+cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-3* /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-3/.
+
+
+
+
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-4
+for gene in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/leo_busco_nt/*_nt_aligned_trimmed_edit.fasta); do
+ln -s $gene /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-4/.
+done
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-4
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-4
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-4
+cpu=32
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -s $AlignDir -m JTT+I+G4+F -B 1000 -T AUTO --threads-max $cpu
+#2042821
+
+cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-4* /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-4/.
+
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-5
+for gene in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/leo_busco_nt/*_nt_aligned_trimmed_edit.fasta); do
+ln -s $gene /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-5/.
+done
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-5
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-5
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-5
+cpu=32
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -s $AlignDir -m GTR+G4 -B 1000 -T AUTO --threads-max $cpu
+#2042814
+
+cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-5* /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-5/.
+
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-6
+for gene in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/leo_busco_nt/*_nt_aligned_trimmed_edit.fasta); do
+ln -s $gene /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-6/.
+done
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-6
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-6
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-6
+cpu=32
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -s $AlignDir -m SYM+I+R9 -B 1000 -T AUTO --threads-max $cpu
+#2042808
+
+cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-6* /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-6/.
+
+
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-7
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-3/*_nt_aligned_trimmed_edit.fasta); do
+    x=$(grep '>' "$file" | wc -l)
+    if [ "$x" -gt 69 ]; then
+        count=$((count + 1))
+        ln -s $file /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-7/.
+      else
+        echo "$file"
+        echo $x
+    fi
+done
+
+echo "Number of files with 70 or more sequences: $count" #716
+
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-7
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-7
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-7
+cpu=32
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -s $AlignDir -m SYM+I+R9 -B 1000 -T AUTO --threads-max $cpu
+#2042796
+
+cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-7* /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-7/.
+
+
+
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-8
+count=0
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/leo_busco_nt/*_nt_aligned_trimmed_edit.fasta); do
+    x=$(grep '>' "$file" | wc -l)
+    if [ "$x" -gt 63 ]; then
+        count=$((count + 1))
+        ln -s $file /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-8/.
+      else
+        echo "$file"
+        echo $x
+    fi
+done
+
+echo "Number of files with 64 (the number of leotiomycetes) or more sequences: $count" #2442
+
+cp -r /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-8 /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-9
+cp -r /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-8 /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-10
+
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-8
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-8
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-8
+cpu=32
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -s $AlignDir -m JTT+I+G4+F -B 1000 -T AUTO --threads-max $cpu
+#2042785
+
+cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-8* /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-8/.
+
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-9
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-9
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-9
+cpu=32
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -s $AlignDir -m SYM+I+R9 -B 1000 -T AUTO --threads-max $cpu
+#2042771
+
+cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-9* /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-9/.
+
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-10
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-10
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-10
+cpu=32
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -s $AlignDir -m GTR+G4 -B 1000 -T AUTO --threads-max $cpu
+#2042747
+
+cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-10* /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-10/.
+
+
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/python3.sif python3 ~/git_repos/Scripts/NBI/collpse_newick_single_node_leaves.py /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/trimmed-6.txt /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/ortho/analysis/cafe/trimmed-6.tree
+nano /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-6/AlignDir-6.iqtree #3926774 sites
+source package /nbi/software/testing/bin/r8s-1.80
+echo "#NEXUS" > r8s_ctl_file-m.txt
+echo "begin trees;" >> r8s_ctl_file-m.txt
+#echo "tree hemiptera_tree = [&R] $(cat /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/ortho/analysis/orthology/orthofinder/All_mildew-ara/formatted/orthofinder52000-7/Results_all_mildew/Species_Tree/SpeciesTree_rooted-rerooted.txt)" >> r8s_ctl_file-m.txt
+echo "tree hemiptera_tree = [&R] $(cat /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/ortho/analysis/cafe/trimmed-6.tree)" >> r8s_ctl_file-m.txt
+echo "end;" >> r8s_ctl_file-m.txt
+echo "begin rates;" >> r8s_ctl_file-m.txt
+echo "blformat nsites=3926774 lengths=persite ultrametric=no;" >> r8s_ctl_file-m.txt
+echo "collapse;" >> r8s_ctl_file-m.txt
+echo "mrca callibration_node_1 BLU_HOR_GCA_900237765.1 POD_APH_DRCT72020;" >> r8s_ctl_file-m.txt
+echo "mrca callibration_node_2 BLU_HOR_GCA_900237765.1 PAR_POL_PARPO1;" >> r8s_ctl_file-m.txt
+echo "mrca callibration_node_3 BLU_HOR_GCA_900237765.1 BLU_HOR_GCA_900519115.1;" >> r8s_ctl_file-m.txt
+echo "mrca callibration_node_4 ERY_NEC_GCA_000798795.1 GOL_CIC_GCA_003611215.1;" >> r8s_ctl_file-m.txt
+echo "mrca callibration_node_5 ERY_NEC_GCA_000798795.1 BLU_HOR_GCA_900237765.1;" >> r8s_ctl_file-m.txt
+echo "constrain taxon=callibration_node_1 min_age=75.0 max_age=75.0;" >> r8s_ctl_file-m.txt
+echo "constrain taxon=callibration_node_2 min_age=79.0 max_age=79.0;" >> r8s_ctl_file-m.txt
+echo "constrain taxon=callibration_node_3 min_age=0.01 max_age=11.0;" >> r8s_ctl_file-m.txt
+echo "constrain taxon=callibration_node_4 min_age=57.0 max_age=57.0;" >> r8s_ctl_file-m.txt
+echo "constrain taxon=callibration_node_5 min_age=53.2 max_age=75.0;" >> r8s_ctl_file-m.txt
+echo "divtime method=lf algorithm=tn cvStart=0 cvInc=0.5 cvNum=8 crossv=yes;" >> r8s_ctl_file-m.txt
+echo "describe plot=chronogram;" >> r8s_ctl_file-m.txt
+echo "describe plot=tree_description;" >> r8s_ctl_file-m.txt
+echo "end;" >> r8s_ctl_file-m.txt
+
+r8s -b -f r8s_ctl_file-m.txt > temp_r8s-m.txt
+tail -n 1 temp_r8s-m.txt > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/ortho/analysis/cafe/trimmed-6-r8s.tree
+
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-11
+for gene in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/leo_busco_nt/*_nt_aligned_trimmed_edit.fasta); do
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/python3.sif python3 ~/git_repos/Scripts/NBI/seq_get.py --id_file temp.txt --input $gene --output /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-11/$(basename $gene)
+done
+for gene in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-11/*_nt_aligned_trimmed_edit.fasta); do
+x=$(grep '>' $gene | wc -l)
+if [ ! "$x" -gt 2 ]; then
+    rm "$gene"
+fi
+done #25 removed, 3,207 remaining
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-11
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-11
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-11
+cpu=32
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -s $AlignDir -m JTT+I+G4+F -B 1000 -T AUTO --threads-max $cpu
+#2059447
+
+cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-11* /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-11/.
+
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-12
+for gene in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-11/*_nt_aligned_trimmed_edit.fasta); do
+ln -s $gene /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-12/.
+done
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-12
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-12
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-12
+cpu=32
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -s $AlignDir -m GTR+G4 -B 1000 -T AUTO --threads-max $cpu
+#2059448
+
+cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-12* /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-12/.
+
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-13
+for gene in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-11/*_nt_aligned_trimmed_edit.fasta); do
+ln -s $gene /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-13/.
+done
+mkdir /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-13
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-13
+AlignDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-13
+cpu=32
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/iqtree_2.3.0.sif iqtree2 -s $AlignDir -m SYM+I+R9 -B 1000 -T AUTO --threads-max $cpu
+#2059449
+
+cp /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/AlignDir-13* /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-13/.
+
+singularity exec /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/containers/python3.sif python3 ~/git_repos/Scripts/NBI/collpse_newick_single_node_leaves.py /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/trimmed-6.txt /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/ortho/analysis/cafe/trimmed-6.tree
+nano /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-11/AlignDir-11.iqtree #2580589 sites
+nano /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-12/AlignDir-12.iqtree #2580589
+nano /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/busco_nt/iqtree2-13/AlignDir-13.iqtree #2580589
+source package /nbi/software/testing/bin/r8s-1.80
+echo "#NEXUS" > r8s_ctl_file-m.txt2
+echo "begin trees;" >> r8s_ctl_file-m.txt2
+echo "tree hemiptera_tree = [&R] $(cat /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/13.txt)" >> r8s_ctl_file-m.txt2
+echo "end;" >> r8s_ctl_file-m.txt2
+echo "begin rates;" >> r8s_ctl_file-m.txt2
+echo "blformat nsites=2580589 lengths=persite ultrametric=no;" >> r8s_ctl_file-m.txt2
+echo "collapse;" >> r8s_ctl_file-m.txt2
+#echo "mrca callibration_node_1 BLU_HOR_GCA_900237765.1 POD_APH_DRCT72020;" >> r8s_ctl_file-m.txt2
+echo "mrca callibration_node_2 BLU_HOR_GCA_900237765.1 PAR_POL_PARPO1;" >> r8s_ctl_file-m.txt2
+#echo "mrca callibration_node_3 BLU_HOR_GCA_900237765.1 BLU_HOR_GCA_900519115.1;" >> r8s_ctl_file-m.txt2
+#echo "mrca callibration_node_4 ERY_NEC_GCA_000798795.1 GOL_CIC_GCA_003611215.1;" >> r8s_ctl_file-m.txt2
+#echo "mrca callibration_node_5 ERY_NEC_GCA_000798795.1 BLU_HOR_GCA_900237765.1;" >> r8s_ctl_file-m.txt2
+#echo "constrain taxon=callibration_node_1 min_age=75.0 max_age=75.0;" >> r8s_ctl_file-m.txt2
+echo "constrain taxon=callibration_node_2 min_age=79.0 max_age=79.0;" >> r8s_ctl_file-m.txt2
+#echo "constrain taxon=callibration_node_3 min_age=0.01 max_age=11.0;" >> r8s_ctl_file-m.txt2
+#echo "constrain taxon=callibration_node_4 min_age=57.0 max_age=57.0;" >> r8s_ctl_file-m.txt2
+#echo "constrain taxon=callibration_node_5 min_age=53.2 max_age=75.0;" >> r8s_ctl_file-m.txt2
+echo "divtime method=pl algorithm=tn cvStart=0 cvInc=0.5 cvNum=25 crossv=yes;" >> r8s_ctl_file-m.txt2
+echo "describe plot=chronogram;" >> r8s_ctl_file-m.txt2
+echo "describe plot=tree_description;" >> r8s_ctl_file-m.txt2
+echo "end;" >> r8s_ctl_file-m.txt2
+
+r8s -b -f r8s_ctl_file-m.txt2 > temp_r8s-m.txt2
 ```
 #### R8s
 Making the species tree ultrametric CAFE requires a tree that is ultramatric. There are many ways to obtain ultrametric trees (also known as timetrees, these are phylogenetic trees scaled to time, where all paths from root to tips have the same length). Here, we use a fast program called r8s. You will need to know the number of sites in the alignment used to estimate the species tree (the one you want to make ultrametric), and then you can specify one or more calibration points (ideally, the age or age window of a documented fossil) to scale branch lengths into time units. We provide you with a script that prepares the control file for running r8s on the species tree above (the number of sites is 35157236, and the calibration point for cats and humans is 94). In your shell, type:
@@ -4453,7 +4920,8 @@ source package /nbi/software/testing/bin/r8s-1.80
 
 echo "#NEXUS" > r8s_ctl_file-m.txt
 echo "begin trees; " >> r8s_ctl_file-m.txt
-echo "tree hemiptera_tree = [&R] $(cat /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/mildew-iq-reroot.txt)" >> r8s_ctl_file-m.txt
+#echo "tree hemiptera_tree = [&R] $(cat /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/mildew-iq-reroot.txt)" >> r8s_ctl_file-m.txt
+echo "tree hemiptera_tree = [&R] $(cat /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/mildew-tree.txt)" >> r8s_ctl_file-m.txt
 echo "End;" >> r8s_ctl_file-m.txt
 echo "begin rates;" >> r8s_ctl_file-m.txt
 echo "blformat nsites=3121748 lengths=persite ultrametric=no;" >> r8s_ctl_file-m.txt
@@ -4478,7 +4946,8 @@ echo "describe plot=tree_description;" >> r8s_ctl_file-m.txt
 echo "end;" >> r8s_ctl_file-m.txt
 
 r8s -b -f r8s_ctl_file-m.txt > temp_r8s-m.txt
-tail -n 1 temp_r8s-m.txt | cut -c 16- > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/iqtree_rerooted_r8s.txt
+#tail -n 1 temp_r8s-m.txt | cut -c 16- > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/analysis/phylogeny/iqtree_rerooted_r8s.txt
+tail -n 1 temp_r8s-m.txt | cut -c 16- > /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/mildew-tree_r8s.txt
 ```
 ```bash
 ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast/*_final_genes_renamed.pep.fasta > existing_protein_files.txt
@@ -5158,6 +5627,7 @@ sed -i "\$s/\$/ $y/" out.tsv
 done
 done
 ```
+Check to see if MCAGs that are present blast to distantly related species and are therefore likely contaminants rather than truely present MCAGs:
 ```bash
 ls *_final_genes_renamed.pep.fasta | sed 's@_final_genes_renamed.pep.fasta@@g' > assemblies.txt
 
@@ -5467,7 +5937,7 @@ for file in $(ls ~/projects/niab/theaven/gene_pred/*/*/codingquarry/rep_modeling
   ID=$(echo $file | cut -d '/' -f9)
   blastp -query $file -db buscodb -out ${ID}_busco_blast.tsv -max_target_seqs 1 -evalue 1e-15 -outfmt '6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qseq sseq'
   echo -e "name\tmatch\tpident\tlength\tmismatch\tgapopen\tqstart\tqend\tsstart\tsend\tevalue\tbitscore\tqseq\tsseq" > temp.tsv
-  cat ${ID}_busco_blast.tsv >> temp.tsv && mv temp.tsv ${ID}_busco_blast.tsv
+  cat ${ID}_busco_blast.tsv >> temp.tsv && mv temp.tsv ${ID}_busco_blast2.tsv
 done
 
 #Make blast database as in Praz et al., 2017
@@ -5480,11 +5950,152 @@ for file in $(ls ~/projects/niab/theaven/gene_pred/*/*/codingquarry/rep_modeling
   ID=$(echo $file | cut -d '/' -f9)
 blastp -query $file -db /home/theaven/scratch/uncompressed/csep_db/db/CSEPdb -out ${ID}_csep_blast.tsv -max_target_seqs 1 -evalue 1e-5 -outfmt '6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qseq sseq'
   echo -e "name\tmatch_1\tpident_1\tlength_1\tmismatch_1\tgapopen_1\tqstart_1\tqend_1\tsstart_1\tsend_1\tevalue_1\tbitscore_1\tqseq_1\tsseq_1" > temp.tsv
-  cat ${ID}_csep_blast.tsv >> temp.tsv && mv temp.tsv ${ID}_csep_blast.tsv
+  cat ${ID}_csep_blast.tsv >> temp.tsv && mv temp.tsv ${ID}_csep_blast2.tsv
 done
 
 conda deactivate
+
+
+join -t $'\t' -a 1 -e 0 -o 0,2.2,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12,1.13,1.14,1.15,1.16,1.17,1.18,1.19,1.20,1.21,1.22,1.23,1.24,1.25,1.26,1.27,1.28,1.29,1.30,1.31,1.32,1.33,1.34,1.35,1.36,1.37,1.38,1.39,1.40,1.41,1.42,1.43,1.44,1.45,1.46,1.47,1.48,1.49,1.50,1.51,1.52,1.53,1.54,1.55,1.56,1.57,1.58,1.59,1.60,1.61,1.62,1.63,1.64,1.65,1.66,1.67,1.68,1.69,1.70,1.71,1.72,1.73,1.74,1.75,1.76,1.77,1.78,1.79,1.80,1.81,1.82,1.83,1.84 \
+<(sort /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenSCOTT2020_1/predector_singularity3/results/final_genes_appended_renamed.pep/final_genes_appended_renamed.pep-ranked.tsv) \
+<(sort /home/theaven/scratch/uncompressed/THeavenSCOTT2020_1_csep_blast.tsv) | sed 's/match_1/csep_blast/g' | sort | uniq > P_aphanis-THeavenSCOTT2020_1-ranked.tsv
+
+join -t $'\t' -a 1 -e 0 -o 0,2.2,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12,1.13,1.14,1.15,1.16,1.17,1.18,1.19,1.20,1.21,1.22,1.23,1.24,1.25,1.26,1.27,1.28,1.29,1.30,1.31,1.32,1.33,1.34,1.35,1.36,1.37,1.38,1.39,1.40,1.41,1.42,1.43,1.44,1.45,1.46,1.47,1.48,1.49,1.50,1.51,1.52,1.53,1.54,1.55,1.56,1.57,1.58,1.59,1.60,1.61,1.62,1.63,1.64,1.65,1.66,1.67,1.68,1.69,1.70,1.71,1.72,1.73,1.74,1.75,1.76,1.77,1.78,1.79,1.80,1.81,1.82,1.83,1.84 <(sort /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72020_1/predector_singularity3/results/final_genes_appended_renamed.pep/final_genes_appended_renamed.pep-ranked.tsv) <(sort /home/theaven/scratch/uncompressed/THeavenDRCT72020_1_csep_blast.tsv) | sed 's/match_1/csep_blast/g' | sort | uniq > P_aphanis-THeavenDRCT72020_1-ranked.tsv
+join -t $'\t' -a 1 -e 0 -o 0,2.2,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12,1.13,1.14,1.15,1.16,1.17,1.18,1.19,1.20,1.21,1.22,1.23,1.24,1.25,1.26,1.27,1.28,1.29,1.30,1.31,1.32,1.33,1.34,1.35,1.36,1.37,1.38,1.39,1.40,1.41,1.42,1.43,1.44,1.45,1.46,1.47,1.48,1.49,1.50,1.51,1.52,1.53,1.54,1.55,1.56,1.57,1.58,1.59,1.60,1.61,1.62,1.63,1.64,1.65,1.66,1.67,1.68,1.69,1.70,1.71,1.72,1.73,1.74,1.75,1.76,1.77,1.78,1.79,1.80,1.81,1.82,1.83,1.84 <(sort /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72021_1/predector_singularity3/results/final_genes_appended_renamed.pep/final_genes_appended_renamed.pep-ranked.tsv) <(sort /home/theaven/scratch/uncompressed/THeavenDRCT72021_1_csep_blast.tsv) | sed 's/match_1/csep_blast/g' | sort | uniq > P_aphanis-THeavenDRCT72021_1-ranked.tsv
+join -t $'\t' -a 1 -e 0 -o 0,2.2,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12,1.13,1.14,1.15,1.16,1.17,1.18,1.19,1.20,1.21,1.22,1.23,1.24,1.25,1.26,1.27,1.28,1.29,1.30,1.31,1.32,1.33,1.34,1.35,1.36,1.37,1.38,1.39,1.40,1.41,1.42,1.43,1.44,1.45,1.46,1.47,1.48,1.49,1.50,1.51,1.52,1.53,1.54,1.55,1.56,1.57,1.58,1.59,1.60,1.61,1.62,1.63,1.64,1.65,1.66,1.67,1.68,1.69,1.70,1.71,1.72,1.73,1.74,1.75,1.76,1.77,1.78,1.79,1.80,1.81,1.82,1.83,1.84 <(sort /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenpOGB2019_1/predector_singularity3/results/final_genes_appended_renamed.pep/final_genes_appended_renamed.pep-ranked.tsv) <(sort /home/theaven/scratch/uncompressed/THeavenpOGB2019_1_csep_blast.tsv) | sed 's/match_1/csep_blast/g' | sort | uniq > P_leucotricha-THeavenpOGB2019_1-ranked.tsv
+join -t $'\t' -a 1 -e 0 -o 0,2.2,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12,1.13,1.14,1.15,1.16,1.17,1.18,1.19,1.20,1.21,1.22,1.23,1.24,1.25,1.26,1.27,1.28,1.29,1.30,1.31,1.32,1.33,1.34,1.35,1.36,1.37,1.38,1.39,1.40,1.41,1.42,1.43,1.44,1.45,1.46,1.47,1.48,1.49,1.50,1.51,1.52,1.53,1.54,1.55,1.56,1.57,1.58,1.59,1.60,1.61,1.62,1.63,1.64,1.65,1.66,1.67,1.68,1.69,1.70,1.71,1.72,1.73,1.74,1.75,1.76,1.77,1.78,1.79,1.80,1.81,1.82,1.83,1.84 <(sort /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenp11_1/predector_singularity3/results/final_genes_appended_renamed.pep/final_genes_appended_renamed.pep-ranked.tsv) <(sort /home/theaven/scratch/uncompressed/THeavenp11_1_csep_blast.tsv) | sed 's/match_1/csep_blast/g' | sort | uniq > P_leucotricha-THeavenp11_1-ranked.tsv
+join -t $'\t' -a 1 -e 0 -o 0,2.2,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12,1.13,1.14,1.15,1.16,1.17,1.18,1.19,1.20,1.21,1.22,1.23,1.24,1.25,1.26,1.27,1.28,1.29,1.30,1.31,1.32,1.33,1.34,1.35,1.36,1.37,1.38,1.39,1.40,1.41,1.42,1.43,1.44,1.45,1.46,1.47,1.48,1.49,1.50,1.51,1.52,1.53,1.54,1.55,1.56,1.57,1.58,1.59,1.60,1.61,1.62,1.63,1.64,1.65,1.66,1.67,1.68,1.69,1.70,1.71,1.72,1.73,1.74,1.75,1.76,1.77,1.78,1.79,1.80,1.81,1.82,1.83,1.84 <(sort /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenpOGB2021_1/predector_singularity3/results/final_genes_appended_renamed.pep/final_genes_appended_renamed.pep-ranked.tsv) <(sort /home/theaven/scratch/uncompressed/THeavenpOGB2021_1_csep_blast.tsv) | sed 's/match_1/csep_blast/g' | sort | uniq > P_leucotricha-THeavenpOGB2021_1-ranked.tsv
+
+gene_file=P_aphanis-THeavenSCOTT2020_1-ranked.tsv
+taxon_code=RA20
+echo -e "name\torthogroup" > temp.tsv
+while IFS=$'\t' read -r line; do
+    gene=$(echo "$line" | awk '{print $1}')
+    gene_search="$taxon_code|$gene"
+    orthogroup=$(grep "$gene_search" analysis/orthology/orthofinder/All6_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt | cut -d ':' -f1)
+    if [ $gene != "name" ]; then
+    echo -e "$gene\t$orthogroup" >> temp.tsv
+    fi
+done < $gene_file
+join -t $'\t' -a 1 -e 0 -o 0,2.2,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12,1.13,1.14,1.15,1.16,1.17,1.18,1.19,1.20,1.21,1.22,1.23,1.24,1.25,1.26,1.27,1.28,1.29,1.30,1.31,1.32,1.33,1.34,1.35,1.36,1.37,1.38,1.39,1.40,1.41,1.42,1.43,1.44,1.45,1.46,1.47,1.48,1.49,1.50,1.51,1.52,1.53,1.54,1.55,1.56,1.57,1.58,1.59,1.60,1.61,1.62,1.63,1.64,1.65,1.66,1.67,1.68,1.69,1.70,1.71,1.72,1.73,1.74,1.75,1.76,1.77,1.78,1.79,1.80,1.81,1.82,1.83,1.84,1.85 <(sort $gene_file) <(sort temp.tsv) | sort | uniq > temp2.tsv && mv temp2.tsv $gene_file
+
+gene_file=P_aphanis-THeavenDRCT72020_1-ranked.tsv
+taxon_code=ST20
+echo -e "name\torthogroup" > temp1.tsv
+while IFS=$'\t' read -r line; do
+    gene=$(echo "$line" | awk '{print $1}')
+    gene_search="$taxon_code|$gene"
+    orthogroup=$(grep "$gene_search" analysis/orthology/orthofinder/All6_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt | cut -d ':' -f1)
+    if [ $gene != "name" ]; then
+    echo -e "$gene\t$orthogroup" >> temp1.tsv
+    fi
+done < $gene_file
+join -t $'\t' -a 1 -e 0 -o 0,2.2,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12,1.13,1.14,1.15,1.16,1.17,1.18,1.19,1.20,1.21,1.22,1.23,1.24,1.25,1.26,1.27,1.28,1.29,1.30,1.31,1.32,1.33,1.34,1.35,1.36,1.37,1.38,1.39,1.40,1.41,1.42,1.43,1.44,1.45,1.46,1.47,1.48,1.49,1.50,1.51,1.52,1.53,1.54,1.55,1.56,1.57,1.58,1.59,1.60,1.61,1.62,1.63,1.64,1.65,1.66,1.67,1.68,1.69,1.70,1.71,1.72,1.73,1.74,1.75,1.76,1.77,1.78,1.79,1.80,1.81,1.82,1.83,1.84,1.85 <(sort $gene_file) <(sort temp1.tsv) | sort | uniq > temp12.tsv && mv temp12.tsv $gene_file
+
+gene_file=P_aphanis-THeavenDRCT72021_1-ranked.tsv
+taxon_code=ST21
+echo -e "name\torthogroup" > temp1.tsv
+while IFS=$'\t' read -r line; do
+    gene=$(echo "$line" | awk '{print $1}')
+    gene_search="$taxon_code|$gene"
+    orthogroup=$(grep "$gene_search" analysis/orthology/orthofinder/All6_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt | cut -d ':' -f1)
+    if [ $gene != "name" ]; then
+    echo -e "$gene\t$orthogroup" >> temp1.tsv
+    fi
+done < $gene_file
+join -t $'\t' -a 1 -e 0 -o 0,2.2,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12,1.13,1.14,1.15,1.16,1.17,1.18,1.19,1.20,1.21,1.22,1.23,1.24,1.25,1.26,1.27,1.28,1.29,1.30,1.31,1.32,1.33,1.34,1.35,1.36,1.37,1.38,1.39,1.40,1.41,1.42,1.43,1.44,1.45,1.46,1.47,1.48,1.49,1.50,1.51,1.52,1.53,1.54,1.55,1.56,1.57,1.58,1.59,1.60,1.61,1.62,1.63,1.64,1.65,1.66,1.67,1.68,1.69,1.70,1.71,1.72,1.73,1.74,1.75,1.76,1.77,1.78,1.79,1.80,1.81,1.82,1.83,1.84,1.85 <(sort $gene_file) <(sort temp1.tsv) | sort | uniq > temp12.tsv && mv temp12.tsv $gene_file
+
+gene_file=P_leucotricha-THeavenpOGB2019_1-ranked.tsv
+taxon_code=AP19
+echo -e "name\torthogroup" > temp.tsv
+while IFS=$'\t' read -r line; do
+    gene=$(echo "$line" | awk '{print $1}')
+    gene_search="$taxon_code|$gene"
+    orthogroup=$(grep "$gene_search" analysis/orthology/orthofinder/All6_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt | cut -d ':' -f1)
+    if [ $gene != "name" ]; then
+    echo -e "$gene\t$orthogroup" >> temp.tsv
+    fi
+done < $gene_file
+join -t $'\t' -a 1 -e 0 -o 0,2.2,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12,1.13,1.14,1.15,1.16,1.17,1.18,1.19,1.20,1.21,1.22,1.23,1.24,1.25,1.26,1.27,1.28,1.29,1.30,1.31,1.32,1.33,1.34,1.35,1.36,1.37,1.38,1.39,1.40,1.41,1.42,1.43,1.44,1.45,1.46,1.47,1.48,1.49,1.50,1.51,1.52,1.53,1.54,1.55,1.56,1.57,1.58,1.59,1.60,1.61,1.62,1.63,1.64,1.65,1.66,1.67,1.68,1.69,1.70,1.71,1.72,1.73,1.74,1.75,1.76,1.77,1.78,1.79,1.80,1.81,1.82,1.83,1.84,1.85 <(sort $gene_file) <(sort temp.tsv) | sort | uniq > temp2.tsv && mv temp2.tsv $gene_file
+
+gene_file=P_leucotricha-THeavenp11_1-ranked.tsv
+taxon_code=AP20
+echo -e "name\torthogroup" > temp1.tsv
+while IFS=$'\t' read -r line; do
+    gene=$(echo "$line" | awk '{print $1}')
+    gene_search="$taxon_code|$gene"
+    orthogroup=$(grep "$gene_search" analysis/orthology/orthofinder/All6_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt | cut -d ':' -f1)
+    if [ $gene != "name" ]; then
+    echo -e "$gene\t$orthogroup" >> temp1.tsv
+    fi
+done < $gene_file
+join -t $'\t' -a 1 -e 0 -o 0,2.2,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12,1.13,1.14,1.15,1.16,1.17,1.18,1.19,1.20,1.21,1.22,1.23,1.24,1.25,1.26,1.27,1.28,1.29,1.30,1.31,1.32,1.33,1.34,1.35,1.36,1.37,1.38,1.39,1.40,1.41,1.42,1.43,1.44,1.45,1.46,1.47,1.48,1.49,1.50,1.51,1.52,1.53,1.54,1.55,1.56,1.57,1.58,1.59,1.60,1.61,1.62,1.63,1.64,1.65,1.66,1.67,1.68,1.69,1.70,1.71,1.72,1.73,1.74,1.75,1.76,1.77,1.78,1.79,1.80,1.81,1.82,1.83,1.84,1.85 <(sort $gene_file) <(sort temp1.tsv) | sort | uniq > temp12.tsv && mv temp12.tsv $gene_file
+
+gene_file=P_leucotricha-THeavenpOGB2021_1-ranked.tsv
+taxon_code=AP21
+echo -e "name\torthogroup" > temp.tsv
+while IFS=$'\t' read -r line; do
+    gene=$(echo "$line" | awk '{print $1}')
+    gene_search="$taxon_code|$gene"
+    orthogroup=$(grep "$gene_search" analysis/orthology/orthofinder/All6_isolates/formatted/OrthoFinder/Results_Jul20_2/Orthogroups/Orthogroups.txt | cut -d ':' -f1)
+    if [ $gene != "name" ]; then
+    echo -e "$gene\t$orthogroup" >> temp.tsv
+    fi
+done < $gene_file
+join -t $'\t' -a 1 -e 0 -o 0,2.2,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12,1.13,1.14,1.15,1.16,1.17,1.18,1.19,1.20,1.21,1.22,1.23,1.24,1.25,1.26,1.27,1.28,1.29,1.30,1.31,1.32,1.33,1.34,1.35,1.36,1.37,1.38,1.39,1.40,1.41,1.42,1.43,1.44,1.45,1.46,1.47,1.48,1.49,1.50,1.51,1.52,1.53,1.54,1.55,1.56,1.57,1.58,1.59,1.60,1.61,1.62,1.63,1.64,1.65,1.66,1.67,1.68,1.69,1.70,1.71,1.72,1.73,1.74,1.75,1.76,1.77,1.78,1.79,1.80,1.81,1.82,1.83,1.84,1.85 <(sort $gene_file) <(sort temp.tsv) | sort | uniq > temp2.tsv && mv temp2.tsv $gene_file
+
+while IFS=$'\t' read -r line; do
+    awk -F'\t' '$27 == "1" && $23 == "." && $3 == "0" {print $2}' <<< "$line" | grep -v 'orthogroup' >> temp.txt
+done < <(cat P_leucotricha-THeavenpOGB2021_1-ranked.tsv P_leucotricha-THeavenp11_1-ranked.tsv P_leucotricha-THeavenpOGB2019_1-ranked.tsv P_aphanis-THeavenDRCT72021_1-ranked.tsv P_aphanis-THeavenDRCT72020_1-ranked.tsv P_aphanis-THeavenSCOTT2020_1-ranked.tsv)
+
+
+gene_file=P_leucotricha-THeavenpOGB2021_1-ranked.tsv
+while IFS=$'\t' read -r line; do
+    awk -F'\t' '$27 == "1" && $23 == "." && $3 == "0" {print $2}' <<< "$line" | grep -v 'orthogroup' 
+done < $gene_file | awk '{count[$1]++} END {for (term in count) print term, count[term]}' > temp1.tsv
+
+gene_file=P_leucotricha-THeavenp11_1-ranked.tsv
+while IFS=$'\t' read -r line; do
+    awk -F'\t' '$27 == "1" && $23 == "." && $3 == "0" {print $2}' <<< "$line" | grep -v 'orthogroup' 
+done < $gene_file | awk '{count[$1]++} END {for (term in count) print term, count[term]}' > temp2.tsv
+
+gene_file=P_leucotricha-THeavenpOGB2019_1-ranked.tsv
+while IFS=$'\t' read -r line; do
+    awk -F'\t' '$27 == "1" && $23 == "." && $3 == "0" {print $2}' <<< "$line" | grep -v 'orthogroup' 
+done < $gene_file | awk '{count[$1]++} END {for (term in count) print term, count[term]}' > temp3.tsv
+
+gene_file=P_aphanis-THeavenDRCT72021_1-ranked.tsv
+while IFS=$'\t' read -r line; do
+    awk -F'\t' '$27 == "1" && $23 == "." && $3 == "0" {print $2}' <<< "$line" | grep -v 'orthogroup' 
+done < $gene_file | awk '{count[$1]++} END {for (term in count) print term, count[term]}' > temp4.tsv
+
+gene_file=P_aphanis-THeavenDRCT72020_1-ranked.tsv
+while IFS=$'\t' read -r line; do
+    awk -F'\t' '$27 == "1" && $23 == "." && $3 == "0" {print $2}' <<< "$line" | grep -v 'orthogroup' 
+done < $gene_file | awk '{count[$1]++} END {for (term in count) print term, count[term]}' > temp5.tsv
+
+gene_file=P_aphanis-THeavenSCOTT2020_1-ranked.tsv
+while IFS=$'\t' read -r line; do
+    awk -F'\t' '$27 == "1" && $23 == "." && $3 == "0" {print $2}' <<< "$line" | grep -v 'orthogroup' 
+done < $gene_file | awk '{count[$1]++} END {for (term in count) print term, count[term]}' > temp6.tsv
+
+tr ' ' '\t' < temp1.tsv > temp_file && mv temp_file temp1.tsv
+tr ' ' '\t' < temp2.tsv > temp_file && mv temp_file temp2.tsv
+tr ' ' '\t' < temp3.tsv > temp_file && mv temp_file temp3.tsv
+tr ' ' '\t' < temp4.tsv > temp_file && mv temp_file temp4.tsv
+tr ' ' '\t' < temp5.tsv > temp_file && mv temp_file temp5.tsv
+tr ' ' '\t' < temp6.tsv > temp_file && mv temp_file temp6.tsv
+
+cat temp1.tsv temp2.tsv temp3.tsv temp4.tsv temp5.tsv temp6.tsv | awk '{print $1}' | sort | uniq > temp.tsv
+
+join -t $'\t' -a 1 -e 0 -o 0,2.2 <(sort temp.tsv) <(sort temp1.tsv) > tempx.txt && mv tempx.txt temp.tsv
+join -t $'\t' -a 1 -e 0 -o 0,2.2,1.2 <(sort temp.tsv) <(sort temp2.tsv) > tempx.txt && mv tempx.txt temp.tsv
+join -t $'\t' -a 1 -e 0 -o 0,2.2,1.2,1.3 <(sort temp.tsv) <(sort temp3.tsv) > tempx.txt && mv tempx.txt temp.tsv
+join -t $'\t' -a 1 -e 0 -o 0,2.2,1.2,1.3,1.4 <(sort temp.tsv) <(sort temp4.tsv) > tempx.txt && mv tempx.txt temp.tsv
+join -t $'\t' -a 1 -e 0 -o 0,2.2,1.2,1.3,1.4,1.5 <(sort temp.tsv) <(sort temp5.tsv) > tempx.txt && mv tempx.txt temp.tsv
+join -t $'\t' -a 1 -e 0 -o 0,2.2,1.2,1.3,1.4,1.5,1.6 <(sort temp.tsv) <(sort temp6.tsv) > tempx.txt && mv tempx.txt 6_OGs.tsv
 ```
+
 ```R
 setwd("C:/Users/did23faz/OneDrive - Norwich Bioscience Institutes/Desktop/R")
 
@@ -5880,6 +6491,8 @@ library(ggplot2)
 library(patchwork)
 library(dplyr)
 
+#See permutation_vs_busco.R for generation of merged_data4 - merged_data9
+
 df_all <- merged_data4 #DRCT72020
 #df_all <- merged_data5 #DRCT72021
 #df_all <- merged_data6 #SCOTT2020
@@ -5908,7 +6521,7 @@ df_all$eka[df_all$is_secreted == 1] <- "Non EKA"
 # Plot 1
 df_all$tempvar <- "Total"
 plot101 <- ggplot(df_all, aes(x= five_prime, y=three_prime)) +
-  geom_hex(binwidth=c(0.05, 0.05)) +
+  geom_hex(binwidth=0.05) +
   scale_fill_distiller(palette = "Spectral", name="Gene\ncount", trans = "log10", breaks = c(0, 10, 100, 1000, 4000)) +
   scale_x_log10(labels = scales::number_format(), breaks = NULL) +
   scale_y_log10(labels = scales::number_format(), breaks = c(1, 10, 100, 1000, 10000, 100000)) +
@@ -5926,7 +6539,7 @@ plot101 <- plot101 + facet_grid(. ~ tempvar) +
 # Plot 2
 df_all$tempvar <- "BUSCO"
 plot102 <- ggplot(df_all, aes(x = five_prime, y = three_prime)) +
-  geom_hex(binwidth = c(0.05, 0.05), fill = "grey") +
+  geom_hex(binwidth = 0.05, fill = "grey") +
   scale_x_log10(labels = scales::number_format(), breaks = NULL) +
   scale_y_log10(labels = scales::number_format(), breaks = NULL) +
   ylab("") +
@@ -5944,7 +6557,7 @@ plot102 <- plot102 + facet_grid(. ~ tempvar) +
 # Plot 3
 df_all$tempvar <- "CAZY"
 plot103 <- ggplot(df_all, aes(x = five_prime, y = three_prime)) +
-  geom_hex(binwidth = c(0.05, 0.05), fill = "grey") +
+  geom_hex(binwidth = 0.05, fill = "grey") +
   scale_x_log10(labels = scales::number_format(), breaks = NULL) +
   scale_y_log10(labels = scales::number_format(), breaks = c(1, 10, 100, 1000, 10000, 100000)) +
   ylab("5' prime intergenic length (bp)") +
@@ -5962,7 +6575,7 @@ plot103 <- plot103 + facet_grid(. ~ tempvar) +
 # Plot 4
 df_all$tempvar <- "CSEP"
 plot104 <- ggplot(df_all, aes(x = five_prime, y = three_prime)) +
-  geom_hex(binwidth = c(0.05, 0.05), fill = "grey") +
+  geom_hex(binwidth = 0.05, fill = "grey") +
   scale_x_log10(labels = scales::number_format(), breaks = NULL) +
   scale_y_log10(labels = scales::number_format(), breaks = NULL) +
   ylab("") +
@@ -5980,7 +6593,7 @@ plot104 <- plot104 + facet_grid(. ~ tempvar) +
 # Plot 5
 df_all$tempvar <- "EKA"
 plot105 <- ggplot(df_all, aes(x = five_prime, y = three_prime)) +
-  geom_hex(binwidth = c(0.05, 0.05), fill = "grey") +
+  geom_hex(binwidth = 0.05, fill = "grey") +
   scale_x_log10(labels = scales::number_format(), breaks = c(1, 10, 100, 1000, 10000, 100000)) +
   scale_y_log10(labels = scales::number_format(), breaks = c(1, 10, 100, 1000, 10000, 100000)) +
   ylab("") +
@@ -5998,7 +6611,7 @@ plot105 <- plot105 + facet_grid(. ~ tempvar) +
 # Plot 6
 df_all$tempvar <- "RALPH"
 plot106 <- ggplot(df_all, aes(x = five_prime, y = three_prime)) +
-  geom_hex(binwidth = c(0.05, 0.05), fill = "grey") +
+  geom_hex(binwidth = 0.05, fill = "grey") +
   scale_x_log10(labels = scales::number_format(), breaks = c(1, 10, 100, 1000, 10000, 100000)) +
   scale_y_log10(labels = scales::number_format(), breaks = NULL) +
   ylab("") +
@@ -6021,6 +6634,8 @@ combined_plot <- plot101 + plot102 + plot103 + plot104 + plot105 + plot106 +
 
 # Display combined plot
 combined_plot
+
+#Export as pdf to retain hexagonal bin shape
 ```
 ```R
 library(ggplot2)
@@ -6584,6 +7199,7 @@ done
 
 Müller et al. (2018) found that in the B. graminis genome the upstream regions of short CSEPs were enriched for LTRs of the Copia and Gypsy superfamilies, whereas upstream regions of longer CSEPs were enriched for LINEs and SINEs.
 ```bash
+#put gene and TE annotations into one file and keep only annotations for 'cleaned' contigs:
 awk '$3 == "gene"' /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3 > /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/te.gff
 cat /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72020/fcs/earlgreyte/Pod_aph_DRT72020/Pod_aph_DRT72020_EarlGrey/Pod___summaryFiles/Pod__.filteredRepeats.gff >> /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/te.gff
 grep '>' /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72020/fcs/HEAVEN_strawberry2020_clean.fasta | sed 's@>@@g' > search.txt
@@ -6711,7 +7327,7 @@ for Gff in $(ls /home/theaven/projects/niab/theaven/gene_pred/P_*/*/codingquarry
   ID=$(echo $Gff | cut -d '/' -f9)
 OutFile=$(dirname $Gff)/${ID}_flanking_Pogos.txt
 echo -e "ID\tfive_prime_lgth\tfive_prime_family\tfive_prime_ID\tthree_prime_lgth\tthree_prime_family\tthree_prime_ID\tstrand" > $OutFile
-python2.7 ../apps/tools/find_intergenic_te_distances.py --Gff $Gff --ID DNA/TcMar_Pogo >> $OutFile
+python2.7 ../apps/tools/find_intergenic_te_distances.py --Gff $Gff --ID DNA/TcMar-Pogo >> $OutFile
 head -n 1 $OutFile > temp.temp
 tail -n +2 $OutFile | awk -F'\t' '{print $1 ".t1\t" $2 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8}' >> temp.temp && mv temp.temp $OutFile
 x=$(grep 'gene' $Gff | wc -l)
@@ -6723,7 +7339,7 @@ for Gff in $(ls /home/theaven/projects/niab/theaven/gene_pred/P_*/*/codingquarry
   ID=$(echo $Gff | cut -d '/' -f9)
 OutFile=$(dirname $Gff)/${ID}_flanking_Mariners.txt
 echo -e "ID\tfive_prime_lgth\tfive_prime_family\tfive_prime_ID\tthree_prime_lgth\tthree_prime_family\tthree_prime_ID\tstrand" > $OutFile
-python2.7 ../apps/tools/find_intergenic_te_distances.py --Gff $Gff --ID DNA/TcMar_Mariner >> $OutFile
+python2.7 ../apps/tools/find_intergenic_te_distances.py --Gff $Gff --ID DNA/TcMar >> $OutFile
 head -n 1 $OutFile > temp.temp
 tail -n +2 $OutFile | awk -F'\t' '{print $1 ".t1\t" $2 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8}' >> temp.temp && mv temp.temp $OutFile
 x=$(grep 'gene' $Gff | wc -l)
@@ -6767,6 +7383,10 @@ y=$(cat $OutFile | wc -l)
 echo "Genes in $ID GFF: $x, distances found for: $y"
 done
 conda deactivate
+
+for file in $(ls /home/theaven/projects/niab/theaven/gene_pred/P_*/*/codingquarry/rep_modeling/final/*.txt | grep -v 'intergenic'); do
+cp $file tmp20082024/.
+done
 ```
 ```python
 from collections import Counter
@@ -6783,6 +7403,290 @@ with open('/home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenp1
 # Print the occurrences of each unique string in the fourth column
 for string, count in nested_strings_counter.items():
     print(f"{string}: {count} occurrences")
+
+```
+Note-copia and gypsy are LTRs and tad1 is an LINE, pogo is a DNA and mariner.
+```R
+setwd("C:/Users/did23faz/OneDrive - Norwich Bioscience Institutes/Desktop/R")
+
+#search <- read.table("p11_1_good.txt", header = FALSE)
+#search <- read.table("OGB2021_good.txt", header = FALSE)
+#search <- read.table("OGB2019_good.txt", header = FALSE)
+#search <- read.table("SCOTT2020_good.txt", header = FALSE)
+search <- read.table("DRCT72021_good.txt", header = FALSE)
+#search <- read.table("DRCT72020_good.txt", header = FALSE)
+
+#prefix <- "THeavenp11"
+#prefix <- "THeavenpOGB2021"
+#prefix <- "THeavenpOGB2019"
+#species <- "P_leucotricha"
+#prefix <- "THeavenSCOTT2020"
+#prefix <- "THeavenDRCT72020"
+prefix <- "THeavenDRCT72021"
+species <- "P_aphanis"
+
+predector <- read.table(paste0("download/download/", species, "-", prefix, "_1-ranked.tsv"), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+nonest <- read.table(paste0("download/download/", prefix, "_1_intergenic_regions_nonest.txt"), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+nest <- read.table(paste0("download/download/", prefix, "_1_intergenic_regions.txt"), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+names(nest)[2:4] <- paste0(names(nest)[2:4], "_2")
+blast <- read.table(paste0("download/download/", prefix, "_1_busco_blast.tsv"), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+csep_blast <- read.table(paste0("download/download/", prefix, "_1_csep_blast.tsv"), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+
+any_te <- read.table(paste0("download/download/", prefix, "_1_flanking_tes.txt"), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+colnames(any_te)[1] <- "name"
+
+copia_te <- read.table(paste0("download/download/", prefix, "_1_flanking_Copias.txt"), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+colnames(copia_te)[1] <- "name"
+
+DNA_te <- read.table(paste0("download/download/", prefix, "_1_flanking_DNAs.txt"), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+colnames(DNA_te)[1] <- "name"
+
+Gypsy_te <- read.table(paste0("download/download/", prefix, "_1_flanking_Gypsys.txt"), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+colnames(Gypsy_te)[1] <- "name"
+
+LINE_te <- read.table(paste0("download/download/", prefix, "_1_flanking_LINEs.txt"), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+colnames(LINE_te)[1] <- "name"
+
+LTR_te <- read.table(paste0("download/download/", prefix, "_1_flanking_LTRs.txt"), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+colnames(LTR_te)[1] <- "name"
+
+Mariner_te <- read.table(paste0("download/download/", prefix, "_1_flanking_Mariners.txt"), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+colnames(Mariner_te)[1] <- "name"
+
+Pogo_te <- read.table(paste0("download/download/", prefix, "_1_flanking_Pogos.txt"), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+colnames(Pogo_te)[1] <- "name"
+
+Tad_te <- read.table(paste0("download/download/", prefix, "_1_flanking_Tads.txt"), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+colnames(Tad_te)[1] <- "name"
+
+# Merging the data
+merged_data <- merge(predector, nonest,  by = "name", all = TRUE)
+merged_data2 <- merge(merged_data, nest, by = "name", all = TRUE)
+merged_data3 <- merge(merged_data2, blast, by = "name", all = TRUE)
+df <- merge(merged_data3, csep_blast, by = "name", all = TRUE)
+df2 <- df[!duplicated(df[[1]]), ]
+df3 <- df2 %>%
+  filter(name %in% search$V1)
+
+df3$sec_type <- 'Non CSEP'
+df3$sec_type[is.na(df3$match_1) & df3$is_secreted == 1 & df3$effectorp3_noneffector == "." & df3$residue_number < 201] <- "Short CSEP"
+df3$sec_type[is.na(df3$match_1) & df3$is_secreted == 1 & df3$effectorp3_noneffector == "." & df3$residue_number > 200] <- "Long CSEP"
+df3$sec_type <- factor(df3$sec_type, levels = c("Non CSEP", "Short CSEP", "Long CSEP"))
+count_short_csep <- sum(df3$sec_type == "Short CSEP")
+count_long_csep <- sum(df3$sec_type == "Long CSEP")
+count_non_csep <- sum(df3$sec_type == "Non CSEP")
+merged_data4 <- df3
+
+merged_data5 <- merge(merged_data4, any_te, by = "name", all = FALSE)
+merged_data5$te_group <- 'Any TE'
+merged_data6 <- merge(merged_data4, copia_te, by = "name", all = FALSE)
+merged_data6$te_group <- 'Copia'
+merged_data7 <- merge(merged_data4, DNA_te, by = "name", all = FALSE)
+merged_data7$te_group <- 'DNA'
+merged_data8 <- merge(merged_data4, Gypsy_te, by = "name", all = FALSE)
+merged_data8$te_group <- 'Gypsy'
+merged_data9 <- merge(merged_data4, LINE_te, by = "name", all = FALSE)
+merged_data9$te_group <- 'LINE'
+merged_data10 <- merge(merged_data4, LTR_te, by = "name", all = FALSE)
+merged_data10$te_group <- 'LTR'
+merged_data11 <- merge(merged_data4, Mariner_te, by = "name", all = FALSE)
+merged_data11$te_group <- 'Mariner'
+merged_data12 <- merge(merged_data4, Pogo_te, by = "name", all = FALSE)
+merged_data12$te_group <- 'Pogo'
+merged_data13 <- merge(merged_data4, Tad_te, by = "name", all = FALSE)
+merged_data13$te_group <- 'Tad'
+
+merged_data14 <- merge(merged_data4, any_te, by = "name", all = FALSE)
+merged_data14$five_prime_lgth <- merged_data14$five_prime_2
+merged_data14$five_prime_family <- 'gene'
+merged_data14$five_prime_ID <- 'gene'
+merged_data14$three_prime_lgth <- merged_data14$three_prime_2
+merged_data14$three_prime_family <- 'gene'
+merged_data14$three_prime_ID <- 'gene'
+merged_data14$strand.y <- merged_data14$strand_2
+merged_data14$te_group <- 'Gene'
+
+df <- rbind(merged_data5,merged_data6,merged_data7,merged_data8,merged_data9,merged_data10,merged_data11,merged_data12,merged_data13,merged_data14)
+
+allte <- df %>%
+  filter(name %in% search$V1)
+
+allte$three_prime_lgth[allte$three_prime_lgth == 'Nested TE'] <- 0
+allte$five_prime_lgth[allte$five_prime_lgth == 'Nested TE'] <- 0
+
+allte$three_prime_lgth[allte$three_prime_lgth == 'gene'] <- NA
+allte$five_prime_lgth[allte$five_prime_lgth == 'gene'] <- NA
+
+allte$three_prime_lgth[allte$three_prime_lgth == 'end'] <- NA
+allte$five_prime_lgth[allte$five_prime_lgth == 'end'] <- NA
+
+allte$three_prime_lgth <- as.numeric(allte$three_prime_lgth)
+allte$five_prime_lgth <- as.numeric(allte$five_prime_lgth)
+
+te_group_order <- c("Gene", "Any TE", "LINE", "Tad", "LTR", "Copia", "Gypsy", "DNA", "Mariner", "Pogo")
+allte$te_group <- factor(allte$te_group, levels = te_group_order)
+
+mean_3_gene_value <- mean(allte$three_prime_lgth[grepl("Gene", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_gene_value <- mean(allte$five_prime_lgth[grepl("Gene", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_AnyTE_value <- mean(allte$three_prime_lgth[grepl("Any TE", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_AnyTE_value <- mean(allte$five_prime_lgth[grepl("Any TE", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_Copia_value <- mean(allte$three_prime_lgth[grepl("Copia", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_Copia_value <- mean(allte$five_prime_lgth[grepl("Copia", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_DNA_value <- mean(allte$three_prime_lgth[grepl("DNA", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_DNA_value <- mean(allte$five_prime_lgth[grepl("DNA", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_Gypsy_value <- mean(allte$three_prime_lgth[grepl("Gypsy", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_Gypsy_value <- mean(allte$five_prime_lgth[grepl("Gypsy", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_LINE_value <- mean(allte$three_prime_lgth[grepl("LINE", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_LINE_value <- mean(allte$five_prime_lgth[grepl("LINE", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_LTR_value <- mean(allte$three_prime_lgth[grepl("LTR", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_LTR_value <- mean(allte$five_prime_lgth[grepl("LTR", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_Mariner_value <- mean(allte$three_prime_lgth[grepl("Mariner", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_Mariner_value <- mean(allte$five_prime_lgth[grepl("Mariner", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_Pogo_value <- mean(allte$three_prime_lgth[grepl("Pogo", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_Pogo_value <- mean(allte$five_prime_lgth[grepl("Pogo", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_Tad_value <- mean(allte$three_prime_lgth[grepl("Tad", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_Tad_value <- mean(allte$five_prime_lgth[grepl("Tad", allte$te_group) & grepl("Non CSEP", allte$sec_type)], na.rm = TRUE)
+
+text <- print(paste(prefix, "of", count_non_csep, "Non CSEP", "Gene 3", mean_3_gene_value, "Gene 5", mean_5_gene_value, "Any TE 3", mean_3_AnyTE_value, "Any TE 5", mean_5_AnyTE_value, "Copia 3", mean_3_Copia_value, "Copia 5", mean_5_Copia_value, "DNA 3", mean_3_DNA_value, "DNA 5", mean_5_DNA_value, "Gypsy 3", mean_3_Gypsy_value, "Gypsy 5", mean_5_Gypsy_value, "LINE 3", mean_3_LINE_value, "LINE 5", mean_5_LINE_value, "LTR 3", mean_3_LTR_value, "LTR 5", mean_5_LTR_value, "Mariner 3", mean_3_Mariner_value, "Mariner 5", mean_5_Mariner_value, "Pogo 3", mean_3_Pogo_value, "Pogo 5", mean_5_Pogo_value, "Tad 3", mean_3_Tad_value, "Tad 5", mean_5_Tad_value))
+
+mean_3_gene_value <- mean(allte$three_prime_lgth[grepl("Gene", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_gene_value <- mean(allte$five_prime_lgth[grepl("Gene", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_AnyTE_value <- mean(allte$three_prime_lgth[grepl("Any TE", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_AnyTE_value <- mean(allte$five_prime_lgth[grepl("Any TE", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_Copia_value <- mean(allte$three_prime_lgth[grepl("Copia", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_Copia_value <- mean(allte$five_prime_lgth[grepl("Copia", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_DNA_value <- mean(allte$three_prime_lgth[grepl("DNA", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_DNA_value <- mean(allte$five_prime_lgth[grepl("DNA", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_Gypsy_value <- mean(allte$three_prime_lgth[grepl("Gypsy", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_Gypsy_value <- mean(allte$five_prime_lgth[grepl("Gypsy", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_LINE_value <- mean(allte$three_prime_lgth[grepl("LINE", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_LINE_value <- mean(allte$five_prime_lgth[grepl("LINE", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_LTR_value <- mean(allte$three_prime_lgth[grepl("LTR", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_LTR_value <- mean(allte$five_prime_lgth[grepl("LTR", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_Mariner_value <- mean(allte$three_prime_lgth[grepl("Mariner", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_Mariner_value <- mean(allte$five_prime_lgth[grepl("Mariner", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_Pogo_value <- mean(allte$three_prime_lgth[grepl("Pogo", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_Pogo_value <- mean(allte$five_prime_lgth[grepl("Pogo", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_Tad_value <- mean(allte$three_prime_lgth[grepl("Tad", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_Tad_value <- mean(allte$five_prime_lgth[grepl("Tad", allte$te_group) & grepl("Short CSEP", allte$sec_type)], na.rm = TRUE)
+
+text2 <- print(paste(prefix, "of", count_short_csep, "Short CSEP", "Gene 3", mean_3_gene_value, "Gene 5", mean_5_gene_value, "Any TE 3", mean_3_AnyTE_value, "Any TE 5", mean_5_AnyTE_value, "Copia 3", mean_3_Copia_value, "Copia 5", mean_5_Copia_value, "DNA 3", mean_3_DNA_value, "DNA 5", mean_5_DNA_value, "Gypsy 3", mean_3_Gypsy_value, "Gypsy 5", mean_5_Gypsy_value, "LINE 3", mean_3_LINE_value, "LINE 5", mean_5_LINE_value, "LTR 3", mean_3_LTR_value, "LTR 5", mean_5_LTR_value, "Mariner 3", mean_3_Mariner_value, "Mariner 5", mean_5_Mariner_value, "Pogo 3", mean_3_Pogo_value, "Pogo 5", mean_5_Pogo_value, "Tad 3", mean_3_Tad_value, "Tad 5", mean_5_Tad_value))
+
+mean_3_gene_value <- mean(allte$three_prime_lgth[grepl("Gene", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_gene_value <- mean(allte$five_prime_lgth[grepl("Gene", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_AnyTE_value <- mean(allte$three_prime_lgth[grepl("Any TE", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_AnyTE_value <- mean(allte$five_prime_lgth[grepl("Any TE", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_Copia_value <- mean(allte$three_prime_lgth[grepl("Copia", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_Copia_value <- mean(allte$five_prime_lgth[grepl("Copia", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_DNA_value <- mean(allte$three_prime_lgth[grepl("DNA", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_DNA_value <- mean(allte$five_prime_lgth[grepl("DNA", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_Gypsy_value <- mean(allte$three_prime_lgth[grepl("Gypsy", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_Gypsy_value <- mean(allte$five_prime_lgth[grepl("Gypsy", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_LINE_value <- mean(allte$three_prime_lgth[grepl("LINE", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_LINE_value <- mean(allte$five_prime_lgth[grepl("LINE", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_LTR_value <- mean(allte$three_prime_lgth[grepl("LTR", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_LTR_value <- mean(allte$five_prime_lgth[grepl("LTR", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_Mariner_value <- mean(allte$three_prime_lgth[grepl("Mariner", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_Mariner_value <- mean(allte$five_prime_lgth[grepl("Mariner", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_Pogo_value <- mean(allte$three_prime_lgth[grepl("Pogo", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_Pogo_value <- mean(allte$five_prime_lgth[grepl("Pogo", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+
+mean_3_Tad_value <- mean(allte$three_prime_lgth[grepl("Tad", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+mean_5_Tad_value <- mean(allte$five_prime_lgth[grepl("Tad", allte$te_group) & grepl("Long CSEP", allte$sec_type)], na.rm = TRUE)
+
+text3 <- print(paste(prefix, "of", count_long_csep, "Long CSEP", "Gene 3", mean_3_gene_value, "Gene 5", mean_5_gene_value, "Any TE 3", mean_3_AnyTE_value, "Any TE 5", mean_5_AnyTE_value, "Copia 3", mean_3_Copia_value, "Copia 5", mean_5_Copia_value, "DNA 3", mean_3_DNA_value, "DNA 5", mean_5_DNA_value, "Gypsy 3", mean_3_Gypsy_value, "Gypsy 5", mean_5_Gypsy_value, "LINE 3", mean_3_LINE_value, "LINE 5", mean_5_LINE_value, "LTR 3", mean_3_LTR_value, "LTR 5", mean_5_LTR_value, "Mariner 3", mean_3_Mariner_value, "Mariner 5", mean_5_Mariner_value, "Pogo 3", mean_3_Pogo_value, "Pogo 5", mean_5_Pogo_value, "Tad 3", mean_3_Tad_value, "Tad 5", mean_5_Tad_value))
+
+
+cat(text, "\n", file = "TE_distance.txt", append = TRUE)
+cat(text2, "\n", file = "TE_distance.txt", append = TRUE)
+cat(text3, "\n", file = "TE_distance.txt", append = TRUE)
+
+# Define custom colors
+te_group_colors <- c("Gene" = "#eeeeee", "Any TE" = "#b6d7a8" , "LINE" = "#9fc5e8", "Tad" = "#9fc5e8", "LTR" = "#e06666", "Copia" = "#e06666", "Gypsy" = "#e06666", "DNA" = "#ffd966", "Mariner" = "#ffd966", "Pogo" = "#ffd966")
+
+library(ggplot2)
+library(hrbrthemes)
+library(scales)
+library(dplyr)
+
+counts <- allte %>%
+  group_by(te_group, sec_type) %>%
+  summarise(n = sum(!is.na(three_prime_lgth)), 
+            median_y = median(as.numeric(three_prime_lgth[as.numeric(three_prime_lgth) != 0]), na.rm = TRUE))
+
+ggplot(allte, aes(x = te_group, y = three_prime_lgth)) +
+    geom_point(alpha = 0.1, position = 'jitter') +
+    geom_violin(aes(fill = te_group)) +
+    geom_text(data = counts, aes(x = te_group, y = median_y, label = n), position = position_dodge(width = 0.9), angle = 90, vjust = 0.3, size = 3) +
+    facet_wrap(~sec_type) +
+    scale_fill_manual(values = te_group_colors, name = "TE Group") +
+    scale_x_discrete(limits = te_group_order) +
+    scale_y_log10(labels = scales::label_number(accuracy = 1)) +  
+    theme_ipsum() +
+    theme(
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),  
+        axis.title.x = element_text(hjust = 0.5),  
+        axis.title.y = element_text(hjust = 0.5),  
+        plot.title = element_text(hjust = 0.5),  
+        strip.text = element_text(hjust = 0.5),  
+        plot.margin = margin(10, 10, 10, 10)  
+    ) +
+    ylab("3' intergenic distance (bp)") +
+    xlab("Repetitive element type (bp)") 
+
+counts <- allte %>%
+  group_by(te_group, sec_type) %>%
+  summarise(n = sum(!is.na(five_prime_lgth)), 
+            median_y = median(as.numeric(five_prime_lgth[as.numeric(five_prime_lgth) != 0]), na.rm = TRUE))
+
+ggplot(allte, aes(x = te_group, y = five_prime_lgth)) +
+    geom_point(alpha = 0.1, position = 'jitter') +
+    geom_violin(aes(fill = te_group)) +
+    geom_text(data = counts, aes(x = te_group, y = median_y, label = n), position = position_dodge(width = 0.9), angle = 90, vjust = 0.3, size = 3) +
+    facet_wrap(~sec_type) +
+    scale_fill_manual(values = te_group_colors, name = "TE Group") +
+    scale_x_discrete(limits = te_group_order) +
+    scale_y_log10(labels = scales::label_number(accuracy = 1)) +  
+    theme_ipsum() +
+    theme(
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),  
+        axis.title.x = element_text(hjust = 0.5),  
+        axis.title.y = element_text(hjust = 0.5),  
+        plot.title = element_text(hjust = 0.5),  
+        strip.text = element_text(hjust = 0.5), 
+        plot.margin = margin(10, 10, 10, 10)  
+    ) +
+    ylab("5' intergenic distance (bp)") +
+    xlab("Repetitive element type (bp)") 
+
+
+
 
 ```
 
@@ -6981,7 +7885,64 @@ ProgDir=/home/theaven/scratch/apps
 sbatch $ProgDir/fcs/run_fcs.sh $Genome $TAXID $OutDir $OutFile
 #
 done
+
+screen -S predector
+conda activate predector
+for proteome in $(ls /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000151065.3/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153116/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153117/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153118/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153119/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153120/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Parauncinula/polyspora/Parp01/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/fusca/GCA_030378345.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/xanthii/GCA_028751805.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000417025.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000417865.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000418435.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000441875.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_900519115.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_905067625.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/hordei/GCA_000401675.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/hordei/GCA_900237765.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/hordei/GCA_900239735.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/hordei/GCA_900638725.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/alphitoides/CLCBIO/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798715.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798735.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798755.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798775.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798795.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_016906895.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/neolycopersici/GCA_003610855.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/pisi/GCA_000208805.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/pisi/GCA_000214055.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/pulchra/GCA_002918395.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Golovinomyces/cichoracearum/GCA_003611195.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Golovinomyces/cichoracearum/GCA_003611215.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Golovinomyces/cichoracearum/GCA_003611235.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Golovinomyces/magnicellulatus/GCA_006912115.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Golovinomyces/orontii/MGH1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Leveillula/taurrica/CADEPA01/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Phyllactinia/moricola/GCA_019455665.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Pleochaeta/shiraiana/GCA_019455505.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72020/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72021/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/SCOTT2020/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/cerasii/GCA_018398735.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/GCA_013170925.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGB2019/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGB2021/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGBp112020/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/xanthii/GCA_010015925.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/xanthii/GCA_014884795.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Oidium/heveae/GCA_003957845.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_024703715.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta); do
+#  ls $proteome  
+    OutDir=$(dirname $proteome)/predector/Prothint
+    ProgDir=/home/theaven/scratch/apps/predector
+#    ls $OutDir/results/clean_final_genes_renamed.pep/clean_final_genes_renamed.pep-ranked.tsv
+if [ ! -f "$OutDir/results/clean_final_genes_renamed.pep/clean_final_genes_renamed.pep-ranked.tsv" ]; then
+echo $proteome >> predectorpathlog.txt
+sbatch $ProgDir/predector_singularity.sh $proteome 1.2.6 $OutDir  2>&1 >> predectorpathlog.txt
+echo $proteome
+else 
+echo $OutDir
+fi
+#sleep 30
+done 
+
+for proteome in $(ls /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000151065.3/fcs/GCA_000151065.3_ASM15106v3_genom_clean.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153116/fcs/S_1459_contigs_min_500bp_clean.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153117/fcs/S_1201_contigs_min_500bp_clean.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153118/fcs/S_1203_contigs_min_500bp_clean.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153119/fcs/S_1391_contigs_min_500bp_clean.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153120/fcs/S_1400_contigs_min_500bp_clean.fasta /home/theaven/scratch/uncompressed/genomes/Colletotrichum/higginsianum/broad_KN1394/fcs/KN-1394_23MarchAllContigs_clean.fasta /home/theaven/scratch/uncompressed/genomes/Coprinus/cinereus/GCA_000182895.1/fcs/GCA_000182895.1_CC3_genom_clean.fasta /home/theaven/scratch/uncompressed/genomes/Cryptococcus/neoformans/GCF_000091045.1/fcs/GCF_000091045.1_ASM9104v1_genom_clean.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_024703715.1/fcs/GCA_024703715.1_EnE101_chr_assembly_v3_genom_clean.fasta /home/theaven/scratch/uncompressed/genomes/Fusarium/oxysporum/GCF_013085055.1/fcs/GCF_013085055.1_ASM1308505v1_genom_clean.fasta /home/theaven/scratch/uncompressed/genomes/Magnaporthe/oryzae/GCF_000002495.2/fcs/GCF_000002495.2_MG8_genom_clean.fasta /home/theaven/scratch/uncompressed/genomes/Parauncinula/polyspora/Parp01/fcs/Parpo1_AssemblyScaffolds_clean.fasta /home/theaven/scratch/uncompressed/genomes/Pleurotus/ostreatus/GCA_014466165.1/fcs/GCA_014466165.1_ASM1446616v1_genom_clean.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/fusca/GCA_030378345.1/fcs/GCA_030378345.1_ASM3037834v1_genom_clean.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/xanthii/GCA_028751805.1/fcs/GCA_028751805.1_YZU_CsPM_1.2_genom_clean.fasta /home/theaven/scratch/uncompressed/genomes/Psilocybe/cubensis/GCA_017499595.2/fcs/GCA_017499595.2_MGC_Penvy_1_genom_clean.fasta /home/theaven/scratch/uncompressed/genomes/Puccinia/striiformis/GCA_021901695.1/fcs/GCA_021901695.1_Pst134E36_v1_pri_genom_clean.fasta /home/theaven/scratch/uncompressed/genomes/Puccinia/triticina/GCA_000151525.2/fcs/GCA_000151525.2_P_triticina_1_1_V2_genom_clean.fasta /home/theaven/scratch/uncompressed/genomes/Saccharomyces/cerevisiae/GCF_000146045.2/fcs/Scereviseae_GCF_000146045.2_R64_genom_clean.fasta /home/theaven/scratch/uncompressed/genomes/Schizophyllum/commune/GCA_000143185.2/fcs/GCA_000143185.2_Schco3_genom_clean.fasta /home/theaven/scratch/uncompressed/genomes/Tuber/melanosporum/GCF_000151645.1/fcs/GCF_000151645.1_ASM15164v1_genom_clean.fasta /home/theaven/scratch/uncompressed/genomes/Ustilago/maydis/GCA_000328475.2/fcs/GCA_000328475.2_Umaydis521_2.0_genom_clean.fasta | sed 's@fcs/@fcs/ab_initio_@g'); do
+  proteome=$(dirname $genome)/gene_pred/braker/final-02042924/ab_initio_final_genes_renamed.pep.fasta
+    Jobs=$(squeue -u theaven | grep 'predecto' | wc -l)
+    while [ $Jobs -gt 9 ]; do
+    sleep 300s
+    printf "."
+    Jobs=$(squeue -u theaven | grep 'predecto' | wc -l)
+    done 
+    OutDir=$(dirname $proteome)/predector/abinitio
+    ProgDir=/home/theaven/scratch/apps/predector
+sbatch $ProgDir/predector_singularity.sh $proteome 1.2.6 $OutDir  2>&1 >> predectorpathlog.txt
+sleep 30
+done 
+
+#tar and move between clusters
+list="/home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000151065.3/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153116/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153117/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153118/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153119/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis-secale/SRR2153120/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Parauncinula/polyspora/Parp01/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/fusca/GCA_030378345.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/xanthii/GCA_028751805.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000417025.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000417865.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000418435.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000441875.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_900519115.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_905067625.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/hordei/GCA_000401675.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/hordei/GCA_900237765.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/hordei/GCA_900239735.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Blumeria/hordei/GCA_900638725.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/alphitoides/CLCBIO/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798715.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798735.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798755.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798775.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_000798795.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_016906895.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/neolycopersici/GCA_003610855.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/pisi/GCA_000208805.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/pisi/GCA_000214055.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/pulchra/GCA_002918395.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Golovinomyces/cichoracearum/GCA_003611195.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Golovinomyces/cichoracearum/GCA_003611215.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Golovinomyces/cichoracearum/GCA_003611235.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Golovinomyces/magnicellulatus/GCA_006912115.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Golovinomyces/orontii/MGH1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Leveillula/taurrica/CADEPA01/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Phyllactinia/moricola/GCA_019455665.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Pleochaeta/shiraiana/GCA_019455505.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72020/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72021/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/SCOTT2020/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/cerasii/GCA_018398735.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/GCA_013170925.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGB2019/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGB2021/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGBp112020/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/xanthii/GCA_010015925.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Podosphaera/xanthii/GCA_014884795.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Oidium/heveae/GCA_003957845.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta /home/theaven/scratch/uncompressed/genomes/Erysiphe/necator/GCA_024703715.1/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta"
+for File in $list; do 
+InFile=$(echo $File | sed 's@/home@/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/download2/home@g')
+ls $InFile
+OutDir=$(dirname $InFile)/interproscan/Prothint
+ProgDir=~/git_repos/Wrappers/NBI
+mkdir -p $OutDir
+sbatch $ProgDir/run_interproscan.sh $InFile $OutDir
+done #60036638-88
+
+for folder in $(ls -d download2/home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/interproscan); do
+out=$(echo $folder | sed 's@download2@@g')
+mv $folder $out
+done
+
+
+#Annotate aphanis only genes:
+InFile=aphanis_only.faa
+OutDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/download2/INTERPRO
+ProgDir=~/git_repos/Wrappers/NBI
+sbatch $ProgDir/run_interproscan.sh $InFile $OutDir
+#62170663
 ```
+/home/theaven/scratch/uncompressed/genomes/Blumeria/graminis/GCA_000151065.3/fcs/gene_pred/braker/final-02042924/
+
 Shared by B.cinerea, M. oryzae, C. higginsianum, S. sclerotiorum and S. cerevisiae
 ```bash
 for file in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta); do
@@ -7116,21 +8077,24 @@ python3 /home/theaven/scratch/apps/tools/seq_get.py --id_file hits.txt --input S
 grep '>' Sac_cer_Scl_scl_Col_hig_Mag_ory_Bot_cin2.faa | wc -l #3,660
 
 screen -S mcag
-srun -p long  -c 1 --mem 50G --pty bash
+srun -p short  -c 1 --mem 50G --pty bash
 mkdir -p test/out
 cd /home/theaven/scratch/uncompressed/mcag/db/test
 for proteome in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta); do
-ID=$(echo $file | cut -d '/' -f7 | cut -c 1-3)_$(echo $file | cut -d '/' -f8 | cut -c 1-3)_$(echo $file | cut -d '/' -f9)
+ID=$(echo $proteome | cut -d '/' -f7 | cut -c 1-3)_$(echo $proteome | cut -d '/' -f8 | cut -c 1-3)_$(echo $proteome | cut -d '/' -f9)
+echo $ID
 makeblastdb -in $proteome -input_type fasta -dbtype prot  -title $ID -parse_seqids -out $ID
-blastp -query ../Sac_cer_Scl_scl_Col_hig_Mag_ory_Bot_cin2.faa -db $ID -out out/${ID}_results -evalue 1e-6 -outfmt 6 -num_threads 1 -max_target_seqs 1
+blastp -query ../Sac_cer_Scl_scl_Col_hig_Mag_ory_Bot_cin2.faa -db $ID -out out/${ID}_results -evalue 1e-6 -outfmt 6 -num_threads 32 -max_target_seqs 1
 done
 
-grep '>' ../Sac_cer_Scl_scl_Col_hig_Mag_ory_Bot_cin2.faa | sed 's@>@@G' > CAGs.txt
+cd out
+grep '>' ../../Sac_cer_Scl_scl_Col_hig_Mag_ory_Bot_cin2.faa | sed 's@>@@g' > CAGs.txt
 echo CAGs > mcags.txt
 cat CAGs.txt >> mcags.txt
 for proteome in *_results; do
     echo "$proteome" > temp.txt
     while IFS= read -r line; do
+      echo $line
         # Check if the line exists in the current proteome file
         if grep -qF "$line" "$proteome"; then
             echo "1" >> temp.txt
@@ -7139,6 +8103,213 @@ for proteome in *_results; do
         fi
     done < "CAGs.txt"
     paste mcags.txt temp.txt > temp2.txt && mv temp2.txt mcags.txt
+done
+
+head -n 1 mcags.txt > MCAGs.tsv
+awk -F'\t' 'BEGIN {OFS="\t"} {count=0; for (i=7; i<=22; i++) if ($i == "0") count++; for (i=30; i<=50; i++) if ($i == "0") count++; for (i=56; i<=74; i++) if ($i == "0") count++; if (count >= 3) print}' mcags.txt >> MCAGs.tsv
+#572 are missing from at least 3 mildews
+#927 are missing from at least 2 mildews
+#1,622 are missing from at least 1 mildew
+
+cd /home/theaven/scratch/uncompressed/mcag/db/test
+makeblastdb -in /home/theaven/scratch/uncompressed/mcag/db/Sac_cer_Scl_scl_Col_hig_Mag_ory_Bot_cin2.faa -input_type fasta -dbtype prot  -title spanu -parse_seqids -out spanu
+for file in $(ls /home/theaven/scratch/uncompressed/mcag/prot/*); do
+name=$(basename $file | cut -d '.' -f1)
+blastp -query $file -db spanu -out ../${name}_results -evalue 1e-6 -outfmt 6 -num_threads 1 
+done
+
+cat ../*results > temp.txt
+awk -F'\t' '$3 > 90' temp.txt > temp2.txt
+```
+99 mcags
+```bash
+#Give species unique names to each predicted gene:
+mkdir /home/theaven/scratch/uncompressed/mcag/db/99
+cd /home/theaven/scratch/uncompressed/mcag/db/99
+for file in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta); do
+ID=$(echo $file | cut -d '/' -f7 | cut -c 1-3)_$(echo $file | cut -d '/' -f8 | cut -c 1-3)_$(echo $file | cut -d '/' -f9)
+echo $ID
+cp $file ./${ID}_$(basename $file)
+sed -i "s/>/>${ID}_/g" ${ID}_$(basename $file)
+done
+
+for file in $(ls *final_genes_renamed.pep.fasta); do
+seqkit rmdup $file > temp.fasta && mv temp.fasta $file
+done
+
+#make a blast database from the proteomes and query each putative MCAG against it:
+mkdir db
+cat *final_genes_renamed.pep.fasta > db/db.faa
+cd db
+makeblastdb -in db.faa -input_type fasta -dbtype prot  -title mildew+db  -parse_seqids -out mildew+db
+
+for file in $(ls /home/theaven/scratch/uncompressed/mcag/prot/*.fsa); do
+name=$(basename $file | cut -d '.' -f1)
+blastp -query $file -db mildew+db -out ../${name}_results -evalue 1e-5 -outfmt 6 -num_threads 1
+done
+
+ls ../*_results | wc -l
+
+#Collect results into one file:
+echo Gene: > out99.tsv
+
+for file2 in $(ls ../*_final_genes_renamed.pep.fasta); do
+  name=$(basename $file2 | sed 's@_clean_final_genes_renamed.pep.fasta@@g')
+  sed -i "\$s/\$/ $name/" out99.tsv
+done
+
+for file in $(ls ../*_results); do
+gene=$(awk '{print $1; exit}' $file)
+echo $gene >> out99.tsv
+for file2 in $(ls ../*_final_genes_renamed.pep.fasta); do
+  name=$(basename $file2 | sed 's@_clean_final_genes_renamed.pep.fasta@@g')
+x=$(grep -m 1 $name $file | awk '{print $11}')
+if [ -z "$x" ]; then
+    y=missing
+else
+    y=$x
+fi
+sed -i "\$s/\$/ $y/" out99.tsv
+done
+done
+```
+Check to see if MCAGs that are present blast to distantly related species and are therefore likely contaminants rather than truely present MCAGs:
+```bash
+#Collect gne IDs for select de novo mcags:
+mkdir /home/theaven/scratch/uncompressed/mcag/db/blast
+extramcags=/home/theaven/scratch/uncompressed/mcags+.txt
+for blastresult in /home/theaven/scratch/uncompressed/mcag/db/test/out/*_results; do
+  assembly_id=$(basename "$blastresult" | sed 's@_results@@g')
+  awk 'NR==FNR { patterns[$1]; next } $1 in patterns && !($1 in printed) { print; printed[$1] }' "$extramcags" "$blastresult" | awk '{print $2}' > temp_genenames.txt
+  while read -r gene; do
+    echo "${assembly_id}_${gene}" >> "/home/theaven/scratch/uncompressed/mcag/db/blast/${assembly_id}_proteins.txt"
+  done < temp_genenames.txt
+  rm temp_genenames.txt
+done
+#Collect gene IDs for 99 predefined MCAGS:
+ls /home/theaven/scratch/uncompressed/mcag/db/99/*_final_genes_renamed.pep.fasta | rev | cut -d '/' -f1 |  rev | sed 's@_clean_final_genes_renamed.pep.fasta@@g' > assemblies.txt
+for assembly_id in $(cat assemblies.txt); do
+for protein in $(ls /home/theaven/scratch/uncompressed/mcag/db/99/*_protein_results); do
+grep -m 1 "$assembly_id" $protein | awk '{print $2}' >> /home/theaven/scratch/uncompressed/mcag/db/blast/${assembly_id}_proteins.txt
+done
+done
+
+#Get the corresponding protein sequences for the mcags
+for file in $(ls /home/theaven/scratch/uncompressed/mcag/db/blast/*_proteins.txt); do
+sort $file > temp-temp.txt && mv temp-temp.txt $file
+done
+
+for file in $(ls /home/theaven/scratch/uncompressed/mcag/db/blast/*_proteins.txt); do
+  ID=$(basename $file | sed 's@_proteins.txt@@g')
+  ls /home/theaven/scratch/uncompressed/mcag/db/99/${ID}_clean_final_genes_renamed.pep.fasta
+  python3 /home/theaven/scratch/apps/tools/seq_get.py --id_file $file --input /home/theaven/scratch/uncompressed/mcag/db/99/${ID}_clean_final_genes_renamed.pep.fasta --output /home/theaven/scratch/uncompressed/mcag/db/blast/${ID}_final_genes_renamed.pep.fasta
+done
+
+#Get search the mcag proteins against the uniprot database
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast2/*_final_genes_renamed.pep.fasta); do
+Database=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/databases/blast/uniprot_01102023/Uniprot_01102023_reference_proteomes.dmnd
+OutDir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/MCAG/blast2
+OutFile=$(basename $file | sed 's@_final_genes_renamed.pep.fasta@@g')
+hits=5
+ProgDir=~/git_repos/Wrappers/NBI
+sbatch $ProgDir/run_diamond_blastp.sh $file $Database $OutDir $OutFile $hits
+done
+#1272157-240
+
+#Collect the outputs into a single file for each assembly:
+for assembly_id in $(cat assemblies.txt); do
+echo -e "MCAG\tTop_hit\tblast_1\tblast_2\tblast_3\tblast_4\tblast_5\tID_1\tID_2\tID_3\tID_4\tID_5" > /home/theaven/scratch/uncompressed/mcag/db/blast/${assembly_id}_proteins_notes.txt
+for protein in $(ls /home/theaven/scratch/uncompressed/mcag/db/99/*_protein_results); do
+x=$(basename $protein | sed 's@_protein_results@@g'| sed 's@results/@@g') 
+y=$(grep -m 1 "$assembly_id" $protein | awk '{print $2}')
+echo -e "$x\t$y" >> /home/theaven/scratch/uncompressed/mcag/db/blast/${assembly_id}_proteins_notes.txt
+done
+done
+
+extramcags=/home/theaven/scratch/uncompressed/mcags+.txt
+mapfile -t patterns < "$extramcags"
+for blastresult in /home/theaven/scratch/uncompressed/mcag/db/test/out/*_results; do
+  assembly_id=$(basename "$blastresult" | sed 's@_results@@g')
+  
+  for pattern in "${patterns[@]}"; do
+    y=$(awk -v pat="$pattern" '$1 == pat { print $2; exit }' "$blastresult")
+    if [ -n "$y" ]; then
+      echo -e "${pattern}\t${assembly_id}_${y}" >> "/home/theaven/scratch/uncompressed/mcag/db/blast/${assembly_id}_proteins_notes.txt"
+    fi
+  done
+done
+
+for file in $(ls /home/theaven/scratch/uncompressed/mcag/db/blast/*_proteins_notes.txt); do
+awk 'BEGIN {FS=OFS="\t"} $2 == "" {$2="###"}1' $file > temp.txt && mv temp.txt $file
+done
+
+for file in /home/theaven/scratch/uncompressed/mcag/db/blast/*_proteins_notes.txt; do
+    ID=$(basename "$file" | sed 's@_proteins_notes.txt@@g')
+    while IFS=$'\t' read -r col1 col2 rest; do
+        matches=$(grep "^$col2" "/home/theaven/scratch/uncompressed/mcag/db/blast/${ID}.vs.Uniprot_01102023_reference_proteomes.dmnd.diamond_blastp.out" | awk -v col2="$col2" '$1 == col2 {printf "%s\t", $5}')
+        if [ -n "$matches" ]; then
+            matches="${matches%?}"  # Remove the last character (trailing tab)
+        fi
+        echo -e "$col1\t$col2\t$rest\t$matches"
+    done < "$file" > "${ID}merged_notes.txt"
+    awk 'BEGIN {FS=OFS="\t"} {print $1, $2, $4, $5, $6, $7, $8, $9}' ${ID}merged_notes.txt > $file
+    rm ${ID}merged_notes.txt
+done
+
+#Get the uniprot codes for lookup:
+for file in /home/theaven/scratch/uncompressed/mcag/db/blast/*_proteins_notes.txt; do
+awk -F'\t' '{split($3, a, "|"); split($4, b, "|"); split($5, c, "|"); split($6, d, "|"); split($7, e, "|"); print a[2] "\n" b[2] "\n" c[2] "\n" d[2] "\n" e[2]}' $file | sort | uniq > $(dirname $file)/$(basename $file | sed 's@_proteins_notes.txt@@g')_protcodes.txt
+done
+
+#Edit notes file to contain species info:
+for notes in $(ls /home/theaven/scratch/uncompressed/mcag/db/blast/*_proteins_notes.txt); do
+tsv=/home/theaven/scratch/uncompressed/mcag/db/blast/uniprot/$(basename "$notes" | sed 's@_proteins_notes.txt@_protcodes.tsv@g')
+output_file="edited_file.txt"
+rm "$output_file"
+touch "$output_file"
+while IFS= read -r line; do
+    id=$(echo "$line" | awk -F'\t' '{split($3, arr, "|"); print arr[2]}')
+    fifth_column=$(awk -v var="$id" -F'\t' '$1 == var {print $5}' $tsv | cut -d ' ' -f1,2)
+    edited_line="$line\t$fifth_column"
+    echo -e "$edited_line" >> "$output_file"
+done < $notes
+mv "$output_file" $notes
+rm "$output_file"
+touch "$output_file"
+while IFS= read -r line; do
+    id=$(echo "$line" | awk -F'\t' '{split($4, arr, "|"); print arr[2]}')
+    fifth_column=$(awk -v var="$id" -F'\t' '$1 == var {print $5}' $tsv | cut -d ' ' -f1,2)
+    edited_line="$line\t$fifth_column"
+    echo -e "$edited_line" >> "$output_file"
+done < $notes
+mv "$output_file" $notes
+rm "$output_file"
+touch "$output_file"
+while IFS= read -r line; do
+    id=$(echo "$line" | awk -F'\t' '{split($5, arr, "|"); print arr[2]}')
+    fifth_column=$(awk -v var="$id" -F'\t' '$1 == var {print $5}' $tsv | cut -d ' ' -f1,2)
+    edited_line="$line\t$fifth_column"
+    echo -e "$edited_line" >> "$output_file"
+done < $notes
+mv "$output_file" $notes
+rm "$output_file"
+touch "$output_file"
+while IFS= read -r line; do
+    id=$(echo "$line" | awk -F'\t' '{split($6, arr, "|"); print arr[2]}')
+    fifth_column=$(awk -v var="$id" -F'\t' '$1 == var {print $5}' $tsv | cut -d ' ' -f1,2)
+    edited_line="$line\t$fifth_column"
+    echo -e "$edited_line" >> "$output_file"
+done < $notes
+mv "$output_file" $notes
+rm "$output_file"
+touch "$output_file"
+while IFS= read -r line; do
+    id=$(echo "$line" | awk -F'\t' '{split($7, arr, "|"); print arr[2]}')
+    fifth_column=$(awk -v var="$id" -F'\t' '$1 == var {print $5}' $tsv | cut -d ' ' -f1,2)
+    edited_line="$line\t$fifth_column"
+    echo -e "$edited_line" >> "$output_file"
+done < $notes
+mv "$output_file" $notes
 done
 ```
 ```bash
@@ -7239,3 +8410,2108 @@ GCF_000151645 not found
 /home/theaven/scratch/uncompressed/genomes/Tuber/melanosporum/GCF_000151645.1/braker #
 GCA_000328475 not found
 /home/theaven/scratch/uncompressed/genomes/Ustilago/maydis/GCA_000328475.2/braker #
+
+
+Blast for aphanis only effectors across wider mildews:
+```bash
+for file in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/clean_final_genes_renamed.pep.fasta); do
+output_dir=$(dirname $file)
+ID=$(echo $file | cut -d '/' -f7 | cut -c 1-3)_$(echo $file | cut -d '/' -f8 | cut -c 1-3)_$(echo $file | cut -d '/' -f9)
+echo $ID
+sed -E "/^>/ s/>[[:space:]]*/&$ID /" $file | sed 's/ \([^\t]\)/_\1/' > ${output_dir}/${ID}_clean_final_genes.pep.fasta
+done
+
+mkdir db
+for file in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  cat $file >> db/clean_mildew.faa
+done
+
+conda activate seqkit
+seqkit rmdup db/clean_mildew.faa > temp.fasta && mv temp.fasta db/clean_mildew.faa
+conda deactivate
+
+conda activate blast+
+cd /home/theaven/scratch/uncompressed/db
+makeblastdb -in clean_mildew.faa -input_type fasta -dbtype prot  -title mildew+db  -parse_seqids -out mildew+db
+
+while IFS=$'\t' read -r line; do
+    awk -F'\t' '$31 == "1" && $27 == "." && $7 == "0" {print $1}' <<< "$line" | grep -v 'name' >> aphanis_only_secreted_effectors.txt
+done < ~/projects/niab/theaven/results/P_aphanis-THeavenDRCT72020_1-aphanis-ranked4.tsv
+
+while IFS=$'\t' read -r line; do
+echo $line > hits.txt
+python3 /home/theaven/scratch/apps/tools/seq_get.py --id_file hits.txt --input /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta --output effectors/${line}.faa
+done < aphanis_only_secreted_effectors.txt
+
+for file in $(ls effectors/*.faa); do
+name=$(basename $file | cut -d '.' -f1)
+blastp -query $file -db db/mildew+db -out effectors/${name}_results -evalue 1e-5 -outfmt 6 -num_threads 16 -max_target_seqs 99999
+done
+
+echo Gene: > effectors/out.tsv
+
+for file in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file | cut -d '/' -f7 | cut -c 1-3)_$(echo $file | cut -d '/' -f8 | cut -c 1-3)_$(echo $file | cut -d '/' -f9)
+sed -i "\$s/\$/ $ID/" effectors/out.tsv
+done
+
+
+for file in $(ls effectors/*_results); do
+gene=$(basename $file | sed 's@_results@@g')
+echo $gene
+echo $gene >> effectors/out.tsv
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep -m 1 $ID $file | awk '{print $11}')
+if [ -z "$x" ]; then
+    y=missing
+else
+    y=$x
+fi
+sed -i "\$s/\$/ $y/" effectors/out.tsv
+done
+done
+
+ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/*clean.fasta
+
+for file in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/*clean.fasta); do
+output_dir=$(dirname $file)
+ID=$(echo $file | cut -d '/' -f7 | cut -c 1-3)_$(echo $file | cut -d '/' -f8 | cut -c 1-3)_$(echo $file | cut -d '/' -f9)
+echo $ID
+sed -E "/^>/ s/>[[:space:]]*/&$ID /" $file | sed 's/ \([^\t]\)/_\1/' | awk '{print $1}' | sed 's@_Oidium_NoIndex_L002_R1_R2_paired_trimmed@@g' | awk -F'_length' '{print $1}' > ${output_dir}/${ID}_clean_renamed.fasta
+done
+
+for file in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/*clean_renamed.fasta); do
+  cat $file >> db/clean_mildew.fa
+done
+
+awk 'length($0) > 50 && /^>/ {print}' db/clean_mildew.fa
+
+conda activate seqkit
+seqkit rmdup db/clean_mildew.fa > temp.fasta && mv temp.fasta db/clean_mildew.fa
+conda deactivate
+
+srun -p short --mem-per-cpu 4G --cpus-per-task 8 --pty bash
+conda activate blast+
+cd /home/theaven/scratch/uncompressed/db
+makeblastdb -in clean_mildew.fa -input_type fasta -dbtype nucl  -title mildew+db2  -parse_seqids -out mildew+db2
+
+for file in $(ls effectors/*.faa); do
+name=$(basename $file | cut -d '.' -f1)
+tblastn -query $file -db db/mildew+db2 -out effectors/${name}_resultsx -evalue 1e-5 -outfmt 6 -num_threads 16 -max_target_seqs 99999
+done
+
+g6562.t1        Pod_aph_SCOTT2020_contig_55     65.000  80      10      2       1       63      10354   10118
+g12955.t1       Pod_aph_DRT72020_contig_3643    100.000 248     0       0       48      295     3388    4131    2.33e-170       514
+
+
+echo Gene: >> effectors/out7.tsv
+
+for file in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file | cut -d '/' -f7 | cut -c 1-3)_$(echo $file | cut -d '/' -f8 | cut -c 1-3)_$(echo $file | cut -d '/' -f9)
+sed -i "\$s/\$/ $ID/" effectors/out7.tsv
+done
+
+#E value of top hit:
+for file in $(ls effectors/*_resultsx); do
+gene=$(basename $file | sed 's@_resultsx@@g')
+echo $gene
+echo $gene >> effectors/out2.tsv
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep -m 1 $ID $file | awk '{print $11}')
+if [ -z "$x" ]; then
+    y=missing
+else
+    y=$x
+fi
+sed -i "\$s/\$/ $y/" effectors/out2.tsv
+done
+done
+
+#E value of top hit, filter for % query length and % identity:
+for file in $(ls effectors/*_resultsx); do
+gene=$(basename $file | sed 's@_resultsx@@g')
+echo $gene
+echo $gene >> effectors/out6.tsv
+gene_file=$(ls effectors/${gene}.t1.faa)
+gene_length=$(grep -v '>' $gene_file | tr -d '\n' | wc -c)
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep -m 1 $ID $file | awk '$3 > 70' | awk -v gene_length="$gene_length" '$4 / gene_length > 0.4' | awk '{print $11}')
+if [ -z "$x" ]; then
+    y=missing
+else
+    y=$x
+fi
+sed -i "\$s/\$/ $y/" effectors/out6.tsv
+done
+done
+
+#No. of hits
+for file in $(ls effectors/*_resultsx); do
+gene=$(basename $file | sed 's@_resultsx@@g')
+echo $gene
+echo $gene >> effectors/out7.tsv
+gene_file=$(ls effectors/${gene}.t1.faa)
+gene_length=$(grep -v '>' $gene_file | tr -d '\n' | wc -c)
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 > 60' | awk -v gene_length="$gene_length" '$4 / gene_length > 0.4' | wc -l)
+sed -i "\$s/\$/ $x/" effectors/out7.tsv
+done
+done
+
+
+for file in $(ls effectors/*_resultsx); do
+  grep $ID $file | awk '$3 > 60' | awk -v gene_length="$gene_length" '$4 / gene_length > 0.4' >> temp.out.txt
+done
+
+
+
+#Check for stop codons???
+for file in $(ls effectors/*_resultsx); do
+gene=$(basename $file | sed 's@_resultsx@@g')
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file >> effectors/species/${ID}2.tsv
+#sed -i "s@${ID}_@@g" effectors/species/${ID}.tsv
+#sed -i 's@_contig@contig@g' effectors/species/${ID}.tsv
+done
+done
+
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+  out=$(dirname $file2)/aphanis_only2.bed
+awk -F'\t' '{print $2"\t"$9"\t"$10"\t"$1}' effectors/species/${ID}2.tsv > $out
+done
+
+for file in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/aphanis_only2.bed); do
+  genome=$(ls $(echo $file | cut -d '/' -f1,2,3,4,5,6,7,8,9,10)/*clean_renamed.fasta)
+singularity exec ~/scratch/apps/containers/bedtools_2.31.1--hf5e1c6e_1 bedtools getfasta -fi $genome -bed $file > $(echo $file | sed 's@.bed@.fa@g')
+done
+
+
+
+
+
+
+
+
+
+
+for file in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/final_genes_renamed.gff3); do
+  out=$(echo $file | sed 's@.gff3@.bed@g')
+singularity exec ~/scratch/apps/containers/bedops_2.4.41--h4ac6f70_2 gff2bed < $file > $out
+done
+
+
+
+for file in $(ls effectors/*_resultsx); do
+gene=$(basename $file | sed 's@_resultsx@@g')
+echo $gene
+echo $gene >> effectors/out7.tsv
+gene_file=$(ls effectors/${gene}.t1.faa)
+gene_length=$(grep -v '>' $gene_file | tr -d '\n' | wc -c)
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 > 60' | awk -v gene_length="$gene_length" '$4 / gene_length > 0.4' | grep 'Pod_aph_DRT72020' >> temp.out.txt
+grep $ID $file | awk '$3 > 60' | awk -v gene_length="$gene_length" '$4 / gene_length > 0.4' | grep 'Pod_aph_DRT72021' >> temp2.out.txt
+grep $ID $file | awk '$3 > 60' | awk -v gene_length="$gene_length" '$4 / gene_length > 0.4' | grep 'Pod_aph_SCOTT2020' >> temp3.out.txt
+sed -i "\$s/\$/ $x/" effectors/out7.tsv
+done
+done
+
+
+makeblastdb -in data/assembly/genome/fragaria/ananassa/F_ana_Camarosa_6-28-17.c.fna -input_type fasta -dbtype nucl  -title fananasadb2  -parse_seqids -out fananasadb2
+for file in $(ls effectors/*.t1.faa); do
+name=$(basename $file | cut -d '.' -f1)
+tblastn -query $file -db fananasadb2 -out ${name}_resultsx_fragan -evalue 1e-5 -outfmt 6 -num_threads 12 -max_target_seqs 99999
+done
+
+
+for file in $(ls *_resultsx_fragan); do
+gene=$(basename $file | sed 's@_resultsx_fragan@@g')
+echo $gene
+gene_file=$(ls effectors/${gene}.t1.faa)
+gene_length=$(grep -v '>' $gene_file | tr -d '\n' | wc -c)
+echo $file | awk '$3 > 60' | awk -v gene_length="$gene_length" '$4 / gene_length > 0.4'
+done
+
+makeblastdb -in data/assembly/genome/rubus/idaeus/AnitraCuratedED_HiC.c.fna -input_type fasta -dbtype nucl  -title ridaeusdb2  -parse_seqids -out ridaeusdb2
+for file in $(ls effectors/*.t1.faa); do
+name=$(basename $file | cut -d '.' -f1)
+tblastn -query $file -db ridaeusdb2 -out ${name}_resultsx_ridaeus -evalue 1e-5 -outfmt 6 -num_threads 12 -max_target_seqs 99999
+done
+
+for file in $(ls *_resultsx_ridaeus); do
+gene=$(basename $file | sed 's@_resultsx_ridaeus@@g')
+echo $gene
+gene_file=$(ls effectors/${gene}.t1.faa)
+gene_length=$(grep -v '>' $gene_file | tr -d '\n' | wc -c)
+echo $file | awk '$3 > 60' | awk -v gene_length="$gene_length" '$4 / gene_length > 0.4'
+done
+```
+```bash
+grep 'g10232;\|g11054;\|g11278;\|g1209;\|g12302;\|g12450;\|g12453;\|g12628;\|g12667;\|g12955;\|g13367;\|g13490;\|g1355;\|g13885;\|g14348;\|g14731;\|g14832;\|g15923;\|g2113;\|g2919;\|g2928;\|g3129;\|g324;\|g422;\|g548;\|g5605;\|g5645;\|g5721;\|g6055;\|g6450;\|g6520;\|g6562;\|g7278;\|g757;\|g8019;\|g9359;\|g10232.t1\|g11054.t1\|g11278.t1\|g1209.t1\|g12302.t1\|g12450.t1\|g12453.t1\|g12628.t1\|g12667.t1\|g12955.t1\|g13367.t1\|g13490.t1\|g1355.t1\|g13885.t1\|g14348.t1\|g14731.t1\|g14832.t1\|g15923.t1\|g2113.t1\|g2919.t1\|g2928.t1\|g3129.t1\|g324.t1\|g422.t1\|g548.t1\|g5605.t1\|g5645.t1\|g5721.t1\|g6055.t1\|g6450.t1\|g6520.t1\|g6562.t1\|g7278.t1\|g757.t1\|g8019.t1\|g9359.t1' /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3 > effectors/aphanis_only.gff
+```
+Aphanis_Gene: Exon_no.: Lengths:
+g10232  1 1289
+g11054  4 321 506 437 157
+g11278  3 160 407 873
+g1209 2 253 228
+g12302  2 115 378
+g12450  1 764
+g12453  2 483 37
+g12628  1 257
+g12667* 2 142 141
+g12955  2 141 745
+g13367  4 157 407 509 321
+g13490  1 500
+g1355 1 491
+g13885  1 647
+g14348  1 899
+g14731  2 439 123
+g14832  1 786
+g15923  1 611
+g2113 2 479 44
+g2919 1 230
+g2928 1 605
+g3129 1 446
+g324  1 539
+g422  3 138 226 668
+g548  1 332
+g5605 2 274 357
+g5645 1 665
+g5721 2 109 360
+g6055 3 68 847 363
+g6450 1 1232
+g6520*  2 463 66
+g6562 2 80 183
+g7278 3 13 71 369
+g757  1 386
+g8019 2 152 386
+g9359 1 389
+
+```bash
+#No. of hits
+Output=effectors/out13.tsv
+for file in $(ls effectors/*_resultsxyz); do
+gene=$(basename $file | sed 's@_resultsxyz@@g')
+echo $gene
+echo $gene >> $Output
+
+if [[ $gene == "g10232" || $gene == "g12450" || $gene == "g12628" || $gene == "g13490" || $gene == "g1355" || $gene == "g13885" || $gene == "g14348" || $gene == "g14832" || $gene == "g15923" || $gene == "g2919" || $gene == "g2928" || $gene == "g3129" || $gene == "g324" || $gene == "g548" || $gene == "g5645" || $gene == "g6450" || $gene == "g757" || $gene == "g9359" ]]; then
+gene_file=$(ls effectors/${gene}.t1.faa)
+gene_length=$(grep -v '>' $gene_file | tr -d '\n' | wc -c)
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk -v gene_length="$gene_length" '$4 / gene_length > 0.7' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g11054" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 118' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g11278" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 203' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g1209" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 59' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g12302" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 88' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g12453" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 112' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g12667" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 32' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g12955" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 173' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g13367" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 118' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g14731" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 102' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g2113" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 111' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g422" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 155' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g5605" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 83' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g5721" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 84' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g6055" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 197' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g6520" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 108' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g6562" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 42' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g7278" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 86' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g8019" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 90' | awk '$11 < 1e-23' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+fi
+
+done
+
+for file in $(ls effectors/*.faa); do
+name=$(basename $file | cut -d '.' -f1)
+tblastn -query $file -db db/mildew+db2 -out effectors/${name}_resultsxyz -evalue 1e-5 -outfmt "6 std qseq sseq" -num_threads 12 -max_target_seqs 99999
+done
+
+for file in $(ls effectors/*_out13.tsv); do
+x=$(basename $file | sed 's@.tsv@.fasta@g')
+mv $file effectors/$x
+done
+
+for file in $(ls effectors/*_resultsxyz); do
+gene=$(basename $file | sed 's@_resultsxyz@@g')
+Output=effectors/${gene}_out13.fasta
+
+  if [[ $gene == "g10232" || $gene == "g12450" || $gene == "g12628" || $gene == "g13490" || $gene == "g1355" || $gene == "g13885" || $gene == "g14348" || $gene == "g14832" || $gene == "g15923" || $gene == "g2919" || $gene == "g2928" || $gene == "g3129" || $gene == "g324" || $gene == "g548" || $gene == "g5645" || $gene == "g6450" || $gene == "g757" || $gene == "g9359" ]]; then
+    gene_file=$(ls effectors/${gene}.t1.faa)
+    gene_length=$(grep -v '>' "$gene_file" | tr -d '\n' | wc -c)
+    for file2 in /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta; do
+      ID=$(echo "$file2" | cut -d '/' -f7 | cut -c 1-3)_$(echo "$file2" | cut -d '/' -f8 | cut -c 1-3)_$(echo "$file2" | cut -d '/' -f9)
+      grep "$ID" "$file" | awk '$3 >= 60' | awk -v gene_length="$gene_length" '$4 / gene_length > 0.7' | awk '$11 < 1e-23' |
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+  elif [[ $gene == "g11054" ]]; then
+    for file2 in /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta; do
+      ID=$(echo "$file2" | cut -d '/' -f7 | cut -c 1-3)_$(echo "$file2" | cut -d '/' -f8 | cut -c 1-3)_$(echo "$file2" | cut -d '/' -f9)
+      grep "$ID" "$file" | awk '$3 >= 60' | awk '$4 > 118' | awk '$11 < 1e-23' |
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g11278" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 203' | awk '$11 < 1e-23' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g1209" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 59' | awk '$11 < 1e-23' |
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g12302" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 88' | awk '$11 < 1e-23' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g12453" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 112' | awk '$11 < 1e-23' |
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g12667" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 32' | awk '$11 < 1e-23' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g12955" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 173' | awk '$11 < 1e-23' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g13367" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 118' | awk '$11 < 1e-23' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g14731" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 102' | awk '$11 < 1e-23' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g2113" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 111' | awk '$11 < 1e-23' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g422" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 155' | awk '$11 < 1e-23' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g5605" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 83' | awk '$11 < 1e-23' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g5721" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 84' | awk '$11 < 1e-23' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g6055" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 197' | awk '$11 < 1e-23' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g6520" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 108' | awk '$11 < 1e-23' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g6562" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 42' | awk '$11 < 1e-23' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g7278" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 86' | awk '$11 < 1e-23' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g8019" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 90' | awk '$11 < 1e-23' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+fi
+
+done
+
+
+
+```
+```bash
+for file in $(ls effectors/*.faa); do
+name=$(basename $file | cut -d '.' -f1)
+tblastn -query $file -db db/mildew+db2 -out effectors/${name}_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length -num_threads 12 -max_target_seqs 99999
+done
+
+for file in $(ls slurm-19869203.out); do
+tblastn -query effectors/g10232.t1.faa -db db/mildew+db2 -out effectors/g10232_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g11054.t1.faa -db db/mildew+db2 -out effectors/g11054_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 94 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g11278.t1.faa -db db/mildew+db2 -out effectors/g11278_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 93 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g1209.t1.faa -db db/mildew+db2 -out effectors/g1209_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 304 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g12302.t1.faa -db db/mildew+db2 -out effectors/g12302_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 73 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g12450.t1.faa -db db/mildew+db2 -out effectors/g12450_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g12453.t1.faa -db db/mildew+db2 -out effectors/g12453_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 59 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g12628.t1.faa -db db/mildew+db2 -out effectors/g12628_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g12667.t1.faa -db db/mildew+db2 -out effectors/g12667_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 55 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g12955.t1.faa -db db/mildew+db2 -out effectors/g12955_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 248 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g13367.t1.faa -db db/mildew+db2 -out effectors/g13367_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 100 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g13490.t1.faa -db db/mildew+db2 -out effectors/g13490_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g1355.t1.faa -db db/mildew+db2 -out effectors/g1355_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g13885.t1.faa -db db/mildew+db2 -out effectors/g13885_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g14348.t1.faa -db db/mildew+db2 -out effectors/g14348_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g14731.t1.faa -db db/mildew+db2 -out effectors/g14731_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 59 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g14832.t1.faa -db db/mildew+db2 -out effectors/g14832_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g15923.t1.faa -db db/mildew+db2 -out effectors/g15923_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g2113.t1.faa -db db/mildew+db2 -out effectors/g2113_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 48 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g2919.t1.faa -db db/mildew+db2 -out effectors/g2919_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g2928.t1.faa -db db/mildew+db2 -out effectors/g2928_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g3129.t1.faa -db db/mildew+db2 -out effectors/g3129_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g324.t1.faa -db db/mildew+db2 -out effectors/g324_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g422.t1.faa -db db/mildew+db2 -out effectors/g422_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 349 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g548.t1.faa -db db/mildew+db2 -out effectors/g548_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g5605.t1.faa -db db/mildew+db2 -out effectors/g5605_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 72 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g5645.t1.faa -db db/mildew+db2 -out effectors/g5645_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g5721.t1.faa -db db/mildew+db2 -out effectors/g5721_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 64 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g6055.t1.faa -db db/mildew+db2 -out effectors/g6055_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 67 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g6450.t1.faa -db db/mildew+db2 -out effectors/g6450_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g6520.t1.faa -db db/mildew+db2 -out effectors/g6520_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 73 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g6562.t1.faa -db db/mildew+db2 -out effectors/g6562_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 56 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g7278.t1.faa -db db/mildew+db2 -out effectors/g7278_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 56 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g757.t1.faa -db db/mildew+db2 -out effectors/g757_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g8019.t1.faa -db db/mildew+db2 -out effectors/g8019_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 129 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors/g9359.t1.faa -db db/mildew+db2 -out effectors/g9359_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+done
+
+
+for file in $(ls effectors/*_resultsxyza); do
+gene=$(basename $file | sed 's@_resultsxyza@@g')
+Output=effectors/${gene}_out15.fasta
+
+  if [[ $gene == "g10232" || $gene == "g12450" || $gene == "g12628" || $gene == "g13490" || $gene == "g1355" || $gene == "g13885" || $gene == "g14348" || $gene == "g14832" || $gene == "g15923" || $gene == "g2919" || $gene == "g2928" || $gene == "g3129" || $gene == "g324" || $gene == "g548" || $gene == "g5645" || $gene == "g6450" || $gene == "g757" || $gene == "g9359" ]]; then
+    gene_file=$(ls effectors/${gene}.t1.faa)
+    gene_length=$(grep -v '>' "$gene_file" | tr -d '\n' | wc -c)
+    for file2 in /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta; do
+      ID=$(echo "$file2" | cut -d '/' -f7 | cut -c 1-3)_$(echo "$file2" | cut -d '/' -f8 | cut -c 1-3)_$(echo "$file2" | cut -d '/' -f9)
+      grep "$ID" "$file" | awk '$3 >= 60' | awk -v gene_length="$gene_length" '$4 / gene_length > 0.7' | awk '$11 < 1e-20' |
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+  elif [[ $gene == "g11054" ]]; then
+    for file2 in /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta; do
+      ID=$(echo "$file2" | cut -d '/' -f7 | cut -c 1-3)_$(echo "$file2" | cut -d '/' -f8 | cut -c 1-3)_$(echo "$file2" | cut -d '/' -f9)
+      grep "$ID" "$file" | awk '$3 >= 60' | awk '$4 > 118' | awk '$11 < 1e-20' |
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g11278" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 203' | awk '$11 < 1e-20' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g1209" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 59' | awk '$11 < 1e-20' |
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g12302" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 88' | awk '$11 < 1e-20' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g12453" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 112' | awk '$11 < 1e-20' |
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g12667" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 32' | awk '$11 < 1e-20' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g12955" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 173' | awk '$11 < 1e-20' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g13367" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 118' | awk '$11 < 1e-20' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g14731" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 102' | awk '$11 < 1e-20' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g2113" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 111' | awk '$11 < 1e-20' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g422" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 155' | awk '$11 < 1e-20' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g5605" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 83' | awk '$11 < 1e-20' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g5721" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 84' | awk '$11 < 1e-20' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g6055" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 197' | awk '$11 < 1e-20' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g6520" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 108' | awk '$11 < 1e-20' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g6562" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 42' | awk '$11 < 1e-20' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g7278" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 86' | awk '$11 < 1e-20' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+elif [[ $gene == "g8019" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+grep $ID $file | awk '$3 >= 60' | awk '$4 > 90' | awk '$11 < 1e-20' | 
+      while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+      done
+    done
+
+fi
+
+done
+
+
+#No. of hits
+Output=effectors/out15.tsv
+for file in $(ls effectors/*_resultsxyza); do
+gene=$(basename $file | sed 's@_resultsxyza@@g')
+echo $gene
+echo $gene >> $Output
+
+if [[ $gene == "g10232" || $gene == "g12450" || $gene == "g12628" || $gene == "g13490" || $gene == "g1355" || $gene == "g13885" || $gene == "g14348" || $gene == "g14832" || $gene == "g15923" || $gene == "g2919" || $gene == "g2928" || $gene == "g3129" || $gene == "g324" || $gene == "g548" || $gene == "g5645" || $gene == "g6450" || $gene == "g757" || $gene == "g9359" ]]; then
+gene_file=$(ls effectors/${gene}.t1.faa)
+gene_length=$(grep -v '>' $gene_file | tr -d '\n' | wc -c)
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk -v gene_length="$gene_length" '$4 / gene_length > 0.7' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g11054" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 118' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g11278" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 203' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g1209" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 59' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g12302" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 88' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g12453" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 112' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g12667" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 32' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g12955" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 173' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g13367" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 118' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g14731" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 102' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g2113" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 111' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g422" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 155' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g5605" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 83' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g5721" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 84' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g6055" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 197' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g6520" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 108' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g6562" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 42' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g7278" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 86' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+elif [[ $gene == "g8019" ]]; then
+for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+  ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+x=$(grep $ID $file | awk '$3 >= 60' | awk '$4 > 90' | awk '$11 < 1e-20' | wc -l)
+sed -i "\$s/\$/ $x/" $Output
+done
+
+fi
+
+done
+
+Output="effectors/out25.tsv"
+> $Output 
+for file in effectors/*_resultsxyza; do
+    gene=$(basename "$file" | sed 's@_resultsxyza@@g')
+    echo $gene
+    echo -n "$gene" >> $Output  
+    while read -r line; do
+        x=$(echo "$line" | awk '{print $2}')
+        sed -i "\$s/\$/ $x/" $Output
+    done < "$file"
+    echo "" >> $Output 
+done
+```
+blastp against good gene models
+```bash
+cat /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta | sed 's@>@>Pod_aph_DRT72020@g' >> good_preds.faa
+cat /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72021_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta | sed 's@>@>Pod_aph_DRT72021@g' >> good_preds.faa
+cat /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenSCOTT2020_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta | sed 's@>@>Pod_aph_SCOTT2020@g' >> good_preds.faa
+cat /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta | sed 's@>@>Pod_leu_OGBp112020@g' >> good_preds.faa
+cat /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenpOGB2019_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta | sed 's@>@>Pod_leu_OGB2019@g' >> good_preds.faa
+cat /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenpOGB2021_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta | sed 's@>@>Pod_leu_OGB2021@g' >> good_preds.faa
+
+makeblastdb -in good_preds.faa -dbtype prot -title gooddb2 -out db/gooddb2
+
+for file in $(ls effectors/*.faa); do
+name=$(basename $file | cut -d '.' -f1)
+blastp -query $file -db db/gooddb2 -out effectors/${name}_resultsxyzab -evalue 1e-5 -outfmt "6 std qseq sseq" -num_threads 12 -max_target_seqs 99999
+done
+
+#No. of hits
+Output=effectors/out17.tsv
+for file in $(ls effectors/*_resultsxyzab); do
+gene=$(basename $file | sed 's@_resultsxyzab@@g')
+echo $gene
+echo $gene >> $Output
+
+  gene_file=$(ls effectors/${gene}.t1.faa)
+  gene_length=$(grep -v '>' $gene_file | tr -d '\n' | wc -c)
+  for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+    ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+    x=$(grep $ID $file | awk '$3 >= 60' | awk -v gene_length="$gene_length" '$4 / gene_length > 0.7' | awk '$11 < 1e-20' | wc -l)
+    sed -i "\$s/\$/ $x/" $Output
+  done
+
+done
+
+/home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72020/fcs/gene_pred/braker/final-02042924/Pod_aph_DRT72020_clean_final_genes.pep.fasta
+/home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/DRT72021/fcs/gene_pred/braker/final-02042924/Pod_aph_DRT72021_clean_final_genes.pep.fasta
+/home/theaven/scratch/uncompressed/genomes/Podosphaera/aphanis/SCOTT2020/fcs/gene_pred/braker/final-02042924/Pod_aph_SCOTT2020_clean_final_genes.pep.fasta
+/home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/GCA_013170925.1/fcs/gene_pred/braker/final-02042924/Pod_leu_GCA_013170925.1_clean_final_genes.pep.fasta
+/home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGB2019/fcs/gene_pred/braker/final-02042924/Pod_leu_OGB2019_clean_final_genes.pep.fasta
+/home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGB2021/fcs/gene_pred/braker/final-02042924/Pod_leu_OGB2021_clean_final_genes.pep.fasta
+/home/theaven/scratch/uncompressed/genomes/Podosphaera/leucotricha/OGBp112020/fcs/gene_pred/braker/final-02042924/Pod_leu_OGBp112020_clean_final_genes.pep.fasta
+
+```
+```bash
+ls ~/projects/niab/theaven/results/P_aphanis-THeavenDRCT72020_1-aphanis-ranked4.tsv
+ls /home/theaven/scratch/uncompressed/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/NRI/P.aphanis_strawberry2020_interproscan.tsv
+
+grep 'g10232;\|g11054;\|g11278;\|g1209;\|g12302;\|g12450;\|g12453;\|g12628;\|g12667;\|g12955;\|g13367;\|g13490;\|g1355;\|g13885;\|g14348;\|g14731;\|g14832;\|g15923;\|g2113;\|g2919;\|g2928;\|g3129;\|g324;\|g422;\|g548;\|g5605;\|g5645;\|g5721;\|g6055;\|g6450;\|g6520;\|g6562;\|g7278;\|g757;\|g8019;\|g9359;\|g10232.t1\|g11054.t1\|g11278.t1\|g1209.t1\|g12302.t1\|g12450.t1\|g12453.t1\|g12628.t1\|g12667.t1\|g12955.t1\|g13367.t1\|g13490.t1\|g1355.t1\|g13885.t1\|g14348.t1\|g14731.t1\|g14832.t1\|g15923.t1\|g2113.t1\|g2919.t1\|g2928.t1\|g3129.t1\|g324.t1\|g422.t1\|g548.t1\|g5605.t1\|g5645.t1\|g5721.t1\|g6055.t1\|g6450.t1\|g6520.t1\|g6562.t1\|g7278.t1\|g757.t1\|g8019.t1\|g9359.t1' /home/theaven/scratch/uncompressed/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/NRI/P.aphanis_strawberry2020_interproscan.tsv > /home/theaven/scratch/uncompressed/gene_pred/P_aphanis/THeavenDRCT72020_1/interproscan/NRI/aphanis_cseps.tsv
+```
+leucotricha only effectors
+```bash
+while IFS=$'\t' read -r line; do
+    awk -F'\t' '$31 == "1" && $27 == "." && $7 == "0" {print $1}' <<< "$line" | grep -v 'name' >> leuco_only_secreted_effectors.txt
+done < /home/theaven/projects/niab/theaven/results/P_leucotricha-THeavenp11_1-leucotricha-ranked4.tsv
+
+/home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenSCOTT2020_1/predector_singularity3/results/final_genes_appended_renamed.pep/final_genes_appended_renamed.pep-ranked.tsv
+
+while IFS=$'\t' read -r line; do
+echo $line > hits.txt
+python3 /home/theaven/scratch/apps/tools/seq_get.py --id_file hits.txt --input /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta --output effectors2/${line}.faa
+done < leuco_only_secreted_effectors.txt
+
+grep 'g4176;\|g4600;\|g4897;\|g5141;\|g5142;\|g5372;\|g5674;\|g5692;\|g5745;\|g5831;\|g6026;\|g6027;\|g6105;\|g6162;\|g6243;\|g6281;\|g6315;\|g6354;\|g6355;\|g6406;\|g6458;\|g6590;\|g6999;\|g7051;\|g7120;\|g7121;\|g7132;\|g7198;\|g7200;\|g7361;\|g7603;\|g7646;\|g7647;\|g7696;\|g7802;\|g7927;\|g7928;\|g7935;\|g7937;\|g8009;\|g8035;\|g8081;\|g8248;\|g8278;\|g8734;\|g8760;\|g8897;\|g8974;\|g9008;\|g9065;\|g911;\|g9132;\|g9487;\|g978;\|g981;\|g9883;\|g9979;\|g10095;\|g1010;\|g10145;\|g10372;\|g10489;\|g10497;\|g10500;\|g10675;\|g10692;\|g10783;\|g10784;\|g10794;\|g1106;\|g11286;\|g11369;\|g11409;\|g11416;\|g11565;\|g11652;\|g11660;\|g11719;\|g11727;\|g11778;\|g11806;\|g11807;\|g11808;\|g11809;\|g1186;\|g11906;\|g11998;\|g12135;\|g12284;\|g12296;\|g12452;\|g12489;\|g12500;\|g12653;\|g12716;\|g12776;\|g13051;\|g13093;\|g13170;\|g13217;\|g13219;\|g13226;\|g13566;\|g13811;\|g13892;\|g13921;\|g14015;\|g14026;\|g14153;\|g14154;\|g14161;\|g14208;\|g14239;\|g14266;\|g14430;\|g14456;\|g14463;\|g14471;\|g14546;\|g14551;\|g14690;\|g14900;\|g14908;\|g15093;\|g150;\|g1518;\|g15306;\|g15465;\|g15827;\|g16211;\|g16340;\|g16440;\|g16601;\|g16680;\|g172;\|g1765;\|g17771;\|g18158;\|g1899;\|g1901;\|g2067;\|g2071;\|g2085;\|g2280;\|g2297;\|g254;\|g255;\|g258;\|g259;\|g2761;\|g2902;\|g3072;\|g3170;\|g3172;\|g3204;\|g3237;\|g3319;\|g3921;\|g4016;\|g4176.t1\|g4600.t1\|g4897.t1\|g5141.t1\|g5142.t1\|g5372.t1\|g5674.t1\|g5692.t1\|g5745.t1\|g5831.t1\|g6026.t1\|g6027.t1\|g6105.t1\|g6162.t1\|g6243.t1\|g6281.t1\|g6315.t1\|g6354.t1\|g6355.t1\|g6406.t1\|g6458.t1\|g6590.t1\|g6999.t1\|g7051.t1\|g7120.t1\|g7121.t1\|g7132.t1\|g7198.t1\|g7200.t1\|g7361.t1\|g7603.t1\|g7646.t1\|g7647.t1\|g7696.t1\|g7802.t1\|g7927.t1\|g7928.t1\|g7935.t1\|g7937.t1\|g8009.t1\|g8035.t1\|g8081.t1\|g8248.t1\|g8278.t1\|g8734.t1\|g8760.t1\|g8897.t1\|g8974.t1\|g9008.t1\|g9065.t1\|g911.t1\|g9132.t1\|g9487.t1\|g978.t1\|g981.t1\|g9883.t1\|g9979.t1\|g10095.t1\|g1010.t1\|g10145.t1\|g10372.t1\|g10489.t1\|g10497.t1\|g10500.t1\|g10675.t1\|g10692.t1\|g10783.t1\|g10784.t1\|g10794.t1\|g1106.t1\|g11286.t1\|g11369.t1\|g11409.t1\|g11416.t1\|g11565.t1\|g11652.t1\|g11660.t1\|g11719.t1\|g11727.t1\|g11778.t1\|g11806.t1\|g11807.t1\|g11808.t1\|g11809.t1\|g1186.t1\|g11906.t1\|g11998.t1\|g12135.t1\|g12284.t1\|g12296.t1\|g12452.t1\|g12489.t1\|g12500.t1\|g12653.t1\|g12716.t1\|g12776.t1\|g13051.t1\|g13093.t1\|g13170.t1\|g13217.t1\|g13219.t1\|g13226.t1\|g13566.t1\|g13811.t1\|g13892.t1\|g13921.t1\|g14015.t1\|g14026.t1\|g14153.t1\|g14154.t1\|g14161.t1\|g14208.t1\|g14239.t1\|g14266.t1\|g14430.t1\|g14456.t1\|g14463.t1\|g14471.t1\|g14546.t1\|g14551.t1\|g14690.t1\|g14900.t1\|g14908.t1\|g15093.t1\|g150.t1\|g1518.t1\|g15306.t1\|g15465.t1\|g15827.t1\|g16211.t1\|g16340.t1\|g16440.t1\|g16601.t1\|g16680.t1\|g172.t1\|g1765.t1\|g17771.t1\|g18158.t1\|g1899.t1\|g1901.t1\|g2067.t1\|g2071.t1\|g2085.t1\|g2280.t1\|g2297.t1\|g254.t1\|g255.t1\|g258.t1\|g259.t1\|g2761.t1\|g2902.t1\|g3072.t1\|g3170.t1\|g3172.t1\|g3204.t1\|g3237.t1\|g3319.t1\|g3921.t1\|g4016.t1' /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.gff3 > effectors2/leuco_only.gff
+
+#max intron length 1.1x the largest intron in the gene prediction or 40, whichever is larger
+for file in $(ls slurm-19869203.out); do
+tblastn -query effectors2/g10095.t1.faa -db db/mildew+db2 -out effectors2/g10095_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g1010.t1.faa -db db/mildew+db2 -out effectors2/g1010_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 49 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g10145.t1.faa -db db/mildew+db2 -out effectors2/g10145_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g10372.t1.faa -db db/mildew+db2 -out effectors2/g10372_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g10489.t1.faa -db db/mildew+db2 -out effectors2/g10489_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 81 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g10497.t1.faa -db db/mildew+db2 -out effectors2/g10497_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 73 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g10500.t1.faa -db db/mildew+db2 -out effectors2/g10500_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 132 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g10675.t1.faa -db db/mildew+db2 -out effectors2/g10675_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g10692.t1.faa -db db/mildew+db2 -out effectors2/g10692_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g10783.t1.faa -db db/mildew+db2 -out effectors2/g10783_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 104 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g10784.t1.faa -db db/mildew+db2 -out effectors2/g10784_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 95 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g10794.t1.faa -db db/mildew+db2 -out effectors2/g10794_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 65 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g1106.t1.faa -db db/mildew+db2 -out effectors2/g1106_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 76 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g11286.t1.faa -db db/mildew+db2 -out effectors2/g11286_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 72 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g11369.t1.faa -db db/mildew+db2 -out effectors2/g11369_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 72 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g11409.t1.faa -db db/mildew+db2 -out effectors2/g11409_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g11416.t1.faa -db db/mildew+db2 -out effectors2/g11416_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 91 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g11565.t1.faa -db db/mildew+db2 -out effectors2/g11565_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g11652.t1.faa -db db/mildew+db2 -out effectors2/g11652_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g11660.t1.faa -db db/mildew+db2 -out effectors2/g11660_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 80 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g11719.t1.faa -db db/mildew+db2 -out effectors2/g11719_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 85 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g11727.t1.faa -db db/mildew+db2 -out effectors2/g11727_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 88 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g11778.t1.faa -db db/mildew+db2 -out effectors2/g11778_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g11806.t1.faa -db db/mildew+db2 -out effectors2/g11806_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 59 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g11807.t1.faa -db db/mildew+db2 -out effectors2/g11807_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 59 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g11808.t1.faa -db db/mildew+db2 -out effectors2/g11808_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 66 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g11809.t1.faa -db db/mildew+db2 -out effectors2/g11809_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 65 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g1186.t1.faa -db db/mildew+db2 -out effectors2/g1186_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 54 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g11906.t1.faa -db db/mildew+db2 -out effectors2/g11906_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 82 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g11998.t1.faa -db db/mildew+db2 -out effectors2/g11998_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g12135.t1.faa -db db/mildew+db2 -out effectors2/g12135_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 189 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g12284.t1.faa -db db/mildew+db2 -out effectors2/g12284_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 63 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g12296.t1.faa -db db/mildew+db2 -out effectors2/g12296_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 83 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g12452.t1.faa -db db/mildew+db2 -out effectors2/g12452_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g12489.t1.faa -db db/mildew+db2 -out effectors2/g12489_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g12500.t1.faa -db db/mildew+db2 -out effectors2/g12500_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 55 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g12653.t1.faa -db db/mildew+db2 -out effectors2/g12653_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 198 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g12716.t1.faa -db db/mildew+db2 -out effectors2/g12716_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 62 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g12776.t1.faa -db db/mildew+db2 -out effectors2/g12776_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 110 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g13051.t1.faa -db db/mildew+db2 -out effectors2/g13051_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 65 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g13093.t1.faa -db db/mildew+db2 -out effectors2/g13093_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g13170.t1.faa -db db/mildew+db2 -out effectors2/g13170_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 61 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g13217.t1.faa -db db/mildew+db2 -out effectors2/g13217_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 62 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g13219.t1.faa -db db/mildew+db2 -out effectors2/g13219_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 61 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g13226.t1.faa -db db/mildew+db2 -out effectors2/g13226_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g13566.t1.faa -db db/mildew+db2 -out effectors2/g13566_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 66 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g13811.t1.faa -db db/mildew+db2 -out effectors2/g13811_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 105 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g13892.t1.faa -db db/mildew+db2 -out effectors2/g13892_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g13921.t1.faa -db db/mildew+db2 -out effectors2/g13921_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 169 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g14015.t1.faa -db db/mildew+db2 -out effectors2/g14015_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 106 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g14026.t1.faa -db db/mildew+db2 -out effectors2/g14026_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 71 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g14153.t1.faa -db db/mildew+db2 -out effectors2/g14153_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 104 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g14154.t1.faa -db db/mildew+db2 -out effectors2/g14154_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 82 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g14161.t1.faa -db db/mildew+db2 -out effectors2/g14161_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g14208.t1.faa -db db/mildew+db2 -out effectors2/g14208_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 65 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g14239.t1.faa -db db/mildew+db2 -out effectors2/g14239_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g14266.t1.faa -db db/mildew+db2 -out effectors2/g14266_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 70 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g14430.t1.faa -db db/mildew+db2 -out effectors2/g14430_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 66 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g14456.t1.faa -db db/mildew+db2 -out effectors2/g14456_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 59 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g14463.t1.faa -db db/mildew+db2 -out effectors2/g14463_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 70 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g14471.t1.faa -db db/mildew+db2 -out effectors2/g14471_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 70 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g14546.t1.faa -db db/mildew+db2 -out effectors2/g14546_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 74 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g14551.t1.faa -db db/mildew+db2 -out effectors2/g14551_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 58 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g14690.t1.faa -db db/mildew+db2 -out effectors2/g14690_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 70 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g14900.t1.faa -db db/mildew+db2 -out effectors2/g14900_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 69 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g14908.t1.faa -db db/mildew+db2 -out effectors2/g14908_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 62 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g150.t1.faa -db db/mildew+db2 -out effectors2/g150_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g15093.t1.faa -db db/mildew+db2 -out effectors2/g15093_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g1518.t1.faa -db db/mildew+db2 -out effectors2/g1518_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g15306.t1.faa -db db/mildew+db2 -out effectors2/g15306_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 104 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g15465.t1.faa -db db/mildew+db2 -out effectors2/g15465_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 75 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g15827.t1.faa -db db/mildew+db2 -out effectors2/g15827_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g16211.t1.faa -db db/mildew+db2 -out effectors2/g16211_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 68 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g16340.t1.faa -db db/mildew+db2 -out effectors2/g16340_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g16440.t1.faa -db db/mildew+db2 -out effectors2/g16440_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 102 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g16601.t1.faa -db db/mildew+db2 -out effectors2/g16601_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 69 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g16680.t1.faa -db db/mildew+db2 -out effectors2/g16680_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g172.t1.faa -db db/mildew+db2 -out effectors2/g172_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g1765.t1.faa -db db/mildew+db2 -out effectors2/g1765_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 101 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g17771.t1.faa -db db/mildew+db2 -out effectors2/g17771_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g18158.t1.faa -db db/mildew+db2 -out effectors2/g18158_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g1899.t1.faa -db db/mildew+db2 -out effectors2/g1899_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g1901.t1.faa -db db/mildew+db2 -out effectors2/g1901_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 54 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g2067.t1.faa -db db/mildew+db2 -out effectors2/g2067_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 98 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g2071.t1.faa -db db/mildew+db2 -out effectors2/g2071_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g2085.t1.faa -db db/mildew+db2 -out effectors2/g2085_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 97 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g2280.t1.faa -db db/mildew+db2 -out effectors2/g2280_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 70 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g2297.t1.faa -db db/mildew+db2 -out effectors2/g2297_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 61 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g254.t1.faa -db db/mildew+db2 -out effectors2/g254_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 52 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g255.t1.faa -db db/mildew+db2 -out effectors2/g255_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 109 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g258.t1.faa -db db/mildew+db2 -out effectors2/g258_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 86 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g259.t1.faa -db db/mildew+db2 -out effectors2/g259_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 95 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g2761.t1.faa -db db/mildew+db2 -out effectors2/g2761_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g2902.t1.faa -db db/mildew+db2 -out effectors2/g2902_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g3072.t1.faa -db db/mildew+db2 -out effectors2/g3072_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 66 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g3170.t1.faa -db db/mildew+db2 -out effectors2/g3170_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 51 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g3172.t1.faa -db db/mildew+db2 -out effectors2/g3172_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 51 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g3204.t1.faa -db db/mildew+db2 -out effectors2/g3204_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 104 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g3237.t1.faa -db db/mildew+db2 -out effectors2/g3237_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 55 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g3319.t1.faa -db db/mildew+db2 -out effectors2/g3319_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 91 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g3921.t1.faa -db db/mildew+db2 -out effectors2/g3921_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 57 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g4016.t1.faa -db db/mildew+db2 -out effectors2/g4016_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g4176.t1.faa -db db/mildew+db2 -out effectors2/g4176_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 94 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g4600.t1.faa -db db/mildew+db2 -out effectors2/g4600_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 168 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g4897.t1.faa -db db/mildew+db2 -out effectors2/g4897_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 73 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g5141.t1.faa -db db/mildew+db2 -out effectors2/g5141_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 68 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g5142.t1.faa -db db/mildew+db2 -out effectors2/g5142_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 51 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g5372.t1.faa -db db/mildew+db2 -out effectors2/g5372_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 87 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g5674.t1.faa -db db/mildew+db2 -out effectors2/g5674_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 75 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g5692.t1.faa -db db/mildew+db2 -out effectors2/g5692_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g5745.t1.faa -db db/mildew+db2 -out effectors2/g5745_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 49 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g5831.t1.faa -db db/mildew+db2 -out effectors2/g5831_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 75 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g6026.t1.faa -db db/mildew+db2 -out effectors2/g6026_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 65 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g6027.t1.faa -db db/mildew+db2 -out effectors2/g6027_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 59 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g6105.t1.faa -db db/mildew+db2 -out effectors2/g6105_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 51 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g6162.t1.faa -db db/mildew+db2 -out effectors2/g6162_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 107 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g6243.t1.faa -db db/mildew+db2 -out effectors2/g6243_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 91 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g6281.t1.faa -db db/mildew+db2 -out effectors2/g6281_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 57 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g6315.t1.faa -db db/mildew+db2 -out effectors2/g6315_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 68 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g6354.t1.faa -db db/mildew+db2 -out effectors2/g6354_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 106 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g6355.t1.faa -db db/mildew+db2 -out effectors2/g6355_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 96 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g6406.t1.faa -db db/mildew+db2 -out effectors2/g6406_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g6458.t1.faa -db db/mildew+db2 -out effectors2/g6458_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g6590.t1.faa -db db/mildew+db2 -out effectors2/g6590_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 58 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g6999.t1.faa -db db/mildew+db2 -out effectors2/g6999_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 58 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g7051.t1.faa -db db/mildew+db2 -out effectors2/g7051_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 87 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g7120.t1.faa -db db/mildew+db2 -out effectors2/g7120_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 71 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g7121.t1.faa -db db/mildew+db2 -out effectors2/g7121_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 57 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g7132.t1.faa -db db/mildew+db2 -out effectors2/g7132_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g7198.t1.faa -db db/mildew+db2 -out effectors2/g7198_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g7200.t1.faa -db db/mildew+db2 -out effectors2/g7200_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 60 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g7361.t1.faa -db db/mildew+db2 -out effectors2/g7361_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 103 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g7603.t1.faa -db db/mildew+db2 -out effectors2/g7603_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 97 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g7646.t1.faa -db db/mildew+db2 -out effectors2/g7646_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 63 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g7647.t1.faa -db db/mildew+db2 -out effectors2/g7647_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 60 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g7696.t1.faa -db db/mildew+db2 -out effectors2/g7696_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g7802.t1.faa -db db/mildew+db2 -out effectors2/g7802_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 90 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g7927.t1.faa -db db/mildew+db2 -out effectors2/g7927_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 116 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g7928.t1.faa -db db/mildew+db2 -out effectors2/g7928_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 95 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g7935.t1.faa -db db/mildew+db2 -out effectors2/g7935_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 70 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g7937.t1.faa -db db/mildew+db2 -out effectors2/g7937_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 70 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g8009.t1.faa -db db/mildew+db2 -out effectors2/g8009_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 76 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g8035.t1.faa -db db/mildew+db2 -out effectors2/g8035_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g8081.t1.faa -db db/mildew+db2 -out effectors2/g8081_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 57 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g8248.t1.faa -db db/mildew+db2 -out effectors2/g8248_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g8278.t1.faa -db db/mildew+db2 -out effectors2/g8278_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g8734.t1.faa -db db/mildew+db2 -out effectors2/g8734_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 91 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g8760.t1.faa -db db/mildew+db2 -out effectors2/g8760_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 91 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g8897.t1.faa -db db/mildew+db2 -out effectors2/g8897_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 62 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g8974.t1.faa -db db/mildew+db2 -out effectors2/g8974_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g9008.t1.faa -db db/mildew+db2 -out effectors2/g9008_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 69 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g9065.t1.faa -db db/mildew+db2 -out effectors2/g9065_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 73 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g911.t1.faa -db db/mildew+db2 -out effectors2/g911_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 75 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g9132.t1.faa -db db/mildew+db2 -out effectors2/g9132_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 82 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g9487.t1.faa -db db/mildew+db2 -out effectors2/g9487_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 53 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g978.t1.faa -db db/mildew+db2 -out effectors2/g978_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g981.t1.faa -db db/mildew+db2 -out effectors2/g981_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 95 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g9883.t1.faa -db db/mildew+db2 -out effectors2/g9883_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 98 -num_threads 12 -max_target_seqs 99999
+tblastn -query effectors2/g9979.t1.faa -db db/mildew+db2 -out effectors2/g9979_resultsxyza -evalue 1e-5 -outfmt "6 std qseq sseq" -max_intron_length 40 -num_threads 12 -max_target_seqs 99999
+done
+
+tblastn -query effectors2/g8974.t1.faa -db db/mildew+db2 -out effectors2/g8974_resultsxyza_2 -evalue 1e-5 -outfmt "6 std qseq sseq" -num_threads 12 -max_target_seqs 99999
+#this returns no hits, possibly because the gene is so short?
+
+#length of hit 70% of lingest exon:
+declare -A exon_lengths
+exon_lengths["g1010"]=371
+exon_lengths["g10497"]=221
+exon_lengths["g10500"]=208
+exon_lengths["g10783"]=242
+exon_lengths["g10784"]=244
+exon_lengths["g10794"]=233
+exon_lengths["g11286"]=454
+exon_lengths["g11369"]=485
+exon_lengths["g11719"]=310
+exon_lengths["g11807"]=223
+exon_lengths["g11808"]=242
+exon_lengths["g11809"]=217
+exon_lengths["g1186"]=165
+exon_lengths["g12284"]=214
+exon_lengths["g12500"]=212
+exon_lengths["g12653"]=445
+exon_lengths["g12716"]=896
+exon_lengths["g12776"]=202
+exon_lengths["g13051"]=240
+exon_lengths["g13170"]=206
+exon_lengths["g13217"]=99
+exon_lengths["g13219"]=212
+exon_lengths["g13566"]=240
+exon_lengths["g14026"]=210
+exon_lengths["g14208"]=204
+exon_lengths["g14266"]=292
+exon_lengths["g14430"]=223
+exon_lengths["g14463"]=196
+exon_lengths["g14471"]=235
+exon_lengths["g14690"]=558
+exon_lengths["g14900"]=225
+exon_lengths["g14908"]=227
+exon_lengths["g15465"]=242
+exon_lengths["g16211"]=661
+exon_lengths["g16440"]=882
+exon_lengths["g16601"]=135
+exon_lengths["g1901"]=214
+exon_lengths["g2280"]=79
+exon_lengths["g2297"]=263
+exon_lengths["g254"]=225
+exon_lengths["g3072"]=248
+exon_lengths["g3170"]=233
+exon_lengths["g3172"]=269
+exon_lengths["g3204"]=206
+exon_lengths["g3237"]=208
+exon_lengths["g3921"]=169
+exon_lengths["g5142"]=217
+exon_lengths["g5674"]=246
+exon_lengths["g5745"]=231
+exon_lengths["g5831"]=214
+exon_lengths["g6026"]=227
+exon_lengths["g6027"]=227
+exon_lengths["g6105"]=408
+exon_lengths["g6281"]=206
+exon_lengths["g6590"]=212
+exon_lengths["g6999"]=263
+exon_lengths["g7051"]=214
+exon_lengths["g7120"]=246
+exon_lengths["g7121"]=294
+exon_lengths["g7200"]=248
+exon_lengths["g7646"]=248
+exon_lengths["g7647"]=231
+exon_lengths["g7935"]=244
+exon_lengths["g7937"]=238
+exon_lengths["g8081"]=217
+exon_lengths["g8760"]=240
+exon_lengths["g8897"]=128
+exon_lengths["g9008"]=210
+exon_lengths["g9065"]=395
+exon_lengths["g911"]=235
+exon_lengths["g9487"]=156
+exon_lengths["g10489"]=231
+exon_lengths["g1106"]=316
+exon_lengths["g11660"]=245
+exon_lengths["g11806"]=252
+exon_lengths["g13921"]=210
+exon_lengths["g14154"]=475
+exon_lengths["g14456"]=114
+exon_lengths["g14551"]=520
+exon_lengths["g4897"]=235
+exon_lengths["g6315"]=293
+exon_lengths["g8009"]=156
+exon_lengths["g8734"]=80
+exon_lengths["g11416"]=270
+exon_lengths["g11727"]=283
+exon_lengths["g11906"]=266
+exon_lengths["g12135"]=270
+exon_lengths["g12296"]=347
+exon_lengths["g13811"]=264
+exon_lengths["g14153"]=258
+exon_lengths["g14546"]=275
+exon_lengths["g15306"]=266
+exon_lengths["g1765"]=270
+exon_lengths["g2067"]=264
+exon_lengths["g2085"]=258
+exon_lengths["g255"]=283
+exon_lengths["g258"]=266
+exon_lengths["g259"]=275
+exon_lengths["g3319"]=258
+exon_lengths["g4176"]=264
+exon_lengths["g5141"]=144
+exon_lengths["g5372"]=266
+exon_lengths["g6162"]=277
+exon_lengths["g6243"]=170
+exon_lengths["g6354"]=291
+exon_lengths["g6355"]=289
+exon_lengths["g7361"]=270
+exon_lengths["g7603"]=270
+exon_lengths["g7802"]=273
+exon_lengths["g7927"]=277
+exon_lengths["g7928"]=277
+exon_lengths["g9132"]=266
+exon_lengths["g981"]=258
+exon_lengths["g9883"]=270
+exon_lengths["g14015"]=270
+exon_lengths["g4600"]=124
+
+#get fastas
+for file in $(ls effectors2/*_resultsxyza); do
+gene=$(basename $file | sed 's@_resultsxyza@@g')
+Output=effectors2/${gene}_out5.fasta
+echo $gene
+
+if [[ $gene == "g10675" || $gene == "g10692"  || $gene == "g10095" || $gene == "g10145" || $gene == "g10372" || $gene == "g11409" || $gene == "g11565" || $gene == "g11652" || $gene == "g11778" || $gene == "g11998" || $gene == "g12452" || $gene == "g12489" || $gene == "g13093" || $gene == "g13226" || $gene == "g13892" || $gene == "g14161" || $gene == "g14239" || $gene == "g150" || $gene == "g15093" || $gene == "g1518" || $gene == "g15827" || $gene == "g16340" || $gene == "g16680" || $gene == "g172" || $gene == "g17771" || $gene == "g18158" || $gene == "g1899" || $gene == "g2071" || $gene == "g2761" || $gene == "g2902" || $gene == "g4016" || $gene == "g5692" || $gene == "g6406" || $gene == "g6458" || $gene == "g7132" || $gene == "g7198" || $gene == "g7696" || $gene == "g8035" || $gene == "g8248" || $gene == "g8278" || $gene == "g8974" || $gene == "g978" || $gene == "g9979" ]]; then
+  gene_file=$(ls effectors2/${gene}.t1.faa)
+  gene_length=$(grep -v '>' "$gene_file" | tr -d '\n' | wc -c)
+  for file2 in /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta; do
+    ID=$(echo "$file2" | cut -d '/' -f7 | cut -c 1-3)_$(echo "$file2" | cut -d '/' -f8 | cut -c 1-3)_$(echo "$file2" | cut -d '/' -f9)
+    grep "$ID" "$file" | awk '$3 >= 60' | awk -v gene_length="$gene_length" '$4 / gene_length > 0.7' | awk '$11 < 1e-20' |
+    while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+    done
+  done
+else 
+  exon_length=${exon_lengths[$gene]}
+  for file2 in /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta; do
+    ID=$(echo "$file2" | cut -d '/' -f7 | cut -c 1-3)_$(echo "$file2" | cut -d '/' -f8 | cut -c 1-3)_$(echo "$file2" | cut -d '/' -f9)
+    grep "$ID" "$file" | awk '$3 >= 60' | awk -v exon_length="$exon_length" '$4 > exon_length / 3' | awk '$11 < 1e-20' |
+    while IFS=$'\t' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14; do
+        echo ">${col2}_${col9}" >> "$Output"
+        echo "$col14" >> "$Output"
+    done
+  done
+fi
+done
+
+#No. of hits
+Output=effectors2/out5.tsv
+for file in $(ls effectors2/*_resultsxyza); do
+gene=$(basename $file | sed 's@_resultsxyza@@g')
+echo $gene
+echo $gene >> $Output
+
+if [[ $gene == "g10675" || $gene == "g10692"  || $gene == "g10095" || $gene == "g10145" || $gene == "g10372" || $gene == "g11409" || $gene == "g11565" || $gene == "g11652" || $gene == "g11778" || $gene == "g11998" || $gene == "g12452" || $gene == "g12489" || $gene == "g13093" || $gene == "g13226" || $gene == "g13892" || $gene == "g14161" || $gene == "g14239" || $gene == "g150" || $gene == "g15093" || $gene == "g1518" || $gene == "g15827" || $gene == "g16340" || $gene == "g16680" || $gene == "g172" || $gene == "g17771" || $gene == "g18158" || $gene == "g1899" || $gene == "g2071" || $gene == "g2761" || $gene == "g2902" || $gene == "g4016" || $gene == "g5692" || $gene == "g6406" || $gene == "g6458" || $gene == "g7132" || $gene == "g7198" || $gene == "g7696" || $gene == "g8035" || $gene == "g8248" || $gene == "g8278" || $gene == "g8974" || $gene == "g978" || $gene == "g9979" ]]; then
+  gene_file=$(ls effectors2/${gene}.t1.faa)
+  gene_length=$(grep -v '>' $gene_file | tr -d '\n' | wc -c)
+  for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+    ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+    x=$(grep $ID $file | awk '$3 >= 60' | awk -v gene_length="$gene_length" '$4 / gene_length > 0.7' | awk '$11 < 1e-20' | wc -l)
+    sed -i "\$s/\$/ $x/" $Output
+  done
+else 
+  exon_length=${exon_lengths[$gene]}
+  for file2 in /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta; do
+    ID=$(echo "$file2" | cut -d '/' -f7 | cut -c 1-3)_$(echo "$file2" | cut -d '/' -f8 | cut -c 1-3)_$(echo "$file2" | cut -d '/' -f9)
+    x=$(grep "$ID" "$file" | awk '$3 >= 60' | awk -v exon_length="$exon_length" '$4 > exon_length / 3' | awk '$11 < 1e-20' | wc -l)
+    sed -i "\$s/\$/ $x/" $Output
+  done
+fi
+done
+
+
+```
+blastp against good gene models
+```bash
+for file in $(ls effectors2/*.faa); do
+name=$(basename $file | cut -d '.' -f1)
+blastp -query $file -db db/gooddb2 -out effectors2/${name}_resultsxyzab -evalue 1e-5 -outfmt "6 std qseq sseq" -num_threads 12 -max_target_seqs 99999
+done
+
+#No. of hits
+Output=effectors2/out6.tsv
+for file in $(ls effectors2/*_resultsxyzab); do
+gene=$(basename $file | sed 's@_resultsxyzab@@g')
+echo $gene
+echo $gene >> $Output
+  gene_file=$(ls effectors2/${gene}.t1.faa)
+  gene_length=$(grep -v '>' $gene_file | tr -d '\n' | wc -c)
+  for file2 in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+    ID=$(echo $file2 | cut -d '/' -f7 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f8 | cut -c 1-3)_$(echo $file2 | cut -d '/' -f9)
+    x=$(grep $ID $file | awk '$3 >= 60' | awk -v gene_length="$gene_length" '$4 / gene_length > 0.7' | awk '$11 < 1e-20' | wc -l)
+    sed -i "\$s/\$/ $x/" $Output
+  done
+done
+```
+
+```bash
+ls /home/theaven/scratch/uncompressed/gene_pred/P_leucotricha/THeavenp11_1/interproscan/NRI/P.leucotricha_apple2020_interproscan.tsv
+
+grep 'g4176;\|g4600;\|g4897;\|g5141;\|g5142;\|g5372;\|g5674;\|g5692;\|g5745;\|g5831;\|g6026;\|g6027;\|g6105;\|g6162;\|g6243;\|g6281;\|g6315;\|g6354;\|g6355;\|g6406;\|g6458;\|g6590;\|g6999;\|g7051;\|g7120;\|g7121;\|g7132;\|g7198;\|g7200;\|g7361;\|g7603;\|g7646;\|g7647;\|g7696;\|g7802;\|g7927;\|g7928;\|g7935;\|g7937;\|g8009;\|g8035;\|g8081;\|g8248;\|g8278;\|g8734;\|g8760;\|g8897;\|g8974;\|g9008;\|g9065;\|g911;\|g9132;\|g9487;\|g978;\|g981;\|g9883;\|g9979;\|g10095;\|g1010;\|g10145;\|g10372;\|g10489;\|g10497;\|g10500;\|g10675;\|g10692;\|g10783;\|g10784;\|g10794;\|g1106;\|g11286;\|g11369;\|g11409;\|g11416;\|g11565;\|g11652;\|g11660;\|g11719;\|g11727;\|g11778;\|g11806;\|g11807;\|g11808;\|g11809;\|g1186;\|g11906;\|g11998;\|g12135;\|g12284;\|g12296;\|g12452;\|g12489;\|g12500;\|g12653;\|g12716;\|g12776;\|g13051;\|g13093;\|g13170;\|g13217;\|g13219;\|g13226;\|g13566;\|g13811;\|g13892;\|g13921;\|g14015;\|g14026;\|g14153;\|g14154;\|g14161;\|g14208;\|g14239;\|g14266;\|g14430;\|g14456;\|g14463;\|g14471;\|g14546;\|g14551;\|g14690;\|g14900;\|g14908;\|g15093;\|g150;\|g1518;\|g15306;\|g15465;\|g15827;\|g16211;\|g16340;\|g16440;\|g16601;\|g16680;\|g172;\|g1765;\|g17771;\|g18158;\|g1899;\|g1901;\|g2067;\|g2071;\|g2085;\|g2280;\|g2297;\|g254;\|g255;\|g258;\|g259;\|g2761;\|g2902;\|g3072;\|g3170;\|g3172;\|g3204;\|g3237;\|g3319;\|g3921;\|g4016;\|g4176.t1\|g4600.t1\|g4897.t1\|g5141.t1\|g5142.t1\|g5372.t1\|g5674.t1\|g5692.t1\|g5745.t1\|g5831.t1\|g6026.t1\|g6027.t1\|g6105.t1\|g6162.t1\|g6243.t1\|g6281.t1\|g6315.t1\|g6354.t1\|g6355.t1\|g6406.t1\|g6458.t1\|g6590.t1\|g6999.t1\|g7051.t1\|g7120.t1\|g7121.t1\|g7132.t1\|g7198.t1\|g7200.t1\|g7361.t1\|g7603.t1\|g7646.t1\|g7647.t1\|g7696.t1\|g7802.t1\|g7927.t1\|g7928.t1\|g7935.t1\|g7937.t1\|g8009.t1\|g8035.t1\|g8081.t1\|g8248.t1\|g8278.t1\|g8734.t1\|g8760.t1\|g8897.t1\|g8974.t1\|g9008.t1\|g9065.t1\|g911.t1\|g9132.t1\|g9487.t1\|g978.t1\|g981.t1\|g9883.t1\|g9979.t1\|g10095.t1\|g1010.t1\|g10145.t1\|g10372.t1\|g10489.t1\|g10497.t1\|g10500.t1\|g10675.t1\|g10692.t1\|g10783.t1\|g10784.t1\|g10794.t1\|g1106.t1\|g11286.t1\|g11369.t1\|g11409.t1\|g11416.t1\|g11565.t1\|g11652.t1\|g11660.t1\|g11719.t1\|g11727.t1\|g11778.t1\|g11806.t1\|g11807.t1\|g11808.t1\|g11809.t1\|g1186.t1\|g11906.t1\|g11998.t1\|g12135.t1\|g12284.t1\|g12296.t1\|g12452.t1\|g12489.t1\|g12500.t1\|g12653.t1\|g12716.t1\|g12776.t1\|g13051.t1\|g13093.t1\|g13170.t1\|g13217.t1\|g13219.t1\|g13226.t1\|g13566.t1\|g13811.t1\|g13892.t1\|g13921.t1\|g14015.t1\|g14026.t1\|g14153.t1\|g14154.t1\|g14161.t1\|g14208.t1\|g14239.t1\|g14266.t1\|g14430.t1\|g14456.t1\|g14463.t1\|g14471.t1\|g14546.t1\|g14551.t1\|g14690.t1\|g14900.t1\|g14908.t1\|g15093.t1\|g150.t1\|g1518.t1\|g15306.t1\|g15465.t1\|g15827.t1\|g16211.t1\|g16340.t1\|g16440.t1\|g16601.t1\|g16680.t1\|g172.t1\|g1765.t1\|g17771.t1\|g18158.t1\|g1899.t1\|g1901.t1\|g2067.t1\|g2071.t1\|g2085.t1\|g2280.t1\|g2297.t1\|g254.t1\|g255.t1\|g258.t1\|g259.t1\|g2761.t1\|g2902.t1\|g3072.t1\|g3170.t1\|g3172.t1\|g3204.t1\|g3237.t1\|g3319.t1\|g3921.t1\|g4016.t1' /home/theaven/scratch/uncompressed/gene_pred/P_leucotricha/THeavenp11_1/interproscan/NRI/P.leucotricha_apple2020_interproscan.tsv > /home/theaven/scratch/uncompressed/gene_pred/P_leucotricha/THeavenp11_1/interproscan/NRI/leucotricha_cseps.tsv
+```
+#### orthovenn3
+```bash
+cp /home/theaven/projects/niab/theaven/gene_pred/P_aphanis/THeavenDRCT72020_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta ./P_aphanis_THeavenDRCT72020_1_protein.faa
+cp /home/theaven/projects/niab/theaven/gene_pred/P_leucotricha/THeavenp11_1/codingquarry/rep_modeling/final/final_genes_appended_renamed.pep.fasta ./P_leucotricha_THeavenp11_1_protein.faa
+
+for fasta in $(ls B_graminis_GCA_905067625.1_protein.faa B_hordei_GCA_900237765.1protein.faa E_necator_GCA_024703715.1protein.faa G_cichoracearum_GCA_003611235.1protein.faa P_aphanis_THeavenDRCT72020_1_protein.faa P_leucotricha_THeavenp11_1_protein.faa S_cerevisiae_GCF_000146045.2_protein.faa P_xanthii_GCA_010015925.1_protein.faa); do
+python3 /home/theaven/scratch/apps/tools/longest_variant.py $fasta $(echo $fasta | sed 's@.faa@.longest.faa@g')
+done
+
+
+for fasta in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.fasta); do
+python3 /home/theaven/scratch/apps/tools/longest_variant.py $fasta $(echo $fasta | sed 's@.fasta@.longest.faa@g')
+done
+
+for fasta in $(ls /home/theaven/scratch/uncompressed/genomes/*/*/*/fcs/gene_pred/braker/final-02042924/*clean_final_genes.pep.longest.faa); do
+cp $fasta download4/.
+done
+```
+#### Alphafold
+```bash
+cat effectors/*.faa > aphanis-unique-cseps.faa
+cat effectors2/*.faa > leucotricha-unique-cseps.faa
+
+/home/theaven/scratch/apps/tools/signalp-4.1/signalp -t euk -f short aphanis-unique-cseps.faa > aphanis-unique-cseps-signalp4.1.out
+/home/theaven/scratch/apps/tools/signalp-4.1/signalp -t euk -f short leucotricha-unique-cseps.faa > leucotricha-unique-cseps-signalp4.1.out
+
+#mot all proteins have signal peptide as predictd by signalp4.1, some are only predicted by signalp3, phobius or deepsig. Where there was dissagreement between different prediction methods signalp4.1 was considered most reliable, followed by singalp3NN, then signalp3HMM, then phobius, then deepsig - however inmost cases the different tools were in agreement with one another.
+```
+Aphanis_Gene: Signal predicted:
+g10232  SignalP3NN:23
+g11054  SignalP3NN:22,SignalP3HMM:22,SignalP4:22,SignalP5:22,DeepSig:22,Phobius:22,SignalP6:22
+g11278  SignalP3NN:22,SignalP3HMM:22,SignalP4:22,SignalP5:22,DeepSig:22,Phobius:22,SignalP6:22
+g1209 SignalP3NN:21
+g12302  SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g12450  SignalP3NN:19,Phobius:19
+g12453  Phobius:20
+g12628  SignalP3NN:17,SignalP4:17,DeepSig:17
+g12667* SignalP3HMM:19
+g12955  Phobius:17
+g13367  SignalP3NN:22,SignalP3HMM:22,SignalP4:22,SignalP5:22,DeepSig:22,Phobius:22,SignalP6:22
+g13490  SignalP3NN:22
+g1355 SignalP3NN:17,SignalP3HMM:17,SignalP4:17,Phobius:17
+g13885  Phobius:23
+g14348  Phobius:19,SignalP3NN:24,SignalP3HMM:24,SignalP4:24,SignalP5:24,DeepSig:24
+g14731  SignalP3NN:14
+g14832  SignalP3NN:19,Phobius:19
+g15923  SignalP3NN:27,SignalP3HMM:27,Phobius:27
+g2113 Phobius:18
+g2919 Phobius:29
+g2928 Phobius:16
+g3129 SignalP3NN:21,DeepSig:21
+g324  SignalP3NN:27
+g422  SignalP3NN:30
+g548  SignalP3NN:20
+g5605 SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g5645 SignalP3HMM:16,Phobius:16
+g5721 SignalP3NN:28,SignalP3HMM:28,SignalP4:28,SignalP5:28,Phobius:28,SignalP6:28
+g6055 SignalP3NN:24,DeepSig:24,Phobius:24
+g6450 SignalP3NN:28
+g6520*  SignalP3NN:19
+g6562 SignalP3HMM:18,SignalP5:18
+g7278 SignalP3HMM:19,SignalP3NN:23
+g757  SignalP4:10
+g8019 SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:30
+g9359 SignalP3HMM:31,Phobius:31
+  
+Leuco_Gene: 
+g10095  SignalP3HMM:24
+g1010 SignalP3HMM:18,Phobius:18
+g10145  SignalP3NN:23,SignalP4:23,Phobius:23
+g10372  SignalP3NN:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g10489  SignalP3NN:15,SignalP3HMM:15,Phobius:15,SignalP4:19,SignalP6:19,SignalP5:23,DeepSig:23
+g10497  SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:19
+g10500  SignalP3NN:21,SignalP3HMM:21,SignalP4:21,SignalP5:21,SignalP6:21
+g10675  SignalP3NN:23
+g10692  SignalP3HMM:18,Phobius:18
+g10783  SignalP3NN:18,SignalP3HMM:18,SignalP4:18,SignalP5:18,DeepSig:18,Phobius:18,SignalP6:18
+g10784  SignalP3NN:18,SignalP3HMM:18,SignalP4:18,SignalP5:18,DeepSig:18,Phobius:18,SignalP6:18
+g10794  SignalP3NN:33
+g1106 SignalP3HMM:16,Phobius:19,SignalP3NN:26
+g11286  SignalP3NN:19,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g11369  SignalP3NN:20,SignalP3HMM:20,SignalP5:20,Phobius:36
+g11409  SignalP3NN:17,SignalP4:17,DeepSig:17,SignalP5:19,SignalP6:19,SignalP3HMM:21,Phobius:21
+g11416  SignalP3NN:25,SignalP3HMM:25,SignalP4:25,SignalP5:25,DeepSig:25,Phobius:25,SignalP6:25
+g11565  SignalP3NN:19,SignalP3HMM:19,SignalP4:19,DeepSig:19
+g11652  SignalP3HMM:30
+g11660  SignalP3NN:24,SignalP5:24,Phobius:24,SignalP3HMM:28,SignalP6:28
+g11719  Phobius:34
+g11727  DeepSig:22,SignalP3NN:23,SignalP3HMM:23,SignalP4:23,SignalP5:23,Phobius:23,SignalP6:23
+g11778  SignalP3NN:16,SignalP3HMM:16,SignalP4:16,DeepSig:16,Phobius:16
+g11806  SignalP4:19,DeepSig:19,SignalP3NN:23,SignalP5:23
+g11807  SignalP3NN:17,Phobius:17,SignalP3HMM:21,SignalP5:21,DeepSig:21,SignalP6:24
+g11808  SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:19
+g11809  SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:19
+g1186 SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:19
+g11906  SignalP3NN:22,SignalP3HMM:22,SignalP4:22,SignalP5:22,DeepSig:22,Phobius:22,SignalP6:22
+g11998  SignalP3NN:16
+g12135  SignalP3NN:24,SignalP3HMM:24,SignalP4:24,SignalP5:24,SignalP6:24,DeepSig:30,Phobius:30
+g12284  SignalP3NN:24,SignalP3HMM:24,SignalP4:24,SignalP5:24,DeepSig:24,Phobius:24,SignalP6:24
+g12296  SignalP3NN:21,SignalP3HMM:21,SignalP4:21,SignalP5:21,DeepSig:21,Phobius:21,SignalP6:21
+g12452  SignalP3NN:20,SignalP3HMM:20,SignalP4:20,DeepSig:20,Phobius:20,SignalP5:22
+g12489  Phobius:29
+g12500  SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:19
+g12653  SignalP4:15,Phobius:15
+g12716  SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:19
+g12776  SignalP3NN:21,SignalP3HMM:21,SignalP4:21,SignalP5:21,DeepSig:21,Phobius:21,SignalP6:21
+g13051  SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:25
+g13093  SignalP3HMM:16
+g13170  SignalP3NN:16,SignalP3HMM:16,SignalP4:16,SignalP5:16,DeepSig:16,Phobius:16,SignalP6:16
+g13217  SignalP3HMM:22
+g13219  SignalP3NN:23,SignalP3HMM:23,SignalP4:23,SignalP5:23,DeepSig:23,Phobius:23,SignalP6:23
+g13226  Phobius:21,SignalP6:22,SignalP3NN:24,SignalP4:24
+g13566  SignalP3NN:21,SignalP3HMM:21,SignalP4:21,SignalP5:21,DeepSig:21,Phobius:21,SignalP6:21
+g13811  SignalP3NN:21,SignalP3HMM:21,SignalP4:21,SignalP5:21,DeepSig:21,Phobius:21,SignalP6:21
+g13892  Phobius:18
+g13921  SignalP3NN:18,SignalP3HMM:18,SignalP5:18,Phobius:18,SignalP6:18
+g14015  SignalP4:20,SignalP6:22,SignalP3NN:24,SignalP3HMM:24,SignalP5:24,DeepSig:24,Phobius:24
+g14026  SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g14153  SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:19
+g14154  SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:19
+g14161  SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g14208  SignalP3NN:16,SignalP3HMM:16,SignalP4:16,SignalP5:16,DeepSig:16,Phobius:16,SignalP6:16
+g14239  SignalP3NN:22
+g14266  SignalP4:19,SignalP3NN:20,SignalP3HMM:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g14430  SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:19
+g14456  Phobius:21
+g14463  SignalP3NN:21,SignalP3HMM:21,SignalP4:21,SignalP5:21,DeepSig:21,Phobius:21,SignalP6:21
+g14471  SignalP3NN:21,SignalP3HMM:21,SignalP4:21,SignalP5:21,DeepSig:21,Phobius:21,SignalP6:21
+g14546  SignalP3NN:24,SignalP3HMM:24,SignalP4:24,SignalP5:24,DeepSig:24,Phobius:24,SignalP6:24
+g14551  SignalP3HMM:21,SignalP4:21,SignalP6:21,DeepSig:23,SignalP3NN:24,SignalP5:24
+g14690  SignalP3NN:20,SignalP4:20,SignalP5:20,Phobius:20,SignalP6:20
+g14900  SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:29
+g14908  SignalP3NN:21,SignalP3HMM:21,SignalP4:21,SignalP5:21,DeepSig:21,SignalP6:21,Phobius:27
+g150  Phobius:40
+g15093  SignalP3NN:21,SignalP3HMM:21
+g1518 SignalP4:11,Phobius:14,DeepSig:20,SignalP3NN:28
+g15306  SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:19
+g15465  SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:24,SignalP6:24
+g15827  Phobius:17
+g16211  SignalP3HMM:21,Phobius:21,SignalP6:22,SignalP3NN:24,SignalP4:24
+g16340  SignalP3NN:19,SignalP4:19,DeepSig:19,SignalP3HMM:21,SignalP5:21,Phobius:21
+g16440  DeepSig:21
+g16601  SignalP3HMM:21,Phobius:21
+g16680  Phobius:45
+g172  SignalP3NN:18,SignalP4:18
+g1765 SignalP6:18,SignalP3NN:25,SignalP3HMM:25,SignalP4:25,SignalP5:25,DeepSig:25,Phobius:25
+g17771  Phobius:34
+g18158  SignalP3HMM:22,Phobius:22
+g1899 Phobius:28
+g1901 SignalP3NN:19,SignalP3HMM:19,SignalP5:19,DeepSig:19,SignalP6:19
+g2067 Phobius:18,SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP6:19,SignalP5:21,DeepSig:21
+g2071 Phobius:24
+g2085 SignalP3NN:21,SignalP3HMM:21,SignalP4:21,SignalP5:21,DeepSig:21,Phobius:21,SignalP6:21
+g2280 SignalP3HMM:20,Phobius:23
+g2297 SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g254  SignalP3NN:22,SignalP4:22,SignalP5:22,DeepSig:22,SignalP6:22,SignalP3HMM:25,Phobius:25
+g255  SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g258  SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g259  SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g2761 SignalP3NN:29,SignalP4:29,SignalP5:29,SignalP6:29
+g2902 SignalP3NN:24,Phobius:27
+g3072 SignalP3NN:21,SignalP3HMM:21,SignalP4:21,SignalP5:21,DeepSig:21,SignalP6:21,Phobius:26
+g3170 SignalP3NN:22,SignalP3HMM:22,SignalP4:22,SignalP5:22,DeepSig:22,Phobius:22,SignalP6:22
+g3172 SignalP3NN:22,SignalP3HMM:22,SignalP4:22,SignalP5:22,DeepSig:22,Phobius:22,SignalP6:22
+g3204 SignalP3NN:21,SignalP3HMM:21,SignalP4:21,SignalP5:21,DeepSig:21,Phobius:21,SignalP6:21
+g3237 SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:19
+g3319 SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:19
+g3921 SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:19
+g4016 SignalP3NN:18
+g4176 SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g4600 SignalP3NN:15,SignalP3HMM:15,DeepSig:18,Phobius:18,SignalP5:24
+g4897 SignalP3NN:23,SignalP3HMM:23,SignalP4:23,SignalP5:23,DeepSig:23,Phobius:23,SignalP6:23
+g5141 SignalP3NN:24,SignalP3HMM:24,SignalP4:24,SignalP5:24,DeepSig:24,Phobius:24,SignalP6:24
+g5142 SignalP3NN:23,SignalP3HMM:23,SignalP4:23,SignalP5:23,DeepSig:23,Phobius:23,SignalP6:23
+g5372 SignalP3NN:21,SignalP3HMM:21,SignalP4:21,SignalP5:21,DeepSig:21,Phobius:21,SignalP6:21
+g5674 SignalP3NN:23,SignalP3HMM:23,SignalP4:23,SignalP5:23,Phobius:23,SignalP6:23
+g5692 SignalP3NN:22,SignalP3HMM:22,SignalP4:22
+g5745 SignalP3NN:17,SignalP3HMM:17,SignalP4:17,SignalP5:17,DeepSig:17,SignalP6:17,Phobius:19
+g5831 SignalP3NN:23,SignalP3HMM:23,SignalP4:23,SignalP5:23,DeepSig:23,Phobius:23,SignalP6:23
+g6026 SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g6027 SignalP3NN:22,SignalP3HMM:22,SignalP4:22,SignalP5:22,DeepSig:22,Phobius:22,SignalP6:22
+g6105 SignalP3NN:18,SignalP3HMM:18,SignalP4:18,SignalP5:18,DeepSig:18,Phobius:18,SignalP6:18
+g6162 SignalP6:18,SignalP3NN:21,SignalP3HMM:21,SignalP4:21,SignalP5:21,DeepSig:21,Phobius:21
+g6243 SignalP3NN:26,DeepSig:26
+g6281 Phobius:13
+g6315 SignalP3HMM:17,Phobius:17,DeepSig:18
+g6354 SignalP3NN:20,SignalP4:20,DeepSig:20,Phobius:20,SignalP5:25,SignalP3HMM:27,SignalP6:27
+g6355 SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g6406 SignalP3HMM:17
+g6458 SignalP3NN:28
+g6590 SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:19
+g6999 SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:19
+g7051 SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,SignalP6:20
+g7120 SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g7121 SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g7132 DeepSig:25
+g7198 SignalP3NN:18
+g7200 SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:19
+g7361 SignalP3NN:23,SignalP3HMM:24,SignalP4:24,SignalP5:24,DeepSig:24,Phobius:24,SignalP6:24
+g7603 SignalP3NN:21,SignalP3HMM:21,SignalP4:21,SignalP5:21,DeepSig:21,Phobius:21,SignalP6:21
+g7646 SignalP3NN:21,SignalP3HMM:21,SignalP4:21,SignalP5:21,DeepSig:21,Phobius:21,SignalP6:21
+g7647 Phobius:18,SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,SignalP6:20
+g7696 SignalP3NN:23,SignalP4:23,DeepSig:23
+g7802 SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g7927 SignalP3NN:21,SignalP4:21,SignalP5:21,DeepSig:21,Phobius:21,SignalP6:21,SignalP3HMM:23
+g7928 SignalP3NN:21,SignalP3HMM:21,SignalP4:21,SignalP5:21,DeepSig:21,Phobius:21,SignalP6:21
+g7935 SignalP3NN:20,SignalP3HMM:21,SignalP4:21,SignalP5:21,DeepSig:21,Phobius:21,SignalP6:21
+g7937 SignalP3NN:21,SignalP3HMM:21,SignalP4:21,SignalP5:21,DeepSig:21,Phobius:21,SignalP6:21
+g8009 SignalP3NN:20,SignalP3HMM:20,SignalP4:20,DeepSig:20,SignalP5:22
+g8035 SignalP3NN:17,SignalP3HMM:17,SignalP4:17,SignalP5:17,DeepSig:17,SignalP6:17,Phobius:19
+g8081 SignalP3HMM:19,DeepSig:19,Phobius:19,SignalP3NN:21,SignalP4:21,SignalP5:21,SignalP6:21
+g8248 SignalP4:21,SignalP5:21,DeepSig:21,SignalP6:21,SignalP3HMM:22,SignalP3NN:25,Phobius:25
+g8278 SignalP3NN:17,SignalP4:17,SignalP5:17,DeepSig:17,SignalP6:17,SignalP3HMM:21,Phobius:21
+g8734 Phobius:20
+g8760 SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,Phobius:19,SignalP6:19
+g8897 Phobius:27
+g8974 SignalP3NN:14,SignalP3HMM:14,SignalP5:14,Phobius:14
+g9008 SignalP3NN:18,SignalP3HMM:18,SignalP5:18,Phobius:18
+g9065 SignalP3NN:27
+g911  SignalP3NN:19,SignalP3HMM:19,SignalP4:19,SignalP5:19,DeepSig:19,SignalP6:19,Phobius:22
+g9132 SignalP3NN:22,SignalP3HMM:22,SignalP4:22,SignalP5:22,Phobius:22
+g9487 SignalP3HMM:19,Phobius:19
+g978  SignalP3HMM:17,Phobius:17,SignalP3NN:18
+g981  SignalP3NN:20,SignalP3HMM:20,SignalP4:20,SignalP5:20,DeepSig:20,Phobius:20,SignalP6:20
+g9883 Phobius:21,SignalP3NN:23,SignalP3HMM:23,SignalP4:23,SignalP5:23,DeepSig:23
+g9979 SignalP3NN:13,SignalP3HMM:13,SignalP4:13,SignalP5:13,Phobius:13
+```txt
+Aphanis_Gene: Signal predicted:
+g10232  23
+g11054  22
+g11278  22
+g1209 21
+g12302  20
+g12450  19
+g12453  20
+g12628  17
+g12667 19
+g12955  17
+g13367  22
+g13490  22
+g1355 17
+g13885  23
+g14348  24
+g14731  14
+g14832  19
+g15923  27
+g2113 18
+g2919 29
+g2928 16
+g3129 21
+g324  27
+g422  30
+g548  20
+g5605 20
+g5645 16
+g5721 28
+g6055 24
+g6450 28
+g6520  19
+g6562 18
+g7278 23
+g757  10
+g8019 20
+g9359 31
+  
+Leuco_Gene: 
+g10095  24
+g1010 18
+g10145  23
+g10372  20
+g10489  19
+g10497  19
+g10500  21
+g10675  23
+g10692  18
+g10783  18
+g10784  18
+g10794  33
+g1106 26
+g11286  20
+g11369  20
+g11409  17
+g11416  25
+g11565  19
+g11652  30
+g11660  24
+g11719  34
+g11727  23
+g11778  16
+g11806  23
+g11807  17
+g11808  19
+g11809  19
+g1186 19
+g11906  22
+g11998  16
+g12135  24
+g12284  24
+g12296  21
+g12452  20
+g12489  29
+g12500  19
+g12653  15
+g12716  19
+g12776  21
+g13051  20
+g13093  16
+g13170  16
+g13217  22
+g13219  23
+g13226  24
+g13566  21
+g13811  21
+g13892  18
+g13921  18
+g14015  20
+g14026  20
+g14153  19
+g14154  19
+g14161  20
+g14208  16
+g14239  22
+g14266  19
+g14430  19
+g14456  21
+g14463  21
+g14471  21
+g14546  24
+g14551  21
+g14690  20
+g14900  19
+g14908  21
+g150  40
+g15093  21
+g1518 11
+g15306  19
+g15465  19
+g15827  17
+g16211  24
+g16340  19
+g16440  21
+g16601  21
+g16680  45
+g172  18
+g1765 25
+g17771  34
+g18158  22
+g1899 28
+g1901 19
+g2067 19
+g2071 24
+g2085 21
+g2280 20
+g2297 20
+g254  22
+g255  20
+g258  20
+g259  20
+g2761 29
+g2902 24
+g3072 21
+g3170 22
+g3172 22
+g3204 21
+g3237 19
+g3319 19
+g3921 19
+g4016 18
+g4176 20
+g4600 15
+g4897 23
+g5141 24
+g5142 23
+g5372 21
+g5674 23
+g5692 22
+g5745 17
+g5831 23
+g6026 20
+g6027 22
+g6105 18
+g6162 21
+g6243 26
+g6281 13
+g6315 17
+g6354 20
+g6355 20
+g6406 17
+g6458 28
+g6590 19
+g6999 19
+g7051 20
+g7120 20
+g7121 20
+g7132 25
+g7198 18
+g7200 19
+g7361 24
+g7603 21
+g7646 21
+g7647 20
+g7696 23
+g7802 20
+g7927 21
+g7928 21
+g7935 21
+g7937 21
+g8009 20
+g8035 17
+g8081 21
+g8248 21
+g8278 17
+g8734 20
+g8760 19
+g8897 27
+g8974 14
+g9008 18
+g9065 27
+g911  199
+g9132 22
+g9487 19
+g978  18
+g981  20
+g9883 23
+g9979 13
+
+```
+```bash
+nano aphanis-unique-cseps-manual.out
+nano leucotricha-unique-cseps-manual.out
+
+cat effectors/*.faa > aphanis-unique-cseps.faa
+cat effectors2/*.faa > leucotricha-unique-cseps.faa
+
+mkdir aphanis-unique-cseps-cleaved
+mkdir leucotricha-unique-cseps-cleaved
+```
+```python
+from Bio import SeqIO
+
+#signalp_file = "aphanis-unique-cseps-manual.out"
+#input_fasta = "aphanis-unique-cseps.faa"
+#output_fasta = "aphanis-unique-cseps-cleaved.faa"
+signalp_file = "leucotricha-unique-cseps-manual.out"
+input_fasta = "leucotricha-unique-cseps.faa"
+output_fasta = "leucotricha-unique-cseps-cleaved.faa"
+
+def load_signal_peptide_info(signalp_file):
+    cleavage_sites = {}
+    with open(signalp_file, 'r') as file:
+        for line in file:
+            parts = line.strip().split()
+            seq_id = parts[0]
+            cleavage_site = int(parts[1])
+            cleavage_sites[seq_id] = cleavage_site
+    return cleavage_sites
+
+def remove_signal_peptide_fasta(input_fasta, output_fasta, cleavage_sites):
+    with open(output_fasta, 'w') as output_handle:
+        for record in SeqIO.parse(input_fasta, "fasta"):
+            seq_id = record.id.split('.')[0]  # To match with IDs in cleavage_sites
+            if seq_id in cleavage_sites:
+                cleavage_site = cleavage_sites[seq_id]
+                mature_sequence = record.seq[cleavage_site:]
+                record.seq = mature_sequence
+            SeqIO.write(record, output_handle, "fasta")
+
+cleavage_sites = load_signal_peptide_info(signalp_file)
+remove_signal_peptide_fasta(input_fasta, output_fasta, cleavage_sites)
+
+
+
+from Bio import SeqIO
+import os
+def split_fasta(input_fasta, output_directory):
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
+    for record in SeqIO.parse(input_fasta, "fasta"):
+        output_file = os.path.join(output_directory, f"{record.id}.fasta")
+        with open(output_file, 'w') as output_handle:
+            SeqIO.write(record, output_handle, "fasta")
+        print(f"Written {record.id} to {output_file}")
+
+#input_fasta = "aphanis-unique-cseps-cleaved.faa"
+#output_directory = "aphanis-unique-cseps-cleaved"
+input_fasta = "leucotricha-unique-cseps-cleaved.faa"
+output_directory = "leucotricha-unique-cseps-cleaved"
+
+split_fasta(input_fasta, output_directory)
+```
+```bash
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/aphanis-unique-cseps-cleaved/*fasta); do
+echo $(basename $file)
+grep -v '>' $file | wc -c
+done
+
+for protein in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/aphanis-unique-cseps-cleaved/*.fasta); do
+sed -i 's/X*$//' $protein
+OutDir=$(dirname $protein)/$(basename $protein | sed 's@.t1.fasta@@g')
+mkdir $OutDir
+sbatch ~/git_repos/Wrappers/NBI/alphafold.sh $protein $OutDir
+done
+#3555477-3555523 - gpu node with 8cpu, multiple jobs are running on each node
+
+for protein in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/leucotricha-unique-cseps-cleaved/*.fasta); do
+sed -i 's/X*$//' $protein
+OutDir=$(dirname $protein)/$(basename $protein | sed 's@.t1.fasta@@g')
+mkdir $OutDir
+sbatch ~/git_repos/Wrappers/NBI/alphafold.sh $protein $OutDir
+done
+#3556341-3556499 - gpu node with 8cpu, multiple jobs are running on each node
+
+mkdir temp_AF2  
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/*-unique-cseps-cleaved/*/*/ranked_0.pdb); do
+ID=$(echo $file | cut -d '/' -f8 | cut -d '-' -f1 )_$(echo $file | cut -d '/' -f9)_$(basename $file)
+cp $file temp_AF2/$ID
+done
+
+#Download .pdb files from seong and krasileva paper:
+cd /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Seong+Krasileva
+for file in $(ls *.tar.gz); do
+tar -xvzf $file
+done
+mkdir all
+cp *PDBs/*.pdb all/.
+cd ..
+
+
+for file in /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Seong+Krasileva/all/*.pdb
+do
+    ln -s "$file" temp_AF2/.
+done
+
+source package cda29b6a-320e-4d73-83c6-240ed7a6201e
+pdb_dir=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/temp_AF2
+cpu=1  
+Prefix=cluster-0.9
+foldseek easy-cluster --threads $cpu -s 7.5 --max-seqs 2000 --min-seq-id 0.6 -c 0.9 $pdb_dir $Prefix tmp
+Prefix=cluster-0.8
+foldseek easy-cluster --threads $cpu  -s 7.5 --max-seqs 2000 --min-seq-id 0.6 -c 0.8 $pdb_dir $Prefix tmp
+Prefix=cluster-0.7
+foldseek easy-cluster --threads $cpu  -s 7.5 --max-seqs 2000 --min-seq-id 0.6 -c 0.7 $pdb_dir $Prefix tmp
+Prefix=cluster-0.6
+foldseek easy-cluster --threads $cpu  -s 7.5 --max-seqs 2000 --min-seq-id 0.6 -c 0.6 $pdb_dir $Prefix tmp
+
+Prefix=cluster-0.9-5
+foldseek easy-cluster --threads $cpu -s 7.5 --max-seqs 2000 --min-seq-id 0.5 -c 0.9 $pdb_dir $Prefix tmp
+Prefix=cluster-0.8-5
+foldseek easy-cluster --threads $cpu  -s 7.5 --max-seqs 2000 --min-seq-id 0.5 -c 0.8 $pdb_dir $Prefix tmp
+Prefix=cluster-0.7-5
+foldseek easy-cluster --threads $cpu  -s 7.5 --max-seqs 2000 --min-seq-id 0.5 -c 0.7 $pdb_dir $Prefix tmp
+Prefix=cluster-0.6-5
+foldseek easy-cluster --threads $cpu  -s 7.5 --max-seqs 2000 --min-seq-id 0.5 -c 0.6 $pdb_dir $Prefix tmp
+
+Prefix=cluster-0.9-4
+foldseek easy-cluster --threads $cpu -s 7.5 --max-seqs 2000 --min-seq-id 0.4 -c 0.9 $pdb_dir $Prefix tmp
+Prefix=cluster-0.8-4
+foldseek easy-cluster --threads $cpu  -s 7.5 --max-seqs 2000 --min-seq-id 0.4 -c 0.8 $pdb_dir $Prefix tmp
+Prefix=cluster-0.7-4
+foldseek easy-cluster --threads $cpu  -s 7.5 --max-seqs 2000 --min-seq-id 0.4 -c 0.7 $pdb_dir $Prefix tmp
+Prefix=cluster-0.6-4
+foldseek easy-cluster --threads $cpu  -s 7.5 --max-seqs 2000 --min-seq-id 0.4 -c 0.6 $pdb_dir $Prefix tmp
+
+#make a foldseek database from the Seong and Krasileva pdbs
+source package cda29b6a-320e-4d73-83c6-240ed7a6201e
+foldseek createdb /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Seong+Krasileva/all /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Seong+Krasileva/S+Kdb
+
+#The cost to run with the afdb database is ~£2 per protein, therefore run only for the custom database and submit through the web server - time consuming :(
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/*-unique-cseps-cleaved/*/*/ranked_0.pdb | grep -v 'leucotricha-unique-cseps-cleaved/g9979/g9979.t1'); do
+InFile=$file
+OutDir=$(dirname $file)/foldseek
+mkdir $OutDir
+#Database=/nbi/Reference-Data/Foldseek/afdb
+#OutFile=$(echo $file | cut -d '/' -f8 | cut -d '-' -f1 )_$(echo $file | cut -d '/' -f9)_$(basename $file | sed 's@.pdb@@g')-$(basename $Database)-foldseek-output.txt
+#sbatch ~/git_repos/Wrappers/NBI/foldseek.sh $InFile $Database $OutDir $OutFile
+#Database=/nbi/Reference-Data/Foldseek/afdb_proteome
+#OutFile=$(echo $file | cut -d '/' -f8 | cut -d '-' -f1 )_$(echo $file | cut -d '/' -f9)_$(basename $file | sed 's@.pdb@@g')-$(basename $Database)-foldseek-output.txt
+#sbatch ~/git_repos/Wrappers/NBI/foldseek.sh $InFile $Database $OutDir $OutFile
+#Database=/nbi/Reference-Data/Foldseek/afdb_swissprot
+#OutFile=$(echo $file | cut -d '/' -f8 | cut -d '-' -f1 )_$(echo $file | cut -d '/' -f9)_$(basename $file | sed 's@.pdb@@g')-$(basename $Database)-foldseek-output.txt
+#sbatch ~/git_repos/Wrappers/NBI/foldseek.sh $InFile $Database $OutDir $OutFile
+#Database=/nbi/Reference-Data/Foldseek/afdb_uniprot50
+#OutFile=$(echo $file | cut -d '/' -f8 | cut -d '-' -f1 )_$(echo $file | cut -d '/' -f9)_$(basename $file | sed 's@.pdb@@g')-$(basename $Database)-foldseek-output.txt
+#sbatch ~/git_repos/Wrappers/NBI/foldseek.sh $InFile $Database $OutDir $OutFile
+#Database=/nbi/Reference-Data/Foldseek/cath50
+#OutFile=$(echo $file | cut -d '/' -f8 | cut -d '-' -f1 )_$(echo $file | cut -d '/' -f9)_$(basename $file | sed 's@.pdb@@g')-$(basename $Database)-foldseek-output.txt
+#sbatch ~/git_repos/Wrappers/NBI/foldseek.sh $InFile $Database $OutDir $OutFile
+#Database=/nbi/Reference-Data/Foldseek/esmatlas30
+#OutFile=$(echo $file | cut -d '/' -f8 | cut -d '-' -f1 )_$(echo $file | cut -d '/' -f9)_$(basename $file | sed 's@.pdb@@g')-$(basename $Database)-foldseek-output.txt
+#sbatch ~/git_repos/Wrappers/NBI/foldseek.sh $InFile $Database $OutDir $OutFile
+#Database=/nbi/Reference-Data/Foldseek/pdb
+#OutFile=$(echo $file | cut -d '/' -f8 | cut -d '-' -f1 )_$(echo $file | cut -d '/' -f9)_$(basename $file | sed 's@.pdb@@g')-$(basename $Database)-foldseek-output.txt
+#sbatch ~/git_repos/Wrappers/NBI/foldseek.sh $InFile $Database $OutDir $OutFile
+Database=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Seong+Krasileva/S+Kdb
+OutFile=$(echo $file | cut -d '/' -f8 | cut -d '-' -f1 )_$(echo $file | cut -d '/' -f9)_$(basename $file | sed 's@.pdb@@g')-$(basename $Database)-foldseek-output.txt
+sbatch ~/git_repos/Wrappers/NBI/foldseek.sh $InFile $Database $OutDir $OutFile
+done
+#3751068-3751075
+#3780842-3782679
+#3782680-3782872
+
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/*-unique-cseps-cleaved/*/*/ranked_0.pdb); do
+result=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/temp_AF2/foldseek_web_server/mmseqs_results_$(echo $file | cut -d '/' -f8 | cut -d '-' -f1 )_$(echo $file | cut -d '/' -f9)_ranked_0.gz
+mkdir $(dirname $file)/foldseek_web_server
+mv $result $(dirname $file)/foldseek_web_server/$(basename $result | sed 's@.gz@.tar.gz@g')
+ls $(dirname $file)/foldseek_web_server/$(basename $result)
+cd $(dirname $file)/foldseek_web_server/
+tar -xvzf $(basename $result | sed 's@.gz@.tar.gz@g')
+done
+
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/*-unique-cseps-cleaved/*/*/foldseek_web_server/*.m8); do
+db=$(basename $file | cut -d '_' -f2 | cut -d '.' -f1)
+awk -v db="$db" 'BEGIN{FS=OFS="\t"} {print $0, db}' $file > temp.tsv && mv temp.tsv $file
+done
+
+for dir in $(ls -d /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/*-unique-cseps-cleaved/*/*/foldseek_web_server); do
+cat $dir/*.m8 > $dir/all_db.tsv
+sort -k11,11nr -k12,12g $dir/all_db.tsv > temp.tsv && mv temp.tsv $dir/all_db.tsv
+done
+
+ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/*-unique-cseps-cleaved/*/*/foldseek_web_server/all_db.tsv
+```
+

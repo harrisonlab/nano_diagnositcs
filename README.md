@@ -1,5 +1,5 @@
 # nano_diagnostics
-Documentation of analyses and commands used as part of the PhD project investigating next generation diagnostics
+Documentation of analyses and commands used as part of my PhD project investigating next generation diagnostics
 
 Work is documented within the following sub folders: 
 
