@@ -6577,7 +6577,7 @@ done
 #3556341-3556499,6431854 - gpu node with 8cpu, multiple jobs are running on each node
 
 mkdir temp_AF2  
-for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/*-unique-cseps-cleaved/*/*/ranked_0.pdb); do
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/*-unique-cseps-cleaved/g911*/*/ranked_0.pdb); do
 ID=$(echo $file | cut -d '/' -f8 | cut -d '-' -f1 )_$(echo $file | cut -d '/' -f9)_$(basename $file)
 cp $file temp_AF2/$ID
 done
@@ -6646,7 +6646,7 @@ source package cda29b6a-320e-4d73-83c6-240ed7a6201e
 foldseek createdb /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Seong+Krasileva/all /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Seong+Krasileva/S+Kdb
 
 #The cost to run with the afdb database is ~£2 per protein, therefore run only for the custom database and submit through the web server - time consuming :(
-for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/*-unique-cseps-cleaved/*/*/ranked_0.pdb | grep -v 'leucotricha-unique-cseps-cleaved/g9979/g9979.t1'); do
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/*-unique-cseps-cleaved/g911/*/ranked_0.pdb | grep -v 'leucotricha-unique-cseps-cleaved/g9979/g9979.t1'); do
 InFile=$file
 OutDir=$(dirname $file)/foldseek
 mkdir $OutDir
@@ -6677,7 +6677,7 @@ sbatch ~/git_repos/Wrappers/NBI/foldseek.sh $InFile $Database $OutDir $OutFile
 done
 #3751068-3751075
 #3780842-3782679
-#3782680-3782872
+#3782680-3782872,6447769
 
 for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/*-unique-cseps-cleaved/*/*/ranked_0.pdb); do
 result=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/temp_AF2/foldseek_web_server/mmseqs_results_$(echo $file | cut -d '/' -f8 | cut -d '-' -f1 )_$(echo $file | cut -d '/' -f9)_ranked_0.gz
@@ -6856,5 +6856,18 @@ ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/aphan_common
 ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/aphanis-unique-cseps-cleaved/*/*/ranked_0.pdb | wc -l
 ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/leuco_common_secreted_effectors-cleaved/*/*/ranked_0.pdb | wc -l
 ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/leucotricha-unique-cseps-cleaved/*/*/ranked_0.pdb | wc -l
+
+for file in $(ls /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/*common_secreted_effectors-cleaved/*/*/ranked_0.pdb); do
+InFile=$file
+OutDir=$(dirname $file)/foldseek
+mkdir $OutDir
+Database=/jic/scratch/groups/Saskia-Hogenhout/tom_heaven/nano_diagnostics/Seong+Krasileva/S+Kdb
+OutFile=$(echo $file | cut -d '/' -f8 | cut -d '-' -f1 )_$(echo $file | cut -d '/' -f9)_$(basename $file | sed 's@.pdb@@g')-$(basename $Database)-foldseek-output.txt
+sbatch ~/git_repos/Wrappers/NBI/foldseek.sh $InFile $Database $OutDir $OutFile
+done
+#6448934-6449151
 ```
 
+```bash
+tar -cf - /jic/scratch/groups/Saskia-Hogenhout/tom_heaven/Psyllidae/Liberibacter | pigz -p 8 > Liberibacter.tar.gz 
+```
